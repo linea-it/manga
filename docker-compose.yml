@@ -1,0 +1,11 @@
+version: "3.6"
+services:
+  # (Backend Flask)
+  backend:
+    build: ./backend
+    image: manga_backend
+    volumes:
+      - ./backend:/app
+      - ./images:/images
+    ports:
+      - 8000:8000
