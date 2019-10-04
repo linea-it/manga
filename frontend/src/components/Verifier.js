@@ -257,7 +257,7 @@ function Verifier({ setTitle }) {
               title="Spectre"
             />
             <CardContent style={{ minHeight: 689 }}>
-              {fluxPlotData.lamb && fluxPlotData.synt ? (
+              {heatmapPoints[0] !== 0 && heatmapPoints[1] !== 0 ? (
                   <div className={classes.animateEnter}>
                     <Plot
                       data={[
@@ -303,7 +303,7 @@ function Verifier({ setTitle }) {
         <Grid item xs={12} md={12} className={classes.tableContainer}>
           <Card>
             <CardHeader
-              title="Central Spaxel Best Fit"
+              title={spaxelTableData.title ? spaxelTableData.title : 'Best fit for Spaxel'}
             />
             <CardContent>
               {spaxelTableData.rows && spaxelTableData.rows.length > 0 ? (
