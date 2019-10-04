@@ -67,6 +67,10 @@ const useStyles = makeStyles((theme) => ({
   tableContainer: {
     marginTop: 15
   },
+  cardContentTable: {
+    maxHeight: 500,
+    overflow: 'auto'
+  }
 }));
 
 function Verifier({ setTitle }) {
@@ -305,7 +309,7 @@ function Verifier({ setTitle }) {
             <CardHeader
               title={spaxelTableData.title ? spaxelTableData.title : 'Best fit for Spaxel'}
             />
-            <CardContent>
+            <CardContent className={classes.cardContentTable}>
               {spaxelTableData.rows && spaxelTableData.rows.length > 0 ? (
                 <div className={classes.animateEnter}>
                   <CustomTable
@@ -318,6 +322,7 @@ function Verifier({ setTitle }) {
                         [spaxelTableData.columns[3]]: row[3],
                       }))
                     }
+                    hasPagination={false}
                     totalCount={spaxelTableData.count}
                     remote={false}
                     hasColumnVisibility={false}
@@ -325,6 +330,9 @@ function Verifier({ setTitle }) {
                 </div>
               ) : (
                 <>
+                  <Skeleton className={classes.skeletonMargin} />
+                  <Skeleton className={classes.skeletonMargin} />
+                  <Skeleton className={classes.skeletonMargin} />
                   <Skeleton className={classes.skeletonMargin} />
                   <Skeleton className={classes.skeletonMargin} />
                   <Skeleton className={classes.skeletonMargin} />
