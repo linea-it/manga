@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-axios.defaults.baseURL = 'http://localhost/api';
+axios.defaults.baseURL = process.env.REACT_APP_API;
 
 
 export const getFluxByPosition = ({ x, y, megacube }) =>
