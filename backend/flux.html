@@ -36,7 +36,7 @@
 
     <script>
         // Plot Image Heatmap
-        fetch("http://localhost:8000/image_heatmap?megacube=manga-8138-6101-MEGA.fits&hud=xyy").then(function (response) {
+        fetch("http://localhost:8000/api/image_heatmap?megacube=manga-8138-6101-MEGA.fits&hud=xyy").then(function (response) {
             return response.json();
         }).then(function (data) {
             console.log(data);
@@ -65,7 +65,7 @@
         });
 
         // Plot Fluxo
-        fetch("http://localhost:8000/flux_by_position?megacube=manga-8138-6101-MEGA.fits&x=25&y=26").then(function (response) {
+        fetch("http://localhost:8000/api/flux_by_position?megacube=manga-8138-6101-MEGA.fits&x=25&y=26").then(function (response) {
             return response.json();
         }).then(function (data) {
             console.log(data);

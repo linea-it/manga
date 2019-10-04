@@ -13,13 +13,18 @@ def get_megacube_path(filename):
     return os.path.join(os.getenv("IMAGE_PATH", "/images"), filename)
 
 
-@application.route('/')
+@application.route('/api')
 def hello():
     content = open('flux.html').read()
     return Response(content, mimetype="text/html")
 
 
-@application.route('/flux_by_position')
+@application.route('/api/health_check')
+def health_check():
+    return jsonify(dict({'success': True}))
+
+
+@application.route('/api/flux_by_position')
 def flux_by_position():
     """
         Retorna o Fluxo e lambda para uma posicao x,y. 
@@ -58,7 +63,7 @@ def flux_by_position():
     return response
 
 
-@application.route('/image_heatmap')
+@application.route('/api/image_heatmap')
 def image_heatmap():
     """
         Retorna os dados que permitem plotar a imagem usando um heatmap.
@@ -89,7 +94,7 @@ def image_heatmap():
     return response
 
 
-@application.route('/list_hud')
+@application.route('/api/list_hud')
 def list_hud():
     """
         Retorna a lista de HUD disponivel em um megacube.
@@ -118,7 +123,7 @@ def list_hud():
         })
 
     result = dict({
-        'hdu': dHud
+        'hud': dHud
     })
 
     response = jsonify(result)
@@ -126,7 +131,7 @@ def list_hud():
     return response
 
 
-@application.route('/spaxel_fit_by_position')
+@application.route('/api/spaxel_fit_by_position')
 def spaxel_fit_by_position():
     """
         Retorna o "Central Spaxel Best Fit" para uma posicao x,y. 
