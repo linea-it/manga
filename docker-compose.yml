@@ -3,7 +3,6 @@ services:
   # (Backend Flask)
   backend:
     build: ./backend
-    image: manga_backend
     volumes:
       - ./backend:/app
       - ./images:/images
