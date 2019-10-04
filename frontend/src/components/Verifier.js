@@ -64,16 +64,19 @@ const useStyles = makeStyles((theme) => ({
     marginTop: '0.8em',
     marginBottom: '0.8em',
   },
+  tableContainer: {
+    marginTop: 15
+  },
 }));
 
 function Verifier({ setTitle }) {
   const Plot = createPlotlyComponent(Plotly);
   const classes = useStyles();
-  const [selectedMegacube, setSelectedMegacube] = useState('');
   const [megacubeList, setMegacubeList] = useState(['manga-8138-6101-MEGA']);
+  const [selectedMegacube, setSelectedMegacube] = useState(megacubeList[0]);
   const [hudList, setHudList] = useState([]);
   const [selectedHud, setSelectedHud] = useState('');
-  const [fluxPlotData, setFluxPlotData] = useState([]);
+  const [fluxPlotData, setFluxPlotData] = useState({});
   const [spaxelTableData, setSpaxelTableData] = useState({});
   const [heatmapPlotData, setHeatmapPlotData] = useState({});
   const [heatmapPoints, setHeatmapPoints] = useState([0, 0]);
@@ -83,7 +86,12 @@ function Verifier({ setTitle }) {
   }, [setTitle]);
 
   useEffect(() => {
-    getHudList({ megacube: selectedMegacube }).then((res) => setHudList(res));
+    if(selectedMegacube !== '') {
+      getHudList({ megacube: selectedMegacube }).then((res) => {
+        setHudList(res)
+        setSelectedHud(res[0].name)
+      });
+    }
   }, [selectedMegacube]);
 
   const loadFluxMap = (x, y) => {
@@ -102,17 +110,21 @@ function Verifier({ setTitle }) {
   }, [heatmapPoints]);
 
   useEffect(() => {
-    getImageHeatmap({ megacube: selectedMegacube, hud: selectedHud })
-      .then((res) => setHeatmapPlotData(res));
+    if(selectedMegacube !== '' && selectedHud !== '') {
+      getImageHeatmap({ megacube: selectedMegacube, hud: selectedHud })
+        .then((res) => setHeatmapPlotData(res));
+    }
   }, [selectedMegacube, selectedHud]);
 
   useEffect(() => {
-    console.log(spaxelTableData);
-    // if (spaxelTableData.length > 0) {
-    //   spaxelTableData.rows.map((row, i) => {
-    //     console.log({ [spaxelTableData.columns[i]]: row });
-    //   });
-    // }
+    if (spaxelTableData.rows && spaxelTableData.rows.length > 0) {
+      spaxelTableData.rows.map((row) => ({
+        [spaxelTableData.columns[0]]: row[0],
+        [spaxelTableData.columns[1]]: row[1],
+        [spaxelTableData.columns[2]]: row[2],
+        [spaxelTableData.columns[3]]: row[3],
+      }));
+    }
   }, [spaxelTableData]);
 
   const handleSelectMegacube = (e) => {
@@ -121,12 +133,14 @@ function Verifier({ setTitle }) {
 
   const handleSelectHud = (e) => {
     setHeatmapPoints([0, 0]);
-    setFluxPlotData([]);
+    setFluxPlotData({});
+    setSpaxelTableData({});
     setSelectedHud(e.target.value);
   };
 
   const handleHeatmapClick = (e) => {
-    setFluxPlotData([]);
+    setFluxPlotData({});
+    setSpaxelTableData({});
     setHeatmapPoints([e.points[0].x, e.points[0].y]);
   };
 
@@ -134,7 +148,7 @@ function Verifier({ setTitle }) {
   return (
     <>
       <Grid container spacing={2}>
-        <Grid item xs={12} md={5} fullWidth className={classes.gridWrapper}>
+        <Grid item xs={12} md={5} className={classes.gridWrapper}>
           <Card>
             <CardHeader
               title={<span>Inputs</span>}
@@ -194,14 +208,13 @@ function Verifier({ setTitle }) {
             <CardHeader
               title="Plot"
             />
-            <CardContent>
+            <CardContent style={{ minHeight: 689 }}>
               {selectedHud === '' ? (
-                <Skeleton height={450} />
+                <Skeleton height={650} />
               ) : (
                   <div className={classes.animateEnter}>
 
                     <Plot
-
                       data={[{
                         z: heatmapPlotData.z,
                         name: 'Image',
@@ -218,12 +231,12 @@ function Verifier({ setTitle }) {
                         yaxis: {
                           scaleanchor: 'x'
                         },
-                        displayModeBar: 'hover'
                       }}
                       config={{
                         scrollZoom: false,
                         displaylogo: false,
                         responsive: true,
+                        displayModeBar: 'hover',
                       }}
                       transition={{
                         duration: 500,
@@ -243,10 +256,8 @@ function Verifier({ setTitle }) {
             <CardHeader
               title="Spectre"
             />
-            <CardContent>
-              {heatmapPoints[0] === 0 && heatmapPoints[1] === 0 ? (
-                <Skeleton height={450} />
-              ) : (
+            <CardContent style={{ minHeight: 689 }}>
+              {fluxPlotData.lamb && fluxPlotData.synt ? (
                   <div className={classes.animateEnter}>
                     <Plot
                       data={[
@@ -265,11 +276,14 @@ function Verifier({ setTitle }) {
                       layout={{
                         hovermode: 'closest',
                         autosize: true,
+                        height: 600,
+                        title: `x=${heatmapPoints[0]}, y=${heatmapPoints[1]}`
                       }}
                       config={{
                         scrollZoom: false,
                         displaylogo: false,
                         responsive: true,
+                        displayModeBar: 'hover',
                       }}
                       transition={{
                         duration: 500,
@@ -278,37 +292,46 @@ function Verifier({ setTitle }) {
                       frame={{ duration: 500 }}
                     />
                   </div>
-                )}
+                ) : (
+                <Skeleton height={650} />
+              )}
             </CardContent>
           </Card>
         </Grid>
       </Grid>
-      <Grid container spacing={2} justify="flex-end">
-        <Grid item xs={12} md={12}>
-
+      <Grid container spacing={3}>
+        <Grid item xs={12} md={12} className={classes.tableContainer}>
           <Card>
             <CardHeader
               title="Central Spaxel Best Fit"
             />
             <CardContent>
-              {heatmapPoints[0] !== 0 && heatmapPoints[1] !== 0 ? (
+              {spaxelTableData.rows && spaxelTableData.rows.length > 0 ? (
                 <div className={classes.animateEnter}>
-                  {/* <CustomTable
-                    columns={spaxelTableData.columns.map((column) => ({ name: column, displayName: column }))}
-                    data={spaxelTableData.rows.map((row, i) => ({ [spaxelTableData.columns[i]]: row }))}
+                  <CustomTable
+                    columns={spaxelTableData.columns.map((column) => ({ name: column, title: column, width: 320 }))}
+                    data={
+                      spaxelTableData.rows.map((row) => ({
+                        [spaxelTableData.columns[0]]: row[0],
+                        [spaxelTableData.columns[1]]: row[1],
+                        [spaxelTableData.columns[2]]: row[2],
+                        [spaxelTableData.columns[3]]: row[3],
+                      }))
+                    }
                     totalCount={spaxelTableData.count}
                     remote={false}
-                  /> */}
+                    hasColumnVisibility={false}
+                  />
                 </div>
               ) : (
-                  <>
-                    <Skeleton className={classes.skeletonMargin} />
-                    <Skeleton className={classes.skeletonMargin} />
-                    <Skeleton className={classes.skeletonMargin} />
-                    <Skeleton className={classes.skeletonMargin} />
-                    <Skeleton className={classes.skeletonMargin} />
-                  </>
-                )}
+                <>
+                  <Skeleton className={classes.skeletonMargin} />
+                  <Skeleton className={classes.skeletonMargin} />
+                  <Skeleton className={classes.skeletonMargin} />
+                  <Skeleton className={classes.skeletonMargin} />
+                  <Skeleton className={classes.skeletonMargin} />
+                </>
+              )}
             </CardContent>
           </Card>
         </Grid>

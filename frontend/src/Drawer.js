@@ -13,7 +13,7 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import ListItem from '@material-ui/core/ListItem';
 import {
-  BrowserRouter as Router, Route, Link,
+  BrowserRouter as Router, Route, Link, Redirect,
 } from 'react-router-dom';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -25,9 +25,6 @@ import ExpandMore from '@material-ui/icons/ExpandMore';
 import Collapse from '@material-ui/core/Collapse';
 import Footer from './Footer';
 import Logo from './assets/img/linea.png';
-import Download from './components/Download';
-import Install from './components/Install';
-import Process from './components/Process';
 import Verifier from './components/Verifier';
 
 
@@ -240,42 +237,6 @@ function MiniDrawer() {
                 />
               </ListItem>
             </Link>
-            {/* <Divider className={classes.borderDrawer} />
-            <Link to="/download" className={classes.invisibleLink} title="Download">
-              <ListItem button>
-                <ListItemIcon className={clsx(classes.ListIconDrawer, open ? classes.ListIconDrawerOpen : '')}>
-                  <Icon className={clsx(classes.iconDrawer, 'fa', 'fa-download')} />
-                </ListItemIcon>
-                <ListItemText
-                  primary="Download"
-                  className={classes.textDrawer}
-                />
-              </ListItem>
-            </Link>
-            <Divider className={classes.borderDrawer} />
-            <Link to="/install" className={classes.invisibleLink} title="Install">
-              <ListItem button>
-                <ListItemIcon className={clsx(classes.ListIconDrawer, open ? classes.ListIconDrawerOpen : '')}>
-                  <Icon className={clsx(classes.iconDrawer, 'fa', 'fa-upload')} />
-                </ListItemIcon>
-                <ListItemText
-                  primary="Install"
-                  className={classes.textDrawer}
-                />
-              </ListItem>
-            </Link>
-            <Divider className={classes.borderDrawer} />
-            <Link to="/process" className={classes.invisibleLink} title="Process">
-              <ListItem button>
-                <ListItemIcon className={clsx(classes.ListIconDrawer, open ? classes.ListIconDrawerOpen : '')}>
-                  <Icon className={clsx(classes.iconDrawer, 'fa', 'fa-cogs')} />
-                </ListItemIcon>
-                <ListItemText
-                  primary="Process"
-                  className={classes.textDrawer}
-                />
-              </ListItem>
-            </Link> */}
             <Divider className={classes.borderDrawer} />
             <ListItem button onClick={handleDrawerVisualizationClick}>
               {open ? (
@@ -330,10 +291,8 @@ function MiniDrawer() {
         </Drawer>
         <div className={clsx(classes.bodyWrapper, open ? classes.bodyWrapperOpen : classes.bodyWrapperClose)}>
           <main className={classes.content}>
-            <Route exact path="/download" render={() => <Download setTitle={setTitle} />} />
-            <Route exact path="/install" render={() => <Install setTitle={setTitle} />} />
-            <Route exact path="/process" render={() => <Process setTitle={setTitle} />} />
             <Route exact path="/verifier" render={() => <Verifier setTitle={setTitle} />} />
+            <Redirect exact from="/" to="/verifier" />
           </main>
           <Footer drawerOpen={open} />
         </div>
