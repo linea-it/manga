@@ -1,14 +1,14 @@
-# FROM node:8.10 as builder
+FROM node:8.10 as builder
 
-# COPY . /app
+COPY . /app
 
-# WORKDIR /app
+WORKDIR /app
 
-# RUN yarn -v
+RUN yarn -v
 
-# RUN yarn --ignore-optional
+RUN yarn --ignore-optional
 
-# RUN yarn run build
+RUN yarn run build
 
 
 # Ngnix
@@ -21,8 +21,8 @@ RUN chmod -R g+w /var/cache/nginx/
 # Write the PID file to a location where regular users have write access.
 RUN sed --regexp-extended --in-place=.bak 's%^pid\s+/var/run/nginx.pid;%pid /var/tmp/nginx.pid;%' /etc/nginx/nginx.conf
 
-# COPY --from=builder /app/build /var/www/frontend
-# RUN chgrp nginx /var/www/frontend
-# RUN chmod -R g+w /var/www/frontend
+COPY --from=builder /app/build /var/www/frontend
+RUN chgrp nginx /var/www/frontend
+RUN chmod -R g+w /var/www/frontend
 
 USER nginx
