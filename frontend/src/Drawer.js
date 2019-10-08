@@ -99,7 +99,6 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     padding: theme.spacing(3),
     backgroundColor: 'rgb(240, 241, 244)',
-    // height: '100%',
   },
   bodyWrapper: {
     height: '100%',
@@ -258,7 +257,9 @@ function MiniDrawer() {
               />
               {open ? (
                 <ListItemIcon className={clsx(classes.ListIconDrawer, open ? classes.ListIconDrawerOpen : '')}>
-                  {visualizationOpen ? <ExpandLess className={classes.iconDrawer} /> : <ExpandMore className={classes.iconDrawer} />}
+                  {visualizationOpen
+                    ? <ExpandLess className={classes.iconDrawer} />
+                    : <ExpandMore className={classes.iconDrawer} />}
                 </ListItemIcon>
               ) : null}
             </ListItem>
@@ -289,10 +290,18 @@ function MiniDrawer() {
             </IconButton>
           </div>
         </Drawer>
-        <div className={clsx(classes.bodyWrapper, open ? classes.bodyWrapperOpen : classes.bodyWrapperClose)}>
+        <div
+          className={
+            clsx(
+              classes.bodyWrapper, open
+                ? classes.bodyWrapperOpen
+                : classes.bodyWrapperClose,
+            )
+          }
+        >
           <main className={classes.content}>
-            <Route exact path="/verifier" render={() => <Verifier setTitle={setTitle} />} />
             <Redirect exact from="/" to="/verifier" />
+            <Route exact path="/verifier" render={() => <Verifier setTitle={setTitle} />} />
           </main>
           <Footer drawerOpen={open} />
         </div>

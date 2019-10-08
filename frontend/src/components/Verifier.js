@@ -1,22 +1,29 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CardHeader from '@material-ui/core/CardHeader';
+import IconButton from '@material-ui/core/IconButton';
+import Icon from '@material-ui/core/Icon';
 import FormControl from '@material-ui/core/FormControl';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import InputLabel from '@material-ui/core/InputLabel';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, withStyles } from '@material-ui/core/styles';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import Grid from '@material-ui/core/Grid';
 import Skeleton from '@material-ui/lab/Skeleton';
 import createPlotlyComponent from 'react-plotly.js/factory';
 import Plotly from 'plotly.js';
+import Slider from '@material-ui/core/Slider';
+import Snackbar from '@material-ui/core/Snackbar';
+import SnackbarContent from '@material-ui/core/SnackbarContent';
+import clsx from 'clsx';
+import { SizeMe } from 'react-sizeme';
+import CustomTable from '../utils/CustomTable';
 import {
   getFluxByPosition, getHudList, getImageHeatmap, getSpaxelFitByPosition,
 } from '../api/Api';
-import CustomTable from '../utils/CustomTable';
 
 const useStyles = makeStyles((theme) => ({
   button: {
@@ -42,13 +49,6 @@ const useStyles = makeStyles((theme) => ({
   gridWrapper: {
     marginBottom: theme.spacing(3),
   },
-  imgResponsive: {
-    maxWidth: '100%',
-    width: 'auto',
-  },
-  iconHeader: {
-    fontSize: '1rem',
-  },
   plotWrapper: {
     display: 'flex !important',
     alignItems: 'center',
@@ -59,19 +59,111 @@ const useStyles = makeStyles((theme) => ({
   },
   animateEnter: {
     animation: 'fadein 1s',
+    textAlign: 'center',
   },
   skeletonMargin: {
     marginTop: '0.8em',
     marginBottom: '0.8em',
   },
   tableContainer: {
-    marginTop: 15
+    marginTop: 15,
   },
   cardContentTable: {
     maxHeight: 500,
-    overflow: 'auto'
-  }
+    overflow: 'auto',
+  },
+  slider: {
+    maxWidth: 'calc(100% - 130px)',
+    marginLeft: 'auto',
+    display: 'inline-block',
+    verticalAlign: 'middle',
+  },
+  playButton: {
+    marginLeft: 10,
+  },
+  error: {
+    backgroundColor: theme.palette.error.dark,
+  },
+  message: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  iconError: {
+    marginRight: 7,
+    width: '1.2em',
+    fontSize: '1rem',
+  },
 }));
+const heatmapBoxShadow = '0 3px 1px rgba(0,0,0,0.1),0 4px 8px rgba(0,0,0,0.13),0 0 0 1px rgba(0,0,0,0.02)';
+const HeatmapSlider = withStyles({
+  root: {
+    color: '#3880ff',
+    height: 2,
+    padding: '15px 0',
+  },
+  thumb: {
+    height: 28,
+    width: 28,
+    backgroundColor: '#fff',
+    boxShadow: heatmapBoxShadow,
+    marginTop: -14,
+    marginLeft: -14,
+    '&:focus,&:hover,&$active': {
+      boxShadow: '0 3px 1px rgba(0,0,0,0.1),0 4px 8px rgba(0,0,0,0.3),0 0 0 1px rgba(0,0,0,0.02)',
+      // Reset on touch devices, it doesn't add specificity
+      '@media (hover: none)': {
+        boxShadow: heatmapBoxShadow,
+      },
+    },
+  },
+  active: {},
+  valueLabel: {
+    left: 'calc(-50% + 11px)',
+    top: -22,
+    '& *': {
+      background: 'transparent',
+      color: '#000',
+    },
+  },
+  track: {
+    height: 2,
+  },
+  rail: {
+    height: 2,
+    opacity: 0.5,
+    backgroundColor: '#bfbfbf',
+  },
+  mark: {
+    backgroundColor: '#bfbfbf',
+    height: 8,
+    width: 1,
+    marginTop: -3,
+  },
+  markActive: {
+    opacity: 1,
+    backgroundColor: 'currentColor',
+  },
+})(Slider);
+
+function useInterval(callback, delay) {
+  const savedCallback = useRef();
+
+  // Remember the latest callback.
+  useEffect(() => {
+    savedCallback.current = callback;
+  }, [callback]);
+
+  // Set up the interval.
+  useEffect(() => {
+    function tick() {
+      savedCallback.current();
+    }
+    if (delay !== null) {
+      const id = setInterval(tick, delay);
+      return () => clearInterval(id);
+    }
+  }, [delay]);
+}
 
 function Verifier({ setTitle }) {
   const Plot = createPlotlyComponent(Plotly);
@@ -79,21 +171,32 @@ function Verifier({ setTitle }) {
   const [megacubeList, setMegacubeList] = useState(['manga-8138-6101-MEGA']);
   const [selectedMegacube, setSelectedMegacube] = useState(megacubeList[0]);
   const [hudList, setHudList] = useState([]);
-  const [selectedHud, setSelectedHud] = useState('');
+  const [selectedHud, setSelectedHud] = useState({
+    id: 0,
+    name: '',
+  });
   const [fluxPlotData, setFluxPlotData] = useState({});
   const [spaxelTableData, setSpaxelTableData] = useState({});
   const [heatmapPlotData, setHeatmapPlotData] = useState({});
+  const [heatmapError, setHeatmapError] = useState('');
   const [heatmapPoints, setHeatmapPoints] = useState([0, 0]);
+  const [heatmapSliderValue, setHeatmapSliderValue] = useState(1);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [localHeatmaps, setLocalHeatmaps] = useState([]);
+  const [heatmapSize, setHeatmapSize] = useState({ width: 600 });
 
   useEffect(() => {
     setTitle('Verifier');
   }, [setTitle]);
 
   useEffect(() => {
-    if(selectedMegacube !== '') {
+    if (selectedMegacube !== '') {
       getHudList({ megacube: selectedMegacube }).then((res) => {
-        setHudList(res)
-        setSelectedHud(res[0].name)
+        setHudList(res);
+        setSelectedHud({
+          id: 1,
+          name: res[0].name,
+        });
       });
     }
   }, [selectedMegacube]);
@@ -103,7 +206,8 @@ function Verifier({ setTitle }) {
   };
 
   const loadSpaxel = (x, y) => {
-    getSpaxelFitByPosition({ x, y, megacube: selectedMegacube }).then((res) => setSpaxelTableData(res));
+    getSpaxelFitByPosition({ x, y, megacube: selectedMegacube })
+      .then((res) => setSpaxelTableData(res));
   };
 
   useEffect(() => {
@@ -114,11 +218,27 @@ function Verifier({ setTitle }) {
   }, [heatmapPoints]);
 
   useEffect(() => {
-    if(selectedMegacube !== '' && selectedHud !== '') {
-      getImageHeatmap({ megacube: selectedMegacube, hud: selectedHud })
-        .then((res) => setHeatmapPlotData(res));
+    if (selectedMegacube !== '' && selectedHud.id !== 0) {
+      const heatmap = localHeatmaps.filter((el) => el.title === selectedHud.name);
+      if (heatmap.length > 0) {
+        setHeatmapPlotData(heatmap[0]);
+        setHeatmapError('');
+      } else {
+        getImageHeatmap({ megacube: selectedMegacube, hud: selectedHud.name })
+          .then((res) => {
+            setHeatmapPlotData(res);
+            setHeatmapError('');
+          })
+          .catch((err) => {
+            // If heatmap couldn't be built, present an error message to the user:
+            setHeatmapError(err.message);
+            setFluxPlotData({});
+            setSpaxelTableData({});
+            setHeatmapPoints([0, 0]);
+          });
+      }
     }
-  }, [selectedMegacube, selectedHud]);
+  }, [selectedMegacube, selectedHud, localHeatmaps]);
 
   useEffect(() => {
     if (spaxelTableData.rows && spaxelTableData.rows.length > 0) {
@@ -139,7 +259,11 @@ function Verifier({ setTitle }) {
     setHeatmapPoints([0, 0]);
     setFluxPlotData({});
     setSpaxelTableData({});
-    setSelectedHud(e.target.value);
+    setSelectedHud({
+      id: e.target.value,
+      name: hudList[e.target.value - 1].name,
+    });
+    setHeatmapSliderValue(e.target.value);
   };
 
   const handleHeatmapClick = (e) => {
@@ -148,6 +272,48 @@ function Verifier({ setTitle }) {
     setHeatmapPoints([e.points[0].x, e.points[0].y]);
   };
 
+  const handleHeatmapSliderChange = (e, value) => {
+    if (value !== selectedHud.id) {
+      setHeatmapSliderValue(value);
+    }
+  };
+
+  const preloadHeatmaps = () => {
+    const localHeatmapsRef = [];
+    hudList.forEach((hud) => {
+      getImageHeatmap({ megacube: selectedMegacube, hud: hud.name })
+        .then((res) => {
+          localHeatmapsRef.push(res);
+          setLocalHeatmaps(localHeatmapsRef);
+        });
+    });
+  };
+
+  useEffect(() => {
+    if (hudList.length > 0) {
+      preloadHeatmaps();
+    }
+  }, [hudList]);
+
+
+  useEffect(() => {
+    if (hudList.length > 0) {
+      setSelectedHud({
+        id: heatmapSliderValue,
+        name: hudList[heatmapSliderValue - 1].name,
+      });
+    }
+  }, [heatmapSliderValue, hudList]);
+
+  const handlePlayClick = () => setIsPlaying(!isPlaying);
+
+  useInterval(() => {
+    if (heatmapSliderValue === hudList.length) {
+      setHeatmapSliderValue(1);
+    } else {
+      setHeatmapSliderValue(heatmapSliderValue + 1);
+    }
+  }, isPlaying ? 1000 : null);
 
   return (
     <>
@@ -183,14 +349,14 @@ function Verifier({ setTitle }) {
                     <FormControl fullWidth>
                       <InputLabel htmlFor="input">Hud</InputLabel>
                       <Select
-                        value={selectedHud}
+                        value={selectedHud.id}
                         onChange={handleSelectHud}
                         disabled={selectedMegacube === ''}
                       >
-                        {hudList.map((hud) => (
+                        {hudList.map((hud, i) => (
                           <MenuItem
                             key={hud.name}
-                            value={hud.name}
+                            value={i + 1}
                           >
                             {hud.display_name}
                           </MenuItem>
@@ -210,48 +376,95 @@ function Verifier({ setTitle }) {
         <Grid item xs={12} md={5} className={classes.block}>
           <Card>
             <CardHeader
-              title="Plot"
+              title="Galaxy"
             />
-            <CardContent style={{ minHeight: 689 }}>
-              {selectedHud === '' ? (
-                <Skeleton height={650} />
-              ) : (
-                  <div className={classes.animateEnter}>
+            <SizeMe>
+              {({ size }) => {
+                setHeatmapSize(size);
+                return (
+                  <CardContent style={{ minHeight: size.width }}>
+                    {selectedHud.id === 0 ? (
+                      <Skeleton height={size.width - 2} />
+                    ) : (
+                      <div className={classes.animateEnter}>
+                        <Plot
+                          data={[{
+                            z: heatmapError === '' ? heatmapPlotData.z : [],
+                            name: 'Image',
+                            type: 'heatmap',
+                            colorscale: 'Viridis',
+                          }]}
+                          className={classes.plotWrapper}
+                          layout={{
+                            hovermode: 'closest',
+                            width: size.width - 50,
+                            height: size.width - 50,
+                            title: selectedHud.name,
+                            yaxis: {
+                              scaleanchor: 'x',
+                            },
+                          }}
+                          config={{
+                            scrollZoom: false,
+                            displaylogo: false,
+                            responsive: true,
+                            displayModeBar: 'hover',
+                          }}
+                          transition={{
+                            duration: 500,
+                            easing: 'cubic-in-out',
+                          }}
+                          frame={{ duration: 500 }}
+                          onClick={handleHeatmapClick}
+                        />
 
-                    <Plot
-                      data={[{
-                        z: heatmapPlotData.z,
-                        name: 'Image',
-                        type: 'heatmap',
-                        colorscale: 'Viridis',
-                      }]}
-                      className={classes.plotWrapper}
-                      layout={{
-                        hovermode: 'closest',
-                        // autosize: true,
-                        width: 600,
-                        height: 600,
-                        title: selectedHud,
-                        yaxis: {
-                          scaleanchor: 'x'
-                        },
-                      }}
-                      config={{
-                        scrollZoom: false,
-                        displaylogo: false,
-                        responsive: true,
-                        displayModeBar: 'hover',
-                      }}
-                      transition={{
-                        duration: 500,
-                        easing: 'cubic-in-out',
-                      }}
-                      frame={{ duration: 500 }}
-                      onClick={handleHeatmapClick}
-                    />
-                  </div>
-                )}
-            </CardContent>
+                        <div>
+                          <HeatmapSlider
+                            aria-label="Heatmap Slider"
+                            max={hudList.length}
+                            min={1}
+                            value={heatmapSliderValue}
+                            marks
+                            step={1}
+                            valueLabelDisplay="on"
+                            className={classes.slider}
+                            onChange={handleHeatmapSliderChange}
+                          />
+
+                          <IconButton
+                            onClick={handlePlayClick}
+                            title="Play"
+                            className={classes.playButton}
+                          >
+                            <Icon className={`fa ${isPlaying ? 'fa-pause' : 'fa-play'}`} />
+                          </IconButton>
+                        </div>
+                        {heatmapError !== '' ? (
+                          <Snackbar
+                            anchorOrigin={{
+                              vertical: 'bottom',
+                              horizontal: 'left',
+                            }}
+                            open={heatmapError !== ''}
+                          >
+                            <SnackbarContent
+                              className={classes.error}
+                              aria-describedby="client-snackbar"
+                              message={(
+                                <span className={classes.message}>
+                                  <Icon className={clsx('fa fa-exclamation-triangle', classes.iconError)} />
+                                  {heatmapError}
+                                </span>
+                            )}
+                            />
+                          </Snackbar>
+                        ) : null}
+                      </div>
+                    )}
+                  </CardContent>
+                );
+              }}
+            </SizeMe>
           </Card>
         </Grid>
 
@@ -260,49 +473,50 @@ function Verifier({ setTitle }) {
             <CardHeader
               title="Spectre"
             />
-            <CardContent style={{ minHeight: 689 }}>
+            <CardContent style={{ minHeight: heatmapSize.width }}>
               {heatmapPoints[0] !== 0 && heatmapPoints[1] !== 0 ? (
-                  <div className={classes.animateEnter}>
-                    <Plot
-                      data={[
-                        {
-                          x: fluxPlotData.lamb,
-                          y: fluxPlotData.flux,
-                          name: 'Flux',
-                        },
-                        {
-                          x: fluxPlotData.lamb,
-                          y: fluxPlotData.synt,
-                          name: 'Synt',
-                        },
-                      ]}
-                      className={classes.plotWrapper}
-                      layout={{
-                        hovermode: 'closest',
-                        autosize: true,
-                        height: 600,
-                        title: `x=${heatmapPoints[0]}, y=${heatmapPoints[1]}`
-                      }}
-                      config={{
-                        scrollZoom: false,
-                        displaylogo: false,
-                        responsive: true,
-                        displayModeBar: 'hover',
-                      }}
-                      transition={{
-                        duration: 500,
-                        easing: 'cubic-in-out',
-                      }}
-                      frame={{ duration: 500 }}
-                    />
-                  </div>
-                ) : (
-                <Skeleton height={650} />
+                <div className={classes.animateEnter}>
+                  <Plot
+                    data={[
+                      {
+                        x: fluxPlotData.lamb,
+                        y: fluxPlotData.flux,
+                        name: 'Flux',
+                      },
+                      {
+                        x: fluxPlotData.lamb,
+                        y: fluxPlotData.synt,
+                        name: 'Synt',
+                      },
+                    ]}
+                    className={classes.plotWrapper}
+                    layout={{
+                      hovermode: 'closest',
+                      autosize: true,
+                      height: heatmapSize.width - 2,
+                      title: `x=${heatmapPoints[0]}, y=${heatmapPoints[1]}`,
+                    }}
+                    config={{
+                      scrollZoom: false,
+                      displaylogo: false,
+                      responsive: true,
+                      displayModeBar: 'hover',
+                    }}
+                    transition={{
+                      duration: 500,
+                      easing: 'cubic-in-out',
+                    }}
+                    frame={{ duration: 500 }}
+                  />
+                </div>
+              ) : (
+                <Skeleton height={heatmapSize.width - 2} />
               )}
             </CardContent>
           </Card>
         </Grid>
       </Grid>
+
       <Grid container spacing={3}>
         <Grid item xs={12} md={12} className={classes.tableContainer}>
           <Card>
