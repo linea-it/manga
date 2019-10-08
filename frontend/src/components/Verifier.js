@@ -19,6 +19,7 @@ import Slider from '@material-ui/core/Slider';
 import Snackbar from '@material-ui/core/Snackbar';
 import SnackbarContent from '@material-ui/core/SnackbarContent';
 import clsx from 'clsx';
+import { SizeMe } from 'react-sizeme';
 import CustomTable from '../utils/CustomTable';
 import {
   getFluxByPosition, getHudList, getImageHeatmap, getSpaxelFitByPosition,
@@ -72,7 +73,7 @@ const useStyles = makeStyles((theme) => ({
     overflow: 'auto',
   },
   slider: {
-    maxWidth: 470,
+    maxWidth: 'calc(100% - 130px)',
     marginLeft: 'auto',
     display: 'inline-block',
     verticalAlign: 'middle',
@@ -182,6 +183,7 @@ function Verifier({ setTitle }) {
   const [heatmapSliderValue, setHeatmapSliderValue] = useState(1);
   const [isPlaying, setIsPlaying] = useState(false);
   const [localHeatmaps, setLocalHeatmaps] = useState([]);
+  const [heatmapSize, setHeatmapSize] = useState({ width: 600 });
 
   useEffect(() => {
     setTitle('Verifier');
@@ -376,93 +378,93 @@ function Verifier({ setTitle }) {
             <CardHeader
               title="Galaxy"
             />
-            <CardContent style={{ minHeight: 689 }}>
-              {selectedHud.id === 0 ? (
-                <Skeleton height={650} />
-              ) : (
-                <div className={classes.animateEnter}>
-                  <Plot
-                    data={[{
-                      z: heatmapError === '' ? heatmapPlotData.z : [],
-                      name: 'Image',
-                      type: 'heatmap',
-                      colorscale: 'Viridis',
-                    }]}
-                    className={classes.plotWrapper}
-                    layout={{
-                      hovermode: 'closest',
-                      // autosize: true,
-                      width: 600,
-                      height: 600,
-                      title: selectedHud.name,
-                      yaxis: {
-                        scaleanchor: 'x',
-                      },
-                    }}
-                    config={{
-                      scrollZoom: false,
-                      displaylogo: false,
-                      responsive: true,
-                      displayModeBar: 'hover',
-                    }}
-                    transition={{
-                      duration: 500,
-                      easing: 'cubic-in-out',
-                    }}
-                    frame={{ duration: 500 }}
-                    onClick={handleHeatmapClick}
-                  />
+            <SizeMe>
+              {({ size }) => {
+                setHeatmapSize(size);
+                return (
+                  <CardContent style={{ minHeight: size.width }}>
+                    {selectedHud.id === 0 ? (
+                      <Skeleton height={size.width - 2} />
+                    ) : (
+                      <div className={classes.animateEnter}>
+                        <Plot
+                          data={[{
+                            z: heatmapError === '' ? heatmapPlotData.z : [],
+                            name: 'Image',
+                            type: 'heatmap',
+                            colorscale: 'Viridis',
+                          }]}
+                          className={classes.plotWrapper}
+                          layout={{
+                            hovermode: 'closest',
+                            width: size.width - 50,
+                            height: size.width - 50,
+                            title: selectedHud.name,
+                            yaxis: {
+                              scaleanchor: 'x',
+                            },
+                          }}
+                          config={{
+                            scrollZoom: false,
+                            displaylogo: false,
+                            responsive: true,
+                            displayModeBar: 'hover',
+                          }}
+                          transition={{
+                            duration: 500,
+                            easing: 'cubic-in-out',
+                          }}
+                          frame={{ duration: 500 }}
+                          onClick={handleHeatmapClick}
+                        />
 
-                  <div>
-                    <HeatmapSlider
-                      aria-label="Heatmap Slider"
-                      max={hudList.length}
-                      min={1}
-                      value={heatmapSliderValue}
-                      marks
-                      step={1}
-                      valueLabelDisplay="on"
-                      className={classes.slider}
-                      onChange={handleHeatmapSliderChange}
-                    />
+                        <div>
+                          <HeatmapSlider
+                            aria-label="Heatmap Slider"
+                            max={hudList.length}
+                            min={1}
+                            value={heatmapSliderValue}
+                            marks
+                            step={1}
+                            valueLabelDisplay="on"
+                            className={classes.slider}
+                            onChange={handleHeatmapSliderChange}
+                          />
 
-                    <IconButton
-                      onClick={handlePlayClick}
-                      title="Play"
-                      className={classes.playButton}
-                    >
-                      <Icon className={`fa ${isPlaying ? 'fa-pause' : 'fa-play'}`} />
-                    </IconButton>
-                  </div>
-                  {heatmapError !== '' ? (
-                    <Snackbar
-                      anchorOrigin={{
-                        vertical: 'bottom',
-                        horizontal: 'left',
-                      }}
-                      open={heatmapError !== ''}
-
-                    >
-                      <SnackbarContent
-                        className={classes.error}
-                        aria-describedby="client-snackbar"
-                        message={(
-                          <span className={classes.message}>
-                            <Icon className={clsx('fa fa-exclamation-triangle', classes.iconError)} />
-                            {heatmapError}
-                          </span>
-                        )}
-                        // action={[
-                        //   <IconButton key="close" aria-label="close" color="inherit" onClick={onClose}>
-                        //     <CloseIcon className={classes.icon} />
-                        //   </IconButton>,
-                        // ]}
-                      />
-                    </Snackbar>
-                  ) : null}
-                </div>
-              )}
-            </CardContent>
+                          <IconButton
+                            onClick={handlePlayClick}
+                            title="Play"
+                            className={classes.playButton}
+                          >
+                            <Icon className={`fa ${isPlaying ? 'fa-pause' : 'fa-play'}`} />
+                          </IconButton>
+                        </div>
+                        {heatmapError !== '' ? (
+                          <Snackbar
+                            anchorOrigin={{
+                              vertical: 'bottom',
+                              horizontal: 'left',
+                            }}
+                            open={heatmapError !== ''}
+                          >
+                            <SnackbarContent
+                              className={classes.error}
+                              aria-describedby="client-snackbar"
+                              message={(
+                                <span className={classes.message}>
+                                  <Icon className={clsx('fa fa-exclamation-triangle', classes.iconError)} />
+                                  {heatmapError}
+                                </span>
+                            )}
+                            />
+                          </Snackbar>
+                        ) : null}
+                      </div>
+                    )}
+                  </CardContent>
+                );
+              }}
+            </SizeMe>
           </Card>
         </Grid>
 
@@ -471,7 +473,7 @@ function Verifier({ setTitle }) {
             <CardHeader
               title="Spectre"
             />
-            <CardContent style={{ minHeight: 689 }}>
+            <CardContent style={{ minHeight: heatmapSize.width }}>
               {heatmapPoints[0] !== 0 && heatmapPoints[1] !== 0 ? (
                 <div className={classes.animateEnter}>
                   <Plot
@@ -491,7 +493,7 @@ function Verifier({ setTitle }) {
                     layout={{
                       hovermode: 'closest',
                       autosize: true,
-                      height: 600,
+                      height: heatmapSize.width - 2,
                       title: `x=${heatmapPoints[0]}, y=${heatmapPoints[1]}`,
                     }}
                     config={{
@@ -508,12 +510,13 @@ function Verifier({ setTitle }) {
                   />
                 </div>
               ) : (
-                <Skeleton height={650} />
+                <Skeleton height={heatmapSize.width - 2} />
               )}
             </CardContent>
           </Card>
         </Grid>
       </Grid>
+
       <Grid container spacing={3}>
         <Grid item xs={12} md={12} className={classes.tableContainer}>
           <Card>
