@@ -258,7 +258,12 @@ function MiniDrawer() {
               />
               {open ? (
                 <ListItemIcon className={clsx(classes.ListIconDrawer, open ? classes.ListIconDrawerOpen : '')}>
-                  {visualizationOpen ? <ExpandLess className={classes.iconDrawer} /> : <ExpandMore className={classes.iconDrawer} />}
+                  {visualizationOpen
+                    ? (
+                      <ExpandLess className={classes.iconDrawer} />
+                    ) : (
+                      <ExpandMore className={classes.iconDrawer} />
+                    )}
                 </ListItemIcon>
               ) : null}
             </ListItem>
@@ -289,10 +294,18 @@ function MiniDrawer() {
             </IconButton>
           </div>
         </Drawer>
-        <div className={clsx(classes.bodyWrapper, open ? classes.bodyWrapperOpen : classes.bodyWrapperClose)}>
+        <div
+          className={
+            clsx(
+              classes.bodyWrapper, open
+                ? classes.bodyWrapperOpen
+                : classes.bodyWrapperClose,
+            )
+          }
+        >
           <main className={classes.content}>
-            <Route exact path="/verifier" render={() => <Verifier setTitle={setTitle} />} />
             <Redirect exact from="/" to="/verifier" />
+            <Route exact path="/verifier" render={() => <Verifier setTitle={setTitle} />} />
           </main>
           <Footer drawerOpen={open} />
         </div>
