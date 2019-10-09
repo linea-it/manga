@@ -25,5 +25,6 @@ module.exports = {
       extensions: ['.js', '.jsx']
     }],
     'react/no-array-index-key': 0,
+    'no-plusplus': 0,
   }
 };

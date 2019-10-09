@@ -80,7 +80,7 @@ function VerifierGrid({ setTitle }) {
     const skeletons = [];
     for (let i = hudList.length; i > localHeatmaps.length; i--) {
       skeletons.push(
-        <Grid item xs={12} md={4}>
+        <Grid key={i} item xs={12} md={4}>
           <Skeleton width={400} height={400} className={classes.skeletonMargin} />
         </Grid>,
       );
@@ -167,7 +167,7 @@ function VerifierGrid({ setTitle }) {
                       />
                     </Grid>
                   )) : (
-                    <>
+                    <Grid container spacing={2}>
                       <Grid item xs={12} md={4}>
                         <Skeleton width={400} height={400} className={classes.skeletonMargin} />
                       </Grid>
@@ -195,9 +195,9 @@ function VerifierGrid({ setTitle }) {
                       <Grid item xs={12} md={4}>
                         <Skeleton width={400} height={400} className={classes.skeletonMargin} />
                       </Grid>
-                    </>
+                    </Grid>
                   )}
-                {leftoverSkeletons().map((skeleton, i) => <div key={i}>{skeleton}</div>)}
+                {leftoverSkeletons()}
               </Grid>
             </CardContent>
           </Card>
