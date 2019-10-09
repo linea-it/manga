@@ -385,6 +385,7 @@ function Verifier({ setTitle }) {
                               z: heatmapError === '' ? heatmapPlotData.z : [],
                               type: 'heatmap',
                               colorscale: 'Viridis',
+                              hoverinfo: 'x+y+z',
                             },
                             {
                               type: 'scatter',
