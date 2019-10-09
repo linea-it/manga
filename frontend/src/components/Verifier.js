@@ -190,15 +190,13 @@ function Verifier({ setTitle }) {
   }, [setTitle]);
 
   useEffect(() => {
-    if (selectedMegacube !== '') {
-      getHudList({ megacube: selectedMegacube }).then((res) => {
-        setHudList(res);
-        setSelectedHud({
-          id: 1,
-          name: res[0].name,
-        });
+    getHudList({ megacube: selectedMegacube }).then((res) => {
+      setHudList(res);
+      setSelectedHud({
+        id: 1,
+        name: res[0].name,
       });
-    }
+    });
   }, [selectedMegacube]);
 
   const loadFluxMap = (x, y) => {
@@ -279,20 +277,14 @@ function Verifier({ setTitle }) {
   };
 
   const preloadHeatmaps = () => {
-    const localHeatmapsRef = [];
     hudList.forEach((hud) => {
       getImageHeatmap({ megacube: selectedMegacube, hud: hud.name })
-        .then((res) => {
-          localHeatmapsRef.push(res);
-          setLocalHeatmaps(localHeatmapsRef);
-        });
+        .then((res) => setLocalHeatmaps((localHeatmapsRef) => [...localHeatmapsRef, res]));
     });
   };
 
   useEffect(() => {
-    if (hudList.length > 0) {
-      preloadHeatmaps();
-    }
+    if (hudList.length > 0) preloadHeatmaps();
   }, [hudList]);
 
 
@@ -384,7 +376,7 @@ function Verifier({ setTitle }) {
                 return (
                   <CardContent style={{ minHeight: size.width }}>
                     {selectedHud.id === 0 ? (
-                      <Skeleton height={size.width - 2} />
+                      <Skeleton height={size && size.width ? size.width - 2 : 0} />
                     ) : (
                       <div className={classes.animateEnter}>
                         <Plot
@@ -397,8 +389,8 @@ function Verifier({ setTitle }) {
                           className={classes.plotWrapper}
                           layout={{
                             hovermode: 'closest',
-                            width: size.width - 50,
-                            height: size.width - 50,
+                            width: size && size.width ? size.width - 50 : 0,
+                            height: size && size.width ? size.width - 50 : 0,
                             title: selectedHud.name,
                             yaxis: {
                               scaleanchor: 'x',
@@ -473,7 +465,7 @@ function Verifier({ setTitle }) {
             <CardHeader
               title="Spectre"
             />
-            <CardContent style={{ minHeight: heatmapSize.width }}>
+            <CardContent style={{ minHeight: heatmapSize && heatmapSize.width ? heatmapSize.width : 0 }}>
               {heatmapPoints[0] !== 0 && heatmapPoints[1] !== 0 ? (
                 <div className={classes.animateEnter}>
                   <Plot
@@ -493,7 +485,7 @@ function Verifier({ setTitle }) {
                     layout={{
                       hovermode: 'closest',
                       autosize: true,
-                      height: heatmapSize.width - 2,
+                      height: heatmapSize && heatmapSize.width ? heatmapSize.width - 2 : 0,
                       title: `x=${heatmapPoints[0]}, y=${heatmapPoints[1]}`,
                     }}
                     config={{
@@ -510,7 +502,7 @@ function Verifier({ setTitle }) {
                   />
                 </div>
               ) : (
-                <Skeleton height={heatmapSize.width - 2} />
+                <Skeleton height={heatmapSize && heatmapSize.width ? heatmapSize.width - 2 : 0} />
               )}
             </CardContent>
           </Card>
