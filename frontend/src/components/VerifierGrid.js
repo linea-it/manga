@@ -138,7 +138,6 @@ function VerifierGrid({ setTitle }) {
                       <Plot
                         data={[{
                           z: heatmap.error ? [] : heatmap.z,
-                          name: 'Image',
                           type: 'heatmap',
                           colorscale: 'Viridis',
                         }]}

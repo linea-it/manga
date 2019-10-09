@@ -380,12 +380,79 @@ function Verifier({ setTitle }) {
                     ) : (
                       <div className={classes.animateEnter}>
                         <Plot
-                          data={[{
-                            z: heatmapError === '' ? heatmapPlotData.z : [],
-                            name: 'Image',
-                            type: 'heatmap',
-                            colorscale: 'Viridis',
-                          }]}
+                          data={[
+                            {
+                              z: heatmapError === '' ? heatmapPlotData.z : [],
+                              type: 'heatmap',
+                              colorscale: 'Viridis',
+                            },
+                            {
+                              type: 'scatter',
+                              x: [heatmapPoints[0] === 0 ? null : heatmapPoints[0], 0],
+                              y: [heatmapPoints[1] === 0 ? null : heatmapPoints[1], heatmapPoints[1]],
+                              mode: 'lines',
+                              line: {
+                                color: 'rgba(255, 255, 255, .7)',
+                                width: 6,
+                              },
+                              hoverinfo: 'x+y',
+                              showlegend: false,
+                            },
+                            {
+                              type: 'scatter',
+                              x: [heatmapPoints[0] === 0 ? null : heatmapPoints[0], heatmapPoints[0]],
+                              y: [heatmapPoints[1] === 0 ? null : heatmapPoints[1], 0],
+                              mode: 'lines',
+                              line: {
+                                color: 'rgba(255, 255, 255, .4)',
+                                width: 6,
+                              },
+                              hoverinfo: 'x+y',
+                              showlegend: false,
+                            },
+                            {
+                              x: [heatmapPoints[0] === 0 ? null : heatmapPoints[0]],
+                              y: [heatmapPoints[1] === 0 ? null : heatmapPoints[1]],
+                              type: 'scatter',
+                              mode: 'markers',
+                              marker: {
+                                color: 'rgba(0, 0, 0, .8)',
+                                size: 13,
+                                line: {
+                                  color: 'rgba(255, 255, 255, .5)',
+                                  width: 3,
+                                },
+                              },
+                              hoverinfo: 'x+y',
+                              showlegend: false,
+                            },
+                            {
+                              type: 'scatter',
+                              x: [heatmapPoints[0] === 0 ? null : heatmapPoints[0], 0],
+                              y: [heatmapPoints[1] === 0 ? null : heatmapPoints[1], heatmapPoints[1]],
+                              mode: 'lines',
+                              line: {
+                                color: 'rgba(0, 0, 0, .8)',
+                                width: 3,
+                                dash: 'dot',
+                              },
+                              hoverinfo: 'x+y',
+                              showlegend: false,
+                            },
+                            {
+                              type: 'scatter',
+                              x: [heatmapPoints[0] === 0 ? null : heatmapPoints[0], heatmapPoints[0]],
+                              y: [heatmapPoints[1] === 0 ? null : heatmapPoints[1], 0],
+                              mode: 'lines',
+                              line: {
+                                color: 'rgba(0, 0, 0, .8)',
+                                width: 3,
+                                dash: 'dot',
+                              },
+                              hoverinfo: 'x+y',
+                              showlegend: false,
+                            },
+                          ]}
                           className={classes.plotWrapper}
                           layout={{
                             hovermode: 'closest',
