@@ -41,25 +41,44 @@
         }).then(function (data) {
             console.log(data);
 
-            plotImage = document.getElementById('image');
+            // Carregar outro HUD para fazer o contours
+            fetch("http://localhost:8000/api/image_heatmap?megacube=manga-8138-6101-MEGA.fits&hud=mio").then(function (response) {
+                return response.json();
+            }).then(function (contours) {
+                console.log(contours);
 
-            Plotly.plot(plotImage, [
-                {
-                    z: data.z,
-                    name: 'Image',
-                    type: 'heatmap',
-                    colorscale: "Viridis",
-                },
-            ], {
-                margin: 15,
-                title: data.title,
-                yaxis: {
-                    scaleanchor: 'x'
-                }
-            }, {
-                showSendToCloud: true
+
+                // Desenhar o Plot
+                plotImage = document.getElementById('image');
+
+                Plotly.plot(plotImage, [
+                    {
+                        z: data.z,
+                        name: 'Image',
+                        type: 'heatmap',
+                        colorscale: "Viridis",
+                    },
+                    {
+                        z: contours.z,
+                        type: 'contour',
+                        contours: {
+                            coloring: 'none'
+                        },
+                        line: {
+                            color: 'white',
+                            smoothing: 0.85
+                        },
+                    },
+                ], {
+                    margin: 15,
+                    title: data.title,
+                    yaxis: {
+                        scaleanchor: 'x'
+                    }
+                }, {
+                    showSendToCloud: true
+                });
             });
-
         }).catch(function () {
             console.log("Booo");
         });
