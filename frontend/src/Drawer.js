@@ -26,6 +26,7 @@ import Collapse from '@material-ui/core/Collapse';
 import Footer from './Footer';
 import Logo from './assets/img/linea.png';
 import Verifier from './components/Verifier';
+import VerifierGrid from './components/VerifierGrid';
 
 
 const drawerWidth = 240;
@@ -276,6 +277,17 @@ function MiniDrawer() {
                     />
                   </ListItem>
                 </Link>
+                <Link to="/verifier/grid" className={classes.invisibleLink} title="Grid">
+                  <ListItem button className={open ? classes.nested : ''}>
+                    <ListItemIcon className={clsx(classes.ListIconDrawer, open ? classes.ListIconDrawerOpen : '')}>
+                      <Icon className={clsx(classes.iconDrawer, 'fa', 'fa-th')} />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary="Grid"
+                      className={classes.textDrawer}
+                    />
+                  </ListItem>
+                </Link>
               </List>
             </Collapse>
             <Divider className={classes.borderDrawer} />
@@ -300,7 +312,8 @@ function MiniDrawer() {
           }
         >
           <main className={classes.content}>
-            <Redirect exact from="/" to="/verifier" />
+            <Redirect from="/" to="/verifier" />
+            <Route path="/verifier/grid" render={() => <VerifierGrid setTitle={setTitle} />} />
             <Route exact path="/verifier" render={() => <Verifier setTitle={setTitle} />} />
           </main>
           <Footer drawerOpen={open} />
