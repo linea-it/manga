@@ -13,7 +13,7 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import ListItem from '@material-ui/core/ListItem';
 import {
-  BrowserRouter as Router, Route, Link, Redirect,
+  BrowserRouter as Router, Route, Link, Redirect, Switch,
 } from 'react-router-dom';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -312,9 +312,11 @@ function MiniDrawer() {
           }
         >
           <main className={classes.content}>
+            <Switch>
+              <Route exact path="/verifier" render={() => <Verifier setTitle={setTitle} />} />
+              <Route exact path="/verifier/grid" render={() => <VerifierGrid setTitle={setTitle} />} />
+            </Switch>
             <Redirect from="/" to="/verifier" />
-            <Route path="/verifier/grid" render={() => <VerifierGrid setTitle={setTitle} />} />
-            <Route exact path="/verifier" render={() => <Verifier setTitle={setTitle} />} />
           </main>
           <Footer drawerOpen={open} />
         </div>
