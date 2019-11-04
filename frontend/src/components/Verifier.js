@@ -72,6 +72,9 @@ const useStyles = makeStyles((theme) => ({
     display: 'inline-block',
     verticalAlign: 'middle',
   },
+  colorRange: {
+    // maxWidth: 'calc(100% - 130px)',
+  },
   playButton: {
     marginLeft: 10,
   },
@@ -142,6 +145,56 @@ const HeatmapSlider = withStyles({
   },
 })(Slider);
 
+const HeatmapColorRange = withStyles({
+  root: {
+    color: '#3880ff',
+    height: 2,
+    padding: '15px 0',
+  },
+  thumb: {
+    height: 28,
+    width: 28,
+    backgroundColor: '#fff',
+    boxShadow: heatmapBoxShadow,
+    marginTop: '-14px !important',
+    marginLeft: '-14px !important',
+    '&:focus,&:hover,&$active': {
+      boxShadow: '0 3px 1px rgba(0,0,0,0.1),0 4px 8px rgba(0,0,0,0.3),0 0 0 1px rgba(0,0,0,0.02)',
+      // Reset on touch devices, it doesn't add specificity
+      '@media (hover: none)': {
+        boxShadow: heatmapBoxShadow,
+      },
+    },
+  },
+  active: {},
+  valueLabel: {
+    top: 8,
+    left: -2,
+    '& *': {
+      background: 'transparent',
+      color: '#444',
+    },
+  },
+  track: {
+    width: 2,
+  },
+  rail: {
+    width: 2,
+    opacity: 0.5,
+    backgroundColor: '#bfbfbf',
+  },
+  mark: {
+    backgroundColor: '#bfbfbf',
+    width: 8,
+    height: 1,
+    marginLeft: -4,
+  },
+  markActive: {
+    opacity: 1,
+    backgroundColor: 'currentColor',
+  },
+})(Slider);
+
 function useInterval(callback, delay) {
   const savedCallback = useRef();
 
@@ -183,6 +236,8 @@ function Verifier({ setTitle }) {
   const [heatmapError, setHeatmapError] = useState('');
   const [heatmapPoints, setHeatmapPoints] = useState([0, 0]);
   const [heatmapSliderValue, setHeatmapSliderValue] = useState(1);
+  const [heatmapValueLimits, setHeatmapValueLimits] = useState([]);
+  const [heatmapColorRangeValue, setHeatmapColorRangeValue] = useState([]);
   const [isPlaying, setIsPlaying] = useState(false);
   const [localHeatmaps, setLocalHeatmaps] = useState([]);
   const [heatmapSize, setHeatmapSize] = useState({ height: 450 });
@@ -222,6 +277,9 @@ function Verifier({ setTitle }) {
       const heatmap = localHeatmaps.filter((el) => el.title === selectedImage.name);
       if (heatmap.length > 0) {
         setHeatmapPlotImageData(heatmap[0]);
+        const heatmapArr = [].concat.apply([], heatmap[0].z);
+        setHeatmapValueLimits([Math.min(...heatmapArr), Math.max(...heatmapArr)]);
+        setHeatmapColorRangeValue([Math.min(...heatmapArr), Math.max(...heatmapArr)]);
         setHeatmapError('');
       } else {
         getImageHeatmap({ megacube: selectedMegacube, hud: selectedImage.name })
@@ -235,6 +293,8 @@ function Verifier({ setTitle }) {
             setFluxPlotData({});
             setSpaxelTableData({});
             setHeatmapPoints([0, 0]);
+            setHeatmapValueLimits([]);
+            setHeatmapColorRangeValue([]);
           });
       }
     }
@@ -303,6 +363,11 @@ function Verifier({ setTitle }) {
     if (value !== selectedImage.id) {
       setHeatmapSliderValue(value);
     }
+  };
+
+  const handleHeatmapColorRangeChange = (e, value) => {
+    console.log(value);
+    setHeatmapColorRangeValue(value);
   };
 
   const preloadHeatmaps = () => {
@@ -439,6 +504,10 @@ function Verifier({ setTitle }) {
                                   z: heatmapError === '' ? heatmapPlotImageData.z : [],
                                   type: 'heatmap',
                                   colorscale: 'Viridis',
+                                  fixedrange: true,
+                                  zauto: false,
+                                  zmin: heatmapColorRangeValue[0],
+                                  zmax: heatmapColorRangeValue[1],
                                   hoverinfo: 'x+y+z',
                                 },
                                 {
@@ -455,8 +524,12 @@ function Verifier({ setTitle }) {
                                 },
                                 {
                                   type: 'scatter',
-                                  x: [heatmapPoints[0] === 0 ? null : heatmapPoints[0], 0],
-                                  y: [heatmapPoints[1] === 0 ? null : heatmapPoints[1], heatmapPoints[1]],
+                                  x: [heatmapPoints[0] === 0
+                                    ? null
+                                    : heatmapPoints[0], 0],
+                                  y: [heatmapPoints[1] === 0
+                                    ? null
+                                    : heatmapPoints[1], heatmapPoints[1]],
                                   mode: 'lines',
                                   line: {
                                     color: 'rgba(255, 255, 255, .7)',
@@ -467,8 +540,12 @@ function Verifier({ setTitle }) {
                                 },
                                 {
                                   type: 'scatter',
-                                  x: [heatmapPoints[0] === 0 ? null : heatmapPoints[0], heatmapPoints[0]],
-                                  y: [heatmapPoints[1] === 0 ? null : heatmapPoints[1], 0],
+                                  x: [heatmapPoints[0] === 0
+                                    ? null
+                                    : heatmapPoints[0], heatmapPoints[0]],
+                                  y: [heatmapPoints[1] === 0
+                                    ? null
+                                    : heatmapPoints[1], 0],
                                   mode: 'lines',
                                   line: {
                                     color: 'rgba(255, 255, 255, .4)',
@@ -478,8 +555,12 @@ function Verifier({ setTitle }) {
                                   showlegend: false,
                                 },
                                 {
-                                  x: [heatmapPoints[0] === 0 ? null : heatmapPoints[0]],
-                                  y: [heatmapPoints[1] === 0 ? null : heatmapPoints[1]],
+                                  x: [heatmapPoints[0] === 0
+                                    ? null
+                                    : heatmapPoints[0]],
+                                  y: [heatmapPoints[1] === 0
+                                    ? null
+                                    : heatmapPoints[1]],
                                   type: 'scatter',
                                   mode: 'markers',
                                   marker: {
@@ -495,8 +576,12 @@ function Verifier({ setTitle }) {
                                 },
                                 {
                                   type: 'scatter',
-                                  x: [heatmapPoints[0] === 0 ? null : heatmapPoints[0], 0],
-                                  y: [heatmapPoints[1] === 0 ? null : heatmapPoints[1], heatmapPoints[1]],
+                                  x: [heatmapPoints[0] === 0
+                                    ? null
+                                    : heatmapPoints[0], 0],
+                                  y: [heatmapPoints[1] === 0
+                                    ? null
+                                    : heatmapPoints[1], heatmapPoints[1]],
                                   mode: 'lines',
                                   line: {
                                     color: 'rgba(0, 0, 0, .8)',
@@ -508,8 +593,12 @@ function Verifier({ setTitle }) {
                                 },
                                 {
                                   type: 'scatter',
-                                  x: [heatmapPoints[0] === 0 ? null : heatmapPoints[0], heatmapPoints[0]],
-                                  y: [heatmapPoints[1] === 0 ? null : heatmapPoints[1], 0],
+                                  x: [heatmapPoints[0] === 0
+                                    ? null
+                                    : heatmapPoints[0], heatmapPoints[0]],
+                                  y: [heatmapPoints[1] === 0
+                                    ? null
+                                    : heatmapPoints[1], 0],
                                   mode: 'lines',
                                   line: {
                                     color: 'rgba(0, 0, 0, .8)',
@@ -523,6 +612,10 @@ function Verifier({ setTitle }) {
                               className={classes.plotWrapper}
                               layout={{
                                 hovermode: 'closest',
+                                colorscale: {
+                                  zmin: heatmapColorRangeValue[0],
+                                  zmax: heatmapColorRangeValue[1],
+                                },
                                 width: size && size.width ? size.width - 50 : 0,
                                 height: size && size.width ? size.width - 50 : 0,
                                 title: selectedImage.name,
@@ -543,6 +636,23 @@ function Verifier({ setTitle }) {
                               }}
                               frame={{ duration: 500 }}
                               onClick={handleHeatmapClick}
+                            />
+
+                            <HeatmapColorRange
+                              style={{
+                                position: 'absolute',
+                                right: 10,
+                                top: 191,
+                                maxHeight: heatmapSize.height - 369,
+                              }}
+                              orientation="vertical"
+                              aria-label="Heatmap Color Range"
+                              max={heatmapValueLimits[1]}
+                              min={heatmapValueLimits[0]}
+                              value={heatmapColorRangeValue}
+                              valueLabelDisplay="off"
+                              className={classes.colorRange}
+                              onChange={handleHeatmapColorRangeChange}
                             />
                           </Grid>
 
