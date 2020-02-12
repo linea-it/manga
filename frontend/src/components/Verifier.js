@@ -22,7 +22,7 @@ import clsx from 'clsx';
 import { SizeMe } from 'react-sizeme';
 import CustomTable from '../utils/CustomTable';
 import {
-  getFluxByPosition, getHudList, getImageHeatmap, getSpaxelFitByPosition,
+  getFluxByPosition, getHudList, getImageHeatmap, getSpaxelFitByPosition, getMegacubesList
 } from '../api/Api';
 
 const useStyles = makeStyles((theme) => ({
@@ -218,8 +218,8 @@ function useInterval(callback, delay) {
 function Verifier({ setTitle }) {
   const Plot = createPlotlyComponent(Plotly);
   const classes = useStyles();
-  const [megacubeList] = useState(['manga-8138-6101-MEGA']);
-  const [selectedMegacube, setSelectedMegacube] = useState(megacubeList[0]);
+  const [megacubeList, setMegacubeList] = useState([]);
+  const [selectedMegacube, setSelectedMegacube] = useState('');
   const [hudList, setHudList] = useState([]);
   const [selectedImage, setSelectedImage] = useState({
     id: 0,
@@ -247,13 +247,30 @@ function Verifier({ setTitle }) {
   }, [setTitle]);
 
   useEffect(() => {
-    getHudList({ megacube: selectedMegacube }).then((res) => {
-      setHudList(res);
-      setSelectedImage({
-        id: 1,
-        name: res[0].name,
+    getMegacubesList()
+      .then(res => {
+        const filesWithoutExt = res.megacubes.map(megacube => megacube.split('.fits')[0]);
+        setMegacubeList(filesWithoutExt);
+      })
+  }, []);
+
+  useEffect(() => {
+    if(megacubeList.length > 0) {
+      console.log('megacubeList', megacubeList)
+      setSelectedMegacube(megacubeList[0])
+    }
+  }, [megacubeList])
+
+  useEffect(() => {
+    if(selectedMegacube !== '') {
+      getHudList({ megacube: selectedMegacube }).then((res) => {
+        setHudList(res);
+        setSelectedImage({
+          id: 1,
+          name: res[0].name,
+        });
       });
-    });
+    }
   }, [selectedMegacube]);
 
   const loadFluxMap = (x, y) => {
@@ -333,6 +350,11 @@ function Verifier({ setTitle }) {
 
   const handleSelectMegacube = (e) => {
     setSelectedMegacube(e.target.value);
+    setSelectedImage({
+      id: 0,
+      name: ''
+    });
+    setHudList([])
   };
 
   const handleSelectImage = (e) => {
@@ -366,7 +388,6 @@ function Verifier({ setTitle }) {
   };
 
   const handleHeatmapColorRangeChange = (e, value) => {
-    console.log(value);
     setHeatmapColorRangeValue(value);
   };
 
@@ -458,7 +479,7 @@ function Verifier({ setTitle }) {
                                   <FormControl fullWidth className={classes.textAlignLeft}>
                                     <InputLabel htmlFor="input">Image</InputLabel>
                                     <Select
-                                      value={selectedImage.id}
+                                      value={selectedImage.id || 0}
                                       onChange={handleSelectImage}
                                       disabled={selectedMegacube === ''}
                                     >
@@ -646,7 +667,7 @@ function Verifier({ setTitle }) {
                                 maxHeight: heatmapSize.height - 369,
                               }}
                               orientation="vertical"
-                              aria-label="Heatmap Color Range"
+                              // aria-label="Heatmap Color Range"
                               max={heatmapValueLimits[1]}
                               min={heatmapValueLimits[0]}
                               value={heatmapColorRangeValue}
@@ -658,7 +679,7 @@ function Verifier({ setTitle }) {
 
                           <Grid item xs={12}>
                             <HeatmapSlider
-                              aria-label="Heatmap Slider"
+                              // aria-label="Heatmap Slider"
                               max={hudList.length}
                               min={1}
                               value={heatmapSliderValue}

@@ -13,7 +13,7 @@ import FormControl from '@material-ui/core/FormControl';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import InputLabel from '@material-ui/core/InputLabel';
-import { getHudList, getImageHeatmap } from '../api/Api';
+import { getHudList, getImageHeatmap, getMegacubesList } from '../api/Api';
 
 const useStyles = makeStyles((theme) => ({
   plotWrapper: {
@@ -36,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
 function VerifierGrid({ setTitle }) {
   const Plot = createPlotlyComponent(Plotly);
   const classes = useStyles();
-  const [megacubeList, setMegacubeList] = useState(['manga-8138-6101-MEGA']);
+  const [megacubeList, setMegacubeList] = useState([]);
   const [selectedMegacube, setSelectedMegacube] = useState(megacubeList[0]);
   const [hudList, setHudList] = useState([]);
   const [localHeatmaps, setLocalHeatmaps] = useState([]);
@@ -44,6 +44,14 @@ function VerifierGrid({ setTitle }) {
   useEffect(() => {
     setTitle('Verifier Grid');
   }, [setTitle]);
+
+  useEffect(() => {
+    getMegacubesList()
+      .then(res => {
+        const filesWithoutExt = res.megacubes.map(megacube => megacube.split('.fits')[0]);
+        setMegacubeList(filesWithoutExt);
+      })
+  }, []);
 
   useEffect(() => {
     getHudList({ megacube: selectedMegacube }).then((res) => setHudList(res));
@@ -157,10 +165,10 @@ function VerifierGrid({ setTitle }) {
                             staticPlot: true,
                           }}
                           transition={{
-                            duration: 500,
+                            duration: 300,
                             easing: 'cubic-in-out',
                           }}
-                          frame={{ duration: 500 }}
+                          frame={{ duration: 300 }}
                         />
                       </Grid>
                     )) : (
