@@ -5,6 +5,8 @@ from flask_cors import CORS
 
 from verifyer import mclass
 
+import fnmatch
+
 application = Flask(__name__)
 cors = CORS(application, resources={r"/*": {"origins": "*"}})
 
@@ -27,7 +29,7 @@ def health_check():
 @application.route('/api/flux_by_position')
 def flux_by_position():
     """
-        Retorna o Fluxo e lambda para uma posicao x,y. 
+        Retorna o Fluxo e lambda para uma posicao x,y.
 
 
         Exemplo de requisicao.
@@ -134,7 +136,7 @@ def list_hud():
 @application.route('/api/spaxel_fit_by_position')
 def spaxel_fit_by_position():
     """
-        Retorna o "Central Spaxel Best Fit" para uma posicao x,y. 
+        Retorna o "Central Spaxel Best Fit" para uma posicao x,y.
 
         Exemplo de requisicao.
         http://localhost/spaxel_fit_by_position?megacube=manga-8138-6101-MEGA.fits&x=15&y=29
@@ -169,3 +171,25 @@ def spaxel_fit_by_position():
 
 if __name__ == '__main__':
     application.run(debug=True)
+
+
+@application.route('/api/list_megacubes')
+def list_megacubes():
+    """
+        Retorna a lista de megacubos disponíveis.
+        Exemplo de requisicão: http://localhost/api/list_megacubes
+    """
+    megacubes = []
+
+    for file in os.listdir(os.getenv("IMAGE_PATH", "/images")):
+        if fnmatch.fnmatch(file, '*.fits'):
+            megacubes.append(file)
+
+    result = dict({
+        'megacubes': megacubes,
+        'count': len(megacubes),
+    })
+
+    response = jsonify(result)
+
+    return response
