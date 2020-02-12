@@ -251,13 +251,12 @@ function Verifier({ setTitle }) {
       .then(res => {
         const filesWithoutExt = res.megacubes.map(megacube => megacube.split('.fits')[0]);
         setMegacubeList(filesWithoutExt);
-        setSelectedMegacube('')
       })
   }, []);
 
   useEffect(() => {
     if(megacubeList.length > 0) {
-      console.log('jjjjjj')
+      console.log('megacubeList', megacubeList)
       setSelectedMegacube(megacubeList[0])
     }
   }, [megacubeList])
@@ -351,6 +350,11 @@ function Verifier({ setTitle }) {
 
   const handleSelectMegacube = (e) => {
     setSelectedMegacube(e.target.value);
+    setSelectedImage({
+      id: 0,
+      name: ''
+    });
+    setHudList([])
   };
 
   const handleSelectImage = (e) => {
