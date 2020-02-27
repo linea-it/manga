@@ -22,7 +22,7 @@ import clsx from 'clsx';
 import { SizeMe } from 'react-sizeme';
 import CustomTable from '../utils/CustomTable';
 import {
-  getFluxByPosition, getHudList, getImageHeatmap, getSpaxelFitByPosition, getMegacubesList
+  getFluxByPosition, getHudList, getImageHeatmap, getSpaxelFitByPosition, getMegacubesList,
 } from '../api/Api';
 
 const useStyles = makeStyles((theme) => ({
@@ -248,30 +248,34 @@ function Verifier({ setTitle }) {
 
   useEffect(() => {
     getMegacubesList()
-      .then(res => {
-        const filesWithoutExt = res.megacubes.map(megacube => megacube.split('.fits')[0]);
+      .then((res) => {
+        const filesWithoutExt = res.megacubes.map((megacube) => megacube.split('.fits')[0]);
         setMegacubeList(filesWithoutExt);
-      })
+      });
   }, []);
 
   useEffect(() => {
-    if(megacubeList.length > 0) {
-      console.log('megacubeList', megacubeList)
-      setSelectedMegacube(megacubeList[0])
+    if (megacubeList.length > 0) {
+      setSelectedMegacube(megacubeList[0]);
     }
-  }, [megacubeList])
+  }, [megacubeList]);
 
   useEffect(() => {
-    if(selectedMegacube !== '') {
+    if (selectedMegacube !== '') {
       getHudList({ megacube: selectedMegacube }).then((res) => {
         setHudList(res);
-        setSelectedImage({
-          id: 1,
-          name: res[0].name,
-        });
       });
     }
   }, [selectedMegacube]);
+
+  useEffect(() => {
+    if (hudList.length > 0) {
+      setSelectedImage({
+        id: 1,
+        name: hudList[0].name,
+      });
+    }
+  }, [hudList]);
 
   const loadFluxMap = (x, y) => {
     getFluxByPosition({ x, y, megacube: selectedMegacube }).then((res) => setFluxPlotData(res));
@@ -352,9 +356,14 @@ function Verifier({ setTitle }) {
     setSelectedMegacube(e.target.value);
     setSelectedImage({
       id: 0,
-      name: ''
+      name: '',
     });
-    setHudList([])
+    setHudList([]);
+    setLocalHeatmaps([]);
+    setHeatmapPlotImageData({});
+    setHeatmapPlotContourData({});
+    setHeatmapError('');
+    setHeatmapPoints([0, 0]);
   };
 
   const handleSelectImage = (e) => {
@@ -465,11 +474,13 @@ function Verifier({ setTitle }) {
               />
               <SizeMe monitorHeight>
                 {({ size }) => {
-                  setHeatmapSize(size);
+                  if (size.height) {
+                    setHeatmapSize(size);
+                  }
                   return (
                     <CardContent>
                       {selectedImage.id === 0 ? (
-                        <Skeleton height={size && size.height ? size.height - 2 : 0} />
+                        <Skeleton height={selectedImage.id !== 0 && size && size.height ? size.height - 2 : 20} />
                       ) : (
                         <Grid container spacing={2} className={classes.animateEnter}>
                           <Grid item xs={12}>
@@ -769,7 +780,7 @@ function Verifier({ setTitle }) {
                     />
                   </div>
                 ) : (
-                  <Skeleton height={heatmapSize && heatmapSize.height ? heatmapSize.height - 40 : 0} />
+                  <Skeleton height={selectedImage.id !== 0 && heatmapSize && heatmapSize.height ? heatmapSize.height - 40 : 20} />
                 )}
               </CardContent>
             </Card>
