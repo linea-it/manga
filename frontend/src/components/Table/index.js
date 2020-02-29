@@ -5,7 +5,7 @@ import Input from '@material-ui/core/Input';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-import { makeStyles } from '@material-ui/core/styles';
+import clsx from 'clsx';
 import {
   PagingState,
   SortingState,
@@ -16,11 +16,10 @@ import {
   IntegratedSorting,
   IntegratedPaging,
   IntegratedGrouping,
-  IntegratedFiltering,
 } from '@devexpress/dx-react-grid';
 import {
   Grid,
-  Table,
+  Table as MuiTable,
   PagingPanel,
   TableColumnResizing,
   Toolbar,
@@ -34,22 +33,20 @@ import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import CustomColumnChooser from './CustomColumnChooser';
 import CustomTableHeaderRowCell from './CustomTableHeaderRowCell';
+import styles from './styles';
 
-const useStyles = makeStyles({
-  wrapPaper: {
-    position: 'relative',
-    paddingTop: '10px',
-  },
-  formControl: {
-    width: '180px',
-    position: 'absolute',
-    top: '8px',
-    left: '24px',
-    zIndex: '999',
-  },
-});
+function CustomNoDataCellComponent({ ...noDatProps }, customLoading) {
+  const classes = styles();
+  return (
+    <td className={clsx(classes.noDataCell, 'MuiTableCell-root', 'MuiTableCell-body')} {...noDatProps}>
+      <div className={classes.noDataWrapper}>
+        <big className={classes.noDataText}>{customLoading ? 'Loading...' : 'No Data'}</big>
+      </div>
+    </td>
+  );
+}
 
-function CustomTable({
+function Table({
   columns,
   data,
   totalCount,
@@ -72,15 +69,18 @@ function CustomTable({
   modalContent,
   hasFiltering,
   hasLineBreak,
+  loading,
 }) {
   const customColumns = columns.map((column) => ({
     name: column.name,
     title: column.title,
     hasLineBreak: column.hasLineBreak ? column.hasLineBreak : false,
+    headerTooltip: column.headerTooltip ? column.headerTooltip : false,
   }));
   const customColumnExtensions = columns.map((column) => ({
     columnName: column.name,
-    width: !column.width ? 'auto' : column.width,
+    width: !column.width ? 120 : column.width,
+    maxWidth: column.maxWidth ? column.maxWidth : '',
     sortingEnabled:
       !!(!('sortingEnabled' in column) || column.sortingEnabled === true),
     align:
@@ -88,25 +88,29 @@ function CustomTable({
     wordWrapEnabled:
       !(!('wordWrapEnabled' in column) || column.wordWrapEnabled === false),
   }));
+
   const customDefaultColumnWidths = columns.map((column) => ({
     columnName: column.name,
-    width: !column.width ? '120' : column.width,
+    width: !column.width ? 120 : column.width,
   }));
+
+  const customSorting = () => {
+    if (defaultSorting && defaultSorting[0].columnName && defaultSorting[0].direction) {
+      return defaultSorting;
+    } if (columns && columns[0]) {
+      return [{
+        columnName: columns[0].name,
+        direction: 'asc',
+      }];
+    }
+    return null;
+  };
 
   const [customData, setCustomData] = useState(data);
   const [customTotalCount, setCustomTotalCount] = useState(totalCount);
   const [visible, setVisible] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [sorting, setSorting] = useState(
-    defaultSorting[0].columnName && defaultSorting[0].direction
-      ? defaultSorting
-      : [
-        {
-          columnName: columns[0].name,
-          direction: 'asc',
-        },
-      ],
-  );
+  const [customLoading, setCustomLoading] = useState(true);
+  const [sorting, setSorting] = useState(customSorting());
   const [currentPage, setCurrentPage] = useState(0);
   const [after, setAfter] = useState('');
   const [customPageSize, setCustomPageSize] = useState(pageSize);
@@ -115,7 +119,7 @@ function CustomTable({
   const [selection, setSelection] = useState([]);
   const [customModalContent, setCustomModalContent] = useState('');
 
-  const classes = useStyles();
+  const classes = styles();
 
   useEffect(() => {
     if (remote === true) {
@@ -123,11 +127,11 @@ function CustomTable({
         sorting, pageSize, currentPage, after, filter, searchValue,
       });
     }
-  }, [sorting, currentPage, pageSize, filter, searchValue, after, loadData, remote]);
+  }, [sorting, currentPage, currentPage, reload, pageSize, filter, searchValue]);
 
   const clearData = () => {
     setCustomData([]);
-    setLoading(false);
+    setCustomLoading(true);
     setCurrentPage(0);
     setAfter('');
   };
@@ -135,8 +139,12 @@ function CustomTable({
   useEffect(() => {
     setCustomData(data);
     setCustomTotalCount(totalCount);
-    setLoading(false);
-  }, [data, totalCount, reload, defaultExpandedGroups]);
+    setCustomLoading(false);
+  }, [data, totalCount, defaultExpandedGroups]);
+
+  useEffect(() => {
+    if (loading !== null) setCustomLoading(loading);
+  }, [loading]);
 
 
   useEffect(() => {
@@ -146,7 +154,7 @@ function CustomTable({
   const changeSorting = (value) => {
     if (remote === true) {
       clearData();
-      setLoading(true);
+      setCustomLoading(true);
     }
     setSorting(value);
   };
@@ -155,7 +163,7 @@ function CustomTable({
     const offset = value * pageSize;
     const next = window.btoa(`arrayconnection:${offset - 1}`);
     if (remote === true) {
-      setLoading(true);
+      setCustomLoading(true);
     }
     setCurrentPage(value);
     setAfter(next);
@@ -165,18 +173,22 @@ function CustomTable({
     const totalPages = Math.ceil(customTotalCount / value);
     const theCurrentPage = Math.min(currentPage, totalPages - 1);
     if (remote === true) {
-      setLoading(true);
+      setCustomLoading(true);
     }
     setCurrentPage(theCurrentPage);
     setCustomPageSize(value);
   };
 
   const changeSearchValue = (value) => {
-    if (remote === true) {
-      clearData();
-      setLoading(true);
+    if (value.length > 2) {
+      if (remote === true) {
+        clearData();
+        setCustomLoading(true);
+      }
+      setSearchValue(value);
+    } else {
+      setSearchValue('');
     }
-    setSearchValue(value);
   };
 
   const changeSelection = (value) => {
@@ -193,7 +205,7 @@ function CustomTable({
   const handleChangeFilter = (evt) => {
     if (remote === true) {
       clearData();
-      setLoading(true);
+      setCustomLoading(true);
     }
     setFilter(evt.target.value);
   };
@@ -202,9 +214,7 @@ function CustomTable({
 
   const renderModal = () => (
     <Dialog onClose={onHideModal} open={visible} maxWidth="md">
-      <>
-        {customModalContent}
-      </>
+      {customModalContent || ''}
     </Dialog>
   );
 
@@ -212,8 +222,8 @@ function CustomTable({
     <CircularProgress
       style={{
         position: 'absolute',
-        top: '50%',
-        left: '50%',
+        top: 'calc(50% - 40px)',
+        left: 'calc(50% - 20px)',
         marginTop: 'translateY(-50%)',
         zIndex: '99',
       }}
@@ -223,7 +233,7 @@ function CustomTable({
   const renderFilter = () => (
     <FormControl className={classes.formControl}>
       <InputLabel shrink htmlFor="filter-label-placeholder">
-          Filter
+        Filter
       </InputLabel>
       <Select
         value={filter}
@@ -251,12 +261,8 @@ function CustomTable({
       return (
         <>
           <Grid rows={rows} columns={customColumns}>
-            {hasSearching
-              ? <SearchState onValueChange={changeSearchValue} />
-              : null}
-            {hasSorting
-              ? <SortingState sorting={sorting} onSortingChange={changeSorting} />
-              : null }
+            {hasSearching ? <SearchState onValueChange={changeSearchValue} /> : null}
+            {hasSorting ? <SortingState sorting={sorting} onSortingChange={changeSorting} columnExtensions={customColumnExtensions} /> : null}
             {hasPagination
               ? (
                 <PagingState
@@ -285,17 +291,25 @@ function CustomTable({
             )
               : null}
             {hasGrouping ? <IntegratedGrouping /> : null}
-            <Table columnExtensions={customColumnExtensions} />
+            {loading !== null ? (
+              <MuiTable
+                columnExtensions={customColumnExtensions}
+                noDataCellComponent={(props) => CustomNoDataCellComponent({ ...props }, customLoading)}
+              />
+
+            ) : (
+              <MuiTable
+                columnExtensions={customColumnExtensions}
+              />
+            )}
             {hasSelection ? (
               <TableSelection
                 selectByRowClick
                 highlightRow
                 showSelectionColumn={false}
               />
-            ) : null }
-            {hasResizing
-              ? <TableColumnResizing columnExtensions={customDefaultColumnWidths} />
-              : null}
+            ) : null}
+            {hasResizing ? <TableColumnResizing defaultColumnWidths={customDefaultColumnWidths} /> : null}
             <CustomTableHeaderRowCell hasSorting={hasSorting} />
             {hasGrouping ? (
               <TableGroupRow />
@@ -318,11 +332,17 @@ function CustomTable({
     return (
       <>
         <Grid rows={rows} columns={customColumns}>
-          {hasSearching ? <SearchState onValueChange={changeSearchValue} value={searchValue} /> : null}
+          {hasSearching ? <SearchState /> : null}
           {hasSorting
-            ? <SortingState sorting={sorting} onSortingChange={changeSorting} />
-            : null }
-          {hasSorting ? <IntegratedSorting /> : null }
+            ? (
+              <SortingState
+                sorting={sorting}
+                onSortingChange={changeSorting}
+                columnExtensions={customColumnExtensions}
+              />
+            )
+            : null}
+          {hasSorting ? <IntegratedSorting /> : null}
           {hasPagination
             ? (
               <PagingState
@@ -336,12 +356,6 @@ function CustomTable({
             ? (
               <IntegratedPaging />
             ) : null}
-
-          {hasSearching || hasFiltering
-            ? (
-              <IntegratedFiltering />
-            ) : null}
-
           {hasSelection ? (
             <SelectionState
               selection={selection}
@@ -357,22 +371,27 @@ function CustomTable({
           )
             : null}
           {hasGrouping ? <IntegratedGrouping /> : null}
-          <Table columnExtensions={customColumnExtensions} />
+          {loading !== null ? (
+            <MuiTable
+              columnExtensions={customColumnExtensions}
+              noDataCellComponent={(props) => CustomNoDataCellComponent({ ...props }, customLoading)}
+            />
+
+          ) : (
+            <MuiTable
+              columnExtensions={customColumnExtensions}
+            />
+          )}
+
           {hasSelection ? (
             <TableSelection
               selectByRowClick
               highlightRow
               showSelectionColumn={false}
             />
-          ) : null }
-          {hasResizing
-            ? <TableColumnResizing defaultColumnWidths={customDefaultColumnWidths} />
-            : null}
-          <CustomTableHeaderRowCell
-            hasLineBreak={hasLineBreak}
-            hasSorting={hasSorting}
-            remote={remote}
-          />
+          ) : null}
+          {hasResizing ? <TableColumnResizing defaultColumnWidths={customDefaultColumnWidths} /> : null}
+          <CustomTableHeaderRowCell hasLineBreak={hasLineBreak} hasSorting={hasSorting} remote={remote} />
           {hasGrouping ? (
             <TableGroupRow />
           )
@@ -395,8 +414,8 @@ function CustomTable({
   const rows = customData.map((row) => {
     const line = {};
     Object.keys(row).forEach((key) => {
+      const column = columns.filter((el) => el.name === key)[0];
       if (key in row) {
-        const column = columns.filter((el) => el.name === key)[0];
         if (
           (column && column.icon && typeof row[key] !== 'object')
           /*
@@ -413,12 +432,12 @@ function CustomTable({
             line[key] = (
               <>
                 <Button onClick={() => onClickAction(column, row)}>
-                  {typeof column.icon === 'function' ? column.icon(row) : column.icon}
+                  {column.icon}
                 </Button>
               </>
             );
           } else {
-            line[key] = <>{typeof column.icon === 'function' ? column.icon(row) : column.icon}</>;
+            line[key] = <>{column.icon}</>;
           }
           /*
             If the current row has a custom element, than render it, instead of the default.
@@ -428,6 +447,8 @@ function CustomTable({
         } else {
           line[key] = row[key];
         }
+      } else if (column && column.customElement) {
+        line[key] = column.customElement(row);
       } else {
         line[key] = '-';
       }
@@ -439,12 +460,12 @@ function CustomTable({
     <>
       {hasFiltering ? renderFilter() : null}
       {renderTable(rows)}
-      {loading && renderLoading()}
+      {customLoading && renderLoading()}
     </>
   );
 }
 
-CustomTable.defaultProps = {
+Table.defaultProps = {
   loadData: () => null,
   pageSize: 10,
   pageSizes: [5, 10, 15],
@@ -459,23 +480,28 @@ CustomTable.defaultProps = {
   hasGrouping: false,
   hasToolbar: true,
   defaultExpandedGroups: [''],
-  defaultSorting: [{}],
+  defaultSorting: null,
   totalCount: 0,
   reload: false,
   remote: true,
   hasLineBreak: false,
   grouping: [{}],
+  loading: null,
 };
 
 
-CustomTable.propTypes = {
+Table.propTypes = {
   columns: PropTypes.arrayOf(PropTypes.object).isRequired,
   loadData: PropTypes.func,
   data: PropTypes.arrayOf(PropTypes.object).isRequired,
   modalContent: PropTypes.symbol,
   defaultSorting: PropTypes.arrayOf(PropTypes.object),
+  // eslint-disable-next-line react/no-unused-prop-types
   pageSize: PropTypes.number,
-  pageSizes: PropTypes.arrayOf(PropTypes.number),
+  pageSizes: PropTypes.oneOfType([
+    PropTypes.arrayOf(PropTypes.number),
+    PropTypes.number,
+  ]),
   hasFiltering: PropTypes.bool,
   hasSearching: PropTypes.bool,
   hasSorting: PropTypes.bool,
@@ -491,6 +517,7 @@ CustomTable.propTypes = {
   reload: PropTypes.bool,
   remote: PropTypes.bool,
   grouping: PropTypes.arrayOf(PropTypes.object),
+  loading: PropTypes.bool,
 };
 
-export default CustomTable;
+export default Table;

@@ -1,12 +1,16 @@
 import React from 'react';
 import { MuiThemeProvider } from '@material-ui/core/styles';
-import theme from './theme/MaterialTheme';
-import Drawer from './Drawer';
+import { Router } from 'react-router-dom';
+import light from './themes/light';
+import Routes from './routes';
+import history from './services/history';
 
 function App() {
   return (
-    <MuiThemeProvider theme={theme}>
-      <Drawer />
+    <MuiThemeProvider theme={light}>
+      <Router history={history}>
+        <Routes />
+      </Router>
     </MuiThemeProvider>
   );
 }
