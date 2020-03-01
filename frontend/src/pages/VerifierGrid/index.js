@@ -32,7 +32,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function VerifierGrid() {
+function VerifierGrid({ setTitle }) {
   const Plot = createPlotlyComponent(Plotly);
   const classes = useStyles();
   const [megacubeList, setMegacubeList] = useState([]);
@@ -40,9 +40,9 @@ function VerifierGrid() {
   const [hudList, setHudList] = useState([]);
   const [localHeatmaps, setLocalHeatmaps] = useState([]);
 
-  // useEffect(() => {
-  //   setTitle('Verifier Grid');
-  // }, [setTitle]);
+  useEffect(() => {
+    setTitle('Verifier Grid');
+  }, [setTitle]);
 
   useEffect(() => {
     getMegacubesList()

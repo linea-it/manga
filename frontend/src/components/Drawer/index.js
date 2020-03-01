@@ -29,10 +29,9 @@ import styles from './styles';
 import logo from '../../assets/img/linea.png';
 import Footer from '../Footer';
 
-function Drawer({ children }) {
+function Drawer({ title, children }) {
   const [open, setOpen] = useState(false);
   const [visualizationOpen, setVisualizationOpen] = useState(true);
-  const [title, setTitle] = useState('Verifier');
 
   const handleDrawerClick = () => setOpen(!open);
 

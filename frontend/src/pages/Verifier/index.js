@@ -1,24 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
-import CardHeader from '@material-ui/core/CardHeader';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import Grid from '@material-ui/core/Grid';
-import Skeleton from '@material-ui/lab/Skeleton';
-import createPlotlyComponent from 'react-plotly.js/factory';
-import Plotly from 'plotly.js';
 import useInterval from '../../hooks/useInterval';
-import styles from './styles';
-
 import {
-  getFluxByPosition, getHudList, getImageHeatmap, getSpaxelFitByPosition, getMegacubesList,
+  getFluxByPosition,
+  getHudList,
+  getImageHeatmap,
+  getSpaxelFitByPosition,
+  getMegacubesList,
 } from '../../services/api';
 import Inputs from '../../components/Inputs';
 import Galaxy from '../../components/Galaxy';
 import Spectre from '../../components/Spectre';
 import Spaxel from '../../components/Spaxel';
 
-function Verifier() {
+function Verifier({ setTitle }) {
   const [megacubeList, setMegacubeList] = useState([]);
   const [selectedMegacube, setSelectedMegacube] = useState('');
   const [hudList, setHudList] = useState([]);
@@ -42,6 +38,10 @@ function Verifier() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [localHeatmaps, setLocalHeatmaps] = useState([]);
   const [heatmapSize, setHeatmapSize] = useState({ height: 450 });
+
+  useEffect(() => {
+    setTitle('Verifier');
+  }, [setTitle]);
 
   useEffect(() => {
     getMegacubesList()
@@ -150,17 +150,19 @@ function Verifier() {
   }, [spaxelTableData]);
 
   const handleSelectMegacube = (e) => {
-    setSelectedMegacube(e.target.value);
-    setSelectedImage({
-      id: 0,
-      name: '',
-    });
-    setHudList([]);
-    setLocalHeatmaps([]);
-    setHeatmapPlotImageData({});
-    setHeatmapPlotContourData({});
-    setHeatmapError('');
-    setHeatmapPoints([0, 0]);
+    if (e.target.value !== selectedMegacube) {
+      setSelectedMegacube(e.target.value);
+      setSelectedImage({
+        id: 0,
+        name: '',
+      });
+      setHudList([]);
+      setLocalHeatmaps([]);
+      setHeatmapPlotImageData({});
+      setHeatmapPlotContourData({});
+      setHeatmapError('');
+      setHeatmapPoints([0, 0]);
+    }
   };
 
   const handleSelectImage = (e) => {

@@ -43,7 +43,7 @@ function Footer({ open }) {
           <Typography color="inherit" className={classes.grow}>
             {instance}
             {' '}
-            Partition Monitor:
+            MaNGA:
             {' '}
             {/* eslint-disable-next-line */}
             <span
