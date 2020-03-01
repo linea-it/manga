@@ -2,34 +2,23 @@ import React, { useState, useEffect } from 'react';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CardHeader from '@material-ui/core/CardHeader';
-import IconButton from '@material-ui/core/IconButton';
-import Icon from '@material-ui/core/Icon';
-import FormControl from '@material-ui/core/FormControl';
-import MenuItem from '@material-ui/core/MenuItem';
-import Select from '@material-ui/core/Select';
-import InputLabel from '@material-ui/core/InputLabel';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import Grid from '@material-ui/core/Grid';
 import Skeleton from '@material-ui/lab/Skeleton';
 import createPlotlyComponent from 'react-plotly.js/factory';
 import Plotly from 'plotly.js';
-import Snackbar from '@material-ui/core/Snackbar';
-import SnackbarContent from '@material-ui/core/SnackbarContent';
-import clsx from 'clsx';
-import { SizeMe } from 'react-sizeme';
 import useInterval from '../../hooks/useInterval';
 import styles from './styles';
-import Table from '../../components/Table';
+
 import {
   getFluxByPosition, getHudList, getImageHeatmap, getSpaxelFitByPosition, getMegacubesList,
 } from '../../services/api';
-import { HeatmapSlider, HeatmapColorRange } from '../../components/HeatmapSlider';
 import Inputs from '../../components/Inputs';
 import Galaxy from '../../components/Galaxy';
+import Spectre from '../../components/Spectre';
+import Spaxel from '../../components/Spaxel';
 
 function Verifier() {
-  const Plot = createPlotlyComponent(Plotly);
-  const classes = styles();
   const [megacubeList, setMegacubeList] = useState([]);
   const [selectedMegacube, setSelectedMegacube] = useState('');
   const [hudList, setHudList] = useState([]);
@@ -242,59 +231,53 @@ function Verifier() {
   return (
     <Grid container spacing={2}>
       <Grid item xs={12}>
-        <Inputs
+        <Grid container spacing={2}>
+          <Grid item xs={12} md={5}>
+            <Inputs
+              selectedMegacube={selectedMegacube}
+              handleSelectMegacube={handleSelectMegacube}
+              megacubeList={megacubeList}
+            />
+          </Grid>
+        </Grid>
+      </Grid>
+
+      <Grid item xs={12} md={5}>
+        <Galaxy
+          setHeatmapSize={setHeatmapSize}
+          selectedImage={selectedImage}
+          handleSelectImage={handleSelectImage}
           selectedMegacube={selectedMegacube}
-          handleSelectMegacube={handleSelectMegacube}
-          megacubeList={megacubeList}
+          hudList={hudList}
+          handleSelectContour={handleSelectContour}
+          heatmapError={heatmapError}
+          heatmapPlotImageData={heatmapPlotImageData}
+          heatmapPlotContourData={heatmapPlotContourData}
+          heatmapColorRangeValue={heatmapColorRangeValue}
+          heatmapPoints={heatmapPoints}
+          selectedContour={selectedContour}
+          handleHeatmapClick={handleHeatmapClick}
+          heatmapSize={heatmapSize}
+          heatmapValueLimits={heatmapValueLimits}
+          handleHeatmapColorRangeChange={handleHeatmapColorRangeChange}
+          heatmapSliderValue={heatmapSliderValue}
+          handleHeatmapSliderChange={handleHeatmapSliderChange}
+          handlePlayClick={handlePlayClick}
+          isPlaying={isPlaying}
+        />
+      </Grid>
+      <Grid item xs={12} md={7}>
+        <Spectre
+          heatmapPoints={heatmapPoints}
+          fluxPlotData={fluxPlotData}
+          heatmapSize={heatmapSize}
+          selectedImage={selectedImage}
         />
       </Grid>
 
-      <Grid item xs={12}>
-        <Galaxy />
-      </Grid>
 
       <Grid item xs={12}>
-        <Grid container spacing={2}>
-          <Grid item xs={12} md={12}>
-            <Card>
-              <CardHeader
-                title={spaxelTableData.title ? spaxelTableData.title : 'Best fit for Spaxel'}
-              />
-              <CardContent className={classes.cardContentTable}>
-                {spaxelTableData.rows && spaxelTableData.rows.length > 0 ? (
-                  <div className={classes.animateEnter}>
-                    <Table
-                      columns={spaxelTableData.columns.map((column) => ({ name: column, title: column, width: 320 }))}
-                      data={
-                        spaxelTableData.rows.map((row) => ({
-                          [spaxelTableData.columns[0]]: row[0],
-                          [spaxelTableData.columns[1]]: row[1],
-                          [spaxelTableData.columns[2]]: row[2],
-                          [spaxelTableData.columns[3]]: row[3],
-                        }))
-                      }
-                      hasPagination={false}
-                      totalCount={spaxelTableData.count}
-                      remote={false}
-                      hasColumnVisibility={false}
-                    />
-                  </div>
-                ) : (
-                  <>
-                    <Skeleton className={classes.skeletonMargin} />
-                    <Skeleton className={classes.skeletonMargin} />
-                    <Skeleton className={classes.skeletonMargin} />
-                    <Skeleton className={classes.skeletonMargin} />
-                    <Skeleton className={classes.skeletonMargin} />
-                    <Skeleton className={classes.skeletonMargin} />
-                    <Skeleton className={classes.skeletonMargin} />
-                    <Skeleton className={classes.skeletonMargin} />
-                  </>
-                )}
-              </CardContent>
-            </Card>
-          </Grid>
-        </Grid>
+        <Spaxel spaxelTableData={spaxelTableData} />
       </Grid>
     </Grid>
   );
