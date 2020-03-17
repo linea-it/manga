@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CardHeader from '@material-ui/core/CardHeader';
@@ -13,7 +12,7 @@ import FormControl from '@material-ui/core/FormControl';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import InputLabel from '@material-ui/core/InputLabel';
-import { getHudList, getImageHeatmap, getMegacubesList } from '../api/Api';
+import { getHudList, getImageHeatmap, getMegacubesList } from '../../services/api';
 
 const useStyles = makeStyles((theme) => ({
   plotWrapper: {
@@ -47,10 +46,10 @@ function VerifierGrid({ setTitle }) {
 
   useEffect(() => {
     getMegacubesList()
-      .then(res => {
-        const filesWithoutExt = res.megacubes.map(megacube => megacube.split('.fits')[0]);
+      .then((res) => {
+        const filesWithoutExt = res.megacubes.map((megacube) => megacube.split('.fits')[0]);
         setMegacubeList(filesWithoutExt);
-      })
+      });
   }, []);
 
   useEffect(() => {
@@ -212,9 +211,5 @@ function VerifierGrid({ setTitle }) {
     </Grid>
   );
 }
-
-VerifierGrid.propTypes = {
-  setTitle: PropTypes.func.isRequired,
-};
 
 export default VerifierGrid;
