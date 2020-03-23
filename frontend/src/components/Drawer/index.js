@@ -69,7 +69,7 @@ function Drawer({ title, children }) {
         open={open}
       >
         <List className={classes.drawerList}>
-          <Link to="/verifier" className={classes.invisibleLink} title="Laboratório Interinstitucional de e-Astronomia">
+          <Link to="/" className={classes.invisibleLink} title="Laboratório Interinstitucional de e-Astronomia">
             <ListItem button>
               <ListItemText
                 primary={(
@@ -112,24 +112,13 @@ function Drawer({ title, children }) {
           </ListItem>
           <Collapse in={visualizationOpen} timeout="auto" unmountOnExit>
             <List component="div" disablePadding>
-              <Link to="/verifier" className={classes.invisibleLink} title="Verifier">
+              <Link to="/" className={classes.invisibleLink} title="Galaxies">
                 <ListItem button className={open ? classes.nested : ''}>
                   <ListItemIcon className={clsx(classes.ListIconDrawer, open ? classes.ListIconDrawerOpen : '')}>
                     <Icon className={clsx(classes.iconDrawer, 'fa', 'fa-search')} />
                   </ListItemIcon>
                   <ListItemText
-                    primary="Verifier"
-                    className={classes.textDrawer}
-                  />
-                </ListItem>
-              </Link>
-              <Link to="/verifier/grid" className={classes.invisibleLink} title="Grid">
-                <ListItem button className={open ? classes.nested : ''}>
-                  <ListItemIcon className={clsx(classes.ListIconDrawer, open ? classes.ListIconDrawerOpen : '')}>
-                    <Icon className={clsx(classes.iconDrawer, 'fa', 'fa-th')} />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary="Grid"
+                    primary="Galaxies"
                     className={classes.textDrawer}
                   />
                 </ListItem>
@@ -159,6 +148,7 @@ function Drawer({ title, children }) {
 Drawer.propTypes = {
   children: PropTypes.oneOfType([PropTypes.element, PropTypes.func])
     .isRequired,
+  title: PropTypes.string.isRequired,
 };
 
 export default Drawer;

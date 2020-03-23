@@ -1,10 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import Grid from '@material-ui/core/Grid';
+import {
+  Grid,
+  Icon,
+} from '@material-ui/core';
+import { Link } from 'react-router-dom';
 import Table from '../../components/Table';
 import { getMegacubesList } from '../../services/api';
+import styles from './styles';
 
 function VerifierList({ setTitle }) {
+  const classes = styles();
   const [galaxies, setGalaxies] = useState({
     data: [],
     totalCount: 0,
@@ -16,12 +22,12 @@ function VerifierList({ setTitle }) {
     {
       name: 'galaxy_name',
       title: 'Galaxy',
-      width: 500,
+      width: 300,
     },
     {
       name: 'type',
       title: 'Type',
-      width: 200,
+      width: 150,
     },
     {
       name: 'ra',
@@ -34,7 +40,27 @@ function VerifierList({ setTitle }) {
     {
       name: 'cube_name',
       title: 'Cube',
-      width: 400,
+      width: 250,
+    },
+    {
+      name: 'verifier',
+      title: 'Verifier',
+      customElement: (row) => (
+        <Link to={`/verifier/${row.cube_name}`} className={classes.defaultColor}>
+          <Icon className="fa fa-cog" />
+        </Link>
+      ),
+      align: 'center',
+    },
+    {
+      name: 'grid',
+      title: 'Grid',
+      customElement: (row) => (
+        <Link to={`/grid/${row.cube_name}`} className={classes.defaultColor}>
+          <Icon className="fa fa-th-large" />
+        </Link>
+      ),
+      align: 'center',
     },
   ];
 
@@ -45,7 +71,9 @@ function VerifierList({ setTitle }) {
         dec: 0,
         type: null,
         galaxy_name: megacube,
-        cube_name: megacube,
+        cube_name: megacube.split('.fits')[0],
+        verifier: megacube,
+        grid: megacube,
       })),
       totalCount: res.count,
     }));
@@ -62,6 +90,7 @@ function VerifierList({ setTitle }) {
           columns={columns}
           data={galaxies.data}
           totalCount={galaxies.totalCount}
+          remote={false}
         />
       </Grid>
     </Grid>

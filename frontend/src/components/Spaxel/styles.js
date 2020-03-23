@@ -38,7 +38,6 @@ const styles = makeStyles((theme) => ({
     marginBottom: '0.8em',
   },
   cardContentTable: {
-    maxHeight: 500,
     overflow: 'auto',
   },
   slider: {

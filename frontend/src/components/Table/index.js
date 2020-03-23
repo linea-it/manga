@@ -19,6 +19,7 @@ import {
 } from '@devexpress/dx-react-grid';
 import {
   Grid,
+  VirtualTable,
   Table as MuiTable,
   PagingPanel,
   TableColumnResizing,
@@ -42,9 +43,10 @@ function CustomNoDataCellComponent({ ...noDatProps }, customLoading) {
       className={clsx(
         classes.noDataCell,
         'MuiTableCell-root',
-        'MuiTableCell-body'
+        'MuiTableCell-body',
       )}
-      {...noDatProps}>
+      {...noDatProps}
+    >
       <div className={classes.noDataWrapper}>
         <big className={classes.noDataText}>
           {customLoading ? 'Loading...' : 'No Data'}
@@ -78,14 +80,15 @@ function Table({
   hasFiltering,
   hasLineBreak,
   loading,
+  isVirtualTable,
 }) {
-  const customColumns = columns.map(column => ({
+  const customColumns = columns.map((column) => ({
     name: column.name,
     title: column.title,
     hasLineBreak: column.hasLineBreak ? column.hasLineBreak : false,
     headerTooltip: column.headerTooltip ? column.headerTooltip : false,
   }));
-  const customColumnExtensions = columns.map(column => ({
+  const customColumnExtensions = columns.map((column) => ({
     columnName: column.name,
     width: !column.width ? 120 : column.width,
     maxWidth: column.maxWidth ? column.maxWidth : '',
@@ -99,16 +102,16 @@ function Table({
     ),
   }));
 
-  const customDefaultColumnWidths = columns.map(column => ({
+  const customDefaultColumnWidths = columns.map((column) => ({
     columnName: column.name,
     width: !column.width ? 120 : column.width,
   }));
 
   const customSorting = () => {
     if (
-      defaultSorting &&
-      defaultSorting[0].columnName &&
-      defaultSorting[0].direction
+      defaultSorting
+      && defaultSorting[0].columnName
+      && defaultSorting[0].direction
     ) {
       return defaultSorting;
     }
@@ -172,7 +175,7 @@ function Table({
     setCustomModalContent(modalContent);
   }, [modalContent]);
 
-  const changeSorting = value => {
+  const changeSorting = (value) => {
     if (remote === true) {
       clearData();
       setCustomLoading(true);
@@ -180,7 +183,7 @@ function Table({
     setSorting(value);
   };
 
-  const changeCurrentPage = value => {
+  const changeCurrentPage = (value) => {
     const offset = value * pageSize;
     const next = window.btoa(`arrayconnection:${offset - 1}`);
     if (remote === true) {
@@ -190,7 +193,7 @@ function Table({
     setAfter(next);
   };
 
-  const changePageSize = value => {
+  const changePageSize = (value) => {
     const totalPages = Math.ceil(customTotalCount / value);
     const theCurrentPage = Math.min(currentPage, totalPages - 1);
     if (remote === true) {
@@ -200,7 +203,7 @@ function Table({
     setCustomPageSize(value);
   };
 
-  const changeSearchValue = value => {
+  const changeSearchValue = (value) => {
     if (value.length > 2) {
       if (remote === true) {
         clearData();
@@ -212,10 +215,10 @@ function Table({
     }
   };
 
-  const changeSelection = value => {
+  const changeSelection = (value) => {
     let select = value;
     if (value.length > 0) {
-      const diff = value.filter(x => !selection.includes(x));
+      const diff = value.filter((x) => !selection.includes(x));
       select = diff;
     } else {
       select = [];
@@ -223,7 +226,7 @@ function Table({
     setSelection(select);
   };
 
-  const handleChangeFilter = evt => {
+  const handleChangeFilter = (evt) => {
     if (remote === true) {
       clearData();
       setCustomLoading(true);
@@ -261,7 +264,8 @@ function Table({
         onChange={handleChangeFilter}
         input={<Input name="filter" id="filter-label-placeholder" />}
         displayEmpty
-        name="filter">
+        name="filter"
+      >
         <MenuItem value="all">All</MenuItem>
         <MenuItem value="running">Running</MenuItem>
       </Select>
@@ -276,7 +280,30 @@ function Table({
     column.action(row);
   };
 
-  const renderTable = rows => {
+  const renderTableOrVirtualTable = () => {
+    if (loading !== null) {
+      if (isVirtualTable) {
+        return (
+          <VirtualTable
+            columnExtensions={customColumnExtensions}
+            noDataCellComponent={(props) => CustomNoDataCellComponent({ ...props }, customLoading)}
+          />
+        );
+      }
+      return (
+        <MuiTable
+          columnExtensions={customColumnExtensions}
+          noDataCellComponent={(props) => CustomNoDataCellComponent({ ...props }, customLoading)}
+        />
+      );
+    }
+    if (isVirtualTable) {
+      return <VirtualTable columnExtensions={customColumnExtensions} />;
+    }
+    return <MuiTable columnExtensions={customColumnExtensions} />;
+  };
+
+  const renderTable = (rows) => {
     if (remote === true) {
       return (
         <>
@@ -315,16 +342,7 @@ function Table({
               />
             ) : null}
             {hasGrouping ? <IntegratedGrouping /> : null}
-            {loading !== null ? (
-              <MuiTable
-                columnExtensions={customColumnExtensions}
-                noDataCellComponent={props =>
-                  CustomNoDataCellComponent({ ...props }, customLoading)
-                }
-              />
-            ) : (
-              <MuiTable columnExtensions={customColumnExtensions} />
-            )}
+            {renderTableOrVirtualTable()}
             {hasSelection ? (
               <TableSelection
                 selectByRowClick
@@ -383,16 +401,7 @@ function Table({
             />
           ) : null}
           {hasGrouping ? <IntegratedGrouping /> : null}
-          {loading !== null ? (
-            <MuiTable
-              columnExtensions={customColumnExtensions}
-              noDataCellComponent={props =>
-                CustomNoDataCellComponent({ ...props }, customLoading)
-              }
-            />
-          ) : (
-            <MuiTable columnExtensions={customColumnExtensions} />
-          )}
+          {renderTableOrVirtualTable()}
 
           {hasSelection ? (
             <TableSelection
@@ -423,22 +432,22 @@ function Table({
     );
   };
 
-  const rows = customData.map(row => {
+  const rows = customData.map((row) => {
     const line = {};
-    Object.keys(row).forEach(key => {
-      const column = columns.filter(el => el.name === key)[0];
+    Object.keys(row).forEach((key) => {
+      const column = columns.filter((el) => el.name === key)[0];
       if (key in row) {
         if (
-          (column && column.icon && typeof row[key] !== 'object') ||
+          (column && column.icon && typeof row[key] !== 'object')
           /*
           If the current row is an array or object, then verify if its length is higher than 1.
           This was created for the "Release" column,
           that sometimes has multiple releases for a single dataset.
           */
-          (column &&
-            column.icon &&
-            typeof row[key] === 'object' && row[key].length > 1 &&
-            !column.customElement)
+          || (column
+            && column.icon
+            && typeof row[key] === 'object' && row[key].length > 1
+            && !column.customElement)
         ) {
           if (column.action) {
             line[key] = (
@@ -499,6 +508,7 @@ Table.defaultProps = {
   hasLineBreak: false,
   grouping: [{}],
   loading: null,
+  isVirtualTable: false,
 };
 
 Table.propTypes = {
@@ -529,6 +539,8 @@ Table.propTypes = {
   remote: PropTypes.bool,
   grouping: PropTypes.arrayOf(PropTypes.object),
   loading: PropTypes.bool,
+  isVirtualTable: PropTypes.bool,
+
 };
 
 export default Table;

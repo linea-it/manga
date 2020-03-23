@@ -146,7 +146,7 @@ function Galaxy({
                             color: 'rgba(255, 255, 255, .7)',
                             width: 6,
                           },
-                          hoverinfo: 'x+y',
+                          hoverinfo: 'skip',
                           showlegend: false,
                         },
                         {
@@ -162,7 +162,7 @@ function Galaxy({
                             color: 'rgba(255, 255, 255, .4)',
                             width: 6,
                           },
-                          hoverinfo: 'x+y',
+                          hoverinfo: 'skip',
                           showlegend: false,
                         },
                         {
@@ -182,7 +182,7 @@ function Galaxy({
                               width: 3,
                             },
                           },
-                          hoverinfo: 'x+y',
+                          hoverinfo: 'skip',
                           showlegend: false,
                         },
                         {
@@ -199,7 +199,7 @@ function Galaxy({
                             width: 3,
                             dash: 'dot',
                           },
-                          hoverinfo: 'x+y',
+                          hoverinfo: 'skip',
                           showlegend: false,
                         },
                         {
@@ -216,7 +216,7 @@ function Galaxy({
                             width: 3,
                             dash: 'dot',
                           },
-                          hoverinfo: 'x+y',
+                          hoverinfo: 'skip',
                           showlegend: false,
                         },
                       ]}
