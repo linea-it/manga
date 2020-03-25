@@ -17,7 +17,7 @@ export const getImageHeatmap = ({ megacube, hud }) =>
 
 export const getHudList = ({ megacube }) =>
   axios.get(`/list_hud?megacube=${megacube}.fits`)
-    .then(res => res.data.hud)
+    .then(res => res.data.hud.sort((a, b) => (a.name > b.name) ? 1 : -1))
 
 export const getMegacubesList = () =>
   axios.get('/list_megacubes')
