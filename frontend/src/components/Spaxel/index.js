@@ -33,6 +33,7 @@ function Spaxel({ spaxelTableData }) {
               totalCount={spaxelTableData.count}
               remote={false}
               hasColumnVisibility={false}
+              isVirtualTable
             />
           </div>
         )

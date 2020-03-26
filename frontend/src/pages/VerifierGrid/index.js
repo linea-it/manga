@@ -2,17 +2,14 @@ import React, { useState, useEffect } from 'react';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CardHeader from '@material-ui/core/CardHeader';
+import { useParams } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import Grid from '@material-ui/core/Grid';
 import Skeleton from '@material-ui/lab/Skeleton';
 import createPlotlyComponent from 'react-plotly.js/factory';
 import Plotly from 'plotly.js';
-import FormControl from '@material-ui/core/FormControl';
-import MenuItem from '@material-ui/core/MenuItem';
-import Select from '@material-ui/core/Select';
-import InputLabel from '@material-ui/core/InputLabel';
-import { getHudList, getImageHeatmap, getMegacubesList } from '../../services/api';
+import { getHudList, getImageHeatmap } from '../../services/api';
 
 const useStyles = makeStyles((theme) => ({
   plotWrapper: {
@@ -33,10 +30,9 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function VerifierGrid({ setTitle }) {
+  const { megacube } = useParams();
   const Plot = createPlotlyComponent(Plotly);
   const classes = useStyles();
-  const [megacubeList, setMegacubeList] = useState([]);
-  const [selectedMegacube, setSelectedMegacube] = useState(megacubeList[0]);
   const [hudList, setHudList] = useState([]);
   const [localHeatmaps, setLocalHeatmaps] = useState([]);
 
@@ -44,22 +40,15 @@ function VerifierGrid({ setTitle }) {
     setTitle('Verifier Grid');
   }, [setTitle]);
 
-  useEffect(() => {
-    getMegacubesList()
-      .then((res) => {
-        const filesWithoutExt = res.megacubes.map((megacube) => megacube.split('.fits')[0]);
-        setMegacubeList(filesWithoutExt);
-      });
-  }, []);
 
   useEffect(() => {
-    getHudList({ megacube: selectedMegacube }).then((res) => setHudList(res));
-  }, [selectedMegacube]);
+    getHudList({ megacube }).then((res) => setHudList(res));
+  }, []);
 
   useEffect(() => {
     if (hudList.length > 0) {
       hudList.forEach((hud) => {
-        getImageHeatmap({ megacube: selectedMegacube, hud: hud.name })
+        getImageHeatmap({ megacube, hud: hud.name })
           .then((res) => setLocalHeatmaps((localHeatmapsRef) => [...localHeatmapsRef, res]))
           .catch((err) => {
             setLocalHeatmaps((localHeatmapsRef) => [...localHeatmapsRef, {
@@ -69,11 +58,7 @@ function VerifierGrid({ setTitle }) {
           });
       });
     }
-  }, [selectedMegacube, hudList]);
-
-  const handleSelectMegacube = (e) => {
-    setSelectedMegacube(e.target.value);
-  };
+  }, [hudList]);
 
   // Function that will check the current length of localHeatmaps
   // in comparison with hudList and display the leftovers as skeletons:
@@ -91,43 +76,6 @@ function VerifierGrid({ setTitle }) {
 
   return (
     <Grid container spacing={2}>
-      <Grid item xs={12}>
-        <Grid container spacing={2}>
-          <Grid item xs={12} md={5}>
-            <Card>
-              <CardHeader
-                title={<span>Inputs</span>}
-              />
-              <CardContent>
-                <form autoComplete="off">
-                  <Grid container spacing={3}>
-                    <Grid item xs={12}>
-                      <FormControl fullWidth>
-                        <InputLabel htmlFor="input">Megacube</InputLabel>
-                        <Select
-                          value={selectedMegacube}
-                          onChange={handleSelectMegacube}
-                        >
-                          {megacubeList.map((megacube) => (
-                            <MenuItem
-                              key={megacube}
-                              value={megacube}
-                            >
-                              {megacube}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      </FormControl>
-
-                    </Grid>
-                  </Grid>
-                </form>
-              </CardContent>
-            </Card>
-          </Grid>
-        </Grid>
-      </Grid>
-
       <Grid item xs={12}>
         <Grid container spacing={3}>
           <Grid item xs={12} md={12}>
@@ -161,7 +109,6 @@ function VerifierGrid({ setTitle }) {
                             displaylogo: false,
                             responsive: true,
                             displayModeBar: false,
-                            staticPlot: true,
                           }}
                           transition={{
                             duration: 300,
@@ -172,33 +119,11 @@ function VerifierGrid({ setTitle }) {
                       </Grid>
                     )) : (
                       <Grid container spacing={2}>
-                        <Grid item xs={12} md={4}>
-                          <Skeleton width={400} height={400} className={classes.skeletonMargin} />
-                        </Grid>
-                        <Grid item xs={12} md={4}>
-                          <Skeleton width={400} height={400} className={classes.skeletonMargin} />
-                        </Grid>
-                        <Grid item xs={12} md={4}>
-                          <Skeleton width={400} height={400} className={classes.skeletonMargin} />
-                        </Grid>
-                        <Grid item xs={12} md={4}>
-                          <Skeleton width={400} height={400} className={classes.skeletonMargin} />
-                        </Grid>
-                        <Grid item xs={12} md={4}>
-                          <Skeleton width={400} height={400} className={classes.skeletonMargin} />
-                        </Grid>
-                        <Grid item xs={12} md={4}>
-                          <Skeleton width={400} height={400} className={classes.skeletonMargin} />
-                        </Grid>
-                        <Grid item xs={12} md={4}>
-                          <Skeleton width={400} height={400} className={classes.skeletonMargin} />
-                        </Grid>
-                        <Grid item xs={12} md={4}>
-                          <Skeleton width={400} height={400} className={classes.skeletonMargin} />
-                        </Grid>
-                        <Grid item xs={12} md={4}>
-                          <Skeleton width={400} height={400} className={classes.skeletonMargin} />
-                        </Grid>
+                        {[0, 0, 0, 0, 0, 0].map(() => (
+                          <Grid item xs={12} md={4}>
+                            <Skeleton width={400} height={400} className={classes.skeletonMargin} />
+                          </Grid>
+                        ))}
                       </Grid>
                     )}
                   {leftoverSkeletons()}

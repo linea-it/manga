@@ -1,22 +1,21 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import Grid from '@material-ui/core/Grid';
+import { useParams } from 'react-router-dom';
 import useInterval from '../../hooks/useInterval';
 import {
   getFluxByPosition,
   getHudList,
   getImageHeatmap,
   getSpaxelFitByPosition,
-  getMegacubesList,
 } from '../../services/api';
-import Inputs from '../../components/Inputs';
 import Galaxy from '../../components/Galaxy';
 import Spectre from '../../components/Spectre';
 import Spaxel from '../../components/Spaxel';
 
 function Verifier({ setTitle }) {
-  const [megacubeList, setMegacubeList] = useState([]);
-  const [selectedMegacube, setSelectedMegacube] = useState('');
+  const { megacube } = useParams();
   const [hudList, setHudList] = useState([]);
   const [selectedImage, setSelectedImage] = useState({
     id: 0,
@@ -44,26 +43,8 @@ function Verifier({ setTitle }) {
   }, [setTitle]);
 
   useEffect(() => {
-    getMegacubesList()
-      .then((res) => {
-        const filesWithoutExt = res.megacubes.map((megacube) => megacube.split('.fits')[0]);
-        setMegacubeList(filesWithoutExt);
-      });
+    getHudList({ megacube }).then((res) => setHudList(res));
   }, []);
-
-  useEffect(() => {
-    if (megacubeList.length > 0) {
-      setSelectedMegacube(megacubeList[0]);
-    }
-  }, [megacubeList]);
-
-  useEffect(() => {
-    if (selectedMegacube !== '') {
-      getHudList({ megacube: selectedMegacube }).then((res) => {
-        setHudList(res);
-      });
-    }
-  }, [selectedMegacube]);
 
   useEffect(() => {
     if (hudList.length > 0) {
@@ -75,11 +56,11 @@ function Verifier({ setTitle }) {
   }, [hudList]);
 
   const loadFluxMap = (x, y) => {
-    getFluxByPosition({ x, y, megacube: selectedMegacube }).then((res) => setFluxPlotData(res));
+    getFluxByPosition({ x, y, megacube }).then((res) => setFluxPlotData(res));
   };
 
   const loadSpaxel = (x, y) => {
-    getSpaxelFitByPosition({ x, y, megacube: selectedMegacube })
+    getSpaxelFitByPosition({ x, y, megacube })
       .then((res) => setSpaxelTableData(res));
   };
 
@@ -91,7 +72,7 @@ function Verifier({ setTitle }) {
   }, [heatmapPoints]);
 
   useEffect(() => {
-    if (selectedMegacube !== '' && selectedImage.id !== 0) {
+    if (selectedImage.id !== 0) {
       const heatmap = localHeatmaps.filter((el) => el.title === selectedImage.name);
       if (heatmap.length > 0) {
         setHeatmapPlotImageData(heatmap[0]);
@@ -100,7 +81,7 @@ function Verifier({ setTitle }) {
         setHeatmapColorRangeValue([Math.min(...heatmapArr), Math.max(...heatmapArr)]);
         setHeatmapError('');
       } else {
-        getImageHeatmap({ megacube: selectedMegacube, hud: selectedImage.name })
+        getImageHeatmap({ megacube, hud: selectedImage.name })
           .then((res) => {
             setHeatmapPlotImageData(res);
             setHeatmapError('');
@@ -116,16 +97,16 @@ function Verifier({ setTitle }) {
           });
       }
     }
-  }, [selectedMegacube, selectedImage, localHeatmaps]);
+  }, [selectedImage, localHeatmaps]);
 
   useEffect(() => {
-    if (selectedMegacube !== '' && selectedContour.id !== 0) {
+    if (selectedContour.id !== 0) {
       const heatmap = localHeatmaps.filter((el) => el.title === selectedContour.name);
       if (heatmap.length > 0) {
         setHeatmapPlotContourData(heatmap[0]);
         setHeatmapError('');
       } else {
-        getImageHeatmap({ megacube: selectedMegacube, hud: selectedContour.name })
+        getImageHeatmap({ megacube, hud: selectedContour.name })
           .then((res) => {
             setHeatmapPlotContourData(res);
             setHeatmapError('');
@@ -136,7 +117,7 @@ function Verifier({ setTitle }) {
           });
       }
     }
-  }, [selectedMegacube, selectedContour, localHeatmaps]);
+  }, [selectedContour, localHeatmaps]);
 
   useEffect(() => {
     if (spaxelTableData.rows && spaxelTableData.rows.length > 0) {
@@ -148,22 +129,6 @@ function Verifier({ setTitle }) {
       }));
     }
   }, [spaxelTableData]);
-
-  const handleSelectMegacube = (e) => {
-    if (e.target.value !== selectedMegacube) {
-      setSelectedMegacube(e.target.value);
-      setSelectedImage({
-        id: 0,
-        name: '',
-      });
-      setHudList([]);
-      setLocalHeatmaps([]);
-      setHeatmapPlotImageData({});
-      setHeatmapPlotContourData({});
-      setHeatmapError('');
-      setHeatmapPoints([0, 0]);
-    }
-  };
 
   const handleSelectImage = (e) => {
     setHeatmapPoints([0, 0]);
@@ -201,7 +166,7 @@ function Verifier({ setTitle }) {
 
   const preloadHeatmaps = () => {
     hudList.forEach((hud) => {
-      getImageHeatmap({ megacube: selectedMegacube, hud: hud.name })
+      getImageHeatmap({ megacube, hud: hud.name })
         .then((res) => setLocalHeatmaps((localHeatmapsRef) => [...localHeatmapsRef, res]));
     });
   };
@@ -232,24 +197,12 @@ function Verifier({ setTitle }) {
 
   return (
     <Grid container spacing={2}>
-      <Grid item xs={12}>
-        <Grid container spacing={2}>
-          <Grid item xs={12} md={5}>
-            <Inputs
-              selectedMegacube={selectedMegacube}
-              handleSelectMegacube={handleSelectMegacube}
-              megacubeList={megacubeList}
-            />
-          </Grid>
-        </Grid>
-      </Grid>
-
       <Grid item xs={12} md={5}>
         <Galaxy
           setHeatmapSize={setHeatmapSize}
           selectedImage={selectedImage}
           handleSelectImage={handleSelectImage}
-          selectedMegacube={selectedMegacube}
+          selectedMegacube={megacube}
           hudList={hudList}
           handleSelectContour={handleSelectContour}
           heatmapError={heatmapError}
@@ -284,5 +237,9 @@ function Verifier({ setTitle }) {
     </Grid>
   );
 }
+
+Verifier.propTypes = {
+  setTitle: PropTypes.func.isRequired,
+};
 
 export default Verifier;

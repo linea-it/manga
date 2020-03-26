@@ -19,6 +19,7 @@ import {
 } from '@devexpress/dx-react-grid';
 import {
   Grid,
+  VirtualTable,
   Table as MuiTable,
   PagingPanel,
   TableColumnResizing,
@@ -38,9 +39,18 @@ import styles from './styles';
 function CustomNoDataCellComponent({ ...noDatProps }, customLoading) {
   const classes = styles();
   return (
-    <td className={clsx(classes.noDataCell, 'MuiTableCell-root', 'MuiTableCell-body')} {...noDatProps}>
+    <td
+      className={clsx(
+        classes.noDataCell,
+        'MuiTableCell-root',
+        'MuiTableCell-body',
+      )}
+      {...noDatProps}
+    >
       <div className={classes.noDataWrapper}>
-        <big className={classes.noDataText}>{customLoading ? 'Loading...' : 'No Data'}</big>
+        <big className={classes.noDataText}>
+          {customLoading ? 'Loading...' : 'No Data'}
+        </big>
       </div>
     </td>
   );
@@ -70,6 +80,7 @@ function Table({
   hasFiltering,
   hasLineBreak,
   loading,
+  isVirtualTable,
 }) {
   const customColumns = columns.map((column) => ({
     name: column.name,
@@ -81,12 +92,14 @@ function Table({
     columnName: column.name,
     width: !column.width ? 120 : column.width,
     maxWidth: column.maxWidth ? column.maxWidth : '',
-    sortingEnabled:
-      !!(!('sortingEnabled' in column) || column.sortingEnabled === true),
+    sortingEnabled: !!(
+      !('sortingEnabled' in column) || column.sortingEnabled === true
+    ),
     align:
       !('align' in column) || column.align === 'left' ? 'left' : column.align,
-    wordWrapEnabled:
-      !(!('wordWrapEnabled' in column) || column.wordWrapEnabled === false),
+    wordWrapEnabled: !(
+      !('wordWrapEnabled' in column) || column.wordWrapEnabled === false
+    ),
   }));
 
   const customDefaultColumnWidths = columns.map((column) => ({
@@ -95,13 +108,20 @@ function Table({
   }));
 
   const customSorting = () => {
-    if (defaultSorting && defaultSorting[0].columnName && defaultSorting[0].direction) {
+    if (
+      defaultSorting
+      && defaultSorting[0].columnName
+      && defaultSorting[0].direction
+    ) {
       return defaultSorting;
-    } if (columns && columns[0]) {
-      return [{
-        columnName: columns[0].name,
-        direction: 'asc',
-      }];
+    }
+    if (columns && columns[0]) {
+      return [
+        {
+          columnName: columns[0].name,
+          direction: 'asc',
+        },
+      ];
     }
     return null;
   };
@@ -124,10 +144,15 @@ function Table({
   useEffect(() => {
     if (remote === true) {
       loadData({
-        sorting, pageSize, currentPage, after, filter, searchValue,
+        sorting,
+        pageSize,
+        currentPage,
+        after,
+        filter,
+        searchValue,
       });
     }
-  }, [sorting, currentPage, currentPage, reload, pageSize, filter, searchValue]);
+  }, [sorting, currentPage, reload, pageSize, filter, searchValue]); // eslint-disable-line
 
   const clearData = () => {
     setCustomData([]);
@@ -145,7 +170,6 @@ function Table({
   useEffect(() => {
     if (loading !== null) setCustomLoading(loading);
   }, [loading]);
-
 
   useEffect(() => {
     setCustomModalContent(modalContent);
@@ -256,52 +280,69 @@ function Table({
     column.action(row);
   };
 
+  const renderTableOrVirtualTable = () => {
+    if (loading !== null) {
+      if (isVirtualTable) {
+        return (
+          <VirtualTable
+            columnExtensions={customColumnExtensions}
+            noDataCellComponent={(props) => CustomNoDataCellComponent({ ...props }, customLoading)}
+          />
+        );
+      }
+      return (
+        <MuiTable
+          columnExtensions={customColumnExtensions}
+          noDataCellComponent={(props) => CustomNoDataCellComponent({ ...props }, customLoading)}
+        />
+      );
+    }
+    if (isVirtualTable) {
+      return <VirtualTable columnExtensions={customColumnExtensions} />;
+    }
+    return <MuiTable columnExtensions={customColumnExtensions} />;
+  };
+
   const renderTable = (rows) => {
     if (remote === true) {
       return (
         <>
           <Grid rows={rows} columns={customColumns}>
-            {hasSearching ? <SearchState onValueChange={changeSearchValue} /> : null}
-            {hasSorting ? <SortingState sorting={sorting} onSortingChange={changeSorting} columnExtensions={customColumnExtensions} /> : null}
-            {hasPagination
-              ? (
-                <PagingState
-                  currentPage={currentPage}
-                  onCurrentPageChange={changeCurrentPage}
-                  pageSize={customPageSize}
-                  onPageSizeChange={changePageSize}
-                />
-              ) : null}
-            {hasPagination
-              ? <CustomPaging totalCount={customTotalCount} />
-              : null}
+            {hasSearching ? (
+              <SearchState onValueChange={changeSearchValue} />
+            ) : null}
+            {hasSorting ? (
+              <SortingState
+                sorting={sorting}
+                onSortingChange={changeSorting}
+                columnExtensions={customColumnExtensions}
+              />
+            ) : null}
+            {hasPagination ? (
+              <PagingState
+                currentPage={currentPage}
+                onCurrentPageChange={changeCurrentPage}
+                pageSize={customPageSize}
+                onPageSizeChange={changePageSize}
+              />
+            ) : null}
+            {hasPagination ? (
+              <CustomPaging totalCount={customTotalCount} />
+            ) : null}
             {hasSelection ? (
               <SelectionState
                 selection={selection}
                 onSelectionChange={changeSelection}
               />
-            )
-              : null}
+            ) : null}
             {hasGrouping ? (
               <GroupingState
                 grouping={grouping}
                 defaultExpandedGroups={defaultExpandedGroups}
-
               />
-            )
-              : null}
+            ) : null}
             {hasGrouping ? <IntegratedGrouping /> : null}
-            {loading !== null ? (
-              <MuiTable
-                columnExtensions={customColumnExtensions}
-                noDataCellComponent={(props) => CustomNoDataCellComponent({ ...props }, customLoading)}
-              />
-
-            ) : (
-              <MuiTable
-                columnExtensions={customColumnExtensions}
-              />
-            )}
+            {renderTableOrVirtualTable()}
             {hasSelection ? (
               <TableSelection
                 selectByRowClick
@@ -309,21 +350,18 @@ function Table({
                 showSelectionColumn={false}
               />
             ) : null}
-            {hasResizing ? <TableColumnResizing defaultColumnWidths={customDefaultColumnWidths} /> : null}
+            {hasResizing ? (
+              <TableColumnResizing
+                defaultColumnWidths={customDefaultColumnWidths}
+              />
+            ) : null}
             <CustomTableHeaderRowCell hasSorting={hasSorting} />
-            {hasGrouping ? (
-              <TableGroupRow />
-            )
-              : null}
+            {hasGrouping ? <TableGroupRow /> : null}
             {hasPagination ? <PagingPanel pageSizes={pageSizes} /> : null}
             {hasToolbar ? <Toolbar /> : null}
             {hasSearching ? <SearchPanel /> : null}
-            {hasColumnVisibility
-              ? (<TableColumnVisibility />)
-              : null}
-            {hasColumnVisibility
-              ? (<CustomColumnChooser />)
-              : null}
+            {hasColumnVisibility ? <TableColumnVisibility /> : null}
+            {hasColumnVisibility ? <CustomColumnChooser /> : null}
           </Grid>
           {renderModal()}
         </>
@@ -333,55 +371,37 @@ function Table({
       <>
         <Grid rows={rows} columns={customColumns}>
           {hasSearching ? <SearchState /> : null}
-          {hasSorting
-            ? (
-              <SortingState
-                sorting={sorting}
-                onSortingChange={changeSorting}
-                columnExtensions={customColumnExtensions}
-              />
-            )
-            : null}
+          {hasSorting ? (
+            <SortingState
+              sorting={sorting}
+              onSortingChange={changeSorting}
+              columnExtensions={customColumnExtensions}
+            />
+          ) : null}
           {hasSorting ? <IntegratedSorting /> : null}
-          {hasPagination
-            ? (
-              <PagingState
-                currentPage={currentPage}
-                onCurrentPageChange={setCurrentPage}
-                onPageSizeChange={setCustomPageSize}
-                pageSize={customPageSize}
-              />
-            ) : null}
-          {hasPagination
-            ? (
-              <IntegratedPaging />
-            ) : null}
+          {hasPagination ? (
+            <PagingState
+              currentPage={currentPage}
+              onCurrentPageChange={setCurrentPage}
+              onPageSizeChange={setCustomPageSize}
+              pageSize={customPageSize}
+            />
+          ) : null}
+          {hasPagination ? <IntegratedPaging /> : null}
           {hasSelection ? (
             <SelectionState
               selection={selection}
               onSelectionChange={changeSelection}
             />
-          )
-            : null}
+          ) : null}
           {hasGrouping ? (
             <GroupingState
               grouping={grouping}
               defaultExpandedGroups={defaultExpandedGroups}
             />
-          )
-            : null}
+          ) : null}
           {hasGrouping ? <IntegratedGrouping /> : null}
-          {loading !== null ? (
-            <MuiTable
-              columnExtensions={customColumnExtensions}
-              noDataCellComponent={(props) => CustomNoDataCellComponent({ ...props }, customLoading)}
-            />
-
-          ) : (
-            <MuiTable
-              columnExtensions={customColumnExtensions}
-            />
-          )}
+          {renderTableOrVirtualTable()}
 
           {hasSelection ? (
             <TableSelection
@@ -390,21 +410,22 @@ function Table({
               showSelectionColumn={false}
             />
           ) : null}
-          {hasResizing ? <TableColumnResizing defaultColumnWidths={customDefaultColumnWidths} /> : null}
-          <CustomTableHeaderRowCell hasLineBreak={hasLineBreak} hasSorting={hasSorting} remote={remote} />
-          {hasGrouping ? (
-            <TableGroupRow />
-          )
-            : null}
+          {hasResizing ? (
+            <TableColumnResizing
+              defaultColumnWidths={customDefaultColumnWidths}
+            />
+          ) : null}
+          <CustomTableHeaderRowCell
+            hasLineBreak={hasLineBreak}
+            hasSorting={hasSorting}
+            remote={remote}
+          />
+          {hasGrouping ? <TableGroupRow /> : null}
           {hasPagination ? <PagingPanel pageSizes={pageSizes} /> : null}
           {hasToolbar ? <Toolbar /> : null}
           {hasSearching ? <SearchPanel /> : null}
-          {hasColumnVisibility
-            ? (<TableColumnVisibility />)
-            : null}
-          {hasColumnVisibility
-            ? (<CustomColumnChooser />)
-            : null}
+          {hasColumnVisibility ? <TableColumnVisibility /> : null}
+          {hasColumnVisibility ? <CustomColumnChooser /> : null}
         </Grid>
         {renderModal()}
       </>
@@ -425,7 +446,7 @@ function Table({
           */
           || (column
             && column.icon
-            && (typeof row[key] === 'object' && row[key].length > 1)
+            && typeof row[key] === 'object' && row[key].length > 1
             && !column.customElement)
         ) {
           if (column.action) {
@@ -487,8 +508,8 @@ Table.defaultProps = {
   hasLineBreak: false,
   grouping: [{}],
   loading: null,
+  isVirtualTable: false,
 };
-
 
 Table.propTypes = {
   columns: PropTypes.arrayOf(PropTypes.object).isRequired,
@@ -518,6 +539,8 @@ Table.propTypes = {
   remote: PropTypes.bool,
   grouping: PropTypes.arrayOf(PropTypes.object),
   loading: PropTypes.bool,
+  isVirtualTable: PropTypes.bool,
+
 };
 
 export default Table;
