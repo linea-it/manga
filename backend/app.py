@@ -1,36 +1,32 @@
 import os
 
 from flask import Flask, Response, jsonify, request
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
+from config import Config
 from flask_cors import CORS
-
 from verifyer import mclass
 
 import fnmatch
 
-application = Flask(__name__)
-cors = CORS(application, resources={r"/*": {"origins": "*"}})
-
+app = Flask(__name__)
+app.config.from_object(Config)
+cors = CORS(app, resources={r"/*": {"origins": "*"}})
+db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
 def get_megacube_path(filename):
     return os.path.join(os.getenv("IMAGE_PATH", "/images"), filename)
 
-
-@application.route('/api')
-def hello():
-    content = open('flux.html').read()
-    return Response(content, mimetype="text/html")
-
-
-@application.route('/api/health_check')
+@app.route('/api/health_check')
 def health_check():
     return jsonify(dict({'success': True}))
 
 
-@application.route('/api/flux_by_position')
+@app.route('/api/flux_by_position')
 def flux_by_position():
     """
         Retorna o Fluxo e lambda para uma posicao x,y.
-
 
         Exemplo de requisicao.
         http://localhost/flux_by_position?megacube=manga-8138-6101-MEGA.fits&x=25&y=26
@@ -65,7 +61,7 @@ def flux_by_position():
     return response
 
 
-@application.route('/api/image_heatmap')
+@app.route('/api/image_heatmap')
 def image_heatmap():
     """
         Retorna os dados que permitem plotar a imagem usando um heatmap.
@@ -96,7 +92,7 @@ def image_heatmap():
     return response
 
 
-@application.route('/api/list_hud')
+@app.route('/api/list_hud')
 def list_hud():
     """
         Retorna a lista de HUD disponivel em um megacube.
@@ -133,7 +129,7 @@ def list_hud():
     return response
 
 
-@application.route('/api/spaxel_fit_by_position')
+@app.route('/api/spaxel_fit_by_position')
 def spaxel_fit_by_position():
     """
         Retorna o "Central Spaxel Best Fit" para uma posicao x,y.
@@ -170,10 +166,10 @@ def spaxel_fit_by_position():
 
 
 if __name__ == '__main__':
-    application.run(debug=True)
+    app.run(debug=True)
 
 
-@application.route('/api/list_megacubes')
+@app.route('/api/list_megacubes')
 def list_megacubes():
     """
         Retorna a lista de megacubos disponíveis.
