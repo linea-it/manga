@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, memo } from 'react';
 import PropTypes from 'prop-types';
 import InputLabel from '@material-ui/core/InputLabel';
 import Input from '@material-ui/core/Input';
@@ -81,6 +81,7 @@ function Table({
   hasLineBreak,
   loading,
   isVirtualTable,
+  setSelectedGalaxy,
 }) {
   const customColumns = columns.map((column) => ({
     name: column.name,
@@ -213,17 +214,6 @@ function Table({
     } else {
       setSearchValue('');
     }
-  };
-
-  const changeSelection = (value) => {
-    let select = value;
-    if (value.length > 0) {
-      const diff = value.filter((x) => !selection.includes(x));
-      select = diff;
-    } else {
-      select = [];
-    }
-    setSelection(select);
   };
 
   const handleChangeFilter = (evt) => {
@@ -361,7 +351,7 @@ function Table({
             {hasToolbar ? <Toolbar /> : null}
             {hasSearching ? <SearchPanel /> : null}
             {hasColumnVisibility ? <TableColumnVisibility /> : null}
-            {hasColumnVisibility ? <CustomColumnChooser /> : null}
+            {hasColumnVisibility ? <CustomColumnChooser setSelectedGalaxy={setSelectedGalaxy} /> : null}
           </Grid>
           {renderModal()}
         </>
@@ -425,7 +415,7 @@ function Table({
           {hasToolbar ? <Toolbar /> : null}
           {hasSearching ? <SearchPanel /> : null}
           {hasColumnVisibility ? <TableColumnVisibility /> : null}
-          {hasColumnVisibility ? <CustomColumnChooser /> : null}
+          {hasColumnVisibility ? <CustomColumnChooser setSelectedGalaxy={setSelectedGalaxy} /> : null}
         </Grid>
         {renderModal()}
       </>
@@ -476,6 +466,21 @@ function Table({
     });
     return line;
   });
+
+  const changeSelection = (value) => {
+    let select = value;
+    if (value.length > 0) {
+      const diff = value.filter((x) => !selection.includes(x));
+      select = diff;
+    } else {
+      select = [];
+    }
+
+    const cubename = select.length > 0 ? rows[select[0]].cube_name : null;
+
+    setSelectedGalaxy(cubename);
+    setSelection(select);
+  };
 
   return (
     <>
@@ -540,7 +545,7 @@ Table.propTypes = {
   grouping: PropTypes.arrayOf(PropTypes.object),
   loading: PropTypes.bool,
   isVirtualTable: PropTypes.bool,
-
+  setSelectedGalaxy: PropTypes.func.isRequired,
 };
 
-export default Table;
+export default memo(Table);

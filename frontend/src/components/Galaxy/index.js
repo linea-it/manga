@@ -1,9 +1,6 @@
 import React from 'react';
 import {
   Grid,
-  Card,
-  CardHeader,
-  CardContent,
   FormControl,
   InputLabel,
   Select,
@@ -47,65 +44,60 @@ function Galaxy({
   const Plot = createPlotlyComponent(Plotly);
 
   return (
-    <Card>
-      <CardHeader
-        title="Galaxy"
-      />
-      <SizeMe monitorHeight>
-        {({ size }) => {
-          if (size.height) {
-            setHeatmapSize(size);
-          }
-          return (
-            <CardContent>
-              {selectedImage.id === 0 ? (
-                <Skeleton height={selectedImage.id !== 0 && size && size.height ? size.height - 2 : 20} />
-              ) : (
-                <Grid container spacing={2} className={classes.animateEnter}>
-                  <Grid item xs={12}>
-                    <Grid container spacing={2}>
-                      <Grid item xs={12} md={6}>
-                        <form autoComplete="off">
-                          <FormControl fullWidth className={classes.textAlignLeft}>
-                            <InputLabel htmlFor="input">Image</InputLabel>
-                            <Select
-                              value={selectedImage.id || 0}
-                              onChange={handleSelectImage}
-                              disabled={selectedMegacube === ''}
-                            >
-                              {hudList.map((hud, i) => (
-                                <MenuItem
-                                  key={hud.name}
-                                  value={i + 1}
-                                >
-                                  {hud.display_name}
-                                </MenuItem>
-                              ))}
-                            </Select>
-                          </FormControl>
-                        </form>
-                      </Grid>
-                      <Grid item xs={12} md={6}>
-                        <form autoComplete="off">
-                          <FormControl fullWidth className={classes.textAlignLeft}>
-                            <InputLabel htmlFor="input">Contour</InputLabel>
-                            <Select
-                              value={selectedContour.id}
-                              onChange={handleSelectContour}
-                              disabled={selectedMegacube === ''}
-                            >
-                              {hudList.filter((image, i) => i + 1 !== selectedImage.id).map((hud, i) => (
-                                <MenuItem
-                                  key={hud.name}
-                                  value={i + 1}
-                                >
-                                  {hud.display_name}
-                                </MenuItem>
-                              ))}
-                            </Select>
-                          </FormControl>
-                        </form>
-                      </Grid>
+    <SizeMe monitorHeight>
+      {({ size }) => {
+        if (size.height) {
+          setHeatmapSize(size);
+        }
+        return (
+          <>
+            {selectedImage.id === 0 ? (
+              <Skeleton height={400} />
+            ) : (
+              <Grid container spacing={2} className={classes.animateEnter}>
+                <Grid item xs={12}>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12} md={6}>
+                      <form autoComplete="off">
+                        <FormControl fullWidth className={classes.textAlignLeft}>
+                          <InputLabel htmlFor="input">Image</InputLabel>
+                          <Select
+                            value={selectedImage.id || 0}
+                            onChange={handleSelectImage}
+                            disabled={selectedMegacube === ''}
+                          >
+                            {hudList.map((hud, i) => (
+                            <MenuItem
+                                key={hud.name}
+                                value={i + 1}
+                              >
+                                {hud.display_name}
+                              </MenuItem>
+                          ))}
+                          </Select>
+                        </FormControl>
+                      </form>
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                      <form autoComplete="off">
+                        <FormControl fullWidth className={classes.textAlignLeft}>
+                          <InputLabel htmlFor="input">Contour</InputLabel>
+                          <Select
+                            value={selectedContour.id}
+                            onChange={handleSelectContour}
+                            disabled={selectedMegacube === ''}
+                          >
+                            {hudList.filter((image, i) => i + 1 !== selectedImage.id).map((hud, i) => (
+                            <MenuItem
+                                key={hud.name}
+                                value={i + 1}
+                              >
+                                {hud.display_name}
+                              </MenuItem>
+                          ))}
+                          </Select>
+                        </FormControl>
+                      </form>
                     </Grid>
                   </Grid>
                   <Grid item xs={12}>
@@ -309,12 +301,12 @@ function Galaxy({
                     </Snackbar>
                   ) : null}
                 </Grid>
-              )}
-            </CardContent>
-          );
-        }}
-      </SizeMe>
-    </Card>
+              </Grid>
+            )}
+          </>
+        );
+      }}
+    </SizeMe>
   );
 }
 

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import Grid from '@material-ui/core/Grid';
-import { useParams } from 'react-router-dom';
 import useInterval from '../../hooks/useInterval';
 import {
   getFluxByPosition,
@@ -10,12 +9,13 @@ import {
   getImageHeatmap,
   getSpaxelFitByPosition,
 } from '../../services/api';
-import Galaxy from '../../components/Galaxy';
-import Spectre from '../../components/Spectre';
-import Spaxel from '../../components/Spaxel';
+import Galaxy from '../Galaxy';
+import Spectre from '../Spectre';
+import Spaxel from '../Spaxel';
+import useStyles from './styles';
 
-function Verifier({ setTitle }) {
-  const { megacube } = useParams();
+function Verifier({ megacube }) {
+  const classes = useStyles();
   const [hudList, setHudList] = useState([]);
   const [selectedImage, setSelectedImage] = useState({
     id: 0,
@@ -39,12 +39,8 @@ function Verifier({ setTitle }) {
   const [heatmapSize, setHeatmapSize] = useState({ height: 450 });
 
   useEffect(() => {
-    setTitle('Verifier');
-  }, [setTitle]);
-
-  useEffect(() => {
     getHudList({ megacube }).then((res) => setHudList(res));
-  }, []);
+  }, [megacube]);
 
   useEffect(() => {
     if (hudList.length > 0) {
@@ -196,8 +192,8 @@ function Verifier({ setTitle }) {
   }, isPlaying ? 1000 : null);
 
   return (
-    <Grid container spacing={2}>
-      <Grid item xs={12} md={5}>
+    <Grid container className={classes.gridContainer}>
+      <Grid item xs={12}>
         <Galaxy
           setHeatmapSize={setHeatmapSize}
           selectedImage={selectedImage}
@@ -221,7 +217,7 @@ function Verifier({ setTitle }) {
           isPlaying={isPlaying}
         />
       </Grid>
-      <Grid item xs={12} md={7}>
+      <Grid item xs={12}>
         <Spectre
           heatmapPoints={heatmapPoints}
           fluxPlotData={fluxPlotData}
@@ -229,7 +225,6 @@ function Verifier({ setTitle }) {
           selectedImage={selectedImage}
         />
       </Grid>
-
 
       <Grid item xs={12}>
         <Spaxel spaxelTableData={spaxelTableData} />
@@ -239,7 +234,7 @@ function Verifier({ setTitle }) {
 }
 
 Verifier.propTypes = {
-  setTitle: PropTypes.func.isRequired,
+  megacube: PropTypes.string.isRequired,
 };
 
 export default Verifier;

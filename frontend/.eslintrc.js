@@ -26,5 +26,6 @@ module.exports = {
     }],
     'react/no-array-index-key': 0,
     'no-plusplus': 0,
+    'react/jsx-props-no-spreading': 0
   }
 };

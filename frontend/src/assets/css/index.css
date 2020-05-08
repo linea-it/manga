@@ -44,3 +44,7 @@ code {
 .plot-container.plotly {
   width: 100%;
 }
+
+.RootBase-root {
+  height: 100%;
+}
