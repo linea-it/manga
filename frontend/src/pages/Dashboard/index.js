@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Container, Section, Bar } from 'react-simple-resizer';
 import Table from '../../components/Table';
 import Verifier from '../../components/Verifier';
@@ -18,25 +18,27 @@ function Dashboard() {
     {
       name: 'galaxy_name',
       title: 'Galaxy',
-      width: 300,
+      width: 220,
     },
     {
       name: 'type',
       title: 'Type',
-      width: 150,
+      width: 80,
     },
     {
       name: 'ra',
       title: 'RA',
+      width: 70,
     },
     {
       name: 'dec',
       title: 'Dec',
+      width: 70,
     },
     {
       name: 'cube_name',
       title: 'Cube',
-      width: 250,
+      width: 220,
     },
   ];
 
@@ -55,6 +57,10 @@ function Dashboard() {
     }));
   }, []);
 
+  useEffect(() => {
+    loadData();
+  }, []);
+
 
   return (
     <Container>
@@ -63,8 +69,9 @@ function Dashboard() {
           columns={columns}
           data={galaxies.data}
           totalCount={galaxies.totalCount}
-          loadData={loadData}
+          // loadData={loadData}
           setSelectedGalaxy={setSelectedGalaxy}
+          remote={false}
         />
       </Section>
       <Bar

@@ -115,7 +115,7 @@ function VerifierGrid({ megacube }) {
           </Grid>
         )) : (
           <Grid container spacing={2}>
-            {[0, 0, 0, 0, 0, 0, 0, 0, 0].map(() => (
+            {[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0].map(() => (
               <Grid item xs={12} md={6} xl={4}>
                 <Skeleton width={400} height={400} className={classes.skeletonMargin} />
               </Grid>
