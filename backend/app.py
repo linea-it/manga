@@ -95,6 +95,29 @@ def image_heatmap():
 
     return response
 
+@application.route('/api/original_image_heatmap')
+def original_image_heatmap():
+    """
+        Retorna a primeira imagem, a original (zero).
+    """
+    args = request.args.to_dict()
+
+    if 'megacube' not in args:
+        raise Exception("Parameter megacube is required")
+
+    megacube = get_megacube_path(args['megacube'])
+
+    cube_data = mclass().get_original_cube_data(megacube)
+
+    result = dict({
+        'z': cube_data,
+        'title': 'FLUX',
+    })
+
+    response = jsonify(result)
+
+    return response
+
 
 @application.route('/api/list_hud')
 def list_hud():

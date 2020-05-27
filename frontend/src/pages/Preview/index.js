@@ -1,18 +1,18 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { Container, Section, Bar } from 'react-simple-resizer';
 import Table from '../../components/Table';
-import Verifier from '../../components/Verifier';
-import VerifierGrid from '../../components/VerifierGrid';
 import { getMegacubesList } from '../../services/api';
-import Switch from '../../components/Switch';
+import OriginalImage from '../../components/OriginalImage';
+import useStyles from './styles';
 
-function Dashboard() {
-  const [galaxies, setGalaxies] = useState({
+function Preview() {
+  // !TODO: Integrate component content based upon the List ID.
+  const classes = useStyles();
+  const [megacubes, setMegacubes] = useState({
     data: [],
     totalCount: 0,
   });
-  const [selectedGalaxy, setSelectedGalaxy] = useState(null);
-  const [isGrid, setIsGrid] = useState(false);
+  const [selectedMegacube, setSelectedMegacube] = useState(null);
 
   const columns = [
     {
@@ -43,7 +43,7 @@ function Dashboard() {
   ];
 
   const loadData = useCallback(() => {
-    getMegacubesList().then((res) => setGalaxies({
+    getMegacubesList().then((res) => setMegacubes({
       data: res.megacubes.map((megacube) => ({
         ra: 0,
         dec: 0,
@@ -59,38 +59,29 @@ function Dashboard() {
 
   useEffect(() => {
     loadData();
-  }, []);
+  }, [loadData]);
 
 
   return (
-    <Container>
+    <Container className={classes.container}>
       <Section>
         <Table
           columns={columns}
-          data={galaxies.data}
-          totalCount={galaxies.totalCount}
-          // loadData={loadData}
-          setSelectedGalaxy={setSelectedGalaxy}
+          data={megacubes.data}
+          totalCount={megacubes.totalCount}
+          setSelectedGalaxy={setSelectedMegacube}
           remote={false}
         />
       </Section>
       <Bar
-        size={2}
-        style={{
-          background: '#aaa',
-          cursor: 'col-resize',
-        }}
+        className={classes.resizeBar}
+        size={3}
       />
-      <Section>
-        <Switch isGrid={isGrid} setIsGrid={setIsGrid} />
-        {isGrid ? (
-          <VerifierGrid megacube={selectedGalaxy} />
-        ) : (
-          <Verifier megacube={selectedGalaxy} />
-        )}
+      <Section className={classes.imageSection}>
+        <OriginalImage megacube={selectedMegacube} />
       </Section>
     </Container>
   );
 }
 
-export default Dashboard;
+export default Preview;

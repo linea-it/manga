@@ -72,6 +72,13 @@ class mclass:
 
         return lHud
 
+    def get_original_cube_data(self, megacube):
+        cube_data = pf.getdata(megacube, 'FLUX')
+
+        z = np.sum(cube_data[:,:,:], axis=0).tolist()
+
+        return z
+
     def image_by_hud(self, megacube, hud):
 
         cube_header = self.get_headers(megacube, 'PoPBins')
@@ -90,9 +97,9 @@ class mclass:
         """
             Converte os dados da imagem para um array utilizando pcolormesh.
             neste casa a matriz 52x52 vire um array 2704 elementos.
-            este array é dividido em pedaços de 52 elementos. 
-            o retorno da função é um array com 52 elementos onde cada elemento tem tamanho 52. 
-            o primeiro elemento corresponde a x=0, y=0, o segundo x=0, y=1 assim sucessivamente. 
+            este array é dividido em pedaços de 52 elementos.
+            o retorno da função é um array com 52 elementos onde cada elemento tem tamanho 52.
+            o primeiro elemento corresponde a x=0, y=0, o segundo x=0, y=1 assim sucessivamente.
             o segundo elemento é a posição x=1.
         """
         # Converte o ndarray para um mesh (matplotlib.collections.QuadMesh)

@@ -38,7 +38,33 @@ function Verifier({ megacube }) {
   const [localHeatmaps, setLocalHeatmaps] = useState([]);
   const [heatmapSize, setHeatmapSize] = useState({ height: 450 });
 
+  const clearData = () => {
+    setHudList([]);
+    setSelectedImage({
+      id: 0,
+      name: '',
+    });
+    setSelectedContour({
+      id: 0,
+      name: '',
+    });
+    setFluxPlotData({});
+    setSpaxelTableData({});
+    setHeatmapPlotImageData({});
+    setHeatmapPlotContourData({});
+    setHeatmapError('');
+    setHeatmapPoints([0, 0]);
+    setHeatmapSliderValue(1);
+    setHeatmapValueLimits([]);
+    setHeatmapColorRangeValue([]);
+    setIsPlaying(false);
+    setLocalHeatmaps([]);
+    setHeatmapSize({ height: 450 });
+  };
+
   useEffect(() => {
+    clearData();
+
     getHudList({ megacube }).then((res) => setHudList(res));
   }, [megacube]);
 

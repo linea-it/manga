@@ -468,6 +468,7 @@ function Table({
   });
 
   const changeSelection = (value) => {
+    setSelectedGalaxy(null);
     let select = value;
     if (value.length > 0) {
       const diff = value.filter((x) => !selection.includes(x));
@@ -514,6 +515,7 @@ Table.defaultProps = {
   grouping: [{}],
   loading: null,
   isVirtualTable: false,
+  setSelectedGalaxy: () => {},
 };
 
 Table.propTypes = {
@@ -545,7 +547,7 @@ Table.propTypes = {
   grouping: PropTypes.arrayOf(PropTypes.object),
   loading: PropTypes.bool,
   isVirtualTable: PropTypes.bool,
-  setSelectedGalaxy: PropTypes.func.isRequired,
+  setSelectedGalaxy: PropTypes.func,
 };
 
 export default memo(Table);
