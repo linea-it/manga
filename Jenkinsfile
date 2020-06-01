@@ -90,8 +90,8 @@ pipeline {
     }
     post {
         always {
-            sh "docker rmi $registryFrontend:frontend_$GIT_COMMIT_SHORT --force"
-            sh "docker rmi $registryBackend:backend_$GIT_COMMIT_SHORT --force"
+            sh "docker rmi $registryFrontend:$GIT_COMMIT_SHORT --force"
+            sh "docker rmi $registryBackend:$GIT_COMMIT_SHORT --force"
         }
     }
 }
