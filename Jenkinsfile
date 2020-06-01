@@ -14,13 +14,15 @@ pipeline {
             }
         }
         stage('Building and push image') {
-            when {
-                allOf {
-                    expression {
-                        env.TAG_NAME == null
-                    }
-                    expression {
-                        env.BRANCH_NAME.toString().equals('master')
+            steps {
+                when {
+                    allOf {
+                        expression {
+                            env.TAG_NAME == null
+                        }
+                        expression {
+                            env.BRANCH_NAME.toString().equals('master')
+                        }
                     }
                 }
             }
@@ -51,9 +53,11 @@ pipeline {
                 )
             }
             stage('Building and Push Image Release') {
-                when {
-                    expression {
-                        env.TAG_NAME != null
+                steps {
+                    when {
+                        expression {
+                            env.TAG_NAME != null
+                        }
                     }
                 }
                 steps {
