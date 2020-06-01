@@ -30,7 +30,7 @@ pipeline {
                     backend: {
                         dir('backend') {
                             script {
-                                dockerImageBack = docker.build registryFrontend + ":$GIT_COMMIT_SHORT"
+                                dockerImageBack = docker.build registryBackend + ":$GIT_COMMIT_SHORT"
                             }
                         }
                     }
