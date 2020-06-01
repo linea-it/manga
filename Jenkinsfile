@@ -10,9 +10,11 @@ pipeline {
     stages {
 
         stage('Creating version.json') {
-            dir('frontend') {
-                steps {
-                    sh './version.sh && cat ./src/assets/json/version.json'
+            steps {
+                dir('frontend') {
+                    steps {
+                        sh './version.sh && cat ./src/assets/json/version.json'
+                    }
                 }
             }
         }
@@ -39,7 +41,7 @@ pipeline {
                                 }
                             }
                         }
-                    },
+                    }
                     backend: {
                         dir('backend') {
                             script {
@@ -71,7 +73,7 @@ pipeline {
                                     }
                                 }
                             }
-                        },
+                        }
                         backend: {
                             dir('backend') {
                                 script {
