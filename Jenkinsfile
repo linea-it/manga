@@ -25,6 +25,9 @@ pipeline {
                         }
                     }
                 }
+
+            }
+            steps {
                 parallel(
                     frontend: {
                         dir('frontend') {
@@ -57,6 +60,8 @@ pipeline {
                             env.TAG_NAME != null
                         }
                     }
+                }
+                steps {
                     parallel(
                         frontend: {
                             dir('frontend') {
