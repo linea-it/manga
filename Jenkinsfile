@@ -44,7 +44,6 @@ pipeline {
 
                             docker.withRegistry( '', registryCredential ) {
                                     dockerImageFront.push()
-                                    dockerImageFront.push("frontend:latest")
                             }
 
                         }
@@ -66,7 +65,7 @@ pipeline {
 
                             docker.withRegistry( '', registryCredential ) {
                                 dockerImageBack.push()
-                                dockerImageBack.push("backend:latest")
+  
                             }
 
                         }
