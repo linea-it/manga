@@ -1,92 +1,90 @@
 pipeline {
     environment {
-        registry = "linea/manga"
+        registryFrontend = "linea/manga_frontend"
+        registryBackend = "linea/manga_backend"
         registryCredential = 'Dockerhub'
-        dockerImageBack = ''
-        dockerImageFront = ''
-        GIT_COMMIT_SHORT = sh(
-                script: "printf \$(git rev-parse --short ${GIT_COMMIT})",
-                returnStdout: true
-        )
+        dockerImage = ''
+        commit = ''
     }
     agent any
-
     stages {
-        stage('Build Images') {
-            steps {
-              parallel(
-              frontend: {
-                  dir('frontend') {
-                      script {
-                          dockerImageFront = docker.build registry + "_frontend:$GIT_COMMIT_SHORT"
-                      }
-                  }
-              },
-              backend: {
-                dir('backend') {
-                    script {
-                        dockerImageBack = docker.build registry + "_backend:$GIT_COMMIT_SHORT"
-                    }
+
+        stage('Creating version.json') {
+            dir('frontend') {
+                steps {
+                    sh './version.sh && cat ./src/assets/json/version.json'
                 }
-              }
-          )
+            }
         }
-      }
-      stage('Push Images') {
-            steps {
-              parallel(
-              frontend: {
-                  dir('frontend') {
-                    script{
-                        if (env.BRANCH_NAME.toString().equals('master')) {
-                            // No caso de um merge em master
-                            // Faz o push da imagem também como latest.
-
-                            docker.withRegistry( '', registryCredential ) {
-                                    dockerImageFront.push()
-                                    dockerImageFront.push("frontend:latest")
-                            }
-
-                        }
+        stage('Building and push image') {
+            when {
+                allOf {
+                    expression {
+                        env.TAG_NAME == null
                     }
-                    //  Para merges em qualquer branch faz o push apenas da imagem com o hash do commit.
-                    script {
-                        docker.withRegistry( '', registryCredential ) {
-                            dockerImageFront.push()
-                        }
-                    }
-                  }
-              },
-              backend: {
-                  dir('backend') {
-                    script{
-                        if (env.BRANCH_NAME.toString().equals('master')) {
-                            // No caso de um merge em master
-                            // Faz o push da imagem também como latest.
-
-                            docker.withRegistry( '', registryCredential ) {
-                                dockerImageBack.push()
-                                dockerImageBack.push("backend:latest")
-                            }
-
-                        }
-                    }
-                    //  Para merges em qualquer branch faz o push apenas da imagem com o hash do commit.
-                    script {
-                        docker.withRegistry( '', registryCredential ) {
-                            dockerImageBack.push()
-                        }
+                    expression {
+                        env.BRANCH_NAME.toString().equals('master')
                     }
                 }
             }
-          )
+            steps {
+                parallel(
+                    frontend: {
+                        dir('frontend') {
+                            script {
+                                sh 'docker build -t $registryFrontend:$GIT_COMMIT .'
+                                docker.withRegistry('', registryCredential) {
+                                    sh 'docker push $registryFrontend:$GIT_COMMIT'
+                                    sh 'docker rmi $registryFrontend:$GIT_COMMIT'
+                                }
+                            }
+                        }
+                    }
+                    backend: {
+                        dir('backend') {
+                            script {
+                                sh 'docker build -t $registryBackend:$GIT_COMMIT .'
+                                docker.withRegistry('', registryCredential) {
+                                    sh 'docker push $registryBackend:$GIT_COMMIT'
+                                    sh 'docker rmi $registryBackend:$GIT_COMMIT'
+                                }
+                            }
+                        }
+                    }
+                )
+            }
+            stage('Building and Push Image Release') {
+                when {
+                    expression {
+                        env.TAG_NAME != null
+                    }
+                }
+                steps {
+                    parallel(
+                        frontend: {
+                            dir('frontend') {
+                                script {
+                                    sh 'docker build -t $registryFrontend:$TAG_NAME .'
+                                    docker.withRegistry('', registryCredential) {
+                                        sh 'docker push $registryFrontend:$TAG_NAME'
+                                        sh 'docker rmi $registryFrontend:$TAG_NAME'
+                                    }
+                                }
+                            }
+                        }
+                        backend: {
+                            dir('backend') {
+                                script {
+                                    sh 'docker build -t $registryBackend:$TAG_NAME .'
+                                    docker.withRegistry('', registryCredential) {
+                                        sh 'docker push $registryBackend:$TAG_NAME'
+                                        sh 'docker rmi $registryBackend:$TAG_NAME'
+                                    }
+                                }
+                            }
+                        }
+                    )
+                }
+            }
         }
-      }
     }
-    post {
-        always {
-            sh "docker rmi $registry" + "_frontend:$GIT_COMMIT_SHORT --force"
-            sh "docker rmi $registry" + "_backend:$GIT_COMMIT_SHORT --force"
-        }
-    }
-}
