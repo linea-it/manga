@@ -6,7 +6,7 @@ echo "TAG: ${GIT_TAG}"
 
 printenv
 
-cat >./src/assets/json/version.json <<EOF
+cat >./frontend/src/assets/json/version.json <<EOF
   {
     "tag": "$GIT_TAG",
     "sha": "$GIT_COMMIT",

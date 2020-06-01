@@ -14,7 +14,7 @@ pipeline {
     stages {
         stage('Creating version.json') {
             steps {
-                sh './frontend/version.sh && cat ./frontend/src/assets/json/version.json'
+                sh './version.sh && cat ./frontend/src/assets/json/version.json'
             }
         }
         stage('Build Images') {
