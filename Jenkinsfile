@@ -41,7 +41,7 @@ pipeline {
                                 }
                             }
                         }
-                    }
+                    },
                     backend: {
                         dir('backend') {
                             script {
@@ -73,7 +73,7 @@ pipeline {
                                     }
                                 }
                             }
-                        }
+                        },
                         backend: {
                             dir('backend') {
                                 script {
