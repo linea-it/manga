@@ -12,9 +12,7 @@ pipeline {
         stage('Creating version.json') {
             steps {
                 dir('frontend') {
-                    steps {
-                        sh './version.sh && cat ./src/assets/json/version.json'
-                    }
+                    sh './version.sh && cat ./src/assets/json/version.json'
                 }
             }
         }
