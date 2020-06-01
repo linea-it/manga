@@ -8,12 +8,9 @@ pipeline {
     }
     agent any
     stages {
-
         stage('Creating version.json') {
             steps {
-                dir('frontend') {
-                    sh './version.sh && cat ./src/assets/json/version.json'
-                }
+                sh './frontend/version.sh && cat ./frontend/src/assets/json/version.json'
             }
         }
         stage('Building and push image') {
