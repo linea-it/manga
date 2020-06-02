@@ -3,6 +3,7 @@ pipeline {
         registryFrontend =  'linea/manga_frontend'
         registryBackend = 'linea/manga_backend'
         registryCredential = 'Dockerhub'
+        deployment = 'manga'
         dockerImageBack = ''
         dockerImageFront = ''
         GIT_COMMIT_SHORT = sh(
@@ -92,6 +93,20 @@ pipeline {
         always {
             sh "docker rmi $registryFrontend:$GIT_COMMIT_SHORT --force"
             sh "docker rmi $registryBackend:$GIT_COMMIT_SHORT --force"
+            sh """
+                curl -D - -X \"POST\" \
+                -H \"content-type: application/json\" \
+                -H \"X-Rundeck-Auth-Token: $RD_AUTH_TOKEN\" \
+                -d '{\"argString\": \"-namespace $namespace -commit $GIT_COMMIT_SHORT -image $registryBackend:$GIT_COMMIT_SHORT -deployment $deployment\"}' \
+                https://fox.linea.gov.br/api/1/job/15e5ca31-67e4-4c56-a7fa-fb5f97c1231f/executions
+            """
+            sh """
+                curl -D - -X \"POST\" \
+                -H \"content-type: application/json\" \
+                -H \"X-Rundeck-Auth-Token: $RD_AUTH_TOKEN\" \
+                -d '{\"argString\": \"-namespace $namespace -commit $GIT_COMMIT_SHORT -image $registryFrontend:$GIT_COMMIT_SHORT -deployment $deployment\"}' \
+                https://fox.linea.gov.br/api/1/job/15e5ca31-67e4-4c56-a7fa-fb5f97c1231f/executions
+            """
         }
     }
 }
