@@ -4,6 +4,7 @@ pipeline {
         registryBackend = 'linea/manga_backend'
         registryCredential = 'Dockerhub'
         deployment = 'manga'
+        namespace = 'manga'
         dockerImageBack = ''
         dockerImageFront = ''
         GIT_COMMIT_SHORT = sh(
