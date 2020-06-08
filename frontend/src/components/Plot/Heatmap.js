@@ -5,16 +5,20 @@ import createPlotlyComponent from 'react-plotly.js/factory';
 import useWindowSize from '../../hooks/useWindowSize';
 
 
-function Heatmap({ z }) {
+function Heatmap({ z, sectionWidth }) {
   const windowSize = useWindowSize();
   const Plot = createPlotlyComponent(Plotly);
   const [height, setHeight] = useState(400);
+  const [width, setWidth] = useState(500);
 
   useEffect(() => {
-    const margin = windowSize.height * 0.1;
-    const newHeight = windowSize.height - margin;
-    setHeight(newHeight);
-  }, [windowSize.height]);
+    const size = windowSize.height > sectionWidth ? sectionWidth : windowSize.height;
+
+    const margin = size * 0.025;
+    const ratio = size - margin;
+    setHeight(ratio);
+    setWidth(ratio);
+  }, [windowSize.height, sectionWidth]);
 
 
   return (
@@ -32,22 +36,22 @@ function Heatmap({ z }) {
       ]}
       layout={{
         height,
+        width,
         hovermode: 'closest',
         yaxis: {
+          showticklabels: false,
+          visible: false,
           scaleanchor: 'x',
           scaleratio: 1,
-          autosize: true,
-          autorange: false,
-          range: [0, 73],
         },
         xaxis: {
-          autorange: false,
-          range: [0, 73],
+          showticklabels: false,
+          visible: false,
           constrain: 'domain',
         },
         margin: {
           t: 30,
-          l: 0,
+          l: 30,
           r: 0,
           pad: 0,
         },
@@ -73,6 +77,7 @@ Heatmap.propTypes = {
       PropTypes.number,
     ),
   ).isRequired,
+  sectionWidth: PropTypes.number.isRequired,
 };
 
 export default Heatmap;

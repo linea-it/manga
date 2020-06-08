@@ -4,7 +4,7 @@ import { Grid } from '@material-ui/core';
 import Heatmap from '../Plot/Heatmap';
 import { getOriginalImageHeatmap } from '../../services/api';
 
-function OriginalImage({ megacube, size }) {
+function OriginalImage({ megacube, sectionWidth }) {
   const [originalImageData, setOriginalImageData] = useState([]);
 
   useEffect(() => {
@@ -15,11 +15,10 @@ function OriginalImage({ megacube, size }) {
   }, [megacube]);
 
   return (
-
-    <Grid container spacing={3} direction="row" alignItems="stretch">
-      <Grid item xs={12}>
+    <Grid container spacing={3} justify="center" alignItems="center">
+      <Grid item>
         {megacube
-          ? <Heatmap z={originalImageData} />
+          ? <Heatmap z={originalImageData} sectionWidth={sectionWidth} />
           : null}
       </Grid>
     </Grid>
@@ -32,6 +31,7 @@ OriginalImage.defaultProps = {
 
 OriginalImage.propTypes = {
   megacube: PropTypes.string,
+  sectionWidth: PropTypes.number.isRequired,
 };
 
 export default OriginalImage;

@@ -43,6 +43,11 @@ const light = createMuiTheme({
         },
       },
     },
+    TableSelectRow: {
+      selected: {
+        backgroundColor: 'rgba(92, 107, 125, .8)',
+      },
+    },
     MuiSkeleton: {
       text: {
         marginTop: 0,

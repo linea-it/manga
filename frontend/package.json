@@ -11,7 +11,6 @@
     "@material-ui/icons": "^4.4.3",
     "@material-ui/lab": "^4.0.0-alpha.28",
     "axios": "^0.19.0",
-    "babel-eslint": "^10.0.3",
     "clsx": "^1.0.4",
     "history": "^4.10.1",
     "moment": "^2.24.0",

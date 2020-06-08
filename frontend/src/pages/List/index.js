@@ -2,17 +2,12 @@ import React, { useState, useCallback, useEffect } from 'react';
 import {
   Grid,
 } from '@material-ui/core';
-
 import { useHistory } from 'react-router-dom';
-
-import Header from '../../components/Header';
 import Table from '../../components/Table';
-
 import data from './data.json';
 
 function List() {
   const history = useHistory();
-  const [currentUser] = useState({ username: 'Matheus' });
   const [megacubes, setMegacubes] = useState({ data: [], totalCount: 0 });
 
   const columns = [
@@ -64,14 +59,11 @@ function List() {
   return (
     <Grid container direction="column" alignItems="stretch">
       <Grid item>
-        <Header currentUser={currentUser} />
-      </Grid>
-      <Grid item>
         <Table
           columns={columns}
           data={megacubes.data}
           totalCount={megacubes.totalCount}
-          pageSize={25}
+          pageSize={10}
           remote={false}
         />
       </Grid>

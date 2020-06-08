@@ -1,9 +1,4 @@
 import React from 'react';
-import {
-  Card,
-  CardHeader,
-  CardContent,
-} from '@material-ui/core';
 import { Skeleton } from '@material-ui/lab';
 import Plotly from 'plotly.js';
 import createPlotlyComponent from 'react-plotly.js/factory';
@@ -13,7 +8,6 @@ function Spectre({
   heatmapPoints,
   fluxPlotData,
   heatmapSize,
-  selectedImage,
 }) {
   const classes = styles();
   const Plot = createPlotlyComponent(Plotly);
@@ -39,7 +33,8 @@ function Spectre({
             layout={{
               hovermode: 'closest',
               autosize: true,
-              height: heatmapSize && heatmapSize.height ? heatmapSize.height - 40 : 0,
+              width: heatmapSize.width,
+              height: heatmapSize.height,
               title: `x=${heatmapPoints[0]}, y=${heatmapPoints[1]}`,
             }}
             config={{

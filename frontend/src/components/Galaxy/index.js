@@ -67,13 +67,13 @@ function Galaxy({
                             disabled={selectedMegacube === ''}
                           >
                             {hudList.map((hud, i) => (
-                            <MenuItem
+                              <MenuItem
                                 key={hud.name}
                                 value={i + 1}
                               >
                                 {hud.display_name}
                               </MenuItem>
-                          ))}
+                            ))}
                           </Select>
                         </FormControl>
                       </form>
@@ -88,13 +88,13 @@ function Galaxy({
                             disabled={selectedMegacube === ''}
                           >
                             {hudList.filter((image, i) => i + 1 !== selectedImage.id).map((hud, i) => (
-                            <MenuItem
+                              <MenuItem
                                 key={hud.name}
                                 value={i + 1}
                               >
                                 {hud.display_name}
                               </MenuItem>
-                          ))}
+                            ))}
                           </Select>
                         </FormControl>
                       </form>
@@ -261,7 +261,6 @@ function Galaxy({
 
                   <Grid item xs={12}>
                     <HeatmapSlider
-                        // aria-label="Heatmap Slider"
                       max={hudList.length}
                       min={1}
                       value={heatmapSliderValue}
@@ -290,7 +289,6 @@ function Galaxy({
                     >
                       <SnackbarContent
                         className={classes.error}
-                        aria-describedby="client-snackbar"
                         message={(
                           <span className={classes.message}>
                             <Icon className={clsx('fa fa-exclamation-triangle', classes.iconError)} />

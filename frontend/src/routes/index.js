@@ -9,8 +9,8 @@ export default function Routes() {
   return (
     <Switch>
       <Route exact path="/" component={List} />
-      <Route exact path="/preview/:id_list" component={Preview} />
-      <Route exact path="/explorer/:id_list/:id_object" component={Explorer} />
+      <Route exact path="/preview/:idList" component={Preview} />
+      <Route exact path="/explorer/:megacube/" component={Explorer} />
     </Switch>
   );
 }

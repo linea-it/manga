@@ -1,5 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { Container, Section, Bar } from 'react-simple-resizer';
+import { useParams } from 'react-router-dom';
+import { Grid, Button } from '@material-ui/core';
 import Table from '../../components/Table';
 import { getMegacubesList } from '../../services/api';
 import OriginalImage from '../../components/OriginalImage';
@@ -7,12 +9,15 @@ import useStyles from './styles';
 
 function Preview() {
   // !TODO: Integrate component content based upon the List ID.
+  const { idList } = useParams();
+
   const classes = useStyles();
   const [megacubes, setMegacubes] = useState({
     data: [],
     totalCount: 0,
   });
   const [selectedMegacube, setSelectedMegacube] = useState(null);
+  const [sectionWidth, setSectionWidth] = useState(0);
 
   const columns = [
     {
@@ -61,6 +66,8 @@ function Preview() {
     loadData();
   }, [loadData]);
 
+  const handleSectionWidthChange = (size) => setSectionWidth(size);
+
 
   return (
     <Container className={classes.container}>
@@ -77,8 +84,13 @@ function Preview() {
         className={classes.resizeBar}
         size={3}
       />
-      <Section className={classes.imageSection}>
-        <OriginalImage megacube={selectedMegacube} />
+      <Section className={classes.imageSection} onSizeChanged={handleSectionWidthChange}>
+        <Grid container spacing={2} direction="column" alignItems="flex-end">
+          <Grid item>
+            <Button variant="contained" color="primary" disabled={!selectedMegacube} href={`/explorer/${selectedMegacube}`}>Explorer</Button>
+          </Grid>
+        </Grid>
+        <OriginalImage megacube={selectedMegacube} sectionWidth={sectionWidth} />
       </Section>
     </Container>
   );
