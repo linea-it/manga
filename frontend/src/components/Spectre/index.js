@@ -33,7 +33,7 @@ function Spectre({
             layout={{
               hovermode: 'closest',
               autosize: true,
-              width: heatmapSize.width,
+              // width: heatmapSize.width + 100,
               height: heatmapSize.height,
               title: `x=${heatmapPoints[0]}, y=${heatmapPoints[1]}`,
             }}
