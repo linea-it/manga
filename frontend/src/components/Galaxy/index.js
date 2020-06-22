@@ -9,6 +9,9 @@ import {
   IconButton,
   Snackbar,
   SnackbarContent,
+  Card,
+  CardHeader,
+  CardContent,
 } from '@material-ui/core';
 import Skeleton from '@material-ui/lab/Skeleton';
 import { SizeMe } from 'react-sizeme';
@@ -43,265 +46,282 @@ function Galaxy({
   const classes = styles();
   const Plot = createPlotlyComponent(Plotly);
 
+  const calculateSize = (width, margin) => {
+    if (margin) {
+      const m = (margin / 100) * parseInt(width);
+
+      return parseInt(width) - m;
+    }
+    return parseInt(width);
+  };
+
   return (
     <SizeMe monitorHeight>
       {({ size }) => {
-        if (size.height) {
+        if (size.height && size.width) {
           setHeatmapSize(size);
         }
         return (
-          <>
-            {selectedImage.id === 0 ? (
-              <Skeleton height={400} />
-            ) : (
-              <Grid container spacing={2} className={classes.animateEnter}>
-                <Grid item xs={12}>
-                  <Grid container spacing={2}>
-                    <Grid item xs={12} md={6}>
-                      <form autoComplete="off">
-                        <FormControl fullWidth className={classes.textAlignLeft}>
-                          <InputLabel htmlFor="input">Image</InputLabel>
-                          <Select
-                            value={selectedImage.id || 0}
-                            onChange={handleSelectImage}
-                            disabled={selectedMegacube === ''}
-                          >
-                            {hudList.map((hud, i) => (
-                              <MenuItem
-                                key={hud.name}
-                                value={i + 1}
-                              >
-                                {hud.display_name}
-                              </MenuItem>
-                            ))}
-                          </Select>
-                        </FormControl>
-                      </form>
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                      <form autoComplete="off">
-                        <FormControl fullWidth className={classes.textAlignLeft}>
-                          <InputLabel htmlFor="input">Contour</InputLabel>
-                          <Select
-                            value={selectedContour.id}
-                            onChange={handleSelectContour}
-                            disabled={selectedMegacube === ''}
-                          >
-                            {hudList.filter((image, i) => i + 1 !== selectedImage.id).map((hud, i) => (
-                              <MenuItem
-                                key={hud.name}
-                                value={i + 1}
-                              >
-                                {hud.display_name}
-                              </MenuItem>
-                            ))}
-                          </Select>
-                        </FormControl>
-                      </form>
-                    </Grid>
-                  </Grid>
+          <Card>
+            <CardHeader title="Galaxy" />
+            <CardContent>
+              {selectedImage.id === 0 ? (
+                <Skeleton height={400} />
+              ) : (
+                <Grid container spacing={2} className={classes.animateEnter}>
                   <Grid item xs={12}>
-                    <Plot
-                      data={[
-                        {
-                          z: heatmapError === '' ? heatmapPlotImageData.z : [],
-                          type: 'heatmap',
-                          colorscale: 'Viridis',
-                          fixedrange: true,
-                          zauto: false,
-                          zmin: heatmapColorRangeValue[0],
-                          zmax: heatmapColorRangeValue[1],
-                          hoverinfo: 'x+y+z',
-                        },
-                        {
-                          z: heatmapError === '' ? heatmapPlotContourData.z : [],
-                          type: 'contour',
-                          showlegend: false,
-                          contours: {
-                            coloring: 'none',
+                    <Grid container spacing={2}>
+                      <Grid item xs={12} md={6}>
+                        <form autoComplete="off">
+                          <FormControl fullWidth className={classes.textAlignLeft}>
+                            <InputLabel htmlFor="input">Image</InputLabel>
+                            <Select
+                              value={selectedImage.id || 0}
+                              onChange={handleSelectImage}
+                              disabled={selectedMegacube === ''}
+                            >
+                              {hudList.map((hud, i) => (
+                                <MenuItem
+                                  key={hud.name}
+                                  value={i + 1}
+                                >
+                                  {hud.display_name}
+                                </MenuItem>
+                              ))}
+                            </Select>
+                          </FormControl>
+                        </form>
+                      </Grid>
+                      <Grid item xs={12} md={6}>
+                        <form autoComplete="off">
+                          <FormControl fullWidth className={classes.textAlignLeft}>
+                            <InputLabel htmlFor="input">Contour</InputLabel>
+                            <Select
+                              value={selectedContour.id}
+                              onChange={handleSelectContour}
+                              disabled={selectedMegacube === ''}
+                            >
+                              {hudList.filter((image, i) => i + 1 !== selectedImage.id).map((hud, i) => (
+                                <MenuItem
+                                  key={hud.name}
+                                  value={i + 1}
+                                >
+                                  {hud.display_name}
+                                </MenuItem>
+                              ))}
+                            </Select>
+                          </FormControl>
+                        </form>
+                      </Grid>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <Plot
+                        data={[
+                          {
+                            z: heatmapError === '' ? heatmapPlotImageData.z : [],
+                            type: 'heatmap',
+                            colorscale: 'Viridis',
+                            fixedrange: true,
+                            zauto: false,
+                            zmin: heatmapColorRangeValue[0],
+                            zmax: heatmapColorRangeValue[1],
+                            hoverinfo: 'x+y+z',
                           },
-                          line: {
-                            color: 'white',
-                            smoothing: 0.85,
-                          },
-                        },
-                        {
-                          type: 'scatter',
-                          x: [heatmapPoints[0] === 0
-                            ? null
-                            : heatmapPoints[0], 0],
-                          y: [heatmapPoints[1] === 0
-                            ? null
-                            : heatmapPoints[1], heatmapPoints[1]],
-                          mode: 'lines',
-                          line: {
-                            color: 'rgba(255, 255, 255, .7)',
-                            width: 6,
-                          },
-                          hoverinfo: 'skip',
-                          showlegend: false,
-                        },
-                        {
-                          type: 'scatter',
-                          x: [heatmapPoints[0] === 0
-                            ? null
-                            : heatmapPoints[0], heatmapPoints[0]],
-                          y: [heatmapPoints[1] === 0
-                            ? null
-                            : heatmapPoints[1], 0],
-                          mode: 'lines',
-                          line: {
-                            color: 'rgba(255, 255, 255, .4)',
-                            width: 6,
-                          },
-                          hoverinfo: 'skip',
-                          showlegend: false,
-                        },
-                        {
-                          x: [heatmapPoints[0] === 0
-                            ? null
-                            : heatmapPoints[0]],
-                          y: [heatmapPoints[1] === 0
-                            ? null
-                            : heatmapPoints[1]],
-                          type: 'scatter',
-                          mode: 'markers',
-                          marker: {
-                            color: 'rgba(0, 0, 0, .8)',
-                            size: 13,
+                          {
+                            z: heatmapError === '' ? heatmapPlotContourData.z : [],
+                            type: 'contour',
+                            showlegend: false,
+                            contours: {
+                              coloring: 'none',
+                            },
                             line: {
-                              color: 'rgba(255, 255, 255, .5)',
-                              width: 3,
+                              color: 'white',
+                              smoothing: 0.85,
                             },
                           },
-                          hoverinfo: 'skip',
-                          showlegend: false,
-                        },
-                        {
-                          type: 'scatter',
-                          x: [heatmapPoints[0] === 0
-                            ? null
-                            : heatmapPoints[0], 0],
-                          y: [heatmapPoints[1] === 0
-                            ? null
-                            : heatmapPoints[1], heatmapPoints[1]],
-                          mode: 'lines',
-                          line: {
-                            color: 'rgba(0, 0, 0, .8)',
-                            width: 3,
-                            dash: 'dot',
+                          {
+                            type: 'scatter',
+                            x: [heatmapPoints[0] === 0
+                              ? null
+                              : heatmapPoints[0], 0],
+                            y: [heatmapPoints[1] === 0
+                              ? null
+                              : heatmapPoints[1], heatmapPoints[1]],
+                            mode: 'lines',
+                            line: {
+                              color: 'rgba(255, 255, 255, .7)',
+                              width: 6,
+                            },
+                            hoverinfo: 'skip',
+                            showlegend: false,
                           },
-                          hoverinfo: 'skip',
-                          showlegend: false,
-                        },
-                        {
-                          type: 'scatter',
-                          x: [heatmapPoints[0] === 0
-                            ? null
-                            : heatmapPoints[0], heatmapPoints[0]],
-                          y: [heatmapPoints[1] === 0
-                            ? null
-                            : heatmapPoints[1], 0],
-                          mode: 'lines',
-                          line: {
-                            color: 'rgba(0, 0, 0, .8)',
-                            width: 3,
-                            dash: 'dot',
+                          {
+                            type: 'scatter',
+                            x: [heatmapPoints[0] === 0
+                              ? null
+                              : heatmapPoints[0], heatmapPoints[0]],
+                            y: [heatmapPoints[1] === 0
+                              ? null
+                              : heatmapPoints[1], 0],
+                            mode: 'lines',
+                            line: {
+                              color: 'rgba(255, 255, 255, .4)',
+                              width: 6,
+                            },
+                            hoverinfo: 'skip',
+                            showlegend: false,
                           },
-                          hoverinfo: 'skip',
-                          showlegend: false,
-                        },
-                      ]}
-                      className={classes.plotWrapper}
-                      layout={{
-                        hovermode: 'closest',
-                        colorscale: {
-                          zmin: heatmapColorRangeValue[0],
-                          zmax: heatmapColorRangeValue[1],
-                        },
-                        width: size && size.width ? size.width - 50 : 0,
-                        height: size && size.width ? size.width - 50 : 0,
-                        title: selectedImage.name,
-                        yaxis: {
-                          scaleanchor: 'x',
-                        },
-                        showSendToCloud: true,
-                      }}
-                      config={{
-                        scrollZoom: false,
-                        displaylogo: false,
-                        responsive: true,
-                        displayModeBar: 'hover',
-                      }}
-                      transition={{
-                        duration: 500,
-                        easing: 'cubic-in-out',
-                      }}
-                      frame={{ duration: 500 }}
-                      onClick={handleHeatmapClick}
-                    />
-
-                    <HeatmapColorRange
-                      style={{
-                        position: 'absolute',
-                        right: 10,
-                        top: 191,
-                        maxHeight: heatmapSize.height - 369,
-                      }}
-                      orientation="vertical"
-                        // aria-label="Heatmap Color Range"
-                      max={heatmapValueLimits[1]}
-                      min={heatmapValueLimits[0]}
-                      value={heatmapColorRangeValue}
-                      valueLabelDisplay="off"
-                      className={classes.colorRange}
-                      onChange={handleHeatmapColorRangeChange}
-                    />
-                  </Grid>
-
-                  <Grid item xs={12}>
-                    <HeatmapSlider
-                      max={hudList.length}
-                      min={1}
-                      value={heatmapSliderValue}
-                      marks
-                      step={1}
-                      valueLabelDisplay="on"
-                      className={classes.slider}
-                      onChange={handleHeatmapSliderChange}
-                    />
-
-                    <IconButton
-                      onClick={handlePlayClick}
-                      title="Play"
-                      className={classes.playButton}
-                    >
-                      <Icon className={`fa ${isPlaying ? 'fa-pause' : 'fa-play'}`} />
-                    </IconButton>
-                  </Grid>
-                  {heatmapError !== '' ? (
-                    <Snackbar
-                      anchorOrigin={{
-                        vertical: 'bottom',
-                        horizontal: 'left',
-                      }}
-                      open={heatmapError !== ''}
-                    >
-                      <SnackbarContent
-                        className={classes.error}
-                        message={(
-                          <span className={classes.message}>
-                            <Icon className={clsx('fa fa-exclamation-triangle', classes.iconError)} />
-                            {heatmapError}
-                          </span>
-                        )}
+                          {
+                            x: [heatmapPoints[0] === 0
+                              ? null
+                              : heatmapPoints[0]],
+                            y: [heatmapPoints[1] === 0
+                              ? null
+                              : heatmapPoints[1]],
+                            type: 'scatter',
+                            mode: 'markers',
+                            marker: {
+                              color: 'rgba(0, 0, 0, .8)',
+                              size: 13,
+                              line: {
+                                color: 'rgba(255, 255, 255, .5)',
+                                width: 3,
+                              },
+                            },
+                            hoverinfo: 'skip',
+                            showlegend: false,
+                          },
+                          {
+                            type: 'scatter',
+                            x: [heatmapPoints[0] === 0
+                              ? null
+                              : heatmapPoints[0], 0],
+                            y: [heatmapPoints[1] === 0
+                              ? null
+                              : heatmapPoints[1], heatmapPoints[1]],
+                            mode: 'lines',
+                            line: {
+                              color: 'rgba(0, 0, 0, .8)',
+                              width: 3,
+                              dash: 'dot',
+                            },
+                            hoverinfo: 'skip',
+                            showlegend: false,
+                          },
+                          {
+                            type: 'scatter',
+                            x: [heatmapPoints[0] === 0
+                              ? null
+                              : heatmapPoints[0], heatmapPoints[0]],
+                            y: [heatmapPoints[1] === 0
+                              ? null
+                              : heatmapPoints[1], 0],
+                            mode: 'lines',
+                            line: {
+                              color: 'rgba(0, 0, 0, .8)',
+                              width: 3,
+                              dash: 'dot',
+                            },
+                            hoverinfo: 'skip',
+                            showlegend: false,
+                          },
+                        ]}
+                        className={classes.plotWrapper}
+                        layout={{
+                          hovermode: 'closest',
+                          colorscale: {
+                            zmin: heatmapColorRangeValue[0],
+                            zmax: heatmapColorRangeValue[1],
+                          },
+                          width: calculateSize(size.width, 7),
+                          height: calculateSize(size.width, 30),
+                          margin: {
+                            l: 30,
+                            pad: 0,
+                            t: 50,
+                            b: 50,
+                          },
+                          yaxis: {
+                            scaleanchor: 'x',
+                          },
+                          showSendToCloud: true,
+                        }}
+                        config={{
+                          scrollZoom: false,
+                          displaylogo: false,
+                          responsive: true,
+                          displayModeBar: 'hover',
+                        }}
+                        transition={{
+                          duration: 500,
+                          easing: 'cubic-in-out',
+                        }}
+                        frame={{ duration: 500 }}
+                        onClick={handleHeatmapClick}
                       />
-                    </Snackbar>
-                  ) : null}
+
+                      <HeatmapColorRange
+                        style={{
+                          position: 'absolute',
+                          right: 5,
+                          top: 170,
+                          maxHeight: heatmapSize.height - 290,
+                        }}
+                        orientation="vertical"
+                        // aria-label="Heatmap Color Range"
+                        max={heatmapValueLimits[1]}
+                        min={heatmapValueLimits[0]}
+                        value={heatmapColorRangeValue}
+                        valueLabelDisplay="off"
+                        className={classes.colorRange}
+                        onChange={handleHeatmapColorRangeChange}
+                      />
+                    </Grid>
+
+                    <Grid item xs={12} className={classes.textAlignCenter}>
+                      <HeatmapSlider
+                        max={hudList.length}
+                        min={1}
+                        value={heatmapSliderValue}
+                        marks
+                        step={1}
+                        valueLabelDisplay="on"
+                        className={classes.slider}
+                        onChange={handleHeatmapSliderChange}
+                      />
+
+                      <IconButton
+                        onClick={handlePlayClick}
+                        title="Play"
+                        className={classes.playButton}
+                      >
+                        <Icon className={`fa ${isPlaying ? 'fa-pause' : 'fa-play'}`} />
+                      </IconButton>
+                    </Grid>
+                    {heatmapError !== '' ? (
+                      <Snackbar
+                        anchorOrigin={{
+                          vertical: 'bottom',
+                          horizontal: 'left',
+                        }}
+                        open={heatmapError !== ''}
+                      >
+                        <SnackbarContent
+                          className={classes.error}
+                          message={(
+                            <span className={classes.message}>
+                              <Icon className={clsx('fa fa-exclamation-triangle', classes.iconError)} />
+                              {heatmapError}
+                            </span>
+                        )}
+                        />
+                      </Snackbar>
+                    ) : null}
+                  </Grid>
                 </Grid>
-              </Grid>
-            )}
-          </>
+              )}
+            </CardContent>
+          </Card>
         );
       }}
     </SizeMe>

@@ -8,9 +8,11 @@ import {
   getImageHeatmap,
   getSpaxelFitByPosition,
 } from '../../services/api';
+import VerifierGrid from '../../components/VerifierGrid';
 import Galaxy from '../../components/Galaxy';
 import Spectre from '../../components/Spectre';
 import Spaxel from '../../components/Spaxel';
+import Switch from '../../components/Switch';
 
 function Explorer() {
   const { megacube } = useParams();
@@ -35,6 +37,7 @@ function Explorer() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [localHeatmaps, setLocalHeatmaps] = useState([]);
   const [heatmapSize, setHeatmapSize] = useState({ height: 450 });
+  const [isGrid, setIsGrid] = useState(false);
 
   useEffect(() => {
     getHudList({ megacube }).then((res) => setHudList(res));
@@ -190,42 +193,58 @@ function Explorer() {
   }, isPlaying ? 1000 : null);
 
   return (
-    <Grid container spacing={3} style={{ padding: 16 }}>
-      <Grid item xs={12} md={5}>
-        <Galaxy
-          setHeatmapSize={setHeatmapSize}
-          selectedImage={selectedImage}
-          handleSelectImage={handleSelectImage}
-          selectedMegacube={megacube}
-          hudList={hudList}
-          handleSelectContour={handleSelectContour}
-          heatmapError={heatmapError}
-          heatmapPlotImageData={heatmapPlotImageData}
-          heatmapPlotContourData={heatmapPlotContourData}
-          heatmapColorRangeValue={heatmapColorRangeValue}
-          heatmapPoints={heatmapPoints}
-          selectedContour={selectedContour}
-          handleHeatmapClick={handleHeatmapClick}
-          heatmapSize={heatmapSize}
-          heatmapValueLimits={heatmapValueLimits}
-          handleHeatmapColorRangeChange={handleHeatmapColorRangeChange}
-          heatmapSliderValue={heatmapSliderValue}
-          handleHeatmapSliderChange={handleHeatmapSliderChange}
-          handlePlayClick={handlePlayClick}
-          isPlaying={isPlaying}
-        />
-      </Grid>
-      <Grid item xs={12} md={7}>
-        <Spectre
-          heatmapPoints={heatmapPoints}
-          fluxPlotData={fluxPlotData}
-          heatmapSize={heatmapSize}
-          selectedImage={selectedImage}
-        />
-      </Grid>
+    <Grid container spacing={2} style={{ padding: 16 }}>
       <Grid item xs={12}>
-        <Spaxel spaxelTableData={spaxelTableData} />
+        <Grid container justify="flex-end">
+          <Grid item>
+            <Switch isGrid={isGrid} setIsGrid={setIsGrid} />
+          </Grid>
+        </Grid>
       </Grid>
+      {isGrid ? (
+        <Grid item xs={12}>
+          <VerifierGrid megacube={megacube} />
+        </Grid>
+      ) : (
+        <>
+          <Grid item xs={12} md={5} xl={4}>
+            <Galaxy
+              setHeatmapSize={setHeatmapSize}
+              selectedImage={selectedImage}
+              handleSelectImage={handleSelectImage}
+              selectedMegacube={megacube}
+              hudList={hudList}
+              handleSelectContour={handleSelectContour}
+              heatmapError={heatmapError}
+              heatmapPlotImageData={heatmapPlotImageData}
+              heatmapPlotContourData={heatmapPlotContourData}
+              heatmapColorRangeValue={heatmapColorRangeValue}
+              heatmapPoints={heatmapPoints}
+              selectedContour={selectedContour}
+              handleHeatmapClick={handleHeatmapClick}
+              heatmapSize={heatmapSize}
+              heatmapValueLimits={heatmapValueLimits}
+              handleHeatmapColorRangeChange={handleHeatmapColorRangeChange}
+              heatmapSliderValue={heatmapSliderValue}
+              handleHeatmapSliderChange={handleHeatmapSliderChange}
+              handlePlayClick={handlePlayClick}
+              isPlaying={isPlaying}
+            />
+          </Grid>
+          <Grid item xs={12} md={7} xl={8}>
+            <Spectre
+              heatmapPoints={heatmapPoints}
+              fluxPlotData={fluxPlotData}
+              heatmapSize={heatmapSize}
+              selectedImage={selectedImage}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <Spaxel spaxelTableData={spaxelTableData} />
+          </Grid>
+        </>
+      )}
+
     </Grid>
   );
 }

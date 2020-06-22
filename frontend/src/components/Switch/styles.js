@@ -6,7 +6,7 @@ const useStyles = makeStyles((theme) => ({
   switchContainer: {
     paddingLeft: theme.spacing(4),
     paddingRight: theme.spacing(4),
-    paddingTop: theme.spacing(4),
+    // paddingTop: theme.spacing(4),
   },
   switch: {
     marginLeft: theme.spacing(2),

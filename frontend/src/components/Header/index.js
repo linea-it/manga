@@ -33,7 +33,7 @@ function Header({ currentUser }) {
       <Toolbar>
         <Grid container justify="space-between" alignItems="center">
           <Grid item>
-            <Link href="/list" color="inherit" underline="none">
+            <Link href="/" color="inherit" underline="none">
               <Grid container spacing={1}>
                 <Grid item>
                   <img src={desLogo} alt="DES Portal Logo" />

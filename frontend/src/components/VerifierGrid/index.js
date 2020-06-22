@@ -39,14 +39,18 @@ function VerifierGrid({ megacube }) {
   const [localHeatmaps, setLocalHeatmaps] = useState([]);
 
   useEffect(() => {
-    getHudList({ megacube }).then((res) => setHudList(res));
+    getHudList({ megacube }).then((res) => {
+      setHudList(res);
+    });
   }, [megacube]);
 
   useEffect(() => {
     if (hudList.length > 0) {
       hudList.forEach((hud) => {
         getImageHeatmap({ megacube, hud: hud.name })
-          .then((res) => setLocalHeatmaps((localHeatmapsRef) => [...localHeatmapsRef, res]))
+          .then((res) => {
+            setLocalHeatmaps((localHeatmapsRef) => [...localHeatmapsRef, res]);
+          })
           .catch((err) => {
             setLocalHeatmaps((localHeatmapsRef) => [...localHeatmapsRef, {
               title: hud.display_name,
@@ -63,8 +67,8 @@ function VerifierGrid({ megacube }) {
     const skeletons = [];
     for (let i = hudList.length; i > localHeatmaps.length; i--) {
       skeletons.push(
-        <Grid key={i} item xs={12} md={6} xl={4}>
-          <Skeleton width={400} height={400} className={classes.skeletonMargin} />
+        <Grid item xs={12} sm={6} md={4} xl={3}>
+          <Skeleton variant="rect" width={400} height={400} className={classes.skeletonMargin} />
         </Grid>,
       );
     }
@@ -75,7 +79,7 @@ function VerifierGrid({ megacube }) {
     <Grid container className={classes.gridContainer}>
       {localHeatmaps.length > 0
         ? localHeatmaps.map((heatmap, i) => (
-          <Grid key={i} item xs={12} md={6} xl={4} className={classes.animateEnter}>
+          <Grid key={i} item xs={12} sm={6} md={4} xl={3} className={classes.animateEnter}>
             <Plot
               data={[{
                 z: heatmap.error ? [] : heatmap.z,
@@ -116,8 +120,8 @@ function VerifierGrid({ megacube }) {
         )) : (
           <Grid container spacing={2}>
             {[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0].map(() => (
-              <Grid item xs={12} md={6} xl={4}>
-                <Skeleton width={400} height={400} className={classes.skeletonMargin} />
+              <Grid item xs={12} sm={6} md={4} xl={3}>
+                <Skeleton variant="rect" width={400} height={400} className={classes.skeletonMargin} />
               </Grid>
             ))}
           </Grid>

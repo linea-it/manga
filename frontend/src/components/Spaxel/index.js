@@ -1,5 +1,4 @@
 import React from 'react';
-import { Skeleton } from '@material-ui/lab';
 import styles from './styles';
 import Table from '../Table';
 
@@ -28,7 +27,7 @@ function Spaxel({ spaxelTableData }) {
           />
         </div>
       )
-        : [0, 1, 2, 3, 4, 5].map((i) => <Skeleton key={i} className={classes.skeletonMargin} />)}
+        : null}
     </>
   );
 }
