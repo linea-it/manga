@@ -1,22 +1,30 @@
-version: "3.6"
+version: '3.8'
+
 services:
-  # (Backend Flask)
   backend:
     build: ./backend
+    command: python manage.py runserver 0.0.0.0:8000
     volumes:
-      - ./backend:/app
-      - ./images:/images
-    # ports:
-    #   - 8000:8000
-  frontend:
-    build: ./frontend
+      - ./backend:/usr/src/app/
+      - ./images:/usr/src/app/images/
     ports:
-      - 80:8080
-    volumes:
-      - ./nginx/development.conf:/etc/nginx/conf.d/default.conf:ro
-    # cap_drop:
-    #   - ALL
+      - 8000:8000
+    env_file:
+      - ./.env.dev
     depends_on:
-      - backend
-    links:
-      - backend
+      - db
+  db:
+    image: postgres:12.3-alpine
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=manga
+
+volumes:
+  backend:
+    driver: local
+  pg_data:
+    driver: local
+

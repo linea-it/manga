@@ -1,21 +1,30 @@
-FROM python:3.6
+# Pull official base image
+FROM python:3.8.3-alpine
 
-MAINTAINER Glauber Costa Vila Verde <glauber.vila.verde@gmail.com>
+# Set work directory
+WORKDIR /usr/src/app
 
-ENV APP_PATH=/app
-ENV STATIC_PATH=/app/static
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
 
-RUN mkdir ${APP_PATH} ${STATIC_PATH}
+# Install psycopg2 dependencies
+RUN apk update \
+  && apk add postgresql-dev gcc python3-dev musl-dev
 
-COPY . ${APP_PATH}
+# Install python-ldap dependencies
+RUN apk add build-base openldap-dev python2-dev python3-dev
 
-WORKDIR ${APP_PATH}
-
+# Install dependencies
 RUN pip install --upgrade pip
+COPY ./requirements.txt /usr/src/app/requirements.txt
+RUN pip install -r requirements.txt
 
-RUN pip install -r ${APP_PATH}/requirements.txt
+# Copy entrypoint.sh
+COPY ./entrypoint.sh /usr/src/app/entrypoint.sh
 
+# Copy project
+COPY . /usr/src/app/
 
-EXPOSE 8000
-
-CMD gunicorn -b 0.0.0.0:8000 --workers=3 --reload wsgi:application
+# Run entrypoint.sh
+ENTRYPOINT ["/usr/src/app/entrypoint.sh"]

@@ -1,2 +1,3 @@
-images/*.fits
-
+images/*.*
+images/mp-4/*.*
+images/mp-9/*.*
