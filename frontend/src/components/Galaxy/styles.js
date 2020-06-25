@@ -70,6 +70,9 @@ const styles = makeStyles((theme) => ({
   textAlignCenter: {
     textAlign: 'center',
   },
+  positionRelative: {
+    position: 'relative',
+  },
 }));
 
 export default styles;

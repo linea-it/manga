@@ -25,7 +25,7 @@ function Switch({ isGrid, setIsGrid }) {
     >
 
       <Grid>
-        <Typography variant="button" display="block" gutterBottom>Verifier</Typography>
+        <Typography variant="button" display="block" gutterBottom>Image</Typography>
       </Grid>
       <Grid>
         <FormControlLabel

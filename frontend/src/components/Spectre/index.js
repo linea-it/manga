@@ -12,18 +12,6 @@ function Spectre({
   const classes = styles();
   const Plot = createPlotlyComponent(Plotly);
 
-
-  const calculateSize = (width, margin) => {
-    console.log('margin', margin);
-
-    if (margin) {
-      const m = (margin / 100) * parseInt(width);
-
-      return parseInt(width) - m;
-    }
-    return parseInt(width);
-  };
-
   return (
     <Card>
       <CardHeader title="Spectre" />
@@ -48,7 +36,7 @@ function Spectre({
                 hovermode: 'closest',
                 autosize: true,
                 // width: heatmapSize.width + 100,
-                height: parseInt(heatmapSize.height) - 80,
+                height: heatmapSize.height + 94,
                 title: `x=${heatmapPoints[0]}, y=${heatmapPoints[1]}`,
               }}
               config={{
@@ -65,7 +53,7 @@ function Spectre({
             />
           </div>
         ) : (
-          <div style={{ height: parseInt(heatmapSize.height) - 80 }} />
+          <div style={{ height: heatmapSize.height + 97 }} />
         )}
       </CardContent>
     </Card>
