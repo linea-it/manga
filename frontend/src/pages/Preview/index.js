@@ -21,6 +21,10 @@ function Preview() {
 
   const columns = [
     {
+      name: 'id',
+      title: 'ID',
+    },
+    {
       name: 'galaxy_name',
       title: 'Galaxy',
       width: 220,
@@ -49,7 +53,8 @@ function Preview() {
 
   const loadData = useCallback(() => {
     getMegacubesList().then((res) => setMegacubes({
-      data: res.megacubes.map((megacube) => ({
+      data: res.megacubes.map((megacube, i) => ({
+        id: i + 1,
         ra: 0,
         dec: 0,
         type: null,
@@ -77,6 +82,8 @@ function Preview() {
           data={megacubes.data}
           totalCount={megacubes.totalCount}
           setSelectedGalaxy={setSelectedMegacube}
+          pageSize={100}
+          pageSizes={[100, 200, 300]}
           remote={false}
         />
       </Section>

@@ -7,6 +7,8 @@ from verifyer import mclass
 
 import fnmatch
 
+import json
+
 application = Flask(__name__)
 cors = CORS(application, resources={r"/*": {"origins": "*"}})
 
@@ -118,6 +120,21 @@ def original_image_heatmap():
 
     return response
 
+@application.route('/api/original_image_heatmap_json')
+def original_image_heatmap_json():
+    """
+        Retorna a primeira imagem, a original (zero).
+    """
+
+    megacube = get_megacube_path('manga.json')
+
+    megacube_dict = {}
+
+    with open(megacube) as f:
+        megacube_dict = json.load(f)
+
+
+    return megacube_dict
 
 @application.route('/api/list_hud')
 def list_hud():

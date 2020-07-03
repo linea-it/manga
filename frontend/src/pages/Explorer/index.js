@@ -207,7 +207,7 @@ function Explorer() {
         </Grid>
       ) : (
         <>
-          <Grid item xs={12} md={5} xl={4}>
+          <Grid item xs={12} md={6} xl={4}>
             <Galaxy
               setHeatmapSize={setHeatmapSize}
               selectedImage={selectedImage}
@@ -231,13 +231,19 @@ function Explorer() {
               isPlaying={isPlaying}
             />
           </Grid>
-          <Grid item xs={12} md={7} xl={8}>
+          <Grid item xs={12} md={6} xl={8}>
             <Spectre
               heatmapPoints={heatmapPoints}
               fluxPlotData={fluxPlotData}
               heatmapSize={heatmapSize}
               selectedImage={selectedImage}
             />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            {/* Space dedicated to future histograms */}
+          </Grid>
+          <Grid item xs={12} md={6}>
+            {/* Space dedicated to future histograms */}
           </Grid>
           <Grid item xs={12}>
             <Spaxel spaxelTableData={spaxelTableData} />

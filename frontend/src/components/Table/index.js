@@ -321,6 +321,7 @@ function Table({
             ) : null}
             {hasSelection ? (
               <SelectionState
+                style={{ cursor: 'pointer' }}
                 selection={selection}
                 onSelectionChange={changeSelection}
               />
@@ -380,6 +381,7 @@ function Table({
           {hasPagination ? <IntegratedPaging /> : null}
           {hasSelection ? (
             <SelectionState
+              style={{ cursor: 'pointer' }}
               selection={selection}
               onSelectionChange={changeSelection}
             />
@@ -469,19 +471,35 @@ function Table({
 
   const changeSelection = (value) => {
     setSelectedGalaxy(null);
-    let select = value;
-    if (value.length > 0) {
-      const diff = value.filter((x) => !selection.includes(x));
-      select = diff;
-    } else {
-      select = [];
-    }
 
-    const cubename = select.length > 0 ? rows[select[0]].cube_name : null;
+    const select = value[value.length - 1];
 
+    const cubename = rows[select].cube_name;
+
+    setSelection([select]);
     setSelectedGalaxy(cubename);
-    setSelection(select);
   };
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+
+      // 38 (ArrowUp)
+      if (e.keyCode === 38) {
+        const selectLine = selection.length > 0 && selection[0] !== 0 ? [selection[0] - 1] : [0];
+        changeSelection(selectLine);
+      }
+
+      // 40 (ArrowDown)
+      if (e.keyCode === 40) {
+        const selectLine = selection.length > 0 ? [selection[0] + 1] : [0];
+        changeSelection(selectLine);
+      }
+    };
+
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [rows]);
 
   return (
     <>
