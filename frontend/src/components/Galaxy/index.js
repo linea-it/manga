@@ -48,16 +48,25 @@ function Galaxy({
   const Plot = createPlotlyComponent(Plotly);
 
   useEffect(() => {
-    const size = windowSize.height;
+    const size = windowSize.width;
 
-    const marginHeight = size * 0.35;
+    let marginHeight = size * 0.77;
+    let marginWidth = size * 0.70;
+
+
+    if(windowSize.width < 1920 && windowSize.width >= 960 ) {
+      marginHeight = size * 0.67;
+      marginWidth = size * 0.6;
+    } else if (windowSize.width < 960) {
+      marginHeight = size * 0.3;
+      marginWidth = size * 0.2;
+    }
+
     const ratioHeight = size - marginHeight;
-
-    const marginWidth = size * 0.25;
     const ratioWidth = size - marginWidth;
 
     setHeatmapSize({ width: ratioWidth, height: ratioHeight });
-  }, [windowSize.height]);
+  }, [windowSize.width]);
 
   return (
     <Card>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Grid } from '@material-ui/core';
+import { Grid, Card, CardHeader, CardContent } from '@material-ui/core';
 import { useParams } from 'react-router-dom';
 import useInterval from '../../hooks/useInterval';
 import {
@@ -7,6 +7,8 @@ import {
   getHudList,
   getImageHeatmap,
   getSpaxelFitByPosition,
+  getLogAgeByPosition,
+  getVecsByPosition,
 } from '../../services/api';
 import VerifierGrid from '../../components/VerifierGrid';
 import Galaxy from '../../components/Galaxy';
@@ -38,6 +40,16 @@ function Explorer() {
   const [localHeatmaps, setLocalHeatmaps] = useState([]);
   const [heatmapSize, setHeatmapSize] = useState({ height: 450 });
   const [isGrid, setIsGrid] = useState(false);
+  const [agePlotData, setAgePlotData] = useState({
+    x: [],
+    y: [],
+    m: []
+  });
+  const [vecsPlotData, setVecsPlotData] = useState({
+    x: [],
+    y: [],
+    m: []
+  });
 
   useEffect(() => {
     getHudList({ megacube }).then((res) => setHudList(res));
@@ -126,6 +138,30 @@ function Explorer() {
       }));
     }
   }, [spaxelTableData]);
+
+  useEffect(() => {
+    if(heatmapPoints[0] !== 0 && heatmapPoints[1] !== 0) {
+      getLogAgeByPosition({
+        megacube,
+        x: heatmapPoints[0],
+        y: heatmapPoints[1]
+      }).then(res => {
+          setAgePlotData(res)
+        });
+    }
+  }, [heatmapPoints, megacube]);
+
+  useEffect(() => {
+    if(heatmapPoints[0] !== 0 && heatmapPoints[1] !== 0) {
+      getVecsByPosition({
+        megacube,
+        x: heatmapPoints[0],
+        y: heatmapPoints[1]
+      }).then(res => {
+          setVecsPlotData(res)
+        });
+    }
+  }, [heatmapPoints, megacube]);
 
   const handleSelectImage = (e) => {
     setHeatmapPoints([0, 0]);
@@ -237,13 +273,9 @@ function Explorer() {
               fluxPlotData={fluxPlotData}
               heatmapSize={heatmapSize}
               selectedImage={selectedImage}
+              vecsPlotData={vecsPlotData}
+              agePlotData={agePlotData}
             />
-          </Grid>
-          <Grid item xs={12} md={6}>
-            {/* Space dedicated to future histograms */}
-          </Grid>
-          <Grid item xs={12} md={6}>
-            {/* Space dedicated to future histograms */}
           </Grid>
           <Grid item xs={12}>
             <Spaxel spaxelTableData={spaxelTableData} />

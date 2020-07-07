@@ -26,3 +26,11 @@ export const getHudList = ({ megacube }) =>
 export const getMegacubesList = () =>
   axios.get('/list_megacubes')
     .then(res => res.data)
+
+export const getLogAgeByPosition = ({ megacube, x, y }) =>
+  axios.get(`/log_age_by_position?megacube=${megacube}.fits&x=${x}&y=${y}`)
+    .then(res => res.data)
+
+export const getVecsByPosition = ({ megacube, x, y }) =>
+  axios.get(`/vecs_by_position?megacube=${megacube}.fits&x=${x}&y=${y}`)
+    .then(res => res.data)

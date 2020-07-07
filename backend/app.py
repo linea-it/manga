@@ -209,6 +209,63 @@ def spaxel_fit_by_position():
     return response
 
 
+@application.route('/api/log_age_by_position')
+def log_age_by_position():
+    """
+        Retorna o "Central Spaxel Best Fit" para uma posicao x,y.
+
+        Exemplo de requisicao.
+        http://localhost/spaxel_fit_by_position?megacube=manga-8138-6101-MEGA.fits&x=15&y=29
+    """
+    args = request.args.to_dict()
+
+    if 'megacube' not in args:
+        raise Exception("Parameter megacube is required")
+
+    if 'x' not in args:
+        raise Exception("Parameter x is required")
+
+    if 'y' not in args:
+        raise Exception("Parameter y is required")
+
+    megacube = get_megacube_path(args['megacube'])
+
+    log_age = mclass().log_age_by_position(
+        megacube, int(args['x']), int(args['y']))
+
+    response = jsonify(log_age)
+
+    return response
+
+@application.route('/api/vecs_by_position')
+def vecs_by_position():
+    """
+        Retorna o "Central Spaxel Best Fit" para uma posicao x,y.
+
+        Exemplo de requisicao.
+        http://localhost/spaxel_fit_by_position?megacube=manga-8138-6101-MEGA.fits&x=15&y=29
+    """
+    args = request.args.to_dict()
+
+    if 'megacube' not in args:
+        raise Exception("Parameter megacube is required")
+
+    if 'x' not in args:
+        raise Exception("Parameter x is required")
+
+    if 'y' not in args:
+        raise Exception("Parameter y is required")
+
+    megacube = get_megacube_path(args['megacube'])
+
+    vecs = mclass().vecs_by_position(
+        megacube, int(args['x']), int(args['y']))
+
+    response = jsonify(vecs)
+
+    return response
+
+
 if __name__ == '__main__':
     application.run(debug=True)
 

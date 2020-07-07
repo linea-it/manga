@@ -164,6 +164,74 @@ class mclass:
 
         return rows
 
+    def log_age_by_position(self, megacube, x, y):
+
+        xlim = np.log10([1e5,20e9])  # do not change)
+        ylim = [0,100] # do not change
+
+        ############## Making log scale in the x axis ###############
+        summedpopx = []
+        summedpopxTemp = []
+        summedpopxTemp2 = []
+        summedpopm = []
+        summedpopmTemp = []
+        summedpopmTemp2 = []
+
+        popx = self.get_cube_data(megacube, 'PoPVecsL', x, y)
+        popm = self.get_cube_data(megacube, 'PoPVecsM', x, y)
+
+        aux = pf.getdata(megacube,'BaseAgeMetal')
+        popage = aux[:,0]
+        popZ = aux[:,1]
+        zs = np.unique(popZ)[np.unique(popZ) != 0]
+
+        for z in zs:
+            if(len(popZ[popZ == z]) == 0):
+                print('Metallicity',z,' is not in the base, I hope you know wath you are doing!')
+
+            summedpopxTemp.append(popx[popZ == z])
+            summedpopxTemp2 = np.column_stack(summedpopxTemp)
+            summedpopmTemp.append(popm[popZ == z])
+            summedpopmTemp2 = np.column_stack(summedpopmTemp)
+
+        for ind in range(0,len(summedpopxTemp2)):
+              summedpopx=np.append(summedpopx,sum(summedpopxTemp2[ind]))
+              summedpopm=np.append(summedpopm,sum(summedpopmTemp2[ind]))
+
+        summedpopages = popage[popZ == zs[0]]
+
+        result = dict({
+            "x": list(np.log10(summedpopages)),
+            "y": list(summedpopx),
+            "m": list(summedpopm),
+        })
+
+        return result
+
+    def vecs_by_position(self, megacube, x, y):
+        xaxis = np.array([])
+        yaxis = np.array([])
+        maxis = np.array([])
+
+
+        cube_header = self.get_headers(megacube, 'PopBins')
+        cube_data = self.get_cube_data(megacube, 'PopBins')
+
+        vecs = 0
+        for i in range(0, np.shape(cube_data)[0], 1):
+           if 'light' in cube_header['DATA' + str(i)]: vecs = vecs + 1
+
+        for k in np.arange(vecs + 1):
+           xaxis = np.append(xaxis, k)
+           yaxis = np.append(yaxis, cube_data[k, int(y), int(x)])
+           maxis = np.append(maxis, cube_header['DATA' + str(k)])
+
+        return dict({
+            "x": list(xaxis),
+            "y": list(yaxis),
+            "m": list(maxis)
+        })
+
 
 if __name__ == '__main__':
     filename = sys.argv[1]
