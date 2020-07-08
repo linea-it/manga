@@ -8,9 +8,6 @@ const useStyles = makeStyles((theme) => ({
   imageSection: {
     padding: theme.spacing(1),
   },
-  container: {
-    minHeight: '100%',
-  },
 }));
 
 export default useStyles;

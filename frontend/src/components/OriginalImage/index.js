@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { Grid } from '@material-ui/core';
 import Heatmap from '../Plot/Heatmap';
 import { getOriginalImageHeatmap } from '../../services/api';
 
@@ -14,15 +13,9 @@ function OriginalImage({ megacube, sectionWidth }) {
     }
   }, [megacube]);
 
-  return (
-    <Grid container spacing={3} justify="center" alignItems="center">
-      <Grid item>
-        {megacube
-          ? <Heatmap z={originalImageData} sectionWidth={sectionWidth} />
-          : null}
-      </Grid>
-    </Grid>
-  );
+  return megacube
+    ? <Heatmap z={originalImageData} sectionWidth={sectionWidth} />
+    : null;
 }
 
 OriginalImage.defaultProps = {

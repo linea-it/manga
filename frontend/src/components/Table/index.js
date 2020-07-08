@@ -82,6 +82,7 @@ function Table({
   loading,
   isVirtualTable,
   setSelectedGalaxy,
+  height,
 }) {
   const customColumns = columns.map((column) => ({
     name: column.name,
@@ -275,6 +276,7 @@ function Table({
       if (isVirtualTable) {
         return (
           <VirtualTable
+            height={height}
             columnExtensions={customColumnExtensions}
             noDataCellComponent={(props) => CustomNoDataCellComponent({ ...props }, customLoading)}
           />
@@ -288,7 +290,7 @@ function Table({
       );
     }
     if (isVirtualTable) {
-      return <VirtualTable columnExtensions={customColumnExtensions} />;
+      return <VirtualTable height={height} columnExtensions={customColumnExtensions} />;
     }
     return <MuiTable columnExtensions={customColumnExtensions} />;
   };
@@ -482,7 +484,6 @@ function Table({
 
   useEffect(() => {
     const handleKeyDown = (e) => {
-
       // 38 (ArrowUp)
       if (e.keyCode === 38) {
         const selectLine = selection.length > 0 && selection[0] !== 0 ? [selection[0] - 1] : [0];
@@ -534,6 +535,7 @@ Table.defaultProps = {
   loading: null,
   isVirtualTable: false,
   setSelectedGalaxy: () => {},
+  height: 530,
 };
 
 Table.propTypes = {
@@ -566,6 +568,7 @@ Table.propTypes = {
   loading: PropTypes.bool,
   isVirtualTable: PropTypes.bool,
   setSelectedGalaxy: PropTypes.func,
+  height: PropTypes.number,
 };
 
 export default memo(Table);

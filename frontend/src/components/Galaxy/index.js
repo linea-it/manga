@@ -54,7 +54,7 @@ function Galaxy({
     let marginWidth = size * 0.70;
 
 
-    if(windowSize.width < 1920 && windowSize.width >= 960 ) {
+    if (windowSize.width < 1920 && windowSize.width >= 960) {
       marginHeight = size * 0.67;
       marginWidth = size * 0.6;
     } else if (windowSize.width < 960) {

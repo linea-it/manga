@@ -5,6 +5,7 @@ import { Grid, Button } from '@material-ui/core';
 import Table from '../../components/Table';
 import { getMegacubesList } from '../../services/api';
 import OriginalImage from '../../components/OriginalImage';
+import useWindowSize from '../../hooks/useWindowSize';
 import useStyles from './styles';
 
 function Preview() {
@@ -12,17 +13,20 @@ function Preview() {
   const { idList } = useParams();
 
   const classes = useStyles();
+  const windowSize = useWindowSize();
   const [megacubes, setMegacubes] = useState({
     data: [],
     totalCount: 0,
   });
   const [selectedMegacube, setSelectedMegacube] = useState(null);
   const [sectionWidth, setSectionWidth] = useState(0);
+  const [tableHeight, setTableHeight] = useState(0);
 
   const columns = [
     {
       name: 'id',
       title: 'ID',
+      width: 100,
     },
     {
       name: 'galaxy_name',
@@ -71,11 +75,20 @@ function Preview() {
     loadData();
   }, [loadData]);
 
+  useEffect(() => {
+    let margin = (windowSize.height * 0.24) + 4;
+
+    if (windowSize.width <= 1280) {
+      margin = (windowSize.height * 0.32) + 8;
+    }
+
+    setTableHeight(windowSize.height - margin);
+  }, [windowSize]);
+
   const handleSectionWidthChange = (size) => setSectionWidth(size);
 
-
   return (
-    <Container className={classes.container}>
+    <Container>
       <Section>
         <Table
           columns={columns}
@@ -85,6 +98,8 @@ function Preview() {
           pageSize={100}
           pageSizes={[100, 200, 300]}
           remote={false}
+          height={tableHeight}
+          isVirtualTable
         />
       </Section>
       <Bar

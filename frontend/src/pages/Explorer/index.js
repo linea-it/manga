@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Grid, Card, CardHeader, CardContent } from '@material-ui/core';
-import { useParams } from 'react-router-dom';
+import {
+  Grid, Button, Icon, Typography,
+} from '@material-ui/core';
+import { useParams, useHistory } from 'react-router-dom';
 import useInterval from '../../hooks/useInterval';
 import {
   getFluxByPosition,
@@ -15,9 +17,11 @@ import Galaxy from '../../components/Galaxy';
 import Spectre from '../../components/Spectre';
 import Spaxel from '../../components/Spaxel';
 import Switch from '../../components/Switch';
+import { mergeArrayOfArrays } from '../../services/utils';
 
 function Explorer() {
   const { megacube } = useParams();
+  const history = useHistory();
   const [hudList, setHudList] = useState([]);
   const [selectedImage, setSelectedImage] = useState({
     id: 0,
@@ -43,12 +47,12 @@ function Explorer() {
   const [agePlotData, setAgePlotData] = useState({
     x: [],
     y: [],
-    m: []
+    m: [],
   });
   const [vecsPlotData, setVecsPlotData] = useState({
     x: [],
     y: [],
-    m: []
+    m: [],
   });
 
   useEffect(() => {
@@ -85,9 +89,10 @@ function Explorer() {
       const heatmap = localHeatmaps.filter((el) => el.title === selectedImage.name);
       if (heatmap.length > 0) {
         setHeatmapPlotImageData(heatmap[0]);
-        const heatmapArr = [].concat.apply([], heatmap[0].z);
-        setHeatmapValueLimits([Math.min(...heatmapArr), Math.max(...heatmapArr)]);
-        setHeatmapColorRangeValue([Math.min(...heatmapArr), Math.max(...heatmapArr)]);
+        const mergedHeatmapZ = mergeArrayOfArrays(heatmap[0].z);
+
+        setHeatmapValueLimits([Math.min(...mergedHeatmapZ), Math.max(...mergedHeatmapZ)]);
+        setHeatmapColorRangeValue([Math.min(...mergedHeatmapZ), Math.max(...mergedHeatmapZ)]);
         setHeatmapError('');
       } else {
         getImageHeatmap({ megacube, hud: selectedImage.name })
@@ -140,26 +145,26 @@ function Explorer() {
   }, [spaxelTableData]);
 
   useEffect(() => {
-    if(heatmapPoints[0] !== 0 && heatmapPoints[1] !== 0) {
+    if (heatmapPoints[0] !== 0 && heatmapPoints[1] !== 0) {
       getLogAgeByPosition({
         megacube,
         x: heatmapPoints[0],
-        y: heatmapPoints[1]
-      }).then(res => {
-          setAgePlotData(res)
-        });
+        y: heatmapPoints[1],
+      }).then((res) => {
+        setAgePlotData(res);
+      });
     }
   }, [heatmapPoints, megacube]);
 
   useEffect(() => {
-    if(heatmapPoints[0] !== 0 && heatmapPoints[1] !== 0) {
+    if (heatmapPoints[0] !== 0 && heatmapPoints[1] !== 0) {
       getVecsByPosition({
         megacube,
         x: heatmapPoints[0],
-        y: heatmapPoints[1]
-      }).then(res => {
-          setVecsPlotData(res)
-        });
+        y: heatmapPoints[1],
+      }).then((res) => {
+        setVecsPlotData(res);
+      });
     }
   }, [heatmapPoints, megacube]);
 
@@ -228,10 +233,25 @@ function Explorer() {
     }
   }, isPlaying ? 1000 : null);
 
+  const handleBackNavigation = () => history.goBack();
+
   return (
     <Grid container spacing={2} style={{ padding: 16 }}>
       <Grid item xs={12}>
-        <Grid container justify="flex-end">
+        <Grid container justify="space-between">
+          <Grid item>
+            <Button
+              variant="contained"
+              color="primary"
+              title="Back"
+              onClick={handleBackNavigation}
+            >
+              <Icon className="fas fa-undo" fontSize="inherit" />
+              <Typography variant="button" style={{ margin: '0 5px' }}>
+                Back
+              </Typography>
+            </Button>
+          </Grid>
           <Grid item>
             <Switch isGrid={isGrid} setIsGrid={setIsGrid} />
           </Grid>
