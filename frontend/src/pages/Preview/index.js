@@ -76,14 +76,12 @@ function Preview() {
   }, [loadData]);
 
   useEffect(() => {
-    let margin = (windowSize.height * 0.24) + 4;
+    const headerHeight = 55.97;
+    const tableToolbarHeight = 64.99;
+    const tablePager = 71.95;
 
-    if (windowSize.width <= 1280) {
-      margin = (windowSize.height * 0.32) + 8;
-    }
-
-    setTableHeight(windowSize.height - margin);
-  }, [windowSize]);
+    setTableHeight(windowSize.height - headerHeight - tableToolbarHeight - tablePager);
+  }, [windowSize.height]);
 
   const handleSectionWidthChange = (size) => setSectionWidth(size);
 

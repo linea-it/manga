@@ -34,6 +34,7 @@ import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import CustomColumnChooser from './CustomColumnChooser';
 import CustomTableHeaderRowCell from './CustomTableHeaderRowCell';
+import CustomToolbar from './CustomToolbar';
 import styles from './styles';
 
 function CustomNoDataCellComponent({ ...noDatProps }, customLoading) {
@@ -83,6 +84,7 @@ function Table({
   isVirtualTable,
   setSelectedGalaxy,
   height,
+  toolbarChildren,
 }) {
   const customColumns = columns.map((column) => ({
     name: column.name,
@@ -351,7 +353,7 @@ function Table({
             <CustomTableHeaderRowCell hasSorting={hasSorting} />
             {hasGrouping ? <TableGroupRow /> : null}
             {hasPagination ? <PagingPanel pageSizes={pageSizes} /> : null}
-            {hasToolbar ? <Toolbar /> : null}
+            {hasToolbar ? <Toolbar rootComponent={(props) => CustomToolbar({ ...props, toolbarChildren })} /> : null}
             {hasSearching ? <SearchPanel /> : null}
             {hasColumnVisibility ? <TableColumnVisibility /> : null}
             {hasColumnVisibility ? <CustomColumnChooser setSelectedGalaxy={setSelectedGalaxy} /> : null}
@@ -416,7 +418,7 @@ function Table({
           />
           {hasGrouping ? <TableGroupRow /> : null}
           {hasPagination ? <PagingPanel pageSizes={pageSizes} /> : null}
-          {hasToolbar ? <Toolbar /> : null}
+          {hasToolbar ? <Toolbar rootComponent={(props) => CustomToolbar({ ...props, toolbarChildren })} /> : null}
           {hasSearching ? <SearchPanel /> : null}
           {hasColumnVisibility ? <TableColumnVisibility /> : null}
           {hasColumnVisibility ? <CustomColumnChooser setSelectedGalaxy={setSelectedGalaxy} /> : null}
@@ -472,14 +474,15 @@ function Table({
   });
 
   const changeSelection = (value) => {
-    setSelectedGalaxy(null);
-
     const select = value[value.length - 1];
 
-    const cubename = rows[select].cube_name;
+    if (setSelectedGalaxy) {
+      setSelectedGalaxy(null);
+      const cubename = rows[select].cube_name;
+      setSelectedGalaxy(cubename);
+    }
 
     setSelection([select]);
-    setSelectedGalaxy(cubename);
   };
 
   useEffect(() => {
@@ -534,8 +537,9 @@ Table.defaultProps = {
   grouping: [{}],
   loading: null,
   isVirtualTable: false,
-  setSelectedGalaxy: () => {},
+  setSelectedGalaxy: null,
   height: 530,
+  toolbarChildren: null,
 };
 
 Table.propTypes = {
@@ -569,6 +573,11 @@ Table.propTypes = {
   isVirtualTable: PropTypes.bool,
   setSelectedGalaxy: PropTypes.func,
   height: PropTypes.number,
+  toolbarChildren: PropTypes.shape({
+    $$typeof: PropTypes.symbol,
+    props: PropTypes.shape({ name: PropTypes.string }),
+    type: PropTypes.func,
+  }),
 };
 
 export default memo(Table);

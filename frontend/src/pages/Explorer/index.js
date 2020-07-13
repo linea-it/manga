@@ -236,7 +236,7 @@ function Explorer() {
   const handleBackNavigation = () => history.goBack();
 
   return (
-    <Grid container spacing={2} style={{ padding: 16 }}>
+    <Grid container spacing={2} style={{ padding: 16, maxWidth: '100%' }}>
       <Grid item xs={12}>
         <Grid container justify="space-between">
           <Grid item>

@@ -26,11 +26,8 @@ function Header({ currentUser }) {
   const handleUserClose = () => setUserSettingsAnchorEl(null);
 
   return (
-    <AppBar
-      position="relative"
-      variant="dense"
-    >
-      <Toolbar>
+    <AppBar position="relative">
+      <Toolbar variant="dense">
         <Grid container justify="space-between" alignItems="center">
           <Grid item>
             <Link href="/" color="inherit" underline="none">
