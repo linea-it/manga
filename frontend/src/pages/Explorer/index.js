@@ -8,14 +8,12 @@ import {
   getFluxByPosition,
   getHudList,
   getImageHeatmap,
-  getSpaxelFitByPosition,
   getLogAgeByPosition,
   getVecsByPosition,
 } from '../../services/api';
 import VerifierGrid from '../../components/VerifierGrid';
 import Galaxy from '../../components/Galaxy';
 import Spectre from '../../components/Spectre';
-import Spaxel from '../../components/Spaxel';
 import Switch from '../../components/Switch';
 import { mergeArrayOfArrays } from '../../services/utils';
 
@@ -32,7 +30,6 @@ function Explorer() {
     name: '',
   });
   const [fluxPlotData, setFluxPlotData] = useState({});
-  const [spaxelTableData, setSpaxelTableData] = useState({});
   const [heatmapPlotImageData, setHeatmapPlotImageData] = useState({});
   const [heatmapPlotContourData, setHeatmapPlotContourData] = useState({});
   const [heatmapError, setHeatmapError] = useState('');
@@ -72,15 +69,9 @@ function Explorer() {
     getFluxByPosition({ x, y, megacube }).then((res) => setFluxPlotData(res));
   };
 
-  const loadSpaxel = (x, y) => {
-    getSpaxelFitByPosition({ x, y, megacube })
-      .then((res) => setSpaxelTableData(res));
-  };
-
   useEffect(() => {
     if (heatmapPoints[0] !== 0 && heatmapPoints[1] !== 0) {
       loadFluxMap(heatmapPoints[0], heatmapPoints[1]);
-      loadSpaxel(heatmapPoints[0], heatmapPoints[1]);
     }
   }, [heatmapPoints]);
 
@@ -103,11 +94,10 @@ function Explorer() {
           .catch((err) => {
             // If heatmap couldn't be built, present an error message to the user:
             setHeatmapError(err.message);
-            setFluxPlotData({});
-            setSpaxelTableData({});
-            setHeatmapPoints([0, 0]);
-            setHeatmapValueLimits([]);
-            setHeatmapColorRangeValue([]);
+            // setFluxPlotData({});
+            // setHeatmapPoints([0, 0]);
+            // setHeatmapValueLimits([]);
+            // setHeatmapColorRangeValue([]);
           });
       }
     }
@@ -132,17 +122,6 @@ function Explorer() {
       }
     }
   }, [selectedContour, localHeatmaps]);
-
-  useEffect(() => {
-    if (spaxelTableData.rows && spaxelTableData.rows.length > 0) {
-      spaxelTableData.rows.map((row) => ({
-        [spaxelTableData.columns[0]]: row[0],
-        [spaxelTableData.columns[1]]: row[1],
-        [spaxelTableData.columns[2]]: row[2],
-        [spaxelTableData.columns[3]]: row[3],
-      }));
-    }
-  }, [spaxelTableData]);
 
   useEffect(() => {
     if (heatmapPoints[0] !== 0 && heatmapPoints[1] !== 0) {
@@ -171,7 +150,6 @@ function Explorer() {
   const handleSelectImage = (e) => {
     setHeatmapPoints([0, 0]);
     setFluxPlotData({});
-    setSpaxelTableData({});
     setSelectedImage({
       id: e.target.value,
       name: hudList[e.target.value - 1].name,
@@ -188,7 +166,6 @@ function Explorer() {
 
   const handleHeatmapClick = (e) => {
     setFluxPlotData({});
-    setSpaxelTableData({});
     setHeatmapPoints([e.points[0].x, e.points[0].y]);
   };
 
@@ -296,9 +273,6 @@ function Explorer() {
               vecsPlotData={vecsPlotData}
               agePlotData={agePlotData}
             />
-          </Grid>
-          <Grid item xs={12}>
-            <Spaxel spaxelTableData={spaxelTableData} />
           </Grid>
         </>
       )}

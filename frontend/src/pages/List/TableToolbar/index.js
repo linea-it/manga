@@ -6,6 +6,7 @@ import {
   Menu,
   MenuItem,
   Dialog,
+  Grid,
   Card,
   CardHeader,
   CardContent,
@@ -94,61 +95,66 @@ function TableToolbar() {
 
       <Dialog
         fullWidth
-        maxWidth="sm"
+        maxWidth="md"
         open={formAddOpen}
         onClose={handleAddToggle}
       >
-        <Card>
-          <CardHeader
-            title="Add Galaxy List"
-            action={(
-              <IconButton onClick={handleAddToggle}>
-                <CloseIcon fontSize="small" />
-              </IconButton>
-          )}
-          />
-          <CardContent>
-            <form className={classes.form} noValidate>
-              <FormGroup>
-                <FormControl margin="dense" className={classes.formControl}>
-                  <TextField
-                    label="Name"
-                    variant="outlined"
-                    value={formValues.name}
-                    onChange={(e) => handleFormChange('name', e)}
-                  />
-                </FormControl>
-                <FormControl margin="dense" className={classes.formControl}>
-                  <TransferList />
-                </FormControl>
-                <FormControl margin="dense" className={classes.formControl}>
-                  <FormControlLabel
-                    control={(
-                      <Checkbox
-                        checked={formValues.public}
-                        onChange={(e) => handleFormChange('public', e)}
-                        name="Public"
-                        color="primary"
-                        size="small"
+        <Grid container>
+          <Grid item xs={12}>
+            <Card>
+              <CardHeader
+                title="Add Galaxy List"
+                action={(
+                  <IconButton onClick={handleAddToggle}>
+                    <CloseIcon fontSize="small" />
+                  </IconButton>
+              )}
+              />
+              <CardContent>
+                <form className={classes.form} noValidate>
+                  <FormGroup>
+                    <FormControl margin="dense" className={classes.formControl}>
+                      <TextField
+                        label="Galaxy Name"
+                        variant="outlined"
+                        value={formValues.name}
+                        onChange={(e) => handleFormChange('name', e)}
                       />
-                    )}
-                    label="Public"
-                  />
-                </FormControl>
-                <FormControl margin="dense" className={classes.formControl}>
-                  <TextField
-                    label="Description"
-                    multiline
-                    rows={5}
-                    value={formValues.description}
-                    variant="outlined"
-                    onChange={(e) => handleFormChange('description', e)}
-                  />
-                </FormControl>
-              </FormGroup>
-            </form>
-          </CardContent>
-        </Card>
+                    </FormControl>
+                    <FormControl margin="dense" className={classes.formControl}>
+                      <TransferList />
+                    </FormControl>
+                    <FormControl margin="dense" className={classes.formControl}>
+                      <FormControlLabel
+                        control={(
+                          <Checkbox
+                            checked={formValues.public}
+                            onChange={(e) => handleFormChange('public', e)}
+                            name="Public"
+                            color="primary"
+                            size="small"
+                          />
+                        )}
+                        label="Public"
+                      />
+                    </FormControl>
+                    <FormControl margin="dense" className={classes.formControl}>
+                      <TextField
+                        label="Description"
+                        multiline
+                        rows={5}
+                        value={formValues.description}
+                        variant="outlined"
+                        onChange={(e) => handleFormChange('description', e)}
+                      />
+                    </FormControl>
+                  </FormGroup>
+                </form>
+              </CardContent>
+            </Card>
+
+          </Grid>
+        </Grid>
       </Dialog>
     </>
   );

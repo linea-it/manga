@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Grid,
   List,
@@ -6,6 +6,7 @@ import {
   ListItemIcon,
   ListItemText,
   Checkbox,
+  TextField,
   Button,
   Card,
   CardHeader,
@@ -27,9 +28,9 @@ function union(a, b) {
 
 function TransferList() {
   const classes = useStyles();
-  const [checked, setChecked] = React.useState([]);
-  const [left, setLeft] = React.useState([0, 1, 2, 3]);
-  const [right, setRight] = React.useState([4, 5, 6, 7]);
+  const [checked, setChecked] = useState([]);
+  const [left, setLeft] = useState([0, 1, 2, 3, 4, 5, 6, 7]);
+  const [right, setRight] = useState([]);
 
   const leftChecked = intersection(checked, left);
   const rightChecked = intersection(checked, right);
@@ -87,6 +88,16 @@ function TransferList() {
       />
       <Divider />
       <List className={classes.list} dense component="div" role="list">
+        {title === 'List of Objects' ? (
+          <ListItem role="listitem">
+            <TextField
+              label="Search"
+              variant="outlined"
+              size="small"
+              fullWidth
+            />
+          </ListItem>
+        ) : null}
         {items.map((value) => {
           const labelId = `transfer-list-all-item-${value}-label`;
 
@@ -111,7 +122,7 @@ function TransferList() {
 
   return (
     <Grid container spacing={2} justify="center" alignItems="center" className={classes.root}>
-      <Grid item xs={5}>{customList('Objects List', left)}</Grid>
+      <Grid item xs={5}>{customList('List of Objects', left)}</Grid>
       <Grid item xs={2}>
         <Grid container direction="column" alignItems="center">
           <Button
@@ -136,7 +147,7 @@ function TransferList() {
           </Button>
         </Grid>
       </Grid>
-      <Grid item xs={5}>{customList('Objects Chosen', right)}</Grid>
+      <Grid item xs={5}>{customList('Chosen Objects', right)}</Grid>
     </Grid>
   );
 }

@@ -50,12 +50,12 @@ function Galaxy({
   useEffect(() => {
     const size = windowSize.width;
 
-    let marginHeight = size * 0.77;
+    let marginHeight = size * 0.787;
     let marginWidth = size * 0.70;
 
 
     if (windowSize.width < 1920 && windowSize.width >= 960) {
-      marginHeight = size * 0.67;
+      marginHeight = size * 0.702;
       marginWidth = size * 0.6;
     } else if (windowSize.width < 960) {
       marginHeight = size * 0.3;
