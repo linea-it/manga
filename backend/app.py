@@ -120,21 +120,21 @@ def original_image_heatmap():
 
     return response
 
-@application.route('/api/original_image_heatmap_json')
-def original_image_heatmap_json():
-    """
-        Retorna a primeira imagem, a original (zero).
-    """
+# @application.route('/api/original_image_heatmap_json')
+# def original_image_heatmap_json():
+#     """
+#         Retorna a primeira imagem, a original (zero).
+#     """
 
-    megacube = get_megacube_path('manga.json')
+#     megacube = get_megacube_path('manga.json')
 
-    megacube_dict = {}
+#     megacube_dict = {}
 
-    with open(megacube) as f:
-        megacube_dict = json.load(f)
+#     with open(megacube) as f:
+#         megacube_dict = json.load(f)
 
 
-    return megacube_dict
+#     return megacube_dict
 
 @application.route('/api/list_hud')
 def list_hud():
@@ -208,6 +208,27 @@ def spaxel_fit_by_position():
 
     return response
 
+
+@application.route('/api/megacube_header')
+def megacube_header():
+    """
+        Retorna o "Header" de um determinado megacubo.
+
+        Exemplo de requisicao.
+        http://localhost/megacube_header?megacube=manga-8138-6101-MEGA.fits
+    """
+    args = request.args.to_dict()
+
+    if 'megacube' not in args:
+        raise Exception("Parameter megacube is required")
+
+    megacube = get_megacube_path(args['megacube'])
+
+    cube_header = repr(mclass().get_headers(megacube, 'PoPBins')).split('\n')
+
+    response = jsonify(cube_header)
+
+    return response
 
 @application.route('/api/log_age_by_position')
 def log_age_by_position():

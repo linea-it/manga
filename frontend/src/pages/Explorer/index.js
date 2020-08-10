@@ -10,12 +10,14 @@ import {
   getImageHeatmap,
   getLogAgeByPosition,
   getVecsByPosition,
+  getHeader
 } from '../../services/api';
 import VerifierGrid from '../../components/VerifierGrid';
 import Galaxy from '../../components/Galaxy';
 import Spectre from '../../components/Spectre';
 import Switch from '../../components/Switch';
 import { mergeArrayOfArrays } from '../../services/utils';
+import MegacubeHeader from '../../components/MegacubeHeader';
 
 function Explorer() {
   const { megacube } = useParams();
@@ -37,10 +39,14 @@ function Explorer() {
   const [heatmapSliderValue, setHeatmapSliderValue] = useState(1);
   const [heatmapValueLimits, setHeatmapValueLimits] = useState([]);
   const [heatmapColorRangeValue, setHeatmapColorRangeValue] = useState([]);
+  const [heatmapContourLimits, setHeatmapContourLimits] = useState([]);
+  const [heatmapContourRange, setHeatmapContourRange] = useState([]);
   const [isPlaying, setIsPlaying] = useState(false);
   const [localHeatmaps, setLocalHeatmaps] = useState([]);
   const [heatmapSize, setHeatmapSize] = useState({ height: 450 });
   const [isGrid, setIsGrid] = useState(false);
+  const [header, setHeader] = useState([]);
+  const [isHeaderOpen, setIsHeaderOpen] = useState(false);
   const [agePlotData, setAgePlotData] = useState({
     x: [],
     y: [],
@@ -108,6 +114,11 @@ function Explorer() {
       const heatmap = localHeatmaps.filter((el) => el.title === selectedContour.name);
       if (heatmap.length > 0) {
         setHeatmapPlotContourData(heatmap[0]);
+
+        const heatmapArr = [].concat.apply([], heatmap[0].z);
+        setHeatmapContourLimits([Math.min(...heatmapArr), Math.max(...heatmapArr)]);
+        setHeatmapContourRange(Math.max(...heatmapArr));
+
         setHeatmapError('');
       } else {
         getImageHeatmap({ megacube, hud: selectedContour.name })
@@ -179,6 +190,11 @@ function Explorer() {
     setHeatmapColorRangeValue(value);
   };
 
+  const handleHeatmapContourRangeChange = (e, value) => {
+    setHeatmapContourRange(value);
+  };
+
+
   const preloadHeatmaps = () => {
     hudList.forEach((hud) => {
       getImageHeatmap({ megacube, hud: hud.name })
@@ -212,22 +228,60 @@ function Explorer() {
 
   const handleBackNavigation = () => history.goBack();
 
+  const handleHeaderClick = () => {
+    getHeader({ megacube })
+      .then(res => {
+        setHeader(res)
+        setIsHeaderOpen(true);
+      });
+  }
+
   return (
     <Grid container spacing={2} style={{ padding: 16, maxWidth: '100%' }}>
       <Grid item xs={12}>
         <Grid container justify="space-between">
           <Grid item>
-            <Button
-              variant="contained"
-              color="primary"
-              title="Back"
-              onClick={handleBackNavigation}
-            >
-              <Icon className="fas fa-undo" fontSize="inherit" />
-              <Typography variant="button" style={{ margin: '0 5px' }}>
-                Back
-              </Typography>
-            </Button>
+            <Grid container spacing={2}>
+              <Grid item>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  title="Back"
+                  onClick={handleBackNavigation}
+                >
+                  <Icon className="fas fa-undo" fontSize="inherit" />
+                  <Typography variant="button" style={{ margin: '0 5px' }}>
+                    Back
+                  </Typography>
+                </Button>
+              </Grid>
+              <Grid item>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  title="Download"
+                  href={`/data/${megacube}.fits`}
+                >
+                  <Icon className="fas fa-download" fontSize="inherit" />
+                  <Typography variant="button" style={{ margin: '0 5px' }}>
+                    Download
+                  </Typography>
+                </Button>
+              </Grid>
+              <Grid item>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  title="Header"
+                  onClick={handleHeaderClick}
+                >
+                  <Icon className="fas fa-table" fontSize="inherit" />
+                  <Typography variant="button" style={{ margin: '0 5px' }}>
+                  Header
+                  </Typography>
+                </Button>
+              </Grid>
+            </Grid>
           </Grid>
           <Grid item>
             <Switch isGrid={isGrid} setIsGrid={setIsGrid} />
@@ -262,6 +316,9 @@ function Explorer() {
               handleHeatmapSliderChange={handleHeatmapSliderChange}
               handlePlayClick={handlePlayClick}
               isPlaying={isPlaying}
+              heatmapContourLimits={heatmapContourLimits}
+              heatmapContourRange={heatmapContourRange}
+              handleHeatmapContourRangeChange={handleHeatmapContourRangeChange}
             />
           </Grid>
           <Grid item xs={12} md={6} xl={8}>
@@ -276,7 +333,7 @@ function Explorer() {
           </Grid>
         </>
       )}
-
+      <MegacubeHeader data={header} open={isHeaderOpen} setOpen={() => setIsHeaderOpen(false)} />
     </Grid>
   );
 }

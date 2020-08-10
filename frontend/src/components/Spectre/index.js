@@ -18,12 +18,13 @@ function Spectre({
 
   return (
     <Card>
-      <CardHeader title="Spectre and Histograms" />
+      <CardHeader title="Spectrum and Histograms" />
       <CardContent>
         {heatmapPoints[0] !== 0 && heatmapPoints[1] !== 0 ? (
           <Grid container className={classes.animateEnter}>
             <Grid item xs={12}>
               <Plot
+                title="top of the morning"
                 data={[
                   {
                     x: fluxPlotData.lamb,

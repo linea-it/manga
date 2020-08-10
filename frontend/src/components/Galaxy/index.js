@@ -18,7 +18,7 @@ import Plotly from 'plotly.js';
 import createPlotlyComponent from 'react-plotly.js/factory';
 import clsx from 'clsx';
 import styles from './styles';
-import { HeatmapSlider, HeatmapColorRange } from '../HeatmapSlider';
+import { HeatmapSlider, HeatmapColorRange, HeatmapContourRange } from '../HeatmapSlider';
 import useWindowSize from '../../hooks/useWindowSize';
 
 function Galaxy({
@@ -42,6 +42,9 @@ function Galaxy({
   handleHeatmapSliderChange,
   handlePlayClick,
   isPlaying,
+  heatmapContourLimits,
+  heatmapContourRange,
+  handleHeatmapContourRangeChange,
 }) {
   const classes = styles();
   const windowSize = useWindowSize();
@@ -49,24 +52,35 @@ function Galaxy({
 
   useEffect(() => {
     const size = windowSize.width;
-
     let marginHeight = size * 0.787;
     let marginWidth = size * 0.70;
+
+    if(selectedContour.id !== 0) {
+      marginWidth = size * 0.737;
+    }
 
 
     if (windowSize.width < 1920 && windowSize.width >= 960) {
       marginHeight = size * 0.702;
       marginWidth = size * 0.6;
+
+      if(selectedContour.id !== 0) {
+        marginWidth = size * 0.69;
+      }
     } else if (windowSize.width < 960) {
       marginHeight = size * 0.3;
       marginWidth = size * 0.2;
+
+      if(selectedContour.id !== 0) {
+        marginWidth = size * 0.27;
+      }
     }
 
     const ratioHeight = size - marginHeight;
     const ratioWidth = size - marginWidth;
 
     setHeatmapSize({ width: ratioWidth, height: ratioHeight });
-  }, [windowSize.width]);
+  }, [windowSize.width, selectedContour]);
 
   return (
     <Card>
@@ -121,7 +135,7 @@ function Galaxy({
                   </form>
                 </Grid>
               </Grid>
-              <Grid item xs={12} className={classes.positionRelative}>
+              <Grid id={selectedContour.id !== 0 ? 'galaxyHeatmap' : ''} item xs={12} className={classes.positionRelative}>
                 <Plot
                   data={[
                     {
@@ -140,11 +154,15 @@ function Galaxy({
                       showlegend: false,
                       contours: {
                         coloring: 'none',
+                        start: 0,
+                        end: heatmapContourRange,
+                        // size: 0.3,
                       },
                       line: {
                         color: 'white',
                         smoothing: 0.85,
                       },
+                      hoverinfo: 'x+y+z',
                     },
                     {
                       type: 'scatter',
@@ -270,7 +288,7 @@ function Galaxy({
                 <HeatmapColorRange
                   style={{
                     position: 'absolute',
-                    right: -7,
+                    right: selectedContour.id !== 0 ? 60 : -7,
                     top: 60,
                     maxHeight: heatmapSize.height - 110,
                   }}
@@ -283,6 +301,26 @@ function Galaxy({
                   className={classes.colorRange}
                   onChange={handleHeatmapColorRangeChange}
                 />
+
+                {heatmapContourLimits.length > 0 ? (
+                  <HeatmapContourRange
+                    style={{
+                      position: 'absolute',
+                      right: -7,
+                      top: 60,
+                      maxHeight: heatmapSize.height - 110,
+                    }}
+                    orientation="vertical"
+                    // aria-label="Heatmap Color Range"
+                    max={heatmapContourLimits[1]}
+                    min={heatmapContourLimits[0]}
+                    step={heatmapContourRange / 100}
+                    value={heatmapContourRange}
+                    valueLabelDisplay="off"
+                    className={classes.colorRange}
+                    onChange={handleHeatmapContourRangeChange}
+                  />
+                ) : null}
               </Grid>
 
               <Grid item xs={12} className={classes.textAlignCenter}>

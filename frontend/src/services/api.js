@@ -34,3 +34,7 @@ export const getLogAgeByPosition = ({ megacube, x, y }) =>
 export const getVecsByPosition = ({ megacube, x, y }) =>
   axios.get(`/vecs_by_position?megacube=${megacube}.fits&x=${x}&y=${y}`)
     .then(res => res.data)
+
+export const getHeader = ({ megacube }) =>
+  axios.get(`/megacube_header?megacube=${megacube}.fits`)
+    .then(res => res.data)

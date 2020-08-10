@@ -29,6 +29,13 @@ code {
   margin: auto;
 }
 
+#galaxyHeatmap .js-plotly-plot .plot-container.plotly .svg-container {
+    width: 100%;
+    /* height: 'auto' !important; */
+    /* min-height: 400px; */
+    margin: initial;
+  }
+
 .RootBase-root {
   height: 100%;
 }
