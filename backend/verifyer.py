@@ -208,10 +208,17 @@ class mclass:
 
         return result
 
+    def index_of(self, val, in_list):
+        try:
+            return in_list.index(val)
+        except ValueError:
+            return -1
+
     def vecs_by_position(self, megacube, x, y):
         xaxis = np.array([])
         yaxis = np.array([])
         maxis = np.array([])
+        mlegend = np.array([])
 
 
         cube_header = self.get_headers(megacube, 'PopBins')
@@ -221,15 +228,22 @@ class mclass:
         for i in range(0, np.shape(cube_data)[0], 1):
            if 'light' in cube_header['DATA' + str(i)]: vecs = vecs + 1
 
+
+        cube_header_list = repr(cube_header).split('\n')
+
         for k in np.arange(vecs + 1):
-           xaxis = np.append(xaxis, k)
-           yaxis = np.append(yaxis, cube_data[k, int(y), int(x)])
-           maxis = np.append(maxis, cube_header['DATA' + str(k)])
+            xaxis = np.append(xaxis, k)
+            yaxis = np.append(yaxis, cube_data[k, int(y), int(x)])
+            maxis = np.append(maxis, cube_header['DATA' + str(k)])
+            for j in range(0, len(cube_header_list)):
+                if self.index_of('DATA' + str(k) + ' ', str(cube_header_list[j])) > -1:
+                    mlegend = np.append(mlegend, str(cube_header_list[j]).split('/')[1].strip())
 
         return dict({
             "x": list(xaxis),
             "y": list(yaxis),
-            "m": list(maxis)
+            "m": list(maxis),
+            "mlegend": list(mlegend)
         })
 
 

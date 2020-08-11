@@ -12,14 +12,14 @@ function Age({ data, height }) {
         {
           x: data.x,
           y: data.y,
-          name: '∑𝑥ⱼ',
+          name: '∑Light',
           type: 'bar',
           width: 0.8,
         },
         {
           x: data.x,
           y: data.m,
-          name: '∑μⱼ',
+          name: '∑Mass',
           type: 'bar',
           width: 0.2,
           marker: {

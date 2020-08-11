@@ -55,7 +55,7 @@ function Galaxy({
     let marginHeight = size * 0.787;
     let marginWidth = size * 0.70;
 
-    if(selectedContour.id !== 0) {
+    if (selectedContour.id !== 0) {
       marginWidth = size * 0.737;
     }
 
@@ -64,14 +64,14 @@ function Galaxy({
       marginHeight = size * 0.702;
       marginWidth = size * 0.6;
 
-      if(selectedContour.id !== 0) {
+      if (selectedContour.id !== 0) {
         marginWidth = size * 0.69;
       }
     } else if (windowSize.width < 960) {
       marginHeight = size * 0.3;
       marginWidth = size * 0.2;
 
-      if(selectedContour.id !== 0) {
+      if (selectedContour.id !== 0) {
         marginWidth = size * 0.27;
       }
     }

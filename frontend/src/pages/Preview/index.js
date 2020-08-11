@@ -49,9 +49,17 @@ function Preview() {
       width: 70,
     },
     {
-      name: 'cube_name',
-      title: 'Cube',
-      width: 220,
+      name: 'rating',
+      title: 'Rating',
+    },
+    {
+      name: 'reject',
+      title: 'Reject',
+    },
+    {
+      name: 'comments',
+      title: 'Comments',
+      width: 150,
     },
   ];
 

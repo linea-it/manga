@@ -23,6 +23,7 @@ function Explorer() {
   const { megacube } = useParams();
   const history = useHistory();
   const [hudList, setHudList] = useState([]);
+  const [downloadUrl, setDownloadUrl] = useState('');
   const [selectedImage, setSelectedImage] = useState({
     id: 0,
     name: '',
@@ -56,10 +57,14 @@ function Explorer() {
     x: [],
     y: [],
     m: [],
+    mlegend: [],
   });
 
   useEffect(() => {
-    getHudList({ megacube }).then((res) => setHudList(res));
+    getHudList({ megacube }).then((res) => {
+      setDownloadUrl(res.download)
+      setHudList(res.hud)
+    });
   }, []);
 
   useEffect(() => {
@@ -260,7 +265,7 @@ function Explorer() {
                   variant="contained"
                   color="primary"
                   title="Download"
-                  href={`/data/${megacube}.fits`}
+                  href={downloadUrl}
                 >
                   <Icon className="fas fa-download" fontSize="inherit" />
                   <Typography variant="button" style={{ margin: '0 5px' }}>

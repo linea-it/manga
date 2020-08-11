@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, Response, jsonify, request
+from flask import Flask, Response, jsonify, request, Blueprint, url_for
 from flask_cors import CORS
 
 from verifyer import mclass
@@ -8,6 +8,9 @@ from verifyer import mclass
 import fnmatch
 
 import json
+
+from urllib.parse import urlparse
+
 
 application = Flask(__name__)
 cors = CORS(application, resources={r"/*": {"origins": "*"}})
@@ -165,6 +168,7 @@ def list_hud():
         })
 
     result = dict({
+        'download': request.host_url + 'data/' + args['megacube'],
         'hud': dHud
     })
 

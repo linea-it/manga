@@ -2,11 +2,15 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Plotly from 'plotly.js';
 import createPlotlyComponent from 'react-plotly.js/factory';
-import { dark } from '@material-ui/core/styles/createPalette';
+import InfoIcon from '@material-ui/icons/Info';
+import {
+  Tooltip,
+} from '@material-ui/core';
+import useStyles from './styles';
 
 function Vecs({ data, height }) {
+  const classes = useStyles();
   const [rows, setRows] = useState([]);
-  const [annotations, setAnnotations] = useState([]);
 
   const Plot = createPlotlyComponent(Plotly);
 
@@ -24,48 +28,49 @@ function Vecs({ data, height }) {
           marker: {
             opacity: 0.75,
           },
-        });
-
-        // annotationList.push({
-        //   x: row,
-        //   y: data.y[i],
-        //   text: data.m[i],
-        //   textangle: '-90',
-        //   font: {
-        //     family: 'sans serif',
-        //     size: 15,
-        //   },
-        //   showarrow: false
-        // })
+        })
       })
 
       setRows(rowList)
-      setAnnotations(annotationList)
     }
   }, [data])
 
 
   return (
-    <Plot
-      data={rows}
-      layout={{
-        height: height,
-        margin: {
-          t: 30,
-          b: 30,
-          r: 20,
-        },
-        // annotations: annotations,
-        yaxis: {
-          range: [0, 100]
-        },
-        xaxis: {
-          title: 'Vecs',
-        },
-        hovermode: 'closest',
-        autosize: true,
-      }}
-    />
+    <div className={classes.vecWrapper}>
+      <div className={classes.vecTooltipWrapper}>
+
+        <Tooltip
+          title={data.mlegend.map((item, i) => (
+            <p>{data.m[i]}: {item}</p>
+          ))}
+        >
+          <InfoIcon fontSize="inherit" />
+        </Tooltip>
+      </div>
+      <Plot
+        data={rows}
+        layout={{
+          height: height,
+          margin: {
+            t: 30,
+            b: 30,
+            r: 20,
+          },
+          yaxis: {
+            range: [0, 100]
+          },
+          xaxis: {
+            title: 'Vecs',
+          },
+          hovermode: 'closest',
+          autosize: true,
+        }}
+        config={{
+          displaylogo: false,
+        }}
+      />
+    </div>
   )
 }
 
