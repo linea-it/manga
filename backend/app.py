@@ -168,7 +168,7 @@ def list_hud():
         })
 
     result = dict({
-        'download': request.host_url + 'data/' + args['megacube'],
+        'download': '/data/' + args['megacube'],
         'hud': dHud
     })
 
