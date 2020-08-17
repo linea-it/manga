@@ -40,7 +40,7 @@ function VerifierGrid({ megacube }) {
 
   useEffect(() => {
     getHudList({ megacube }).then((res) => {
-      setHudList(res);
+      setHudList(res.hud);
     });
   }, [megacube]);
 
