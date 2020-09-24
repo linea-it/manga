@@ -1,30 +1,41 @@
-# Pull official base image
-FROM python:3.8.3-alpine
+FROM python:3.6
 
-# Set work directory
-WORKDIR /usr/src/app
+ENV GUNICORN_PORT=7001
+ENV GUNICORN_MODULE=manga.wsgi
+ENV GUNICORN_CALLABLE=application
+ENV APP_PATH=/app
 
-# Set environment variables
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
-
-# Install psycopg2 dependencies
-RUN apk update \
-  && apk add postgresql-dev gcc python3-dev musl-dev
+RUN apt-get update && apt-get install -y  \
+  python-dev \
+  libaio-dev \
+  build-essential \
+  vim \
+  expect \
+  telnet \
+  ftp \
+  libcfitsio-bin \
+  && rm -rf /var/lib/apt/lists/*
 
 # Install python-ldap dependencies
-RUN apk add build-base openldap-dev python2-dev python3-dev
+RUN apt-get update && apt-get install libsasl2-dev libldap2-dev libssl-dev -y
 
-# Install dependencies
+RUN mkdir $APP_PATH
+
+WORKDIR $APP_PATH
+
+ADD requirements.txt $APP_PATH
+
 RUN pip install --upgrade pip
-COPY ./requirements.txt /usr/src/app/requirements.txt
+
+# Lint
+RUN pip install --upgrade pip
+RUN pip install flake8
+COPY . /usr/src/app/
+RUN flake8 --ignore=E501,F401 .
+
 RUN pip install -r requirements.txt
 
-# Copy entrypoint.sh
-COPY ./entrypoint.sh /usr/src/app/entrypoint.sh
+COPY . $APP_PATH
 
-# Copy project
-COPY . /usr/src/app/
-
-# Run entrypoint.sh
-ENTRYPOINT ["/usr/src/app/entrypoint.sh"]
+WORKDIR $APP_PATH
+ENTRYPOINT $APP_PATH/entrypoint.sh

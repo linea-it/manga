@@ -34,16 +34,23 @@ ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")
 # Application definition
 
 INSTALLED_APPS = [
-    'galaxy.apps.GalaxyConfig',
-    'classification.apps.ClassificationConfig',
-    'common.apps.CommonConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # Third-party
     'rest_framework',
+    'rest_framework.authtoken',
+
+    # Apps
+    'manga.apps.MangaConfig',
+    'galaxy.apps.GalaxyConfig',
+    'classification.apps.ClassificationConfig',
+    'common.apps.CommonConfig',
+
 ]
 
 MIDDLEWARE = [
@@ -131,6 +138,21 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
+    ),
+    'DEFAULT_PAGINATION_CLASS': 'common.pagination.StandardResultsSetPagination',
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    'DEFAULT_FILTER_BACKENDS': (
+        'url_filter.integrations.drf.DjangoFilterBackend',
+        'rest_framework.filters.SearchFilter',
+        'rest_framework.filters.OrderingFilter',
+    ),
+}
+
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
@@ -160,3 +182,41 @@ if AUTH_LDAP_ENABLED == 'True':
 
     # Adding LDAP as an authentication method:
     AUTHENTICATION_BACKENDS += ('django_auth_ldap.backend.LDAPBackend',)
+
+
+# Logging
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+    },
+}
+
+
+# HOST URL url para onde o app está disponivel. em desenvolvimento //localhost
+# No ambiente de testes é //manga.linea.gov.br
+HOST_URL = None
+try:
+    HOST_URL = os.environ["HOST_URL"]
+except:
+    raise ("Environment variable HOST_URL can not be null.")
+
+# Configurando os redirects padrao de login e logout, para apontar para o HOST_URL.
+if HOST_URL is not None:
+    LOGOUT_REDIRECT_URL = HOST_URL
+    LOGIN_REDIRECT_URL = HOST_URL
