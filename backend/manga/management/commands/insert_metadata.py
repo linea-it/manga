@@ -28,7 +28,7 @@ class Command(BaseCommand):
 
 
     def get_megacube_path(self, filename):
-        return os.path.join(os.getenv("IMAGE_PATH", "/usr/src/app/images/"), filename)
+        return os.path.join(os.getenv("IMAGE_PATH", "/images/"), filename)
 
     def get_model_fields(self, model):
 

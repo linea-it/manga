@@ -20,7 +20,7 @@ class ImageViewSet(viewsets.ModelViewSet):
     ordering = ('id', 'megacube', 'mangaid', 'objra', 'objdec', 'harname', 'platetyp',)
 
     def get_megacube_path(self, filename):
-        return os.path.join(os.getenv('IMAGE_PATH', '/usr/src/app/images/'), filename)
+        return os.path.join(os.getenv('IMAGE_PATH', '/images/'), filename)
 
     @action(detail=True, methods=['get'])
     def original_image(self, request, pk=None):
