@@ -31,7 +31,6 @@ const styles = makeStyles((theme) => ({
   },
   animateEnter: {
     animation: 'fadein 1s',
-    textAlign: 'center',
   },
   skeletonMargin: {
     marginTop: '0.8em',
@@ -67,6 +66,12 @@ const styles = makeStyles((theme) => ({
   },
   textAlignLeft: {
     textAlign: 'left',
+  },
+  textAlignCenter: {
+    textAlign: 'center',
+  },
+  positionRelative: {
+    position: 'relative',
   },
 }));
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, memo } from 'react';
 import PropTypes from 'prop-types';
 import InputLabel from '@material-ui/core/InputLabel';
 import Input from '@material-ui/core/Input';
@@ -34,6 +34,7 @@ import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import CustomColumnChooser from './CustomColumnChooser';
 import CustomTableHeaderRowCell from './CustomTableHeaderRowCell';
+import CustomToolbar from './CustomToolbar';
 import styles from './styles';
 
 function CustomNoDataCellComponent({ ...noDatProps }, customLoading) {
@@ -81,6 +82,9 @@ function Table({
   hasLineBreak,
   loading,
   isVirtualTable,
+  setSelectedRow,
+  height,
+  toolbarChildren,
 }) {
   const customColumns = columns.map((column) => ({
     name: column.name,
@@ -215,17 +219,6 @@ function Table({
     }
   };
 
-  const changeSelection = (value) => {
-    let select = value;
-    if (value.length > 0) {
-      const diff = value.filter((x) => !selection.includes(x));
-      select = diff;
-    } else {
-      select = [];
-    }
-    setSelection(select);
-  };
-
   const handleChangeFilter = (evt) => {
     if (remote === true) {
       clearData();
@@ -285,6 +278,7 @@ function Table({
       if (isVirtualTable) {
         return (
           <VirtualTable
+            height={height}
             columnExtensions={customColumnExtensions}
             noDataCellComponent={(props) => CustomNoDataCellComponent({ ...props }, customLoading)}
           />
@@ -298,7 +292,7 @@ function Table({
       );
     }
     if (isVirtualTable) {
-      return <VirtualTable columnExtensions={customColumnExtensions} />;
+      return <VirtualTable height={height} columnExtensions={customColumnExtensions} />;
     }
     return <MuiTable columnExtensions={customColumnExtensions} />;
   };
@@ -331,6 +325,7 @@ function Table({
             ) : null}
             {hasSelection ? (
               <SelectionState
+                style={{ cursor: 'pointer' }}
                 selection={selection}
                 onSelectionChange={changeSelection}
               />
@@ -358,10 +353,10 @@ function Table({
             <CustomTableHeaderRowCell hasSorting={hasSorting} />
             {hasGrouping ? <TableGroupRow /> : null}
             {hasPagination ? <PagingPanel pageSizes={pageSizes} /> : null}
-            {hasToolbar ? <Toolbar /> : null}
+            {hasToolbar ? <Toolbar rootComponent={(props) => CustomToolbar({ ...props, toolbarChildren })} /> : null}
             {hasSearching ? <SearchPanel /> : null}
             {hasColumnVisibility ? <TableColumnVisibility /> : null}
-            {hasColumnVisibility ? <CustomColumnChooser /> : null}
+            {hasColumnVisibility ? <CustomColumnChooser setSelectedRow={setSelectedRow} /> : null}
           </Grid>
           {renderModal()}
         </>
@@ -390,6 +385,7 @@ function Table({
           {hasPagination ? <IntegratedPaging /> : null}
           {hasSelection ? (
             <SelectionState
+              style={{ cursor: 'pointer' }}
               selection={selection}
               onSelectionChange={changeSelection}
             />
@@ -422,10 +418,10 @@ function Table({
           />
           {hasGrouping ? <TableGroupRow /> : null}
           {hasPagination ? <PagingPanel pageSizes={pageSizes} /> : null}
-          {hasToolbar ? <Toolbar /> : null}
+          {hasToolbar ? <Toolbar rootComponent={(props) => CustomToolbar({ ...props, toolbarChildren })} /> : null}
           {hasSearching ? <SearchPanel /> : null}
           {hasColumnVisibility ? <TableColumnVisibility /> : null}
-          {hasColumnVisibility ? <CustomColumnChooser /> : null}
+          {hasColumnVisibility ? <CustomColumnChooser setSelectedRow={setSelectedRow} /> : null}
         </Grid>
         {renderModal()}
       </>
@@ -477,6 +473,39 @@ function Table({
     return line;
   });
 
+  const changeSelection = (value) => {
+    const select = value[value.length - 1];
+
+    if (setSelectedRow) {
+      setSelectedRow(null);
+
+      const rowId = rows[select].id;
+      setSelectedRow(rowId);
+    }
+
+    setSelection([select]);
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      // 38 (ArrowUp)
+      if (e.keyCode === 38) {
+        const selectLine = selection.length > 0 && selection[0] !== 0 ? [selection[0] - 1] : [0];
+        changeSelection(selectLine);
+      }
+
+      // 40 (ArrowDown)
+      if (e.keyCode === 40) {
+        const selectLine = selection.length > 0 ? [selection[0] + 1] : [0];
+        changeSelection(selectLine);
+      }
+    };
+
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [rows]);
+
   return (
     <>
       {hasFiltering ? renderFilter() : null}
@@ -509,6 +538,9 @@ Table.defaultProps = {
   grouping: [{}],
   loading: null,
   isVirtualTable: false,
+  setSelectedRow: null,
+  height: 530,
+  toolbarChildren: null,
 };
 
 Table.propTypes = {
@@ -540,7 +572,13 @@ Table.propTypes = {
   grouping: PropTypes.arrayOf(PropTypes.object),
   loading: PropTypes.bool,
   isVirtualTable: PropTypes.bool,
-
+  setSelectedRow: PropTypes.func,
+  height: PropTypes.number,
+  toolbarChildren: PropTypes.shape({
+    $$typeof: PropTypes.symbol,
+    props: PropTypes.shape({ name: PropTypes.string }),
+    type: PropTypes.func,
+  }),
 };
 
-export default Table;
+export default memo(Table);

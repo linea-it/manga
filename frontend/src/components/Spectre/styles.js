@@ -22,12 +22,13 @@ const styles = makeStyles((theme) => ({
     margin: 0,
   },
   plotWrapper: {
-    display: 'flex !important',
-    alignItems: 'center',
-    justifyContent: 'center',
-    [theme.breakpoints.down('lg')]: {
-      overflow: 'auto',
-    },
+    display: 'block',
+    // display: 'flex !important',
+    // alignItems: 'center',
+    // justifyContent: 'center',
+    // [theme.breakpoints.down('lg')]: {
+    //   overflow: 'auto',
+    // },
   },
   animateEnter: {
     animation: 'fadein 1s',

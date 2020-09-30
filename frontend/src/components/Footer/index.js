@@ -16,10 +16,6 @@ function Footer({ open }) {
     }
   };
 
-  const instance = process.env.NODE_ENV === 'production'
-    ? window._env_.REACT_APP_INSTANCE // eslint-disable-line
-    : process.env.REACT_APP_INSTANCE;
-
   let version = '--';
   let vlink = null;
 
@@ -41,10 +37,7 @@ function Footer({ open }) {
       <AppBar position="fixed" className={clsx(classes.drawer, open ? classes.appBarDrawerOpen : classes.appBarDrawerClose)}>
         <Toolbar className={classes.toolbar}>
           <Typography color="inherit" className={classes.grow}>
-            {instance}
-            {' '}
             MaNGA:
-            {' '}
             {/* eslint-disable-next-line */}
             <span
               onClick={() => openGithub(vlink)}

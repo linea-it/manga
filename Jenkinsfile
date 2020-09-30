@@ -40,6 +40,11 @@ pipeline {
             }
         }
         stage('Push Images') {
+            when {
+                expression {
+                   env.BRANCH_NAME.toString().equals('master')
+                }
+            }
             steps {
                 parallel(
                     frontend: {

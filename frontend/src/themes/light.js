@@ -38,9 +38,18 @@ const light = createMuiTheme({
     },
     MuiTableRow: {
       root: {
+        cursor: 'pointer',
         '&:hover': {
-          backgroundColor: 'rgba(244, 244, 244, 1)',
+          backgroundColor: 'rgb(244, 244, 244)',
         },
+      },
+    },
+    TableSelectRow: {
+      selected: {
+        '&:hover': {
+          backgroundColor: 'rgba(92, 107, 125, .8)',
+        },
+        backgroundColor: 'rgba(92, 107, 125, .8)',
       },
     },
     MuiSkeleton: {

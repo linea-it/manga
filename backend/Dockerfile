@@ -1,21 +1,41 @@
 FROM python:3.6
 
-MAINTAINER Glauber Costa Vila Verde <glauber.vila.verde@gmail.com>
-
+ENV GUNICORN_PORT=7001
+ENV GUNICORN_MODULE=manga.wsgi
+ENV GUNICORN_CALLABLE=application
 ENV APP_PATH=/app
-ENV STATIC_PATH=/app/static
 
-RUN mkdir ${APP_PATH} ${STATIC_PATH}
+RUN apt-get update && apt-get install -y  \
+  python-dev \
+  libaio-dev \
+  build-essential \
+  vim \
+  expect \
+  telnet \
+  ftp \
+  libcfitsio-bin \
+  && rm -rf /var/lib/apt/lists/*
 
-COPY . ${APP_PATH}
+# Install python-ldap dependencies
+RUN apt-get update && apt-get install libsasl2-dev libldap2-dev libssl-dev -y
 
-WORKDIR ${APP_PATH}
+RUN mkdir $APP_PATH
+
+WORKDIR $APP_PATH
+
+ADD requirements.txt $APP_PATH
 
 RUN pip install --upgrade pip
 
-RUN pip install -r ${APP_PATH}/requirements.txt
+# Lint
+RUN pip install --upgrade pip
+RUN pip install flake8
+COPY . /usr/src/app/
+RUN flake8 --ignore=E501,F401 .
 
+RUN pip install -r requirements.txt
 
-EXPOSE 8000
+COPY . $APP_PATH
 
-CMD gunicorn -b 0.0.0.0:8000 --workers=3 --reload wsgi:application
+WORKDIR $APP_PATH
+ENTRYPOINT $APP_PATH/entrypoint.sh

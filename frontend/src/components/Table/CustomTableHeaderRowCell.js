@@ -32,6 +32,7 @@ const TableHeaderRowCell = ({ ...restProps }) => (
     style={{
       color: '#555555',
       fontSize: '1em',
+      cursor: 'default'
     }}
   />
 );
