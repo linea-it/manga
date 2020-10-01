@@ -14,8 +14,7 @@ import {
   CardContent,
 } from '@material-ui/core';
 import Skeleton from '@material-ui/lab/Skeleton';
-import Plotly from 'plotly.js';
-import createPlotlyComponent from 'react-plotly.js/factory';
+import Plot from 'react-plotly.js';
 import clsx from 'clsx';
 import styles from './styles';
 import { HeatmapSlider, HeatmapColorRange, HeatmapContourRange } from '../HeatmapSlider';
@@ -48,7 +47,6 @@ function Galaxy({
 }) {
   const classes = styles();
   const windowSize = useWindowSize();
-  const Plot = createPlotlyComponent(Plotly);
 
   useEffect(() => {
     const size = windowSize.width;

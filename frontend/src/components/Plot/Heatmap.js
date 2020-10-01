@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import Plotly from 'plotly.js';
-import createPlotlyComponent from 'react-plotly.js/factory';
+import Plot from 'react-plotly.js';
 import useWindowSize from '../../hooks/useWindowSize';
 import { HeatmapColorRange } from '../HeatmapSlider';
 import { mergeArrayOfArrays } from '../../services/utils';
@@ -45,8 +44,6 @@ function Heatmap({ z, sectionWidth }) {
   const handleColorRangeChange = (e, value) => {
     setColorRangeValue(value);
   };
-
-  const Plot = createPlotlyComponent(Plotly);
 
   return (
     <div className={classes.heatmapWrapper}>

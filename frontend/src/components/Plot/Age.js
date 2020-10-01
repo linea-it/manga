@@ -1,10 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Plotly from 'plotly.js';
-import createPlotlyComponent from 'react-plotly.js/factory';
+import Plot from 'react-plotly.js';
 
 function Age({ data, height }) {
-  const Plot = createPlotlyComponent(Plotly);
 
   return (
     <Plot

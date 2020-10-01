@@ -4,8 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import Grid from '@material-ui/core/Grid';
 import Skeleton from '@material-ui/lab/Skeleton';
-import createPlotlyComponent from 'react-plotly.js/factory';
-import Plotly from 'plotly.js';
+import Plot from 'react-plotly.js';
 import { getHudList, getImageHeatmap } from '../../services/api';
 
 const useStyles = makeStyles((theme) => ({
@@ -34,7 +33,6 @@ const useStyles = makeStyles((theme) => ({
 
 function VerifierGrid() {
   const { id } = useParams();
-  const Plot = createPlotlyComponent(Plotly);
   const classes = useStyles();
   const [hudList, setHudList] = useState([]);
   const [localHeatmaps, setLocalHeatmaps] = useState([]);

@@ -21,8 +21,6 @@ services:
     volumes:
       - ./backend:/app
       - ./images:/images
-    depends_on:
-      - database
 
   # Frontend React
   frontend:

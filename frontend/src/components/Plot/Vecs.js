@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import Plotly from 'plotly.js';
-import createPlotlyComponent from 'react-plotly.js/factory';
+import Plot from 'react-plotly.js';
 import InfoIcon from '@material-ui/icons/Info';
 import {
   Tooltip,
@@ -11,8 +10,6 @@ import useStyles from './styles';
 function Vecs({ data, height }) {
   const classes = useStyles();
   const [rows, setRows] = useState([]);
-
-  const Plot = createPlotlyComponent(Plotly);
 
   useEffect(() => {
     if(data.x.length > 0 && data.y.length > 0 && data.m.length > 0) {
