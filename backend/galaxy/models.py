@@ -457,33 +457,33 @@ class Image(models.Model):
         return str(self.pk)
 
 
-# List of galaxies, created by the user:
-class List(models.Model):
-    id_owner = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        verbose_name='Owner',
-        on_delete=models.CASCADE,
-    )
-    name = models.CharField(max_length=200)
-    objects_qty = models.IntegerField(default=0)
-    creation_date = models.DateTimeField('date published')
+# # List of galaxies, created by the user:
+# class List(models.Model):
+#     id_owner = models.ForeignKey(
+#         settings.AUTH_USER_MODEL,
+#         verbose_name='Owner',
+#         on_delete=models.CASCADE,
+#     )
+#     name = models.CharField(max_length=200)
+#     objects_qty = models.IntegerField(default=0)
+#     creation_date = models.DateTimeField('date published')
 
-    def __str__(self):
-        return str(self.pk)
+#     def __str__(self):
+#         return str(self.pk)
 
 
-# Key-value association, many-to-many, between the galaxies and lists:
-class ListImage(models.Model):
-    class Meta:
-        db_table = 'galaxy_list_image'
+# # Key-value association, many-to-many, between the galaxies and lists:
+# class ListImage(models.Model):
+#     class Meta:
+#         db_table = 'galaxy_list_image'
 
-    id_image = models.ForeignKey(
-        Image,
-        verbose_name='Image',
-        on_delete=models.CASCADE,
-    )
-    id_list = models.ForeignKey(
-        List,
-        verbose_name='List',
-        on_delete=models.CASCADE,
-    )
+#     id_image = models.ForeignKey(
+#         Image,
+#         verbose_name='Image',
+#         on_delete=models.CASCADE,
+#     )
+#     id_list = models.ForeignKey(
+#         List,
+#         verbose_name='List',
+#         on_delete=models.CASCADE,
+#     )

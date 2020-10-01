@@ -1,6 +1,5 @@
 import React from 'react';
-import Plotly from 'plotly.js';
-import createPlotlyComponent from 'react-plotly.js/factory';
+import Plot from 'react-plotly.js';
 import { Card, CardHeader, CardContent, Grid } from '@material-ui/core';
 import Age from '../../components/Plot/Age';
 import Vecs from '../../components/Plot/Vecs';
@@ -14,7 +13,6 @@ function Spectre({
   vecsPlotData
 }) {
   const classes = styles();
-  const Plot = createPlotlyComponent(Plotly);
 
   return (
     <Card>
