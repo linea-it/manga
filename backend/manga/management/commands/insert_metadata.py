@@ -86,7 +86,7 @@ class Command(BaseCommand):
 
         for row in list_metadata:
 
-            filename = 'manga-%s-MEGA.fits' % row['plateifu']
+            filename = 'manga-%s-MEGA.fits.fz' % row['plateifu']
             megacube = self.get_megacube_path(filename)
 
             if os.path.isfile(megacube):
