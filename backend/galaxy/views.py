@@ -88,8 +88,11 @@ class ImageViewSet(viewsets.ModelViewSet):
         Returns the megacube's link for download
 
         Returns:
-            Link [String]: the url of the megacube
-            Size [Number]: the size of the file
+            mangaid [String]: the manga id
+            name [String]: the name of the galaxy
+            megacube [String]: the megacube filename
+            link [String]: the url of the megacube
+            size [Number]: the size of the file
         """
 
         galaxy = self.get_object()
