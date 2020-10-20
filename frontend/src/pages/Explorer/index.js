@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Grid, Button, Icon, Typography,
+  Grid, Button, Icon, Typography, Dialog,
 } from '@material-ui/core';
 import { useParams, useHistory } from 'react-router-dom';
 import useInterval from '../../hooks/useInterval';
@@ -10,7 +10,8 @@ import {
   getImageHeatmap,
   getLogAgeByPosition,
   getVecsByPosition,
-  getHeader
+  getHeader,
+  getDownloadInfo
 } from '../../services/api';
 import VerifierGrid from '../../components/VerifierGrid';
 import Galaxy from '../../components/Galaxy';
@@ -18,20 +19,15 @@ import Spectre from '../../components/Spectre';
 import Switch from '../../components/Switch';
 import { mergeArrayOfArrays } from '../../services/utils';
 import MegacubeHeader from '../../components/MegacubeHeader';
+import MegacubeDownload from '../../components/MegacubeDownload';
 
 function Explorer() {
   const { id } = useParams();
   const history = useHistory();
   const [hudList, setHudList] = useState([]);
-  const [downloadUrl, setDownloadUrl] = useState('');
-  const [selectedImage, setSelectedImage] = useState({
-    id: 0,
-    name: '',
-  });
-  const [selectedContour, setSelectedContour] = useState({
-    id: 0,
-    name: '',
-  });
+  const [download, setDownload] = useState({ open: false, mangaid: '', name: '', megacube: '', link: '', size: 0 });
+  const [selectedImage, setSelectedImage] = useState({ id: 0, name: '' });
+  const [selectedContour, setSelectedContour] = useState({ id: 0, name: '' });
   const [fluxPlotData, setFluxPlotData] = useState({});
   const [heatmapPlotImageData, setHeatmapPlotImageData] = useState({ z: [], title: '' });
   const [heatmapPlotContourData, setHeatmapPlotContourData] = useState({});
@@ -46,8 +42,7 @@ function Explorer() {
   const [localHeatmaps, setLocalHeatmaps] = useState([]);
   const [heatmapSize, setHeatmapSize] = useState({ height: 450 });
   const [isGrid, setIsGrid] = useState(false);
-  const [header, setHeader] = useState([]);
-  const [isHeaderOpen, setIsHeaderOpen] = useState(false);
+  const [header, setHeader] = useState({ open: false, data: [] })
   const [agePlotData, setAgePlotData] = useState({
     x: [],
     y: [],
@@ -62,7 +57,6 @@ function Explorer() {
 
   useEffect(() => {
     getHudList(id).then((res) => {
-      setDownloadUrl(res.download)
       setHudList(res.hud)
     });
   }, []);
@@ -236,9 +230,20 @@ function Explorer() {
   const handleHeaderClick = () => {
     getHeader(id)
       .then(res => {
-        setHeader(res)
-        setIsHeaderOpen(true);
+        setHeader({
+          open: true,
+          data: res,
+        });
       });
+  }
+
+  const handleDownloadClick = () => {
+    getDownloadInfo(id).then(res => {
+      setDownload({
+        open: true,
+        ...res,
+      });
+    });
   }
 
   return (
@@ -265,7 +270,7 @@ function Explorer() {
                   variant="contained"
                   color="primary"
                   title="Download"
-                  href={downloadUrl}
+                  onClick={handleDownloadClick}
                 >
                   <Icon className="fas fa-download" fontSize="inherit" />
                   <Typography variant="button" style={{ margin: '0 5px' }}>
@@ -282,7 +287,7 @@ function Explorer() {
                 >
                   <Icon className="fas fa-table" fontSize="inherit" />
                   <Typography variant="button" style={{ margin: '0 5px' }}>
-                  Header
+                    Header
                   </Typography>
                 </Button>
               </Grid>
@@ -338,7 +343,8 @@ function Explorer() {
           </Grid>
         </>
       )}
-      <MegacubeHeader data={header} open={isHeaderOpen} setOpen={() => setIsHeaderOpen(false)} />
+      <MegacubeHeader open={header.open} data={header.data} setOpen={() => setHeader({ open: false, data: [] })} />
+      <MegacubeDownload data={download} setOpen={() => setDownload({ open: false, mangaid: '', name: '', megacube: '', link: '', size: 0})} />
     </Grid>
   );
 }

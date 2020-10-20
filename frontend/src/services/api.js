@@ -14,7 +14,7 @@ export const getSpaxelFitByPosition = ({ id, x, y, }) => {
   const params = { x, y }
 
   return axios.get(`/images/${id}/spaxel_fit_by_position`)
-    .then(res => res.data)
+    .then(res => res.data, { params })
 }
 
 export const getOriginalImageHeatmap = (id) =>
@@ -31,7 +31,7 @@ export const getImageHeatmap = (id, hud) => {
 
 export const getHudList = (id) =>
   axios.get(`/images/${id}/list_hud/`)
-    .then(res => ({ hud: res.data.hud, download: res.data.download }))
+    .then(res => res.data)
 
 
 export const getMegacubesList = ({ ordering, pageSize, page, search }) => {
@@ -73,4 +73,8 @@ export const getVecsByPosition = ({ id, x, y }) => {
 
 export const getHeader = (id) =>
   axios.get(`/images/${id}/megacube_header`)
+    .then(res => res.data)
+
+export const getDownloadInfo = (id) =>
+  axios.get(`/images/${id}/download_info`)
     .then(res => res.data)
