@@ -19,4 +19,5 @@ class ImageSerializer(serializers.ModelSerializer):
             'cenra',
             'cendec',
             'platetyp',
+            'nsa_iauname',
         )
