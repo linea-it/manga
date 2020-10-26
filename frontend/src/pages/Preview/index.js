@@ -10,7 +10,7 @@ import useStyles from './styles';
 
 function Preview() {
   // !TODO: Integrate component content based upon the List ID.
-  const { idList } = useParams();
+  // const { idList } = useParams();
 
   const classes = useStyles();
   const windowSize = useWindowSize();
@@ -26,17 +26,12 @@ function Preview() {
   const columns = [
     {
       name: 'id',
-      title: 'ID',
-      width: 100,
+      title: '#',
+      width: 80,
     },
     {
-      name: 'harname',
-      title: 'Galaxy',
-      width: 150,
-    },
-    {
-      name: 'platetyp',
-      title: 'Type',
+      name: 'nsa_iauname',
+      title: 'Name',
       width: 180,
     },
     {
@@ -48,21 +43,55 @@ function Preview() {
       title: 'Dec',
     },
     {
-      name: 'rating',
-      title: 'Rating',
-      sortingEnabled: false,
+      name: 'mangaid',
+      title: 'MaNGA-ID',
     },
     {
-      name: 'reject',
-      title: 'Reject',
-      sortingEnabled: false,
+      name: 'mjdmed',
+      title: 'MJD',
     },
     {
-      name: 'comments',
-      title: 'Comments',
-      width: 150,
-      sortingEnabled: false,
+      name: 'exptime',
+      title: 'Exp Time',
     },
+    {
+      name: 'airmsmed',
+      title: 'Airmass',
+    },
+    {
+      name: 'seemed',
+      title: 'Seeing',
+    },
+    {
+      name: 'nsa_z',
+      title: 'z',
+    },
+    // {
+    //   name: 'nsa_sersic_absmag',
+    //   title: 'Abs Magnitude (Sersic)',
+    //   width: 180,
+    // },
+    // {
+    //   name: 'nsa_elpetro_absmag',
+    //   title: 'Abs Mag (Petrosian)',
+    //   width: 180,
+    // },
+    // {
+    //   name: 'rating',
+    //   title: 'Rating',
+    //   sortingEnabled: false,
+    // },
+    // {
+    //   name: 'reject',
+    //   title: 'Reject',
+    //   sortingEnabled: false,
+    // },
+    // {
+    //   name: 'comments',
+    //   title: 'Comments',
+    //   width: 150,
+    //   sortingEnabled: false,
+    // },
   ];
 
   const loadData = ({
