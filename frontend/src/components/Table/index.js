@@ -28,6 +28,8 @@ import {
   TableSelection,
   TableColumnVisibility,
   TableGroupRow,
+  DragDropProvider,
+  TableColumnReordering,
 } from '@devexpress/dx-react-grid-material-ui';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Button from '@material-ui/core/Button';
@@ -75,6 +77,7 @@ function Table({
   hasToolbar,
   hasSearching,
   hasColumnVisibility,
+  hasColumnReordering,
   defaultExpandedGroups,
   reload,
   modalContent,
@@ -337,6 +340,7 @@ function Table({
               />
             ) : null}
             {hasGrouping ? <IntegratedGrouping /> : null}
+            {hasColumnReordering ? <DragDropProvider /> : null}
             {renderTableOrVirtualTable()}
             {hasSelection ? (
               <TableSelection
@@ -357,6 +361,7 @@ function Table({
             {hasSearching ? <SearchPanel /> : null}
             {hasColumnVisibility ? <TableColumnVisibility /> : null}
             {hasColumnVisibility ? <CustomColumnChooser setSelectedRow={setSelectedRow} /> : null}
+            {hasColumnReordering ? <TableColumnReordering defaultOrder={customColumns.map(column => column.name)} /> : null}
           </Grid>
           {renderModal()}
         </>
@@ -397,6 +402,7 @@ function Table({
             />
           ) : null}
           {hasGrouping ? <IntegratedGrouping /> : null}
+          {hasColumnReordering ? <DragDropProvider /> : null}
           {renderTableOrVirtualTable()}
 
           {hasSelection ? (
@@ -422,6 +428,7 @@ function Table({
           {hasSearching ? <SearchPanel /> : null}
           {hasColumnVisibility ? <TableColumnVisibility /> : null}
           {hasColumnVisibility ? <CustomColumnChooser setSelectedRow={setSelectedRow} /> : null}
+          {hasColumnReordering ? <TableColumnReordering defaultOrder={customColumns.map(column => column.name)} /> : null}
         </Grid>
         {renderModal()}
       </>
@@ -528,6 +535,7 @@ Table.defaultProps = {
   hasColumnVisibility: true,
   hasPagination: true,
   hasGrouping: false,
+  hasColumnReordering: true,
   hasToolbar: true,
   defaultExpandedGroups: [''],
   defaultSorting: null,
@@ -579,6 +587,7 @@ Table.propTypes = {
     props: PropTypes.shape({ name: PropTypes.string }),
     type: PropTypes.func,
   }),
+  hasColumnReordering: PropTypes.bool,
 };
 
 export default memo(Table);

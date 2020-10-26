@@ -14,10 +14,10 @@ from manga.verifyer import mclass
 class ImageViewSet(viewsets.ModelViewSet):
     queryset = Image.objects.all()
     serializer_class = ImageSerializer
-    filter_fields = ('id',)
-    search_fields = ('id', 'megacube', 'mangaid', 'objra', 'objdec', 'harname', 'platetyp',)
-    ordering_fields = ('id', 'megacube', 'mangaid', 'objra', 'objdec', 'harname', 'platetyp',)
-    ordering = ('id', 'megacube', 'mangaid', 'objra', 'objdec', 'harname', 'platetyp',)
+    filter_fields = ('id', 'megacube', 'mangaid', 'objra', 'objdec', 'nsa_iauname', 'mjdmed', 'exptime', 'airmsmed', 'seemed', 'nsa_z',)
+    search_fields = ('megacube', 'nsa_iauname',)
+    ordering_fields = ('id', 'megacube', 'mangaid', 'objra', 'objdec', 'nsa_iauname', 'mjdmed', 'exptime', 'airmsmed', 'seemed', 'nsa_z',)
+    ordering = ('mangaid',)
 
     def get_megacube_path(self, filename):
         return os.path.join(os.getenv('IMAGE_PATH', '/images/'), filename)
