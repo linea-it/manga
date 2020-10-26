@@ -15,7 +15,7 @@ class ImageViewSet(viewsets.ModelViewSet):
     queryset = Image.objects.all()
     serializer_class = ImageSerializer
     filter_fields = ('id', 'megacube', 'mangaid', 'objra', 'objdec', 'nsa_iauname', 'mjdmed', 'exptime', 'airmsmed', 'seemed', 'nsa_z',)
-    search_fields = ('id', 'megacube', 'mangaid', 'objra', 'objdec', 'nsa_iauname', 'mjdmed', 'exptime', 'airmsmed', 'seemed', 'nsa_z',)
+    search_fields = ('megacube', 'nsa_iauname',)
     ordering_fields = ('id', 'megacube', 'mangaid', 'objra', 'objdec', 'nsa_iauname', 'mjdmed', 'exptime', 'airmsmed', 'seemed', 'nsa_z',)
     ordering = ('id', 'megacube', 'mangaid', 'objra', 'objdec', 'nsa_iauname', 'mjdmed', 'exptime', 'airmsmed', 'seemed', 'nsa_z',)
 
