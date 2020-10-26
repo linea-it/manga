@@ -26,8 +26,8 @@ function MegacubeHeader({ data, open, setOpen }) {
               title="Megacube Header"
               action={(
                 <IconButton aria-label="close" onClick={setOpen}>
-                <CloseIcon />
-              </IconButton>
+                  <CloseIcon />
+                </IconButton>
               )}
             />
             <CardContent>

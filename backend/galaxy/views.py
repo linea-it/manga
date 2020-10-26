@@ -22,6 +22,9 @@ class ImageViewSet(viewsets.ModelViewSet):
     def get_megacube_path(self, filename):
         return os.path.join(os.getenv('IMAGE_PATH', '/images/'), filename)
 
+    def get_megacube_size(self, filename):
+        return os.stat(self.get_megacube_path(filename)).st_size
+
     @action(detail=True, methods=['get'])
     def original_image(self, request, pk=None):
         """
@@ -74,8 +77,32 @@ class ImageViewSet(viewsets.ModelViewSet):
         dHud = sorted(dHud, key = lambda i: i['display_name'])
 
         result = ({
-            'download': '/data/' + galaxy.megacube,
             'hud': dHud
+        })
+
+        return Response(result)
+
+    @action(detail=True, methods=['get'])
+    def download_info(self, request, pk=None):
+        """
+        Returns the megacube's link for download
+
+        Returns:
+            mangaid [String]: the manga id
+            name [String]: the name of the galaxy
+            megacube [String]: the megacube filename
+            link [String]: the url of the megacube
+            size [Number]: the size of the file
+        """
+
+        galaxy = self.get_object()
+
+        result = ({
+            'mangaid': galaxy.mangaid,
+            'name': galaxy.nsa_iauname,
+            'megacube': galaxy.megacube,
+            'link': '/data/' + galaxy.megacube,
+            'size': self.get_megacube_size(galaxy.megacube)
         })
 
         return Response(result)
