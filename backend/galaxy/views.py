@@ -17,7 +17,7 @@ class ImageViewSet(viewsets.ModelViewSet):
     filter_fields = ('id', 'megacube', 'mangaid', 'objra', 'objdec', 'nsa_iauname', 'mjdmed', 'exptime', 'airmsmed', 'seemed', 'nsa_z',)
     search_fields = ('megacube', 'nsa_iauname',)
     ordering_fields = ('id', 'megacube', 'mangaid', 'objra', 'objdec', 'nsa_iauname', 'mjdmed', 'exptime', 'airmsmed', 'seemed', 'nsa_z',)
-    ordering = ('id', 'megacube', 'mangaid', 'objra', 'objdec', 'nsa_iauname', 'mjdmed', 'exptime', 'airmsmed', 'seemed', 'nsa_z',)
+    ordering = ('mangaid',)
 
     def get_megacube_path(self, filename):
         return os.path.join(os.getenv('IMAGE_PATH', '/images/'), filename)
