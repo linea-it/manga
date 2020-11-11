@@ -43,7 +43,7 @@ function Banner() {
             alt="Data Release Interface"
             className={classes.logo}
           />
-          <h1 className={classes.title}>LineA MaNGA Portal</h1>
+          <h1 className={classes.title}>LIneA MaNGA Portal</h1>
         </Grid>
         {/* <Grid item xs={12}>
           <h2>Mapping Nearby Galaxies at APO</h2>
