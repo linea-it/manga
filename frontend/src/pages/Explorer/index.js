@@ -7,7 +7,7 @@ import useInterval from '../../hooks/useInterval';
 import {
   getFluxByPosition,
   getHudList,
-  getImageHeatmap,
+  getAllImagesHeatmap,
   getLogAgeByPosition,
   getVecsByPosition,
   getHeader,
@@ -25,7 +25,14 @@ function Explorer() {
   const { id } = useParams();
   const history = useHistory();
   const [hudList, setHudList] = useState([]);
-  const [download, setDownload] = useState({ open: false, mangaid: '', name: '', megacube: '', link: '', size: 0 });
+  const [download, setDownload] = useState({
+    open: false,
+    mangaid: '',
+    name: '',
+    megacube: '',
+    link: '',
+    size: 0
+  });
   const [selectedImage, setSelectedImage] = useState({ id: 0, name: '' });
   const [selectedContour, setSelectedContour] = useState({ id: 0, name: '' });
   const [fluxPlotData, setFluxPlotData] = useState({});
@@ -39,7 +46,7 @@ function Explorer() {
   const [heatmapContourLimits, setHeatmapContourLimits] = useState([]);
   const [heatmapContourRange, setHeatmapContourRange] = useState([]);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [localHeatmaps, setLocalHeatmaps] = useState([]);
+  const [heatmaps, setHeatmaps] = useState([]);
   const [heatmapSize, setHeatmapSize] = useState({ height: 450 });
   const [isGrid, setIsGrid] = useState(false);
   const [header, setHeader] = useState({ open: false, data: [] })
@@ -81,57 +88,56 @@ function Explorer() {
   }, [heatmapPoints]);
 
   useEffect(() => {
-    if (selectedImage.id !== 0) {
-      const heatmap = localHeatmaps.filter((el) => el.title === selectedImage.name);
+    if (heatmaps.length > 0 && selectedImage.id !== 0) {
+
+      // Filter the list of heatmaps by the selected image title
+      const heatmap = heatmaps.filter((el) => el.title === selectedImage.name);
+
       if (heatmap.length > 0) {
         setHeatmapPlotImageData(heatmap[0]);
+
+        // Get array of arrays, "z" values on heatmap,
+        // and merge them into a one-dimensional arrays
         const mergedHeatmapZ = mergeArrayOfArrays(heatmap[0].z);
 
+        // Set the limits of the heatmap contrast controller based on the prior made array
         setHeatmapValueLimits([Math.min(...mergedHeatmapZ), Math.max(...mergedHeatmapZ)]);
+
+        // Set the maximum range for the heatmap contrast controller based on the prior made array
         setHeatmapColorRangeValue([Math.min(...mergedHeatmapZ), Math.max(...mergedHeatmapZ)]);
+
         setHeatmapError('');
       } else {
-        getImageHeatmap(id, selectedImage.name)
-          .then((res) => {
-            setHeatmapPlotImageData(res);
-            setHeatmapError('');
-          })
-          .catch((err) => {
-            // If heatmap couldn't be built, present an error message to the user:
-            setHeatmapError(err.message);
-            // setFluxPlotData({});
-            // setHeatmapPoints([0, 0]);
-            // setHeatmapValueLimits([]);
-            // setHeatmapColorRangeValue([]);
-          });
+        setHeatmapError('Not found!');
       }
     }
-  }, [selectedImage, localHeatmaps]);
+  }, [selectedImage, heatmaps]);
 
   useEffect(() => {
-    if (selectedContour.id !== 0) {
-      const heatmap = localHeatmaps.filter((el) => el.title === selectedContour.name);
+    if (heatmaps.length > 0 && selectedContour.id !== 0) {
+
+      // Filter the list of heatmaps by the selected image title
+      const heatmap = heatmaps.filter((el) => el.title === selectedContour.name);
+
       if (heatmap.length > 0) {
         setHeatmapPlotContourData(heatmap[0]);
 
-        const heatmapArr = [].concat.apply([], heatmap[0].z);
-        setHeatmapContourLimits([Math.min(...heatmapArr), Math.max(...heatmapArr)]);
-        setHeatmapContourRange(Math.max(...heatmapArr));
+        // Get array of arrays, "z" values on heatmap,
+        // and merge them into a one-dimensional arrays
+        const mergedHeatmapZ = mergeArrayOfArrays(heatmap[0].z);
+
+        // Set the limits of the contour based on the prior made array
+        setHeatmapContourLimits([Math.min(...mergedHeatmapZ), Math.max(...mergedHeatmapZ)]);
+
+        // Set the maximum range for the contour based on the prior made array
+        setHeatmapContourRange(Math.max(...mergedHeatmapZ));
 
         setHeatmapError('');
       } else {
-        getImageHeatmap(id, selectedContour.name)
-          .then((res) => {
-            setHeatmapPlotContourData(res);
-            setHeatmapError('');
-          })
-          .catch((err) => {
-            // If heatmap couldn't be built, present an error message to the user:
-            setHeatmapError(err.message);
-          });
+        setHeatmapError('Not found!');
       }
     }
-  }, [selectedContour, localHeatmaps]);
+  }, [selectedContour, heatmaps]);
 
   useEffect(() => {
     if (heatmapPoints[0] !== 0 && heatmapPoints[1] !== 0) {
@@ -193,16 +199,13 @@ function Explorer() {
     setHeatmapContourRange(value);
   };
 
-
-  const preloadHeatmaps = () => {
-    hudList.forEach((hud) => {
-      getImageHeatmap(id, hud.name)
-        .then((res) => setLocalHeatmaps((localHeatmapsRef) => [...localHeatmapsRef, res]));
-    });
-  };
-
   useEffect(() => {
-    if (hudList.length > 0) preloadHeatmaps();
+    if (hudList.length > 0) {
+      getAllImagesHeatmap(id)
+        .then((res) => {
+          setHeatmaps(res)
+        });
+    };
   }, [hudList]);
 
 

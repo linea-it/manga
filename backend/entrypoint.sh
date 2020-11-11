@@ -38,9 +38,6 @@ then
     echo "Running Collect Statics"
     python manage.py collectstatic --clear --noinput --verbosity 0
 
-    echo "Running Insert Metadata"
-    python manage.py insert_metadata
-
     python manage.py runserver 0.0.0.0:$GUNICORN_PORT
 
     # Dar Permissao aos arquivos de log

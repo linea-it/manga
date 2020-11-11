@@ -28,6 +28,10 @@ export const getImageHeatmap = (id, hud) => {
     .then(res => res.data)
 }
 
+export const getAllImagesHeatmap = (id) => {
+  return axios.get(`/images/${id}/all_images_heatmap/`)
+    .then(res => res.data)
+}
 
 export const getHudList = (id) =>
   axios.get(`/images/${id}/list_hud/`)
@@ -62,7 +66,6 @@ export const getLogAgeByPosition = ({ id, x, y }) => {
   return axios.get(`/images/${id}/log_age_by_position`, { params })
     .then(res => res.data)
 }
-
 
 export const getVecsByPosition = ({ id, x, y }) => {
   const params = { x, y }

@@ -153,6 +153,16 @@ REST_FRAMEWORK = {
     ),
 }
 
+# Project Path
+IMAGES_DIR = "/images"
+
+# Sub directories of /images
+MEGACUBE_ROOT = 'megacube_parts'
+MEGACUBE_PARTS = os.path.join(IMAGES_DIR, MEGACUBE_ROOT)
+
+if not os.path.exists(MEGACUBE_PARTS):
+    os.mkdir(MEGACUBE_PARTS)
+
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )

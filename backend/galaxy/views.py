@@ -7,16 +7,22 @@ from galaxy.models import Image
 from galaxy.serializers import ImageSerializer
 
 import os
-import numpy as np
+from django.conf import settings
+import json
 
 from manga.verifyer import mclass
+
 
 class ImageViewSet(viewsets.ModelViewSet):
     queryset = Image.objects.all()
     serializer_class = ImageSerializer
-    filter_fields = ('id', 'megacube', 'mangaid', 'objra', 'objdec', 'nsa_iauname', 'mjdmed', 'exptime', 'airmsmed', 'seemed', 'nsa_z',)
+    filter_fields = ('id', 'megacube', 'mangaid', 'objra', 'objdec',
+                     'nsa_iauname', 'mjdmed', 'exptime', 'airmsmed', 'seemed',
+                     'nsa_z',)
     search_fields = ('megacube', 'nsa_iauname',)
-    ordering_fields = ('id', 'megacube', 'mangaid', 'objra', 'objdec', 'nsa_iauname', 'mjdmed', 'exptime', 'airmsmed', 'seemed', 'nsa_z',)
+    ordering_fields = ('id', 'megacube', 'mangaid', 'objra', 'objdec',
+                       'nsa_iauname', 'mjdmed', 'exptime', 'airmsmed', 'seemed',
+                       'nsa_z',)
     ordering = ('mangaid',)
 
     def get_megacube_path(self, filename):
@@ -24,6 +30,17 @@ class ImageViewSet(viewsets.ModelViewSet):
 
     def get_megacube_size(self, filename):
         return os.stat(self.get_megacube_path(filename)).st_size
+
+    def get_image_part_path(self, megacube_id, filename):
+        # Join and make the path for the extracted files:
+        file_dir = os.path.join(
+            settings.MEGACUBE_PARTS,
+            'megacube_' + str(megacube_id) + '/' + filename
+        )
+
+        filepath = self.get_megacube_path(file_dir)
+
+        return filepath
 
     @action(detail=True, methods=['get'])
     def original_image(self, request, pk=None):
@@ -33,18 +50,13 @@ class ImageViewSet(viewsets.ModelViewSet):
 
         galaxy = self.get_object()
 
-        megacube = self.get_megacube_path(galaxy.megacube)
+        original_image_filepath = self.get_image_part_path(
+            galaxy.id, 'original_image.json')
 
-        cube_data = mclass().get_original_cube_data(megacube)
+        with open(original_image_filepath) as f:
+            data = json.load(f)
 
-        result = dict({
-            'z': cube_data,
-            'title': 'FLUX',
-        })
-
-        response = Response(result)
-
-        return response
+        return Response(data)
 
     @action(detail=True, methods=['get'])
     def list_hud(self, request, pk=None):
@@ -55,32 +67,13 @@ class ImageViewSet(viewsets.ModelViewSet):
 
         galaxy = self.get_object()
 
-        megacube = self.get_megacube_path(galaxy.megacube)
+        list_hud_filepath = self.get_image_part_path(
+            galaxy.id, 'list_hud.json')
 
-        cube_header = mclass().get_headers(megacube, 'PoPBins')
+        with open(list_hud_filepath) as f:
+            data = json.load(f)
 
-        cube_data = mclass().get_cube_data(megacube, 'PoPBins')
-
-        lHud = mclass().get_all_hud(
-            cube_header, cube_data)
-
-        dHud = list()
-
-        for hud in lHud:
-            # TODO: recuperar o display name para cada HUD
-            dHud.append({
-                'name': hud,
-                'display_name': hud
-            })
-
-
-        dHud = sorted(dHud, key = lambda i: i['display_name'])
-
-        result = ({
-            'hud': dHud
-        })
-
-        return Response(result)
+        return Response(data)
 
     @action(detail=True, methods=['get'])
     def download_info(self, request, pk=None):
@@ -121,20 +114,45 @@ class ImageViewSet(viewsets.ModelViewSet):
 
         galaxy = self.get_object()
 
-        megacube = self.get_megacube_path(galaxy.megacube)
+        filename = 'image_heatmap_%s.json' % params['hud']
 
-        image_data = mclass().image_by_hud(
-            megacube, params['hud'])
+        image_heatmap_filepath = self.get_image_part_path(
+            galaxy.id, filename)
 
-        z = mclass().image_data_to_array(image_data)
+        with open(image_heatmap_filepath) as f:
+            data = json.load(f)
 
-        result = dict({
-            'z': z,
-            'title': params['hud'],
-        })
+        return Response(data)
 
-        return Response(result)
+    @action(detail=True, methods=['get'])
+    def all_images_heatmap(self, request, pk=None):
+        """
+            Retorna os dados que permitem plotar a imagem usando um heatmap.
+            Exemplo de Requisicao: http://localhost/image_2d_histogram?megacube=manga-8138-6101-MEGA.fits&hud=xyy
+        """
 
+        galaxy = self.get_object()
+
+        list_hud_filepath = self.get_image_part_path(
+            galaxy.id, 'list_hud.json')
+
+        with open(list_hud_filepath) as f:
+            list_hud = json.load(f)
+
+        data = []
+
+        for hud in list_hud['hud']:
+            filename = 'image_heatmap_%s.json' % hud['name']
+
+            image_heatmap_filepath = self.get_image_part_path(
+                galaxy.id, filename)
+
+            with open(image_heatmap_filepath) as f:
+                image = json.load(f)
+
+            data.append(image)
+
+        return Response(data)
 
     @action(detail=True, methods=['get'])
     def flux_by_position(self, request, pk=None):
@@ -188,7 +206,6 @@ class ImageViewSet(viewsets.ModelViewSet):
         if 'y' not in params:
             raise Exception("Parameter y is required")
 
-
         galaxy = self.get_object()
 
         megacube = self.get_megacube_path(galaxy.megacube)
@@ -215,7 +232,6 @@ class ImageViewSet(viewsets.ModelViewSet):
         if 'y' not in params:
             raise Exception("Parameter y is required")
 
-
         galaxy = self.get_object()
 
         megacube = self.get_megacube_path(galaxy.megacube)
@@ -236,8 +252,10 @@ class ImageViewSet(viewsets.ModelViewSet):
 
         galaxy = self.get_object()
 
-        megacube = self.get_megacube_path(galaxy.megacube)
+        cube_header_filepath = self.get_image_part_path(
+            galaxy.id, 'cube_header.json')
 
-        cube_header = repr(mclass().get_headers(megacube, 'PoPBins')).split('\n')
+        with open(cube_header_filepath) as f:
+            data = json.load(f)
 
-        return Response(cube_header)
+        return Response(data)
