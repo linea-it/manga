@@ -31,7 +31,9 @@ function Header() {
   useEffect(() => {
     loggedUser()
       .then(res => {
-        setCurrentUser({ username: res.username })
+        if (res) {
+          setCurrentUser({ username: res ? res.username : null })
+        }
       })
   }, []);
 

@@ -4,12 +4,12 @@ import { MuiThemeProvider } from '@material-ui/core/styles';
 import Routes from './routes';
 import history from './services/history';
 import light from './themes/light';
-import Header from './components/Header';
+// import Header from './components/Header';
 
 function App() {
   return (
     <MuiThemeProvider theme={light}>
-      <Header />
+      {/* <Header /> */}
       <Router history={history}>
         <Routes />
       </Router>
