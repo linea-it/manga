@@ -1,6 +1,5 @@
 import React from 'react';
 import { Typography, Grid } from '@material-ui/core';
-import clsx from 'clsx';
 import logo from '../../../assets/img/linea-dark-invert.png';
 import useStyles from './styles';
 
@@ -8,21 +7,22 @@ function Footer() {
   const classes = useStyles();
 
   return (
-    <footer className={clsx(classes.root, classes.appBarDrawerClose)}>
+    <footer className={classes.root}>
       <Grid
         container
         direction="row"
         justify="space-between"
         alignItems="center"
+        className={classes.container}
       >
-        <Grid item className={classes.marginItem}>
-          <Typography color="contrastText">
+        <Grid item>
+          <Typography color="contrastText" className={classes.marginItem}>
             <span className={classes.poweredBy}>Testing</span>{' '}
             <span className={classes.versionLink}>1.0.0</span>
           </Typography>
         </Grid>
-        <Grid item className={classes.marginItem}>
-          <Typography color="contrastText">
+        <Grid item>
+          <Typography color="contrastText" className={classes.marginItem}>
             <span className={classes.poweredBy}>Powered by</span>
             <a
               href="http://www.linea.gov.br/"

@@ -34,7 +34,6 @@ function Banner() {
         direction="row"
         justify="space-between"
         alignItems="flex-start"
-        spacing={1}
         className={classes.container}
       >
         <Grid item xs={12} className={classes.titleWrapper}>
