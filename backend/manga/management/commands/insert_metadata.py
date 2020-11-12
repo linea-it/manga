@@ -8,6 +8,7 @@ from manga.verifyer import mclass
 import os
 import numpy as np
 
+
 class Command(BaseCommand):
     help = 'Integrating metadata files into the database'
 
@@ -21,11 +22,8 @@ class Command(BaseCommand):
 
         self.stdout.write('Done!')
 
-
-
     def delete_table(self, model):
         model.objects.all().delete()
-
 
     def get_megacube_path(self, filename):
         return os.path.join(os.getenv("IMAGE_PATH", "/images/"), filename)
@@ -51,7 +49,6 @@ class Command(BaseCommand):
     def dict_list_to_list_dict(self, dl):
         return [dict(zip(dl, t)) for t in zip(*dl.values())]
 
-
     def update_metadata(self):
 
         mpl4 = self.get_megacube_path('mpl-4/drpall-v1_5_1.fits')
@@ -63,11 +60,8 @@ class Command(BaseCommand):
         mpl9_metadata = mclass().get_metadata(mpl9)
         self.stdout.write('Fetched MPL9')
 
-
-
         columns = self.get_model_fields(Image)
         columns.remove('id')
-
 
         for column in list(mpl4_metadata):
             if column not in columns:
@@ -82,7 +76,8 @@ class Command(BaseCommand):
         dict_metadata = self.merge_same_keys_dict(mpl4_metadata, mpl9_metadata)
         list_metadata = self.dict_list_to_list_dict(dict_metadata)
 
-        self.stdout.write('Transformed the dictionary of lists to a list of dictionaries')
+        self.stdout.write(
+            'Transformed the dictionary of lists to a list of dictionaries')
 
         for row in list_metadata:
 
@@ -110,6 +105,5 @@ class Command(BaseCommand):
                 # Verifying that the there's not duplicates
                 except IntegrityError:
                     pass
-
 
         self.stdout.write('Finished the database integration')

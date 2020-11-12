@@ -95,7 +95,7 @@ function Galaxy({
                     <FormControl fullWidth className={classes.textAlignLeft}>
                       <InputLabel htmlFor="input">Type</InputLabel>
                       <Select
-                        value={selectedImage.id || 0}
+                        value={selectedImage.id}
                         onChange={handleSelectImage}
                         disabled={selectedMegacube === ''}
                       >

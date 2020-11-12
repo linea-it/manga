@@ -42,3 +42,22 @@ docker-compose -f docker-compose.prod.yml up
 ```
 docker-compose -f docker-compose.prod.yml exec web manage.py createsuperuser
 ```
+
+## Insert Metadata
+
+1. Configuration
+> Make sure that there's at least one galaxy (`.fits.fz`) at the `images` folder.
+> You can download one in here: http://dev.linea.gov.br/~matheus.freitas/manga-7443-12701-MEGA.fits.fz.
+
+2. Running Command
+```
+docker-compose exec backend python manage.py insert_metadata
+```
+
+## Extract Image Parts
+>This will extract the needed informations of the `.fits.fz` file and store them in separate, and small, files, to decrease the output time on requests.
+
+1. Running Command
+```
+docker-compose exec backend python manage.py extract_image_parts
+```

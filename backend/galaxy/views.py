@@ -7,16 +7,22 @@ from galaxy.models import Image
 from galaxy.serializers import ImageSerializer
 
 import os
-import numpy as np
+from django.conf import settings
+import json
 
 from manga.verifyer import mclass
+
 
 class ImageViewSet(viewsets.ModelViewSet):
     queryset = Image.objects.all()
     serializer_class = ImageSerializer
-    filter_fields = ('id', 'megacube', 'mangaid', 'objra', 'objdec', 'nsa_iauname', 'mjdmed', 'exptime', 'airmsmed', 'seemed', 'nsa_z',)
+    filter_fields = ('id', 'megacube', 'mangaid', 'objra', 'objdec',
+                     'nsa_iauname', 'mjdmed', 'exptime', 'airmsmed', 'seemed',
+                     'nsa_z',)
     search_fields = ('megacube', 'nsa_iauname',)
-    ordering_fields = ('id', 'megacube', 'mangaid', 'objra', 'objdec', 'nsa_iauname', 'mjdmed', 'exptime', 'airmsmed', 'seemed', 'nsa_z',)
+    ordering_fields = ('id', 'megacube', 'mangaid', 'objra', 'objdec',
+                       'nsa_iauname', 'mjdmed', 'exptime', 'airmsmed', 'seemed',
+                       'nsa_z',)
     ordering = ('mangaid',)
 
     def get_megacube_path(self, filename):
@@ -25,74 +31,79 @@ class ImageViewSet(viewsets.ModelViewSet):
     def get_megacube_size(self, filename):
         return os.stat(self.get_megacube_path(filename)).st_size
 
+    def get_image_part_path(self, megacube_id, filename):
+        # Join and make the path for the extracted files:
+        file_dir = os.path.join(
+            settings.MEGACUBE_PARTS,
+            'megacube_' + str(megacube_id) + '/' + filename
+        )
+
+        filepath = self.get_megacube_path(file_dir)
+
+        return filepath
+
     @action(detail=True, methods=['get'])
     def original_image(self, request, pk=None):
         """
-            Retorna a primeira imagem, a original (zero).
+        Returns the original image data by 'FLUX' hud to create a heatmap.
+
+        It's being read by the file in:
+        `/images/megacube_parts/megacube_{JOB_ID}/original_image.json`
+        that has been extracted from `.fits.fz` file.
+
+        Returns: <br>
+            ([dict]): a dictionary containing the 'z' and 'title'. <br>
+                - z ([list[list[number]]]): image data
+                (Matrix 52x52: 20704 elements) converted utilizing pcolormesh. <br>
+                - title ([string]): the HUD title, which is 'FLUX'.
         """
 
         galaxy = self.get_object()
 
-        megacube = self.get_megacube_path(galaxy.megacube)
+        original_image_filepath = self.get_image_part_path(
+            galaxy.id, 'original_image.json')
 
-        cube_data = mclass().get_original_cube_data(megacube)
+        with open(original_image_filepath) as f:
+            data = json.load(f)
 
-        result = dict({
-            'z': cube_data,
-            'title': 'FLUX',
-        })
-
-        response = Response(result)
-
-        return response
+        return Response(data)
 
     @action(detail=True, methods=['get'])
     def list_hud(self, request, pk=None):
         """
-            Retorna a lista de HUD disponivel em um megacube.
-            Exemplo de requisicao: http://localhost/8/list_hud/
+        Returns a list of all HUDs titles.
+
+        It's being read by the file in:
+        `/images/megacube_parts/megacube_{JOB_ID}/list_hud.json`
+        that has been extracted from `.fits.fz` file.
+
+        Returns: <br>
+            ([list[string]]): a list of HUDs titles.
         """
 
         galaxy = self.get_object()
 
-        megacube = self.get_megacube_path(galaxy.megacube)
+        list_hud_filepath = self.get_image_part_path(
+            galaxy.id, 'list_hud.json')
 
-        cube_header = mclass().get_headers(megacube, 'PoPBins')
+        with open(list_hud_filepath) as f:
+            data = json.load(f)
 
-        cube_data = mclass().get_cube_data(megacube, 'PoPBins')
-
-        lHud = mclass().get_all_hud(
-            cube_header, cube_data)
-
-        dHud = list()
-
-        for hud in lHud:
-            # TODO: recuperar o display name para cada HUD
-            dHud.append({
-                'name': hud,
-                'display_name': hud
-            })
-
-
-        dHud = sorted(dHud, key = lambda i: i['display_name'])
-
-        result = ({
-            'hud': dHud
-        })
-
-        return Response(result)
+        return Response(data)
 
     @action(detail=True, methods=['get'])
     def download_info(self, request, pk=None):
         """
-        Returns the megacube's link for download
+        Returns meta information on a megacube and its link for download.
 
-        Returns:
-            mangaid [String]: the manga id
-            name [String]: the name of the galaxy
-            megacube [String]: the megacube filename
-            link [String]: the url of the megacube
-            size [Number]: the size of the file
+        Returns: <br>
+            ([dict]): a dictionary containing 'mangaid', 'name', 'megacube',
+            'link', 'size'. <br>
+                - mangaid ([string]): the manga id. <br>
+                - name ([string]): the name of the galaxy. <br>
+                - megacube ([string]): the megacube filename. <br>
+                - link ([string]): the url of the megacube. <br>
+                - size ([number]): the size of the file.
         """
 
         galaxy = self.get_object()
@@ -110,8 +121,20 @@ class ImageViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['get'])
     def image_heatmap(self, request, pk=None):
         """
-            Retorna os dados que permitem plotar a imagem usando um heatmap.
-            Exemplo de Requisicao: http://localhost/image_2d_histogram?megacube=manga-8138-6101-MEGA.fits&hud=xyy
+        Returns the image data by HUD to create a heatmap.
+
+        It's being read by the files in:
+        `/images/megacube_parts/megacube_{JOB_ID}/image_heatmap_{HUD}.json`
+        that has been extracted from `.fits.fz` file.
+
+        Args: <br>
+            hud ([string]): the HUD title.
+
+        Returns: <br>
+            ([dict]): a dictionary containing the 'z' and 'title'. <br>
+                - z ([list[list[number]]]): image data (Matrix 52x52:
+                20704 elements) converted utilizing pcolormesh. <br>
+                - title ([string]): the title of the HUD
         """
 
         params = request.query_params
@@ -121,28 +144,68 @@ class ImageViewSet(viewsets.ModelViewSet):
 
         galaxy = self.get_object()
 
-        megacube = self.get_megacube_path(galaxy.megacube)
+        filename = 'image_heatmap_%s.json' % params['hud']
 
-        image_data = mclass().image_by_hud(
-            megacube, params['hud'])
+        image_heatmap_filepath = self.get_image_part_path(
+            galaxy.id, filename)
 
-        z = mclass().image_data_to_array(image_data)
+        with open(image_heatmap_filepath) as f:
+            data = json.load(f)
 
-        result = dict({
-            'z': z,
-            'title': params['hud'],
-        })
+        return Response(data)
 
-        return Response(result)
+    @action(detail=True, methods=['get'])
+    def all_images_heatmap(self, request, pk=None):
+        """
+        Returns a list of image data by all HUDs to create heatmaps.
 
+        It's being read by the files in:
+        `/images/megacube_parts/megacube_{JOB_ID}/image_heatmap_{HUD}.json`
+        that has been extracted from `.fits.fz` file.
+
+        Returns: <br>
+            ([list[dict]]): a list of dictionaries containing the 'z' and 'title'. <br>
+                - z ([list[list[number]]]): image data (Matrix 52x52: 20704 elements) converted utilizing pcolormesh. <br>
+                - title ([string]): the title of the HUD.
+        """
+
+        galaxy = self.get_object()
+
+        list_hud_filepath = self.get_image_part_path(
+            galaxy.id, 'list_hud.json')
+
+        with open(list_hud_filepath) as f:
+            list_hud = json.load(f)
+
+        data = []
+
+        for hud in list_hud['hud']:
+            filename = 'image_heatmap_%s.json' % hud['name']
+
+            image_heatmap_filepath = self.get_image_part_path(
+                galaxy.id, filename)
+
+            with open(image_heatmap_filepath) as f:
+                image = json.load(f)
+
+            data.append(image)
+
+        return Response(data)
 
     @action(detail=True, methods=['get'])
     def flux_by_position(self, request, pk=None):
         """
-            Retorna o Fluxo e lambda para uma posicao x,y.
+        Returns the Flux, Lambda and Synt by an X, Y position.
 
-            Exemplo de requisicao.
-            http://localhost/flux_by_position?megacube=manga-8138-6101-MEGA.fits&x=25&y=26
+        Args: <br>
+            x ([number]): position X on Image. <br>
+            y ([number]): position Y on Image.
+
+        Returns: <br>
+            [dict]: a dictionary with the 'flux', 'lamb' and 'synt'. <br>
+                - flux ([list[number]]) <br>
+                - lamb ([list[number]]) <br>
+                - synt ([list[number]])
         """
 
         params = request.query_params
@@ -174,10 +237,17 @@ class ImageViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['get'])
     def log_age_by_position(self, request, pk=None):
         """
-            Retorna o "Central Spaxel Best Fit" para uma posicao x,y.
+        Returns the image HUDs by log10 by an X, Y position.
 
-            Exemplo de requisicao.
-            http://localhost/spaxel_fit_by_position?megacube=manga-8138-6101-MEGA.fits&x=15&y=29
+        Args: <br>
+            x ([number]): position X on Image. <br>
+            y ([number]): position Y on Image. <br>
+
+        Returns: <br>
+            [dict]: a dictionary with 'x', 'y' and 'm'. <br>
+                - x ([list[number]]) <br>
+                - y ([list[number]]) <br>
+                - m ([list[number]])
         """
 
         params = request.query_params
@@ -187,7 +257,6 @@ class ImageViewSet(viewsets.ModelViewSet):
 
         if 'y' not in params:
             raise Exception("Parameter y is required")
-
 
         galaxy = self.get_object()
 
@@ -201,10 +270,18 @@ class ImageViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['get'])
     def vecs_by_position(self, request, pk=None):
         """
-            Retorna o "Central Spaxel Best Fit" para uma posicao x,y.
+        Returns the Vecs by an X, Y position.
 
-            Exemplo de requisicao.
-            http://localhost/spaxel_fit_by_position?megacube=manga-8138-6101-MEGA.fits&x=15&y=29
+        Args: <br>
+            x ([number]): position X on Image. <br>
+            y ([number]): position Y on Image. <br>
+
+        Returns: <br>
+            [dict]: a dictionary with 'x', 'y', 'm' and 'mlegend'. <br>
+                - x ([list[number]]) <br>
+                - y ([list[number]]) <br>
+                - m ([list[number]]) <br>
+                - mlegend ([list[string]])
         """
 
         params = request.query_params
@@ -214,7 +291,6 @@ class ImageViewSet(viewsets.ModelViewSet):
 
         if 'y' not in params:
             raise Exception("Parameter y is required")
-
 
         galaxy = self.get_object()
 
@@ -228,16 +304,23 @@ class ImageViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['get'])
     def megacube_header(self, request, pk=None):
         """
-            Retorna o "Header" de um determinado megacubo.
+        Returns the Image's Megacube Header.
 
-            Exemplo de requisicao.
-            http://localhost/megacube_header?megacube=manga-8138-6101-MEGA.fits
+        It's being read by the file in:
+        `/images/megacube_parts/megacube_{JOB_ID}/megacube_header.json`
+        that has been extracted from `.fits.fz` file.
+
+
+        Returns: <br>
+            ([list[string]]): a list of srings.
         """
 
         galaxy = self.get_object()
 
-        megacube = self.get_megacube_path(galaxy.megacube)
+        cube_header_filepath = self.get_image_part_path(
+            galaxy.id, 'cube_header.json')
 
-        cube_header = repr(mclass().get_headers(megacube, 'PoPBins')).split('\n')
+        with open(cube_header_filepath) as f:
+            data = json.load(f)
 
-        return Response(cube_header)
+        return Response(data)

@@ -97,6 +97,9 @@ class mclass:
 
         image_data = cube_data[idxHud, :, :]
 
+        # Transforming "masked" values to zero:
+        image_data[np.isnan(image_data)] = 0
+
         return image_data
 
     def image_data_to_array(self, image_data):
@@ -110,6 +113,7 @@ class mclass:
         """
         # Converte o ndarray para um mesh (matplotlib.collections.QuadMesh)
         # https://matplotlib.org/3.1.1/api/collections_api.html#matplotlib.collections.QuadMesh)
+
         mesh = pyplot.pcolormesh(image_data)
 
         # O mesh tem a funcao get_array que transforma
@@ -189,7 +193,8 @@ class mclass:
 
         for z in zs:
             if(len(popZ[popZ == z]) == 0):
-                print('Metallicity', z, ' is not in the base, I hope you know wath you are doing!')
+                print('Metallicity', z,
+                      ' is not in the base, I hope you know wath you are doing!')
 
             summedpopxTemp.append(popx[popZ == z])
             summedpopxTemp2 = np.column_stack(summedpopxTemp)
@@ -238,7 +243,8 @@ class mclass:
             maxis = np.append(maxis, cube_header['DATA' + str(k)])
             for j in range(0, len(cube_header_list)):
                 if self.index_of('DATA' + str(k) + ' ', str(cube_header_list[j])) > -1:
-                    mlegend = np.append(mlegend, str(cube_header_list[j]).split('/')[1].strip())
+                    mlegend = np.append(mlegend, str(
+                        cube_header_list[j]).split('/')[1].strip())
 
         return dict({
             "x": list(xaxis),
@@ -340,8 +346,8 @@ class mclass:
                 # Here we loop through the these columns and change their name according to the latest version, which is the mpl9 file.
                 for column in same_attribute_columns:
                     if column['mpl4'] in columns.names:
-                        columns.change_name(col_name=column['mpl4'], new_name=column['mpl9'])
-
+                        columns.change_name(
+                            col_name=column['mpl4'], new_name=column['mpl9'])
 
                 for column in columns.names:
                     # In case of having the column in the file, insert its data to the result dictionary
@@ -365,8 +371,6 @@ class mclass:
                 pass
 
         return result
-
-
 
 
 if __name__ == '__main__':
