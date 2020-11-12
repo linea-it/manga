@@ -6,12 +6,8 @@ from galaxy.models import Image
 from manga.verifyer import mclass
 
 import os
-from django.conf import settings
-
 import json
-import traceback
-
-import numpy as np
+from django.conf import settings
 
 
 class Command(BaseCommand):
