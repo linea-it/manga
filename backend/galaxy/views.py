@@ -45,7 +45,17 @@ class ImageViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['get'])
     def original_image(self, request, pk=None):
         """
-            Retorna a primeira imagem, a original (zero).
+        Returns the original image data by 'FLUX' hud to create a heatmap.
+
+        It's being read by the file in:
+        `/images/megacube_parts/megacube_{JOB_ID}/original_image.json`
+        that has been extracted from `.fits.fz` file.
+
+        Returns: <br>
+            ([dict]): a dictionary containing the 'z' and 'title'. <br>
+                - z ([list[list[number]]]): image data
+                (Matrix 52x52: 20704 elements) converted utilizing pcolormesh. <br>
+                - title ([string]): the HUD title, which is 'FLUX'.
         """
 
         galaxy = self.get_object()
@@ -61,8 +71,14 @@ class ImageViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['get'])
     def list_hud(self, request, pk=None):
         """
-            Retorna a lista de HUD disponivel em um megacube.
-            Exemplo de requisicao: http://localhost/8/list_hud/
+        Returns a list of all HUDs titles.
+
+        It's being read by the file in:
+        `/images/megacube_parts/megacube_{JOB_ID}/list_hud.json`
+        that has been extracted from `.fits.fz` file.
+
+        Returns: <br>
+            ([list[string]]): a list of HUDs titles.
         """
 
         galaxy = self.get_object()
@@ -78,14 +94,16 @@ class ImageViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['get'])
     def download_info(self, request, pk=None):
         """
-        Returns the megacube's link for download
+        Returns meta information on a megacube and its link for download.
 
-        Returns:
-            mangaid [String]: the manga id
-            name [String]: the name of the galaxy
-            megacube [String]: the megacube filename
-            link [String]: the url of the megacube
-            size [Number]: the size of the file
+        Returns: <br>
+            ([dict]): a dictionary containing 'mangaid', 'name', 'megacube',
+            'link', 'size'. <br>
+                - mangaid ([string]): the manga id. <br>
+                - name ([string]): the name of the galaxy. <br>
+                - megacube ([string]): the megacube filename. <br>
+                - link ([string]): the url of the megacube. <br>
+                - size ([number]): the size of the file.
         """
 
         galaxy = self.get_object()
@@ -103,8 +121,20 @@ class ImageViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['get'])
     def image_heatmap(self, request, pk=None):
         """
-            Retorna os dados que permitem plotar a imagem usando um heatmap.
-            Exemplo de Requisicao: http://localhost/image_2d_histogram?megacube=manga-8138-6101-MEGA.fits&hud=xyy
+        Returns the image data by HUD to create a heatmap.
+
+        It's being read by the files in:
+        `/images/megacube_parts/megacube_{JOB_ID}/image_heatmap_{HUD}.json`
+        that has been extracted from `.fits.fz` file.
+
+        Args: <br>
+            hud ([string]): the HUD title.
+
+        Returns: <br>
+            ([dict]): a dictionary containing the 'z' and 'title'. <br>
+                - z ([list[list[number]]]): image data (Matrix 52x52:
+                20704 elements) converted utilizing pcolormesh. <br>
+                - title ([string]): the title of the HUD
         """
 
         params = request.query_params
@@ -127,8 +157,16 @@ class ImageViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['get'])
     def all_images_heatmap(self, request, pk=None):
         """
-            Retorna os dados que permitem plotar a imagem usando um heatmap.
-            Exemplo de Requisicao: http://localhost/image_2d_histogram?megacube=manga-8138-6101-MEGA.fits&hud=xyy
+        Returns a list of image data by all HUDs to create heatmaps.
+
+        It's being read by the files in:
+        `/images/megacube_parts/megacube_{JOB_ID}/image_heatmap_{HUD}.json`
+        that has been extracted from `.fits.fz` file.
+
+        Returns: <br>
+            ([list[dict]]): a list of dictionaries containing the 'z' and 'title'. <br>
+                - z ([list[list[number]]]): image data (Matrix 52x52: 20704 elements) converted utilizing pcolormesh. <br>
+                - title ([string]): the title of the HUD.
         """
 
         galaxy = self.get_object()
@@ -157,10 +195,17 @@ class ImageViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['get'])
     def flux_by_position(self, request, pk=None):
         """
-            Retorna o Fluxo e lambda para uma posicao x,y.
+        Returns the Flux, Lambda and Synt by an X, Y position.
 
-            Exemplo de requisicao.
-            http://localhost/flux_by_position?megacube=manga-8138-6101-MEGA.fits&x=25&y=26
+        Args: <br>
+            x ([number]): position X on Image. <br>
+            y ([number]): position Y on Image.
+
+        Returns: <br>
+            [dict]: a dictionary with the 'flux', 'lamb' and 'synt'. <br>
+                - flux ([list[number]]) <br>
+                - lamb ([list[number]]) <br>
+                - synt ([list[number]])
         """
 
         params = request.query_params
@@ -192,10 +237,17 @@ class ImageViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['get'])
     def log_age_by_position(self, request, pk=None):
         """
-            Retorna o "Central Spaxel Best Fit" para uma posicao x,y.
+        Returns the image HUDs by log10 by an X, Y position.
 
-            Exemplo de requisicao.
-            http://localhost/spaxel_fit_by_position?megacube=manga-8138-6101-MEGA.fits&x=15&y=29
+        Args: <br>
+            x ([number]): position X on Image. <br>
+            y ([number]): position Y on Image. <br>
+
+        Returns: <br>
+            [dict]: a dictionary with 'x', 'y' and 'm'. <br>
+                - x ([list[number]]) <br>
+                - y ([list[number]]) <br>
+                - m ([list[number]])
         """
 
         params = request.query_params
@@ -218,10 +270,18 @@ class ImageViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['get'])
     def vecs_by_position(self, request, pk=None):
         """
-            Retorna o "Central Spaxel Best Fit" para uma posicao x,y.
+        Returns the Vecs by an X, Y position.
 
-            Exemplo de requisicao.
-            http://localhost/spaxel_fit_by_position?megacube=manga-8138-6101-MEGA.fits&x=15&y=29
+        Args: <br>
+            x ([number]): position X on Image. <br>
+            y ([number]): position Y on Image. <br>
+
+        Returns: <br>
+            [dict]: a dictionary with 'x', 'y', 'm' and 'mlegend'. <br>
+                - x ([list[number]]) <br>
+                - y ([list[number]]) <br>
+                - m ([list[number]]) <br>
+                - mlegend ([list[string]])
         """
 
         params = request.query_params
@@ -244,10 +304,15 @@ class ImageViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['get'])
     def megacube_header(self, request, pk=None):
         """
-            Retorna o "Header" de um determinado megacubo.
+        Returns the Image's Megacube Header.
 
-            Exemplo de requisicao.
-            http://localhost/megacube_header?megacube=manga-8138-6101-MEGA.fits
+        It's being read by the file in:
+        `/images/megacube_parts/megacube_{JOB_ID}/megacube_header.json`
+        that has been extracted from `.fits.fz` file.
+
+
+        Returns: <br>
+            ([list[string]]): a list of srings.
         """
 
         galaxy = self.get_object()

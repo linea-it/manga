@@ -28,6 +28,7 @@ class Command(BaseCommand):
         return os.path.join(os.getenv('IMAGE_PATH', '/images/'), filename)
 
     def write_in_megacube_path(self, megacube_id, filename, content):
+
         # Join and make the path for the extracted files:
         file_dir = os.path.join(
             settings.MEGACUBE_PARTS,
@@ -42,6 +43,11 @@ class Command(BaseCommand):
             json.dump(content, f)
 
     def exctract_original_image(self):
+        """
+            It extracts the Origimal Image (zero) data from 'FLUX' HUD
+            for each image and save them in a very small JSON file in the path
+            /images/megacube_parts/megacube_{JOB_ID}/original_image.json.
+        """
 
         self.stdout.write('Started Original Image Extraction')
 
@@ -66,6 +72,12 @@ class Command(BaseCommand):
         self.stdout.write('Finished Original Image Extraction!')
 
     def extract_list_hud(self):
+        """
+            It extracts the List of HUDs from 'PoPBins' HUD
+            for each image and save them in a very small JSON file in the path
+            /images/megacube_parts/megacube_{JOB_ID}/list_hud.json.
+        """
+
         self.stdout.write("".ljust(100, '-'))
         self.stdout.write('Started List Of HUD Extraction')
 
@@ -105,6 +117,13 @@ class Command(BaseCommand):
         self.stdout.write('Finished List Of HUD Extraction!')
 
     def extract_image_heatmap(self):
+        """
+            It extracts all the Image Heatmaps from 'PoPBins' HUD
+            for each image and for each HUD saved in the file
+            /images/megacube_parts/megacube_{JOB_ID}/list_hud.json
+            and save them in very small JSON files in the path
+            /images/megacube_parts/megacube_{JOB_ID}/image_heatmap_{HUD}.json.json.
+        """
 
         self.stdout.write("".ljust(100, '-'))
         self.stdout.write('Started Image Heatmap Extraction')
@@ -145,6 +164,12 @@ class Command(BaseCommand):
         self.stdout.write('Finished Image Heatmap Extraction!')
 
     def extract_megacube_header(self):
+        """
+            It extracts the Megacube Header from 'PoPBins' HUD
+            for each image and save them in a very small JSON file in the path
+            /images/megacube_parts/megacube_{JOB_ID}/cube_header.json.
+        """
+
         self.stdout.write("".ljust(100, '-'))
         self.stdout.write('Started Megacube Header Extraction')
 
