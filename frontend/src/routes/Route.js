@@ -1,3 +1,5 @@
+/* eslint-disable consistent-return */
+/* eslint-disable no-nested-ternary */
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Route, Redirect } from 'react-router-dom';
@@ -5,10 +7,14 @@ import Backdrop from '@material-ui/core/Backdrop';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import useStyles from './styles';
 import { isAuthenticated, url } from '../services/auth';
+import Header from '../components/Header';
+import HeaderHome from '../components/LandingPage/Header';
+import Footer from '../components/LandingPage/Footer';
 
 export default function RouteWrapper({
   component: Component,
   isPrivate,
+  isHomePage,
   ...rest
 }) {
 
@@ -42,15 +48,29 @@ export default function RouteWrapper({
 
   return (
     <>
-      {!authenticated ? (
+      {isHomePage ? (
+        <Route
+          {...rest}
+          render={(props) => (
+            <>
+              <HeaderHome />
+              <Component {...props} />
+              <Footer />
+            </>
+          )}
+        />
+      ) : !authenticated ? (
         <Backdrop className={classes.backdrop} open>
           <CircularProgress color="inherit" />
         </Backdrop>
       ) : (
         <Route
-          {...rest}
-          render={(props) => (
+        {...rest}
+        render={(props) => (
+          <>
+            <Header />
             <Component {...props} />
+          </>
           )}
         />
       )}
@@ -60,10 +80,12 @@ export default function RouteWrapper({
 
 RouteWrapper.propTypes = {
   isPrivate: PropTypes.bool,
+  isHomePage: PropTypes.bool,
   component: PropTypes.oneOfType([PropTypes.element, PropTypes.func])
     .isRequired,
 };
 
 RouteWrapper.defaultProps = {
   isPrivate: false,
+  isHomePage: false,
 };
