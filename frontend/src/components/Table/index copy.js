@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, memo } from 'react';
 import PropTypes from 'prop-types';
 import InputLabel from '@material-ui/core/InputLabel';
 import Input from '@material-ui/core/Input';
@@ -19,6 +19,7 @@ import {
 } from '@devexpress/dx-react-grid';
 import {
   Grid,
+  VirtualTable,
   Table as MuiTable,
   PagingPanel,
   TableColumnResizing,
@@ -27,23 +28,25 @@ import {
   TableSelection,
   TableColumnVisibility,
   TableGroupRow,
+  DragDropProvider,
+  TableColumnReordering,
 } from '@devexpress/dx-react-grid-material-ui';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
-import ColumnChooser from './ColumnChooser';
-import HeaderRowCell from './HeaderRowCell';
-import RowIndexer from './plugins/RowIndexer';
-import useStyles from './styles';
+import CustomColumnChooser from './CustomColumnChooser';
+import CustomTableHeaderRowCell from './CustomTableHeaderRowCell';
+import CustomToolbar from './CustomToolbar';
+import styles from './styles';
 
 function CustomNoDataCellComponent({ ...noDatProps }, customLoading) {
-  const classes = useStyles();
+  const classes = styles();
   return (
     <td
       className={clsx(
         classes.noDataCell,
         'MuiTableCell-root',
-        'MuiTableCell-body'
+        'MuiTableCell-body',
       )}
       {...noDatProps}
     >
@@ -74,13 +77,17 @@ function Table({
   hasToolbar,
   hasSearching,
   hasColumnVisibility,
+  hasColumnReordering,
   defaultExpandedGroups,
   reload,
   modalContent,
   hasFiltering,
   hasLineBreak,
   loading,
+  isVirtualTable,
   setSelectedRow,
+  height,
+  toolbarChildren,
 }) {
   const customColumns = columns.map((column) => ({
     name: column.name,
@@ -88,7 +95,6 @@ function Table({
     hasLineBreak: column.hasLineBreak ? column.hasLineBreak : false,
     headerTooltip: column.headerTooltip ? column.headerTooltip : false,
   }));
-
   const customColumnExtensions = columns.map((column) => ({
     columnName: column.name,
     width: !column.width ? 120 : column.width,
@@ -110,16 +116,16 @@ function Table({
 
   const customSorting = () => {
     if (
-      defaultSorting &&
-      defaultSorting[0].columnName &&
-      defaultSorting[0].direction
+      defaultSorting
+      && defaultSorting[0].columnName
+      && defaultSorting[0].direction
     ) {
       return defaultSorting;
     }
-    if (customColumns && customColumns[0]) {
+    if (columns && columns[0]) {
       return [
         {
-          columnName: customColumns[0].name,
+          columnName: columns[0].name,
           direction: 'asc',
         },
       ];
@@ -140,20 +146,20 @@ function Table({
   const [selection, setSelection] = useState([]);
   const [customModalContent, setCustomModalContent] = useState('');
 
-  const classes = useStyles();
+  const classes = styles();
 
   useEffect(() => {
     if (remote === true) {
       loadData({
         sorting,
-        pageSize: customPageSize,
+        pageSize,
         currentPage,
         after,
         filter,
         searchValue,
       });
     }
-  }, [sorting, currentPage, reload, customPageSize, filter, searchValue]); // eslint-disable-line
+  }, [sorting, currentPage, reload, pageSize, filter, searchValue]); // eslint-disable-line
 
   const clearData = () => {
     setCustomData([]);
@@ -181,8 +187,7 @@ function Table({
       clearData();
       setCustomLoading(true);
     }
-
-    setSorting([value[value.length - 1]]);
+    setSorting(value);
   };
 
   const changeCurrentPage = (value) => {
@@ -217,24 +222,6 @@ function Table({
     }
   };
 
-  const changeSelection = (value) => {
-    let select = value;
-
-    if (value.length > 0) {
-      const diff = value.filter((x) => !selection.includes(x));
-      select = diff;
-    } else {
-      select = [];
-    }
-
-    setSelectedRow(null);
-    if (setSelectedRow && select.length > 0) {
-      setSelectedRow(rows[select].id);
-    }
-
-    setSelection(select);
-  };
-
   const handleChangeFilter = (evt) => {
     if (remote === true) {
       clearData();
@@ -253,11 +240,10 @@ function Table({
 
   const renderLoading = () => (
     <CircularProgress
-      size={20}
       style={{
         position: 'absolute',
-        top: 'calc(50% + 20px)',
-        left: 'calc(50%)',
+        top: 'calc(50% - 40px)',
+        left: 'calc(50% - 20px)',
         marginTop: 'translateY(-50%)',
         zIndex: '99',
       }}
@@ -290,6 +276,30 @@ function Table({
     column.action(row);
   };
 
+  const renderTableOrVirtualTable = () => {
+    if (loading !== null) {
+      if (isVirtualTable) {
+        return (
+          <VirtualTable
+            height={height}
+            columnExtensions={customColumnExtensions}
+            noDataCellComponent={(props) => CustomNoDataCellComponent({ ...props }, customLoading)}
+          />
+        );
+      }
+      return (
+        <MuiTable
+          columnExtensions={customColumnExtensions}
+          noDataCellComponent={(props) => CustomNoDataCellComponent({ ...props }, customLoading)}
+        />
+      );
+    }
+    if (isVirtualTable) {
+      return <VirtualTable height={height} columnExtensions={customColumnExtensions} />;
+    }
+    return <MuiTable columnExtensions={customColumnExtensions} />;
+  };
+
   const renderTable = (rows) => {
     if (remote === true) {
       return (
@@ -318,6 +328,7 @@ function Table({
             ) : null}
             {hasSelection ? (
               <SelectionState
+                style={{ cursor: 'pointer' }}
                 selection={selection}
                 onSelectionChange={changeSelection}
               />
@@ -329,16 +340,8 @@ function Table({
               />
             ) : null}
             {hasGrouping ? <IntegratedGrouping /> : null}
-            {loading !== null ? (
-              <MuiTable
-                columnExtensions={customColumnExtensions}
-                noDataCellComponent={(props) =>
-                  CustomNoDataCellComponent({ ...props }, customLoading)
-                }
-              />
-            ) : (
-              <MuiTable columnExtensions={customColumnExtensions} />
-            )}
+            {hasColumnReordering ? <DragDropProvider /> : null}
+            {renderTableOrVirtualTable()}
             {hasSelection ? (
               <TableSelection
                 selectByRowClick
@@ -351,14 +354,14 @@ function Table({
                 defaultColumnWidths={customDefaultColumnWidths}
               />
             ) : null}
-            <HeaderRowCell hasSorting={hasSorting} />
+            <CustomTableHeaderRowCell hasSorting={hasSorting} />
             {hasGrouping ? <TableGroupRow /> : null}
             {hasPagination ? <PagingPanel pageSizes={pageSizes} /> : null}
-            {hasToolbar ? <Toolbar /> : null}
+            {hasToolbar ? <Toolbar rootComponent={(props) => CustomToolbar({ ...props, toolbarChildren })} /> : null}
             {hasSearching ? <SearchPanel /> : null}
             {hasColumnVisibility ? <TableColumnVisibility /> : null}
-            {hasColumnVisibility ? <ColumnChooser /> : null}
-            <RowIndexer />
+            {hasColumnVisibility ? <CustomColumnChooser setSelectedRow={setSelectedRow} /> : null}
+            {hasColumnReordering ? <TableColumnReordering defaultOrder={customColumns.map(column => column.name)} /> : null}
           </Grid>
           {renderModal()}
         </>
@@ -387,6 +390,7 @@ function Table({
           {hasPagination ? <IntegratedPaging /> : null}
           {hasSelection ? (
             <SelectionState
+              style={{ cursor: 'pointer' }}
               selection={selection}
               onSelectionChange={changeSelection}
             />
@@ -398,16 +402,8 @@ function Table({
             />
           ) : null}
           {hasGrouping ? <IntegratedGrouping /> : null}
-          {loading !== null ? (
-            <MuiTable
-              columnExtensions={customColumnExtensions}
-              noDataCellComponent={(props) =>
-                CustomNoDataCellComponent({ ...props }, customLoading)
-              }
-            />
-          ) : (
-            <MuiTable columnExtensions={customColumnExtensions} />
-          )}
+          {hasColumnReordering ? <DragDropProvider /> : null}
+          {renderTableOrVirtualTable()}
 
           {hasSelection ? (
             <TableSelection
@@ -421,18 +417,18 @@ function Table({
               defaultColumnWidths={customDefaultColumnWidths}
             />
           ) : null}
-          <HeaderRowCell
+          <CustomTableHeaderRowCell
             hasLineBreak={hasLineBreak}
             hasSorting={hasSorting}
             remote={remote}
           />
           {hasGrouping ? <TableGroupRow /> : null}
           {hasPagination ? <PagingPanel pageSizes={pageSizes} /> : null}
-          {hasToolbar ? <Toolbar /> : null}
+          {hasToolbar ? <Toolbar rootComponent={(props) => CustomToolbar({ ...props, toolbarChildren })} /> : null}
           {hasSearching ? <SearchPanel /> : null}
           {hasColumnVisibility ? <TableColumnVisibility /> : null}
-          {hasColumnVisibility ? <ColumnChooser /> : null}
-          <RowIndexer />
+          {hasColumnVisibility ? <CustomColumnChooser setSelectedRow={setSelectedRow} /> : null}
+          {hasColumnReordering ? <TableColumnReordering defaultOrder={customColumns.map(column => column.name)} /> : null}
         </Grid>
         {renderModal()}
       </>
@@ -445,17 +441,16 @@ function Table({
       const column = columns.filter((el) => el.name === key)[0];
       if (key in row) {
         if (
-          (column && column.icon && typeof row[key] !== 'object') ||
+          (column && column.icon && typeof row[key] !== 'object')
           /*
           If the current row is an array or object, then verify if its length is higher than 1.
           This was created for the "Release" column,
           that sometimes has multiple releases for a single dataset.
           */
-          (column &&
-            column.icon &&
-            typeof row[key] === 'object' &&
-            row[key].length > 1 &&
-            !column.customElement)
+          || (column
+            && column.icon
+            && typeof row[key] === 'object' && row[key].length > 1
+            && !column.customElement)
         ) {
           if (column.action) {
             line[key] = (
@@ -485,12 +480,45 @@ function Table({
     return line;
   });
 
+  const changeSelection = (value) => {
+    const select = value[value.length - 1];
+
+    if (setSelectedRow) {
+      setSelectedRow(null);
+
+      const rowId = rows[select].id;
+      setSelectedRow(rowId);
+    }
+
+    setSelection([select]);
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      // 38 (ArrowUp)
+      if (e.keyCode === 38) {
+        const selectLine = selection.length > 0 && selection[0] !== 0 ? [selection[0] - 1] : [0];
+        changeSelection(selectLine);
+      }
+
+      // 40 (ArrowDown)
+      if (e.keyCode === 40) {
+        const selectLine = selection.length > 0 ? [selection[0] + 1] : [0];
+        changeSelection(selectLine);
+      }
+    };
+
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [rows]);
+
   return (
-    <div className={classes.container}>
+    <>
       {hasFiltering ? renderFilter() : null}
       {renderTable(rows)}
       {customLoading && renderLoading()}
-    </div>
+    </>
   );
 }
 
@@ -507,6 +535,7 @@ Table.defaultProps = {
   hasColumnVisibility: true,
   hasPagination: true,
   hasGrouping: false,
+  hasColumnReordering: true,
   hasToolbar: true,
   defaultExpandedGroups: [''],
   defaultSorting: null,
@@ -516,7 +545,10 @@ Table.defaultProps = {
   hasLineBreak: false,
   grouping: [{}],
   loading: null,
+  isVirtualTable: false,
   setSelectedRow: null,
+  height: 530,
+  toolbarChildren: null,
 };
 
 Table.propTypes = {
@@ -547,7 +579,15 @@ Table.propTypes = {
   remote: PropTypes.bool,
   grouping: PropTypes.arrayOf(PropTypes.object),
   loading: PropTypes.bool,
+  isVirtualTable: PropTypes.bool,
   setSelectedRow: PropTypes.func,
+  height: PropTypes.number,
+  toolbarChildren: PropTypes.shape({
+    $$typeof: PropTypes.symbol,
+    props: PropTypes.shape({ name: PropTypes.string }),
+    type: PropTypes.func,
+  }),
+  hasColumnReordering: PropTypes.bool,
 };
 
-export default Table;
+export default memo(Table);

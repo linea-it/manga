@@ -1,6 +1,6 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container, Section, Bar } from 'react-simple-resizer';
-import { useParams } from 'react-router-dom';
+// import { useParams } from 'react-router-dom';
 import { Grid, Button } from '@material-ui/core';
 import Table from '../../components/Table';
 import { getMegacubesList, getOriginalImageHeatmap } from '../../services/api';
@@ -25,9 +25,10 @@ function Preview() {
 
   const columns = [
     {
-      name: 'id',
-      title: '#',
+      name: 'index',
+      title: ' ',
       width: 80,
+      sortingEnabled: false,
     },
     {
       name: 'nsa_iauname',
@@ -115,10 +116,11 @@ function Preview() {
   }
 
   useEffect(() => {
+    setOriginalImageData([])
     if(selectedMegacube) {
       getOriginalImageHeatmap(selectedMegacube)
         .then(res => {
-          setOriginalImageData(res.z)
+          setOriginalImageData(res)
         })
     }
   }, [selectedMegacube])
@@ -155,10 +157,17 @@ function Preview() {
       <Section className={classes.imageSection} onSizeChanged={handleSectionWidthChange}>
         <Grid container spacing={2} direction="column" alignItems="flex-end">
           <Grid item>
-            <Button variant="contained" color="primary" disabled={!selectedMegacube} href={`/explorer/${selectedMegacube}`}>Explorer</Button>
+            <Button
+              variant="contained"
+              color="primary"
+              disabled={!selectedMegacube}
+              href={`/explorer/${selectedMegacube}`}
+            >
+              Explorer
+            </Button>
           </Grid>
         </Grid>
-        {originalImageData.length > 0 ? <OriginalImage data={originalImageData} sectionWidth={sectionWidth} /> : null}
+        {'z' in originalImageData ? <OriginalImage data={originalImageData} sectionWidth={sectionWidth} /> : null}
       </Section>
     </Container>
   );

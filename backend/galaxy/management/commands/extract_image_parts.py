@@ -1,6 +1,5 @@
 
 from django.core.management.base import BaseCommand
-from django.db import connection, IntegrityError
 
 from galaxy.models import Image
 from manga.verifyer import mclass
@@ -30,12 +29,10 @@ class Command(BaseCommand):
     def write_in_megacube_path(self, megacube_id, filename, content):
 
         # Join and make the path for the extracted files:
-        file_dir = os.path.join(
+        filepath = os.path.join(
             settings.MEGACUBE_PARTS,
             'megacube_' + str(megacube_id) + '/' + filename
         )
-
-        filepath = self.get_megacube_path(file_dir)
 
         os.makedirs(os.path.dirname(filepath), exist_ok=True)
 

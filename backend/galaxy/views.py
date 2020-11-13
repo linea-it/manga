@@ -19,7 +19,9 @@ class ImageViewSet(viewsets.ModelViewSet):
     filter_fields = ('id', 'megacube', 'mangaid', 'objra', 'objdec',
                      'nsa_iauname', 'mjdmed', 'exptime', 'airmsmed', 'seemed',
                      'nsa_z',)
-    search_fields = ('megacube', 'nsa_iauname',)
+    search_fields = ('id', 'megacube', 'mangaid', 'objra', 'objdec',
+                     'nsa_iauname', 'mjdmed', 'exptime', 'airmsmed', 'seemed',
+                     'nsa_z',)
     ordering_fields = ('id', 'megacube', 'mangaid', 'objra', 'objdec',
                        'nsa_iauname', 'mjdmed', 'exptime', 'airmsmed', 'seemed',
                        'nsa_z',)
@@ -33,12 +35,19 @@ class ImageViewSet(viewsets.ModelViewSet):
 
     def get_image_part_path(self, megacube_id, filename):
         # Join and make the path for the extracted files:
-        file_dir = os.path.join(
+        filepath = os.path.join(
             settings.MEGACUBE_PARTS,
             'megacube_' + str(megacube_id) + '/' + filename
         )
 
-        filepath = self.get_megacube_path(file_dir)
+        return filepath
+
+    def get_sdss_image_path(self, megacube_id, filename):
+        # Join and make the path for the sdss image:
+        filepath = os.path.join(
+            '/data/megacube_parts/',
+            'megacube_' + str(megacube_id) + '/' + filename
+        )
 
         return filepath
 
@@ -52,10 +61,13 @@ class ImageViewSet(viewsets.ModelViewSet):
         that has been extracted from `.fits.fz` file.
 
         Returns: <br>
-            ([dict]): a dictionary containing the 'z' and 'title'. <br>
+            ([dict]): a dictionary containing the 'z', 'title'
+            and 'sdss_image'. <br>
                 - z ([list[list[number]]]): image data
-                (Matrix 52x52: 20704 elements) converted utilizing pcolormesh. <br>
+                (Matrix 52x52: 20704 elements) converted utilizing
+                pcolormesh. <br>
                 - title ([string]): the HUD title, which is 'FLUX'.
+                - sdss_image ([string]): the SDSS image path.
         """
 
         galaxy = self.get_object()
@@ -63,8 +75,13 @@ class ImageViewSet(viewsets.ModelViewSet):
         original_image_filepath = self.get_image_part_path(
             galaxy.id, 'original_image.json')
 
+        sdss_image_filepath = self.get_sdss_image_path(
+            galaxy.id, 'sdss_image.jpg')
+
         with open(original_image_filepath) as f:
             data = json.load(f)
+
+        data['sdss_image'] = sdss_image_filepath
 
         return Response(data)
 
@@ -164,8 +181,10 @@ class ImageViewSet(viewsets.ModelViewSet):
         that has been extracted from `.fits.fz` file.
 
         Returns: <br>
-            ([list[dict]]): a list of dictionaries containing the 'z' and 'title'. <br>
-                - z ([list[list[number]]]): image data (Matrix 52x52: 20704 elements) converted utilizing pcolormesh. <br>
+            ([list[dict]]): a list of dictionaries containing the 'z'
+            and 'title'. <br>
+                - z ([list[list[number]]]): image data (Matrix 52x52:
+                20704 elements) converted utilizing pcolormesh. <br>
                 - title ([string]): the title of the HUD.
         """
 
