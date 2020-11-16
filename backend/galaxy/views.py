@@ -42,10 +42,10 @@ class ImageViewSet(viewsets.ModelViewSet):
 
         return filepath
 
-    def get_sdss_image_path(self, megacube_id, filename):
+    def get_sdss_image_path(self, megacube_id, filename, root_folder="data"):
         # Join and make the path for the sdss image:
         filepath = os.path.join(
-            '/data/megacube_parts/',
+            '/' + root_folder + '/megacube_parts/',
             'megacube_' + str(megacube_id) + '/' + filename
         )
 
@@ -80,9 +80,9 @@ class ImageViewSet(viewsets.ModelViewSet):
 
         with open(original_image_filepath) as f:
             data = json.load(f)
-
         # Only send the path if the file exists:
-        if os.path.isfile('filename.txt'):
+        if os.path.exists(self.get_sdss_image_path(galaxy.id, 'sdss_image.jpg',
+                                                   'images')):
             data['sdss_image'] = sdss_image_filepath
         else:
             data['sdss_image'] = None
