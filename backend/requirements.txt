@@ -31,3 +31,4 @@ typed-ast==1.4.0
 Werkzeug==0.16.0
 wrapt==1.11.2
 requests==2.25.0
+humanize==3.1.0
