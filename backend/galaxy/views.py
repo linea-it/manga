@@ -81,7 +81,11 @@ class ImageViewSet(viewsets.ModelViewSet):
         with open(original_image_filepath) as f:
             data = json.load(f)
 
-        data['sdss_image'] = sdss_image_filepath
+        # Only send the path if the file exists:
+        if os.path.isfile('filename.txt'):
+            data['sdss_image'] = sdss_image_filepath
+        else:
+            data['sdss_image'] = None
 
         return Response(data)
 

@@ -9,13 +9,15 @@ function OriginalImage({ data, sectionWidth }) {
   return (
     <div className={classes.root}>
       <Heatmap z={data.z} sectionWidth={sectionWidth} />
-      <div className={classes.imgContainer}>
-        <img
-          alt="Original"
-          src={data.sdss_image}
-          className={classes.img}
-        />
-      </div>
+      {data.sdss_image ? (
+        <div className={classes.imgContainer}>
+          <img
+            alt="Original"
+            src={data.sdss_image}
+            className={classes.img}
+          />
+        </div>
+      ) : null}
     </div>
   )
 }
