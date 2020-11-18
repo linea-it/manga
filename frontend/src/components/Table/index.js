@@ -485,6 +485,26 @@ function Table({
     return line;
   });
 
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      // 38 (ArrowUp)
+      if (e.keyCode === 38) {
+        const selectLine = selection.length > 0 && selection[0] !== 0 ? [selection[0] - 1] : [0];
+        changeSelection(selectLine);
+      }
+
+      // 40 (ArrowDown)
+      if (e.keyCode === 40) {
+        const selectLine = selection.length > 0 ? [selection[0] + 1] : [0];
+        changeSelection(selectLine);
+      }
+    };
+
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [rows]);
+
   return (
     <div className={classes.container}>
       {hasFiltering ? renderFilter() : null}
