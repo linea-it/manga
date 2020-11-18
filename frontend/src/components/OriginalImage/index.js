@@ -6,10 +6,6 @@ import useStyles from './styles';
 function OriginalImage({ data, sectionWidth }) {
   const classes = useStyles();
 
-
-
-  console.log('data.sdss_image', data.sdss_image)
-
   return (
     <div className={classes.root}>
       <Heatmap z={data.z} sectionWidth={sectionWidth} />

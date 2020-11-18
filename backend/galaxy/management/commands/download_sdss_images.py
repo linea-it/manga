@@ -27,7 +27,12 @@ class Command(BaseCommand):
             'megacube_' + str(megacube_id) + '/' + filename
         )
 
+        # Create directories, if they don't exist already:
         os.makedirs(os.path.dirname(filepath), exist_ok=True)
+
+        # If file already exists, remove it:
+        if os.path.exists(filepath):
+            os.remove(filepath)
 
         # Open a local file with wb ( write binary ) permission.
         with open(filepath, 'wb') as f:
