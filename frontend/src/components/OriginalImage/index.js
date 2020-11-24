@@ -4,7 +4,7 @@ import Heatmap from '../Plot/Heatmap';
 import useStyles from './styles';
 
 function OriginalImage({ data, sectionWidth }) {
-  const classes = useStyles();
+  const classes = useStyles({ sectionWidth });
 
   return (
     <div className={classes.root}>

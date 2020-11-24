@@ -1,6 +1,6 @@
 import { makeStyles } from '@material-ui/core/styles';
 
-const styles = makeStyles({
+const useStyles = makeStyles({
   wrapPaper: {
     position: 'relative',
     paddingTop: '10px',
@@ -24,6 +24,9 @@ const styles = makeStyles({
     display: 'inline-block',
     transform: 'translateX(-50%)',
   },
+  gridContainer: {
+    maxHeight: 200,
+  },
 });
 
-export default styles;
+export default useStyles;

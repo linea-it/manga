@@ -10,8 +10,8 @@ function Heatmap({ z, sectionWidth }) {
   const windowSize = useWindowSize();
   const [height, setHeight] = useState(400);
   const [width, setWidth] = useState(500);
-  const [colorLimits, setColorLimits] = useState([]);
-  const [colorRangeValue, setColorRangeValue] = useState([]);
+  // const [colorLimits, setColorLimits] = useState([]);
+  // const [colorRangeValue, setColorRangeValue] = useState([]);
 
   const classes = useStyles({ height });
 
@@ -23,27 +23,30 @@ function Heatmap({ z, sectionWidth }) {
     // setHeight(ratio);
     // setWidth(ratio);
 
-    const size = windowSize.height > sectionWidth ? sectionWidth : windowSize.height;
+    // const size = windowSize.height > sectionWidth ? sectionWidth : windowSize.height;
 
-    const heightMargin = size * 0.2;
-    const widthMargin = size * 0.03;
+    // const heightMargin = size * 0.2;
+    // const widthMargin = size * 0.03;
 
-    setHeight(size - heightMargin);
-    setWidth(size - widthMargin);
+    // setHeight(size - heightMargin);
+    // setWidth(size - widthMargin);
+
+    setHeight(sectionWidth / 2);
+    setWidth(sectionWidth / 2);
   }, [windowSize.height, sectionWidth]);
 
 
-  useEffect(() => {
-    if (z.length > 0) {
-      const mergedZ = mergeArrayOfArrays(z);
-      setColorLimits([Math.min(...mergedZ), Math.max(...mergedZ)]);
-      setColorRangeValue([Math.min(...mergedZ), Math.max(...mergedZ)]);
-    }
-  }, [z]);
+  // useEffect(() => {
+  //   if (z.length > 0) {
+  //     const mergedZ = mergeArrayOfArrays(z);
+  //     setColorLimits([Math.min(...mergedZ), Math.max(...mergedZ)]);
+  //     setColorRangeValue([Math.min(...mergedZ), Math.max(...mergedZ)]);
+  //   }
+  // }, [z]);
 
-  const handleColorRangeChange = (e, value) => {
-    setColorRangeValue(value);
-  };
+  // const handleColorRangeChange = (e, value) => {
+  //   setColorRangeValue(value);
+  // };
 
   return (
     <div className={classes.heatmapWrapper}>
@@ -55,8 +58,8 @@ function Heatmap({ z, sectionWidth }) {
             colorscale: 'Viridis',
             fixedrange: true,
             zauto: false,
-            zmin: colorRangeValue[0],
-            zmax: colorRangeValue[1],
+            // zmin: colorRangeValue[0],
+            // zmax: colorRangeValue[1],
             hoverinfo: 'x+y+z',
             showscale: true,
           },
@@ -85,17 +88,22 @@ function Heatmap({ z, sectionWidth }) {
           showSendToCloud: true,
         }}
         config={{
+          // scrollZoom: false,
+          // displaylogo: false,
+          // responsive: true,
+          // displayModeBar: 'hover',
           scrollZoom: false,
           displaylogo: false,
           responsive: true,
-          displayModeBar: 'hover',
+          displayModeBar: false,
+          staticPlot: true,
         }}
         transition={{
           duration: 500,
           easing: 'cubic-in-out',
         }}
       />
-      <HeatmapColorRange
+      {/* <HeatmapColorRange
         className={classes.colorRange}
         orientation="vertical"
         max={colorLimits[1]}
@@ -103,7 +111,7 @@ function Heatmap({ z, sectionWidth }) {
         value={colorRangeValue}
         valueLabelDisplay="off"
         onChange={handleColorRangeChange}
-      />
+      /> */}
     </div>
   );
 }

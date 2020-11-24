@@ -1,17 +1,18 @@
 import { makeStyles } from '@material-ui/core/styles';
 
-const styles = makeStyles({
+const styles = makeStyles(theme => ({
   root: {
-    textAlign: 'center',
+    display: 'flex',
+    marginTop: theme.spacing(2)
   },
-  imgContainer: {
-    margin: '0 5%',
-  },
+  imgContainer: props => ({
+    width: props.sectionWidth / 2,
+  }),
   img: {
     width: 'auto',
     height: 'auto',
     maxWidth: '100%',
   },
-});
+}));
 
 export default styles;

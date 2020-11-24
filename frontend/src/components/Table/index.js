@@ -19,6 +19,7 @@ import {
 } from '@devexpress/dx-react-grid';
 import {
   Grid,
+  VirtualTable,
   Table as MuiTable,
   PagingPanel,
   TableColumnResizing,
@@ -63,6 +64,7 @@ function Table({
   defaultSorting,
   grouping,
   remote,
+  defaultCurrentPage,
   pageSize,
   loadData,
   hasSorting,
@@ -80,7 +82,11 @@ function Table({
   hasFiltering,
   hasLineBreak,
   loading,
+  defaultSelection,
   setSelectedRow,
+  isVirtualTable,
+  height,
+  defaultSearchValue,
 }) {
   const customColumns = columns.map((column) => ({
     name: column.name,
@@ -132,12 +138,12 @@ function Table({
   const [visible, setVisible] = useState(false);
   const [customLoading, setCustomLoading] = useState(true);
   const [sorting, setSorting] = useState(customSorting());
-  const [currentPage, setCurrentPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(defaultCurrentPage);
   const [after, setAfter] = useState('');
   const [customPageSize, setCustomPageSize] = useState(pageSize);
   const [filter, setFilter] = useState('all');
-  const [searchValue, setSearchValue] = useState('');
-  const [selection, setSelection] = useState([]);
+  const [searchValue, setSearchValue] = useState(defaultSearchValue);
+  const [selection, setSelection] = useState(defaultSelection);
   const [customModalContent, setCustomModalContent] = useState('');
 
   const classes = useStyles();
@@ -151,9 +157,10 @@ function Table({
         after,
         filter,
         searchValue,
+        selection,
       });
     }
-  }, [sorting, currentPage, reload, customPageSize, filter, searchValue]); // eslint-disable-line
+  }, [sorting, selection, currentPage, reload, customPageSize, filter, searchValue]); // eslint-disable-line
 
   const clearData = () => {
     setCustomData([]);
@@ -290,6 +297,30 @@ function Table({
     column.action(row);
   };
 
+  const renderTableOrVirtualTable = () => {
+    if (loading !== null) {
+      if (isVirtualTable) {
+        return (
+          <VirtualTable
+            height={height}
+            columnExtensions={customColumnExtensions}
+            noDataCellComponent={(props) => CustomNoDataCellComponent({ ...props }, customLoading)}
+          />
+        );
+      }
+      return (
+        <MuiTable
+          columnExtensions={customColumnExtensions}
+          noDataCellComponent={(props) => CustomNoDataCellComponent({ ...props }, customLoading)}
+        />
+      );
+    }
+    if (isVirtualTable) {
+      return <VirtualTable height={height} columnExtensions={customColumnExtensions} />;
+    }
+    return <MuiTable columnExtensions={customColumnExtensions} />;
+  };
+
   const renderTable = (rows) => {
     if (remote === true) {
       return (
@@ -329,16 +360,7 @@ function Table({
               />
             ) : null}
             {hasGrouping ? <IntegratedGrouping /> : null}
-            {loading !== null ? (
-              <MuiTable
-                columnExtensions={customColumnExtensions}
-                noDataCellComponent={(props) =>
-                  CustomNoDataCellComponent({ ...props }, customLoading)
-                }
-              />
-            ) : (
-              <MuiTable columnExtensions={customColumnExtensions} />
-            )}
+            {renderTableOrVirtualTable()}
             {hasSelection ? (
               <TableSelection
                 selectByRowClick
@@ -398,16 +420,7 @@ function Table({
             />
           ) : null}
           {hasGrouping ? <IntegratedGrouping /> : null}
-          {loading !== null ? (
-            <MuiTable
-              columnExtensions={customColumnExtensions}
-              noDataCellComponent={(props) =>
-                CustomNoDataCellComponent({ ...props }, customLoading)
-              }
-            />
-          ) : (
-            <MuiTable columnExtensions={customColumnExtensions} />
-          )}
+          {renderTableOrVirtualTable()}
 
           {hasSelection ? (
             <TableSelection
@@ -516,6 +529,7 @@ function Table({
 
 Table.defaultProps = {
   loadData: () => null,
+  defaultCurrentPage: 0,
   pageSize: 10,
   pageSizes: [5, 10, 15],
   modalContent: null,
@@ -537,6 +551,10 @@ Table.defaultProps = {
   grouping: [{}],
   loading: null,
   setSelectedRow: null,
+  isVirtualTable: false,
+  height: 'auto',
+  defaultSearchValue: '',
+  defaultSelection: []
 };
 
 Table.propTypes = {
@@ -545,8 +563,8 @@ Table.propTypes = {
   data: PropTypes.arrayOf(PropTypes.object).isRequired,
   modalContent: PropTypes.symbol,
   defaultSorting: PropTypes.arrayOf(PropTypes.object),
-  // eslint-disable-next-line react/no-unused-prop-types
   pageSize: PropTypes.number,
+  defaultCurrentPage: PropTypes.number,
   pageSizes: PropTypes.oneOfType([
     PropTypes.arrayOf(PropTypes.number),
     PropTypes.number,
@@ -568,6 +586,10 @@ Table.propTypes = {
   grouping: PropTypes.arrayOf(PropTypes.object),
   loading: PropTypes.bool,
   setSelectedRow: PropTypes.func,
+  isVirtualTable: PropTypes.bool,
+  height: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  defaultSearchValue: PropTypes.string,
+  defaultSelection: PropTypes.arrayOf(PropTypes.number)
 };
 
 export default Table;
