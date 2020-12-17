@@ -6,7 +6,8 @@ const styles = makeStyles(theme => ({
     marginTop: theme.spacing(2)
   },
   imgContainer: props => ({
-    width: props.sectionWidth / 2,
+    maxWidth: props.sectionWidth / 2,
+    margin: 'auto',
   }),
   img: {
     width: 'auto',
