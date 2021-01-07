@@ -27,6 +27,9 @@ const styles = makeStyles({
   grid: {
     margin: 'auto',
   },
+  minHeight: {
+    minHeight: 265,
+  },
 });
 
 export default styles;
