@@ -39,12 +39,12 @@ class Command(BaseCommand):
     def get_megacube_path(self, filename):
         return os.path.join(os.getenv('IMAGE_PATH', '/images/'), filename)
 
-    def write_in_megacube_path(self, megacube_id, filename, content):
+    def write_in_megacube_path(self, megacube_name, filename, content):
 
         # Join and make the path for the extracted files:
         filepath = os.path.join(
             settings.MEGACUBE_PARTS,
-            'megacube_' + str(megacube_id) + '/' + filename
+            str(megacube_name) + '/' + filename
         )
 
         # Create directories, if they don't exist already:
@@ -83,7 +83,8 @@ class Command(BaseCommand):
 
             filename = 'original_image.json'
 
-            self.write_in_megacube_path(image.id, filename, content)
+            self.write_in_megacube_path(
+                image.megacube.split('.fits.fz')[0], filename, content)
 
         self.stdout.write('Finished Original Image Extraction!')
 
@@ -128,7 +129,8 @@ class Command(BaseCommand):
 
             filename = 'list_hud.json'
 
-            self.write_in_megacube_path(image.id, filename, content)
+            self.write_in_megacube_path(
+                image.megacube.split('.fits.fz')[0], filename, content)
 
         self.stdout.write('Finished List Of HUD Extraction!')
 
@@ -177,7 +179,8 @@ class Command(BaseCommand):
                 })
 
                 filename = 'image_heatmap_%s.json' % hud
-                self.write_in_megacube_path(image.id, filename, content)
+                self.write_in_megacube_path(
+                    image.megacube.split('.fits.fz')[0], filename, content)
 
             # End time of Image Heatmap
             t1 = datetime.now()
@@ -218,6 +221,7 @@ class Command(BaseCommand):
 
             filename = 'cube_header.json'
 
-            self.write_in_megacube_path(image.id, filename, content)
+            self.write_in_megacube_path(
+                image.megacube.split('.fits.fz')[0], filename, content)
 
         self.stdout.write('Finished Megacube Header Extraction!')

@@ -33,20 +33,20 @@ class ImageViewSet(viewsets.ModelViewSet):
     def get_megacube_size(self, filename):
         return os.stat(self.get_megacube_path(filename)).st_size
 
-    def get_image_part_path(self, megacube_id, filename):
+    def get_image_part_path(self, megacube_name, filename):
         # Join and make the path for the extracted files:
         filepath = os.path.join(
             settings.MEGACUBE_PARTS,
-            'megacube_' + str(megacube_id) + '/' + filename
+            str(megacube_name) + '/' + filename
         )
 
         return filepath
 
-    def get_sdss_image_path(self, megacube_id, filename, root_folder="data"):
+    def get_sdss_image_path(self, megacube_name, filename, root_folder="data"):
         # Join and make the path for the sdss image:
         filepath = os.path.join(
             '/' + root_folder + '/megacube_parts/',
-            'megacube_' + str(megacube_id) + '/' + filename
+            str(megacube_name) + '/' + filename
         )
 
         return filepath
@@ -73,16 +73,18 @@ class ImageViewSet(viewsets.ModelViewSet):
         galaxy = self.get_object()
 
         original_image_filepath = self.get_image_part_path(
-            galaxy.id, 'original_image.json')
+            galaxy.megacube.split('.fits.fz')[0], 'original_image.json')
 
         sdss_image_filepath = self.get_sdss_image_path(
-            galaxy.id, 'sdss_image.jpg')
+            galaxy.megacube.split('.fits.fz')[0], 'sdss_image.jpg')
 
         with open(original_image_filepath) as f:
             data = json.load(f)
         # Only send the path if the file exists:
-        if os.path.exists(self.get_sdss_image_path(galaxy.id, 'sdss_image.jpg',
-                                                   'images')):
+        if os.path.exists(
+            self.get_sdss_image_path(
+                galaxy.megacube.split('.fits.fz')[0], 'sdss_image.jpg',
+                'images')):
             data['sdss_image'] = sdss_image_filepath
         else:
             data['sdss_image'] = None
@@ -105,7 +107,7 @@ class ImageViewSet(viewsets.ModelViewSet):
         galaxy = self.get_object()
 
         list_hud_filepath = self.get_image_part_path(
-            galaxy.id, 'list_hud.json')
+            galaxy.megacube.split('.fits.fz')[0], 'list_hud.json')
 
         with open(list_hud_filepath) as f:
             data = json.load(f)
@@ -168,7 +170,7 @@ class ImageViewSet(viewsets.ModelViewSet):
         filename = 'image_heatmap_%s.json' % params['hud']
 
         image_heatmap_filepath = self.get_image_part_path(
-            galaxy.id, filename)
+            galaxy.megacube.split('.fits.fz')[0], filename)
 
         with open(image_heatmap_filepath) as f:
             data = json.load(f)
@@ -195,7 +197,7 @@ class ImageViewSet(viewsets.ModelViewSet):
         galaxy = self.get_object()
 
         list_hud_filepath = self.get_image_part_path(
-            galaxy.id, 'list_hud.json')
+            galaxy.megacube.split('.fits.fz')[0], 'list_hud.json')
 
         with open(list_hud_filepath) as f:
             list_hud = json.load(f)
@@ -206,7 +208,7 @@ class ImageViewSet(viewsets.ModelViewSet):
             filename = 'image_heatmap_%s.json' % hud['name']
 
             image_heatmap_filepath = self.get_image_part_path(
-                galaxy.id, filename)
+                galaxy.megacube.split('.fits.fz')[0], filename)
 
             with open(image_heatmap_filepath) as f:
                 image = json.load(f)
@@ -341,7 +343,7 @@ class ImageViewSet(viewsets.ModelViewSet):
         galaxy = self.get_object()
 
         cube_header_filepath = self.get_image_part_path(
-            galaxy.id, 'cube_header.json')
+            galaxy.megacube.split('.fits.fz')[0], 'cube_header.json')
 
         with open(cube_header_filepath) as f:
             data = json.load(f)

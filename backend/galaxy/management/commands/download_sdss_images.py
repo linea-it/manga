@@ -20,11 +20,11 @@ class Command(BaseCommand):
 
         self.stdout.write('Done!')
 
-    def save_in_megacube_path(self, megacube_id, filename, content):
+    def save_in_megacube_path(self, megacube_name, filename, content):
         # Join and make the path for the extracted files:
         filepath = os.path.join(
             settings.MEGACUBE_PARTS,
-            'megacube_' + str(megacube_id) + '/' + filename
+            str(megacube_name) + '/' + filename
         )
 
         # Create directories, if they don't exist already:
@@ -70,7 +70,8 @@ class Command(BaseCommand):
                 r.raw.decode_content = True
 
                 # Open a local file with wb ( write binary ) permission.
-                self.save_in_megacube_path(image.id, filename, r.raw)
+                self.save_in_megacube_path(
+                    image.megacube.split('.fits.fz')[0], filename, r.raw)
 
                 self.stdout.write(
                     'SDSS Image [%s] was downloaded' % str(image.id))
