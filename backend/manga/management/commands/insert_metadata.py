@@ -104,9 +104,6 @@ class Command(BaseCommand):
 
                     images = Image.objects.all()
 
-                    if len(images) == 100:
-                        break
-
                 # Verifying that the there's not duplicates
                 except IntegrityError:
                     pass
