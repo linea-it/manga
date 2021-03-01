@@ -43,6 +43,8 @@ docker-compose -f docker-compose.prod.yml up
 docker-compose -f docker-compose.prod.yml exec web manage.py createsuperuser
 ```
 
+---
+
 ## Insert Metadata
 
 1. Configuration
@@ -60,4 +62,13 @@ docker-compose exec backend python manage.py insert_metadata
 1. Running Command
 ```
 docker-compose exec backend python manage.py extract_image_parts
+```
+
+## Download SDSS Images
+>This will download the SDSS image by the object's RA and Dec.
+>You can check the images in here: http://skyserver.sdss.org/dr16/en/tools/chart/image.aspx.
+
+1. Running Command
+```
+docker-compose exec backend python manage.py download_sdss_images
 ```

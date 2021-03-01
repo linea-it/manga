@@ -1,6 +1,5 @@
 
 from django.core.management.base import BaseCommand
-from django.db import connection, IntegrityError
 
 from galaxy.models import Image
 from manga.verifyer import mclass
@@ -8,6 +7,8 @@ from manga.verifyer import mclass
 import os
 import json
 from django.conf import settings
+from datetime import datetime
+import humanize
 
 
 class Command(BaseCommand):
@@ -15,29 +16,43 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
 
-        self.stdout.write('Started')
+        t0 = datetime.now()
 
+        self.stdout.write('Started [%s]' %
+                          t0.strftime("%Y-%m-%d %H:%M:%S"))
+        self.extract_megacube_header()
         self.exctract_original_image()
         self.extract_list_hud()
         self.extract_image_heatmap()
-        self.extract_megacube_header()
+
+        t1 = datetime.now()
+
+        tdelta = t1 - t0
+
+        self.stdout.write('Finished [%s]' %
+                          t1.strftime("%Y-%m-%d %H:%M:%S"))
+        self.stdout.write('Execution Time: [%s]' % humanize.naturaldelta(
+            tdelta, minimum_unit="seconds"))
 
         self.stdout.write('Done!')
 
     def get_megacube_path(self, filename):
         return os.path.join(os.getenv('IMAGE_PATH', '/images/'), filename)
 
-    def write_in_megacube_path(self, megacube_id, filename, content):
+    def write_in_megacube_path(self, megacube_name, filename, content):
 
         # Join and make the path for the extracted files:
-        file_dir = os.path.join(
+        filepath = os.path.join(
             settings.MEGACUBE_PARTS,
-            'megacube_' + str(megacube_id) + '/' + filename
+            str(megacube_name) + '/' + filename
         )
 
-        filepath = self.get_megacube_path(file_dir)
-
+        # Create directories, if they don't exist already:
         os.makedirs(os.path.dirname(filepath), exist_ok=True)
+
+        # If file already exists, remove it:
+        if os.path.exists(filepath):
+            os.remove(filepath)
 
         with open(filepath, "w") as f:
             json.dump(content, f)
@@ -49,6 +64,7 @@ class Command(BaseCommand):
             /images/megacube_parts/megacube_{JOB_ID}/original_image.json.
         """
 
+        self.stdout.write("".ljust(100, '-'))
         self.stdout.write('Started Original Image Extraction')
 
         images = Image.objects.all()
@@ -67,7 +83,8 @@ class Command(BaseCommand):
 
             filename = 'original_image.json'
 
-            self.write_in_megacube_path(image.id, filename, content)
+            self.write_in_megacube_path(
+                image.megacube.split('.fits.fz')[0], filename, content)
 
         self.stdout.write('Finished Original Image Extraction!')
 
@@ -112,7 +129,8 @@ class Command(BaseCommand):
 
             filename = 'list_hud.json'
 
-            self.write_in_megacube_path(image.id, filename, content)
+            self.write_in_megacube_path(
+                image.megacube.split('.fits.fz')[0], filename, content)
 
         self.stdout.write('Finished List Of HUD Extraction!')
 
@@ -130,7 +148,10 @@ class Command(BaseCommand):
 
         images = Image.objects.all()
 
-        for image in images:
+        for i, image in enumerate(images):
+            t0 = datetime.now()
+            self.stdout.write('Started Image Heatmap By ID [%s]: [%s]' % (
+                image.id, t0.strftime("%Y-%m-%d %H:%M:%S")))
 
             megacube = self.get_megacube_path(image.megacube)
 
@@ -158,8 +179,22 @@ class Command(BaseCommand):
                 })
 
                 filename = 'image_heatmap_%s.json' % hud
+                self.write_in_megacube_path(
+                    image.megacube.split('.fits.fz')[0], filename, content)
 
-                self.write_in_megacube_path(image.id, filename, content)
+            # End time of Image Heatmap
+            t1 = datetime.now()
+
+            self.stdout.write('Finished Image Heatmap By ID [%s]: [%s]' % (
+                image.id, t0.strftime("%Y-%m-%d %H:%M:%S")))
+
+            self.stdout.write('Progress: [%s/%s]' % (i + 1, len(images)))
+
+            tdelta = t1 - t0
+
+            self.stdout.write('Execution Time By ID [%s]: [%s]' % (image.id, humanize.naturaldelta(
+                tdelta, minimum_unit="seconds")))
+            self.stdout.write("".ljust(100, '-'))
 
         self.stdout.write('Finished Image Heatmap Extraction!')
 
@@ -186,6 +221,7 @@ class Command(BaseCommand):
 
             filename = 'cube_header.json'
 
-            self.write_in_megacube_path(image.id, filename, content)
+            self.write_in_megacube_path(
+                image.megacube.split('.fits.fz')[0], filename, content)
 
         self.stdout.write('Finished Megacube Header Extraction!')

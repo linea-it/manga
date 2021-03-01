@@ -23,13 +23,16 @@ function Heatmap({ z, sectionWidth }) {
     // setHeight(ratio);
     // setWidth(ratio);
 
-    const size = windowSize.height > sectionWidth ? sectionWidth : windowSize.height;
+    // const size = windowSize.height > sectionWidth ? sectionWidth : windowSize.height;
 
-    const heightMargin = size * 0.2;
-    const widthMargin = size * 0.03;
+    // const heightMargin = size * 0.2;
+    // const widthMargin = size * 0.03;
 
-    setHeight(size - heightMargin);
-    setWidth(size - widthMargin);
+    // setHeight(size - heightMargin);
+    // setWidth(size - widthMargin);
+
+    setHeight((sectionWidth / 2));
+    setWidth((sectionWidth / 2) - 70);
   }, [windowSize.height, sectionWidth]);
 
 
@@ -76,19 +79,25 @@ function Heatmap({ z, sectionWidth }) {
             constrain: 'domain',
           },
           margin: {
-            t: 30,
+            t: 0,
             l: 0,
             b: 0,
             r: 0,
             pad: 0,
           },
+          title: false,
           showSendToCloud: true,
         }}
         config={{
+          // scrollZoom: false,
+          // displaylogo: false,
+          // responsive: true,
+          // displayModeBar: 'hover',
           scrollZoom: false,
           displaylogo: false,
           responsive: true,
-          displayModeBar: 'hover',
+          displayModeBar: false,
+          staticPlot: true,
         }}
         transition={{
           duration: 500,

@@ -1,6 +1,6 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useHistory } from 'react-router-dom'
 import { Container, Section, Bar } from 'react-simple-resizer';
-import { useParams } from 'react-router-dom';
 import { Grid, Button } from '@material-ui/core';
 import Table from '../../components/Table';
 import { getMegacubesList, getOriginalImageHeatmap } from '../../services/api';
@@ -9,25 +9,41 @@ import useWindowSize from '../../hooks/useWindowSize';
 import useStyles from './styles';
 
 function Preview() {
-  // !TODO: Integrate component content based upon the List ID.
-  // const { idList } = useParams();
-
+  const history = useHistory();
   const classes = useStyles();
   const windowSize = useWindowSize();
   const [megacubes, setMegacubes] = useState({
     data: [],
     totalCount: 0,
   });
-  const [selectedMegacube, setSelectedMegacube] = useState(null);
   const [sectionWidth, setSectionWidth] = useState(0);
   const [originalImageData, setOriginalImageData] = useState([]);
   const [tableHeight, setTableHeight] = useState(0);
 
+
+  const memorizedSelections = localStorage.getItem('previewSelections');
+
+  const [selectedMegacube, setSelectedMegacube] = useState(memorizedSelections ? JSON.parse(memorizedSelections).selectedMegacube : null);
+  const [tableOptions, setTableOptions] = useState(memorizedSelections ? {
+    sorting: JSON.parse(memorizedSelections).sorting,
+    pageSize: JSON.parse(memorizedSelections).pageSize,
+    currentPage: JSON.parse(memorizedSelections).currentPage,
+    searchValue: JSON.parse(memorizedSelections).searchValue,
+    selection: JSON.parse(memorizedSelections).selection
+  } : {
+    sorting: [],
+    pageSize: 20,
+    currentPage: 0,
+    searchValue: '',
+    selection: [],
+  })
+
   const columns = [
     {
-      name: 'id',
-      title: '#',
+      name: 'index',
+      title: ' ',
       width: 80,
+      sortingEnabled: false,
     },
     {
       name: 'nsa_iauname',
@@ -65,6 +81,7 @@ function Preview() {
     {
       name: 'nsa_z',
       title: 'z',
+      width: 80
     },
     // {
     //   name: 'nsa_sersic_absmag',
@@ -99,7 +116,17 @@ function Preview() {
     pageSize,
     currentPage,
     searchValue,
+    selection
    }) => {
+
+    setTableOptions({
+      sorting,
+      pageSize,
+      currentPage,
+      searchValue,
+      selection
+    })
+
     getMegacubesList({
       ordering: sorting,
       pageSize,
@@ -115,10 +142,11 @@ function Preview() {
   }
 
   useEffect(() => {
+    setOriginalImageData([])
     if(selectedMegacube) {
       getOriginalImageHeatmap(selectedMegacube)
         .then(res => {
-          setOriginalImageData(res.z)
+          setOriginalImageData(res)
         })
     }
   }, [selectedMegacube])
@@ -133,6 +161,20 @@ function Preview() {
 
   const handleSectionWidthChange = (size) => setSectionWidth(size);
 
+  const handleExplorerClick = () => {
+
+    // Store last submitted period on local storage:
+    localStorage.setItem(
+      'previewSelections',
+      JSON.stringify({
+        ...tableOptions,
+        selectedMegacube
+      })
+    );
+
+    history.push(`/explorer/${selectedMegacube}`)
+  }
+
   return (
     <Container>
       <Section>
@@ -141,8 +183,11 @@ function Preview() {
           data={megacubes.data}
           totalCount={megacubes.totalCount}
           setSelectedRow={setSelectedMegacube}
-          pageSize={100}
-          pageSizes={[100, 200, 300]}
+          defaultSearchValue={tableOptions.searchValue}
+          defaultCurrentPage={tableOptions.currentPage}
+          defaultSelection={tableOptions.selection}
+          pageSize={tableOptions.pageSize}
+          pageSizes={[20, 50, 100]}
           loadData={loadData}
           height={tableHeight}
           isVirtualTable
@@ -155,10 +200,17 @@ function Preview() {
       <Section className={classes.imageSection} onSizeChanged={handleSectionWidthChange}>
         <Grid container spacing={2} direction="column" alignItems="flex-end">
           <Grid item>
-            <Button variant="contained" color="primary" disabled={!selectedMegacube} href={`/explorer/${selectedMegacube}`}>Explorer</Button>
+            <Button
+              variant="contained"
+              color="primary"
+              disabled={!selectedMegacube}
+              onClick={handleExplorerClick}
+            >
+              Explorer
+            </Button>
           </Grid>
         </Grid>
-        {originalImageData.length > 0 ? <OriginalImage data={originalImageData} sectionWidth={sectionWidth} /> : null}
+        {'z' in originalImageData ? <OriginalImage data={originalImageData} sectionWidth={sectionWidth} /> : null}
       </Section>
     </Container>
   );

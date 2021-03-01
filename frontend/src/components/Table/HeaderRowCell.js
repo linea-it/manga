@@ -9,7 +9,6 @@ import { makeStyles } from '@material-ui/core/styles';
 const useStyles = makeStyles({
   invisibleButton: {
     backgroundColor: 'transparent',
-    cursor: 'pointer',
     color: 'rgb(85, 85, 85)',
     '&:hover': {
       color: 'rgba(0, 0, 0, 0.87)',
@@ -32,33 +31,25 @@ const TableHeaderRowCell = ({ ...restProps }) => (
     style={{
       color: '#555555',
       fontSize: '1em',
-      cursor: 'default'
     }}
   />
 );
 
-const SortingIcon = ({ direction }) => (direction === 'asc' ? (
-  <ArrowUpward style={{ fontSize: '18px' }} />
-) : (
-  <ArrowDownward style={{ fontSize: '18px' }} />
-));
+const SortingIcon = ({ direction }) =>
+  direction === 'asc' ? (
+    <ArrowUpward style={{ fontSize: '18px' }} />
+  ) : (
+    <ArrowDownward style={{ fontSize: '18px' }} />
+  );
 
-const SortLabel = ({
-  onSort, children, direction, ...restProps
-}) => {
+const SortLabel = ({ onSort, children, direction, ...restProps }) => {
   const classes = useStyles();
-
   return (
-    <Tooltip title={
-      restProps.column.headerTooltip
-        ? restProps.column.headerTooltip
-        : children.props.children
-    }
-    >
+    <Tooltip title={children.props.children}>
       <span
         onClick={!restProps.disabled ? onSort : null}
-        className={!restProps.disabled ? classes.invisibleButton : null}
-        style={{ whiteSpace: `${restProps.column.hasLineBreak ? 'normal' : 'nowrap'}` }}
+        className={classes.invisibleButton}
+        style={{ cursor: !restProps.disabled ? 'pointer' : 'default' }}
       >
         {children}
         {!restProps.disabled
@@ -69,10 +60,10 @@ const SortLabel = ({
   );
 };
 
-const CustomTableHeaderRowCell = (props) => (
+const CustomTableHeaderRowCell = () => (
   <TableHeaderRow
     cellComponent={TableHeaderRowCell}
-    showSortingControls={!!props.hasSorting}
+    showSortingControls
     sortLabelComponent={SortLabel}
   />
 );
@@ -93,10 +84,6 @@ SortLabel.propTypes = {
 
 SortLabel.defaultProps = {
   direction: null,
-};
-
-CustomTableHeaderRowCell.propTypes = {
-  hasSorting: PropTypes.bool.isRequired,
 };
 
 export default CustomTableHeaderRowCell;

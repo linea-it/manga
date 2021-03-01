@@ -15,7 +15,6 @@ services:
     env_file:
       - .env.prod
     volumes:
-      - ./backend:/app
       - ./images:/images
 
   frontend:

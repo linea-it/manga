@@ -7,9 +7,9 @@ const useStyles = makeStyles((theme) => ({
   },
   colorRange: ({ height }) => ({
     position: 'absolute',
-    right: 0,
-    top: theme.spacing(8),
-    maxHeight: height - 80,
+    right: -16,
+    top: theme.spacing(2),
+    maxHeight: height - 18,
   }),
   vecWrapper: {
     position: 'relative',

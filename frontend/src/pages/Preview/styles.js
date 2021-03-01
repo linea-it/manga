@@ -7,6 +7,8 @@ const useStyles = makeStyles((theme) => ({
   },
   imageSection: {
     padding: theme.spacing(1),
+    maxHeight: 'calc(100vh - 72px)',
+    overflowY: 'auto !important',
   },
 }));
 
