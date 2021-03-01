@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Grid, Button, Icon, Typography, Dialog,
-} from '@material-ui/core';
+import { Grid, Button, Icon, Typography, Dialog } from '@material-ui/core';
 import { useParams, useHistory } from 'react-router-dom';
 import useInterval from '../../hooks/useInterval';
 import {
@@ -11,7 +9,7 @@ import {
   getLogAgeByPosition,
   getVecsByPosition,
   getHeader,
-  getDownloadInfo
+  getDownloadInfo,
 } from '../../services/api';
 import VerifierGrid from '../../components/VerifierGrid';
 import Galaxy from '../../components/Galaxy';
@@ -31,12 +29,15 @@ function Explorer() {
     name: '',
     megacube: '',
     link: '',
-    size: 0
+    size: 0,
   });
   const [selectedImage, setSelectedImage] = useState({ id: 0, name: '' });
   const [selectedContour, setSelectedContour] = useState({ id: 0, name: '' });
   const [fluxPlotData, setFluxPlotData] = useState({});
-  const [heatmapPlotImageData, setHeatmapPlotImageData] = useState({ z: [], title: '' });
+  const [heatmapPlotImageData, setHeatmapPlotImageData] = useState({
+    z: [],
+    title: '',
+  });
   const [heatmapPlotContourData, setHeatmapPlotContourData] = useState({});
   const [heatmapError, setHeatmapError] = useState('');
   const [heatmapPoints, setHeatmapPoints] = useState([0, 0]);
@@ -49,7 +50,7 @@ function Explorer() {
   const [heatmaps, setHeatmaps] = useState([]);
   const [heatmapSize, setHeatmapSize] = useState({ height: 450 });
   const [isGrid, setIsGrid] = useState(false);
-  const [header, setHeader] = useState({ open: false, data: [] })
+  const [header, setHeader] = useState({ open: false, data: [] });
   const [agePlotData, setAgePlotData] = useState({
     x: [],
     y: [],
@@ -64,7 +65,7 @@ function Explorer() {
 
   useEffect(() => {
     getHudList(id).then((res) => {
-      setHudList(res.hud)
+      setHudList(res.hud);
     });
   }, []);
 
@@ -89,7 +90,6 @@ function Explorer() {
 
   useEffect(() => {
     if (heatmaps.length > 0 && selectedImage.id !== 0) {
-
       // Filter the list of heatmaps by the selected image title
       const heatmap = heatmaps.filter((el) => el.title === selectedImage.name);
 
@@ -101,10 +101,16 @@ function Explorer() {
         const mergedHeatmapZ = mergeArrayOfArrays(heatmap[0].z);
 
         // Set the limits of the heatmap contrast controller based on the prior made array
-        setHeatmapValueLimits([Math.min(...mergedHeatmapZ), Math.max(...mergedHeatmapZ)]);
+        setHeatmapValueLimits([
+          Math.min(...mergedHeatmapZ),
+          Math.max(...mergedHeatmapZ),
+        ]);
 
         // Set the maximum range for the heatmap contrast controller based on the prior made array
-        setHeatmapColorRangeValue([Math.min(...mergedHeatmapZ), Math.max(...mergedHeatmapZ)]);
+        setHeatmapColorRangeValue([
+          Math.min(...mergedHeatmapZ),
+          Math.max(...mergedHeatmapZ),
+        ]);
 
         setHeatmapError('');
       } else {
@@ -115,9 +121,10 @@ function Explorer() {
 
   useEffect(() => {
     if (heatmaps.length > 0 && selectedContour.id !== 0) {
-
       // Filter the list of heatmaps by the selected image title
-      const heatmap = heatmaps.filter((el) => el.title === selectedContour.name);
+      const heatmap = heatmaps.filter(
+        (el) => el.title === selectedContour.name
+      );
 
       if (heatmap.length > 0) {
         setHeatmapPlotContourData(heatmap[0]);
@@ -127,7 +134,10 @@ function Explorer() {
         const mergedHeatmapZ = mergeArrayOfArrays(heatmap[0].z);
 
         // Set the limits of the contour based on the prior made array
-        setHeatmapContourLimits([Math.min(...mergedHeatmapZ), Math.max(...mergedHeatmapZ)]);
+        setHeatmapContourLimits([
+          Math.min(...mergedHeatmapZ),
+          Math.max(...mergedHeatmapZ),
+        ]);
 
         // Set the maximum range for the contour based on the prior made array
         setHeatmapContourRange(Math.max(...mergedHeatmapZ));
@@ -201,13 +211,11 @@ function Explorer() {
 
   useEffect(() => {
     if (hudList.length > 0) {
-      getAllImagesHeatmap(id)
-        .then((res) => {
-          setHeatmaps(res)
-        });
-    };
+      getAllImagesHeatmap(id).then((res) => {
+        setHeatmaps(res);
+      });
+    }
   }, [hudList]);
-
 
   useEffect(() => {
     if (hudList.length > 0) {
@@ -220,34 +228,36 @@ function Explorer() {
 
   const handlePlayClick = () => setIsPlaying(!isPlaying);
 
-  useInterval(() => {
-    if (heatmapSliderValue === hudList.length) {
-      setHeatmapSliderValue(1);
-    } else {
-      setHeatmapSliderValue(heatmapSliderValue + 1);
-    }
-  }, isPlaying ? 1000 : null);
+  useInterval(
+    () => {
+      if (heatmapSliderValue === hudList.length) {
+        setHeatmapSliderValue(1);
+      } else {
+        setHeatmapSliderValue(heatmapSliderValue + 1);
+      }
+    },
+    isPlaying ? 1000 : null
+  );
 
   const handleBackNavigation = () => history.goBack();
 
   const handleHeaderClick = () => {
-    getHeader(id)
-      .then(res => {
-        setHeader({
-          open: true,
-          data: res,
-        });
+    getHeader(id).then((res) => {
+      setHeader({
+        open: true,
+        data: res,
       });
-  }
+    });
+  };
 
   const handleDownloadClick = () => {
-    getDownloadInfo(id).then(res => {
+    getDownloadInfo(id).then((res) => {
       setDownload({
         open: true,
         ...res,
       });
     });
-  }
+  };
 
   return (
     <Grid container spacing={2} style={{ padding: 16, maxWidth: '100%' }}>
@@ -346,8 +356,24 @@ function Explorer() {
           </Grid>
         </>
       )}
-      <MegacubeHeader open={header.open} data={header.data} setOpen={() => setHeader({ open: false, data: [] })} />
-      <MegacubeDownload data={download} setOpen={() => setDownload({ open: false, mangaid: '', name: '', megacube: '', link: '', size: 0})} />
+      <MegacubeHeader
+        open={header.open}
+        data={header.data}
+        setOpen={() => setHeader({ open: false, data: [] })}
+      />
+      <MegacubeDownload
+        data={download}
+        setOpen={() =>
+          setDownload({
+            open: false,
+            mangaid: '',
+            name: '',
+            megacube: '',
+            link: '',
+            size: 0,
+          })
+        }
+      />
     </Grid>
   );
 }

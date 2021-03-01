@@ -160,7 +160,15 @@ function Table({
         selection,
       });
     }
-  }, [sorting, selection, currentPage, reload, customPageSize, filter, searchValue]); // eslint-disable-line
+  }, [
+    sorting,
+    selection,
+    currentPage,
+    reload,
+    customPageSize,
+    filter,
+    searchValue,
+  ]);
 
   const clearData = () => {
     setCustomData([]);
@@ -200,6 +208,7 @@ function Table({
     }
     setCurrentPage(value);
     setAfter(next);
+    changeSelection([]);
   };
 
   const changePageSize = (value) => {
@@ -304,19 +313,28 @@ function Table({
           <VirtualTable
             height={height}
             columnExtensions={customColumnExtensions}
-            noDataCellComponent={(props) => CustomNoDataCellComponent({ ...props }, customLoading)}
+            noDataCellComponent={(props) =>
+              CustomNoDataCellComponent({ ...props }, customLoading)
+            }
           />
         );
       }
       return (
         <MuiTable
           columnExtensions={customColumnExtensions}
-          noDataCellComponent={(props) => CustomNoDataCellComponent({ ...props }, customLoading)}
+          noDataCellComponent={(props) =>
+            CustomNoDataCellComponent({ ...props }, customLoading)
+          }
         />
       );
     }
     if (isVirtualTable) {
-      return <VirtualTable height={height} columnExtensions={customColumnExtensions} />;
+      return (
+        <VirtualTable
+          height={height}
+          columnExtensions={customColumnExtensions}
+        />
+      );
     }
     return <MuiTable columnExtensions={customColumnExtensions} />;
   };
@@ -502,7 +520,8 @@ function Table({
     const handleKeyDown = (e) => {
       // 38 (ArrowUp)
       if (e.keyCode === 38) {
-        const selectLine = selection.length > 0 && selection[0] !== 0 ? [selection[0] - 1] : [0];
+        const selectLine =
+          selection.length > 0 && selection[0] !== 0 ? [selection[0] - 1] : [0];
         changeSelection(selectLine);
       }
 
@@ -512,7 +531,6 @@ function Table({
         changeSelection(selectLine);
       }
     };
-
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
@@ -554,7 +572,7 @@ Table.defaultProps = {
   isVirtualTable: false,
   height: 'auto',
   defaultSearchValue: '',
-  defaultSelection: []
+  defaultSelection: [],
 };
 
 Table.propTypes = {
@@ -589,7 +607,7 @@ Table.propTypes = {
   isVirtualTable: PropTypes.bool,
   height: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   defaultSearchValue: PropTypes.string,
-  defaultSelection: PropTypes.arrayOf(PropTypes.number)
+  defaultSelection: PropTypes.arrayOf(PropTypes.number),
 };
 
 export default Table;

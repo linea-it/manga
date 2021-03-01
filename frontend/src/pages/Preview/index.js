@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useHistory } from 'react-router-dom'
+import { useHistory } from 'react-router-dom';
 import { Container, Section, Bar } from 'react-simple-resizer';
 import { Grid, Button } from '@material-ui/core';
 import Table from '../../components/Table';
@@ -20,23 +20,30 @@ function Preview() {
   const [originalImageData, setOriginalImageData] = useState([]);
   const [tableHeight, setTableHeight] = useState(0);
 
-
   const memorizedSelections = localStorage.getItem('previewSelections');
 
-  const [selectedMegacube, setSelectedMegacube] = useState(memorizedSelections ? JSON.parse(memorizedSelections).selectedMegacube : null);
-  const [tableOptions, setTableOptions] = useState(memorizedSelections ? {
-    sorting: JSON.parse(memorizedSelections).sorting,
-    pageSize: JSON.parse(memorizedSelections).pageSize,
-    currentPage: JSON.parse(memorizedSelections).currentPage,
-    searchValue: JSON.parse(memorizedSelections).searchValue,
-    selection: JSON.parse(memorizedSelections).selection
-  } : {
-    sorting: [],
-    pageSize: 20,
-    currentPage: 0,
-    searchValue: '',
-    selection: [],
-  })
+  const [selectedMegacube, setSelectedMegacube] = useState(
+    memorizedSelections
+      ? JSON.parse(memorizedSelections).selectedMegacube
+      : null
+  );
+  const [tableOptions, setTableOptions] = useState(
+    memorizedSelections
+      ? {
+          sorting: JSON.parse(memorizedSelections).sorting,
+          pageSize: JSON.parse(memorizedSelections).pageSize,
+          currentPage: JSON.parse(memorizedSelections).currentPage,
+          searchValue: JSON.parse(memorizedSelections).searchValue,
+          selection: JSON.parse(memorizedSelections).selection,
+        }
+      : {
+          sorting: [],
+          pageSize: 20,
+          currentPage: 0,
+          searchValue: '',
+          selection: [],
+        }
+  );
 
   const columns = [
     {
@@ -53,10 +60,12 @@ function Preview() {
     {
       name: 'objra',
       title: 'RA',
+      customElement: (row) => row.objra.toFixed(5),
     },
     {
       name: 'objdec',
       title: 'Dec',
+      customElement: (row) => row.objdec.toFixed(5),
     },
     {
       name: 'mangaid',
@@ -73,42 +82,18 @@ function Preview() {
     {
       name: 'airmsmed',
       title: 'Airmass',
+      customElement: (row) => row.airmsmed.toFixed(2),
     },
     {
       name: 'seemed',
       title: 'Seeing',
+      customElement: (row) => row.seemed.toFixed(2),
     },
     {
       name: 'nsa_z',
       title: 'z',
-      width: 80
+      width: 80,
     },
-    // {
-    //   name: 'nsa_sersic_absmag',
-    //   title: 'Abs Magnitude (Sersic)',
-    //   width: 180,
-    // },
-    // {
-    //   name: 'nsa_elpetro_absmag',
-    //   title: 'Abs Mag (Petrosian)',
-    //   width: 180,
-    // },
-    // {
-    //   name: 'rating',
-    //   title: 'Rating',
-    //   sortingEnabled: false,
-    // },
-    // {
-    //   name: 'reject',
-    //   title: 'Reject',
-    //   sortingEnabled: false,
-    // },
-    // {
-    //   name: 'comments',
-    //   title: 'Comments',
-    //   width: 150,
-    //   sortingEnabled: false,
-    // },
   ];
 
   const loadData = ({
@@ -116,64 +101,62 @@ function Preview() {
     pageSize,
     currentPage,
     searchValue,
-    selection
-   }) => {
-
+    selection,
+  }) => {
     setTableOptions({
       sorting,
       pageSize,
       currentPage,
       searchValue,
-      selection
-    })
+      selection,
+    });
 
     getMegacubesList({
       ordering: sorting,
       pageSize,
       page: currentPage + 1,
       search: searchValue,
-    })
-      .then(res => {
-        setMegacubes({
-          data: res.results,
-          totalCount: res.count
-        });
+    }).then((res) => {
+      setMegacubes({
+        data: res.results,
+        totalCount: res.count,
       });
-  }
+    });
+  };
 
   useEffect(() => {
-    setOriginalImageData([])
-    if(selectedMegacube) {
-      getOriginalImageHeatmap(selectedMegacube)
-        .then(res => {
-          setOriginalImageData(res)
-        })
+    setOriginalImageData([]);
+    if (selectedMegacube) {
+      getOriginalImageHeatmap(selectedMegacube).then((res) => {
+        setOriginalImageData(res);
+      });
     }
-  }, [selectedMegacube])
+  }, [selectedMegacube]);
 
   useEffect(() => {
     const headerHeight = 55.97;
     const tableToolbarHeight = 64.99;
     const tablePager = 71.95;
 
-    setTableHeight(windowSize.height - headerHeight - tableToolbarHeight - tablePager);
+    setTableHeight(
+      windowSize.height - headerHeight - tableToolbarHeight - tablePager
+    );
   }, [windowSize.height]);
 
   const handleSectionWidthChange = (size) => setSectionWidth(size);
 
   const handleExplorerClick = () => {
-
     // Store last submitted period on local storage:
     localStorage.setItem(
       'previewSelections',
       JSON.stringify({
         ...tableOptions,
-        selectedMegacube
+        selectedMegacube,
       })
     );
 
-    history.push(`/explorer/${selectedMegacube}`)
-  }
+    history.push(`/explorer/${selectedMegacube}`);
+  };
 
   return (
     <Container>
@@ -193,11 +176,11 @@ function Preview() {
           isVirtualTable
         />
       </Section>
-      <Bar
-        className={classes.resizeBar}
-        size={3}
-      />
-      <Section className={classes.imageSection} onSizeChanged={handleSectionWidthChange}>
+      <Bar className={classes.resizeBar} size={3} />
+      <Section
+        className={classes.imageSection}
+        onSizeChanged={handleSectionWidthChange}
+      >
         <Grid container spacing={2} direction="column" alignItems="flex-end">
           <Grid item>
             <Button
@@ -210,7 +193,9 @@ function Preview() {
             </Button>
           </Grid>
         </Grid>
-        {'z' in originalImageData ? <OriginalImage data={originalImageData} sectionWidth={sectionWidth} /> : null}
+        {'z' in originalImageData ? (
+          <OriginalImage data={originalImageData} sectionWidth={sectionWidth} />
+        ) : null}
       </Section>
     </Container>
   );
