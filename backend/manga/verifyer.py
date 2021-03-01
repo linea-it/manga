@@ -98,7 +98,7 @@ class mclass:
         image_data = cube_data[idxHud, :, :]
 
         # Transforming "masked" values to zero:
-        image_data[np.isnan(image_data)] = 0
+        image_data[np.isnan(image_data)] = -999
 
         return image_data
 
@@ -375,60 +375,3 @@ class mclass:
 
 if __name__ == '__main__':
     filename = sys.argv[1]
-
-    # a = mclass().spaxel_fit_by_position(filename, x=15, y=29)
-
-    # flux, lamb = mclass().flux_by_position(megacube, x=26, y=26)
-
-    # image = mclass().image_by_hud(filename, 'FCFC1.50')
-
-    # aImage = pyplot.pcolormesh(image)
-
-    # l = aImage
-    # n = len(list(image.get_array()))
-
-    # for i in range(0, len(l), n):
-    #     print(l[i:i + n])
-
-    # for X(i,j) to X(i+1,j+1)
-    #     for Y(i,j) to Y(i+1,j+1)
-
-    # x = list()
-    # y = list()
-    # z = list()
-
-    # for i, j in enumerate(range(len(a))):
-    #     print("i: %s j: %s" % (i, j))
-    #     x.append(i)
-    #     y.append(j)
-    #     z.append(a[i, j])
-    # print(x)
-    # print(y)
-    # print(z)
-
-    # print(a[25, 26])
-    # # x = list()
-    # # y = list()
-    # for i in range(len(a)):
-    #     print(a[1][i])
-
-    # print(a[26].tolist())
-
-    # header = pf.getheader(megacube, 'FLXNORM')
-    # flux = pf.getdata(megacube, 'FLXNORM')
-
-    # l0 = pf.getheader(megacube, 'FLXNORM')['CRVAL3']
-    # dl = pf.getheader(megacube, 'FLXNORM')['CD3_3']
-
-    # (size, ypix, xpix) = np.shape(flux)
-    # lamb = np.arange(l0, (dl*size+l0), dl)
-
-    # print(flux[:, 26, 25])
-    # print(len(flux[:, 26, 25]))
-    # print(len(lamb))
-    # print(lamb)
-
-    # window = tk.Tk()
-    # window.title('Megacube Fit Analyser')
-    # start = mclass(window, megacube=megacube)
-    # window.mainloop()

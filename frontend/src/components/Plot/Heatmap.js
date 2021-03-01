@@ -1,40 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Plot from 'react-plotly.js';
-import useWindowSize from '../../hooks/useWindowSize';
 import { HeatmapColorRange } from '../HeatmapSlider';
 import { mergeArrayOfArrays } from '../../services/utils';
 import useStyles from './styles';
 
-function Heatmap({ z, sectionWidth }) {
-  const windowSize = useWindowSize();
-  const [height, setHeight] = useState(400);
-  const [width, setWidth] = useState(500);
+function Heatmap({ z, height, width }) {
   const [colorLimits, setColorLimits] = useState([]);
   const [colorRangeValue, setColorRangeValue] = useState([]);
 
-  const classes = useStyles({ height });
-
-  useEffect(() => {
-    // const size = windowSize.height > sectionWidth ? sectionWidth : windowSize.height;
-
-    // const margin = size * 0.025;
-    // const ratio = size - margin;
-    // setHeight(ratio);
-    // setWidth(ratio);
-
-    // const size = windowSize.height > sectionWidth ? sectionWidth : windowSize.height;
-
-    // const heightMargin = size * 0.2;
-    // const widthMargin = size * 0.03;
-
-    // setHeight(size - heightMargin);
-    // setWidth(size - widthMargin);
-
-    setHeight((sectionWidth / 2));
-    setWidth((sectionWidth / 2) - 70);
-  }, [windowSize.height, sectionWidth]);
-
+  const classes = useStyles({ height, width });
 
   useEffect(() => {
     if (z.length > 0) {
@@ -118,12 +93,9 @@ function Heatmap({ z, sectionWidth }) {
 }
 
 Heatmap.propTypes = {
-  z: PropTypes.arrayOf(
-    PropTypes.arrayOf(
-      PropTypes.number,
-    ),
-  ).isRequired,
-  sectionWidth: PropTypes.number.isRequired,
+  z: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.number)).isRequired,
+  height: PropTypes.number.isRequired,
+  width: PropTypes.number.isRequired,
 };
 
 export default Heatmap;

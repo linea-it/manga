@@ -1,13 +1,16 @@
 import { makeStyles } from '@material-ui/core/styles';
 
-const styles = makeStyles(theme => ({
+const styles = makeStyles((theme) => ({
   root: {
     display: 'flex',
-    marginTop: theme.spacing(2)
+    flexDirection: 'column',
+    marginTop: theme.spacing(2),
+    alignItems: 'center',
   },
-  imgContainer: props => ({
-    maxWidth: props.sectionWidth / 2,
+  imgContainer: (props) => ({
+    maxWidth: props.width - 87,
     margin: 'auto',
+    paddingRight: 87,
   }),
   img: {
     width: 'auto',
