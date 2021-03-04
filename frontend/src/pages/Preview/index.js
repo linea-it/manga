@@ -60,12 +60,12 @@ function Preview() {
     {
       name: 'objra',
       title: 'RA',
-      customElement: (row) => row.objra.toFixed(5),
+      // customElement: (row) => row.objra.toFixed(5),
     },
     {
       name: 'objdec',
       title: 'Dec',
-      customElement: (row) => row.objdec.toFixed(5),
+      // customElement: (row) => row.objdec.toFixed(5),
     },
     {
       name: 'mangaid',
@@ -102,6 +102,7 @@ function Preview() {
     currentPage,
     searchValue,
     selection,
+    filter,
   }) => {
     setTableOptions({
       sorting,
@@ -116,6 +117,7 @@ function Preview() {
       pageSize,
       page: currentPage + 1,
       search: searchValue,
+      filter,
     }).then((res) => {
       setMegacubes({
         data: res.results,
@@ -165,12 +167,14 @@ function Preview() {
           columns={columns}
           data={megacubes.data}
           totalCount={megacubes.totalCount}
+          selectedRow={selectedMegacube}
           setSelectedRow={setSelectedMegacube}
           defaultSearchValue={tableOptions.searchValue}
           defaultCurrentPage={tableOptions.currentPage}
           defaultSelection={tableOptions.selection}
           pageSize={tableOptions.pageSize}
           pageSizes={[20, 50, 100]}
+          hasFiltering
           loadData={loadData}
           height={tableHeight}
           isVirtualTable

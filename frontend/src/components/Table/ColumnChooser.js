@@ -30,6 +30,12 @@ class CustomColumnChooser extends Component {
       <Paper style={styles.chooserPaperWrapper}>
         {columns.children.map((column, index) => {
           const { key } = column;
+
+          // Remove the column index, if there is:
+          if (key === 'index') {
+            return null;
+          }
+
           const item = column.props.item.column;
           const toggle = column.props.onToggle;
           const isFirstIndex = index === 0;
