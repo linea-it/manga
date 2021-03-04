@@ -85,3 +85,9 @@ export const getHeader = (id) =>
 
 export const getDownloadInfo = (id) =>
   axios.get(`/images/${id}/download_info`).then((res) => res.data);
+
+export const sendEmail = (formData) =>
+  axios
+    .post('contact/', formData)
+    .then((res) => res)
+    .catch((err) => err);

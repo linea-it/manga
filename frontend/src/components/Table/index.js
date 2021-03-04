@@ -148,7 +148,11 @@ function Table({
         ];
       }
 
-      if(customColumns[0] && customColumns[0].name === 'index' && customColumns[1]) {
+      if (
+        customColumns[0] &&
+        customColumns[0].name === 'index' &&
+        customColumns[1]
+      ) {
         return [
           {
             columnName: customColumns[1].name,
@@ -449,6 +453,9 @@ function Table({
 
       setFilter(filters);
       setFilterOpen(false);
+      if (currentPage !== 0) {
+        changeCurrentPage(0);
+      }
     }
   };
 
