@@ -232,7 +232,5 @@ if HOST_URL is not None:
     LOGIN_REDIRECT_URL = HOST_URL
 
 # Email notification configs
-# EMAIL_HELPDESK = 'helpdesk@linea.gov.br'
-# EMAIL_HELPDESK_CONTACT = 'manga-portal@linea.gov.br'
-EMAIL_HELPDESK = 'matheus.freitas@linea.gov.br'
-EMAIL_HELPDESK_CONTACT = 'matheus.freitas@linea.gov.br'
+EMAIL_HELPDESK = 'helpdesk@linea.gov.br'
+EMAIL_HELPDESK_CONTACT = 'manga-portal@linea.gov.br'
