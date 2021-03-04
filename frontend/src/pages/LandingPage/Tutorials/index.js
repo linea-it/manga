@@ -18,7 +18,6 @@ import MovieIcon from '@material-ui/icons/Movie';
 import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import styles from './styles';
-// import { tutorials } from '../../Services/api';
 
 function Tutorials() {
   const classes = styles();
@@ -28,42 +27,18 @@ function Tutorials() {
     tutorial: '',
     video: '',
   });
-  const [treeTutorial, setTreeTutorial] = useState([]);
-
-  function compare(a, b) {
-    const bandA = a.title.toUpperCase();
-    const bandB = b.title.toUpperCase();
-    let comparison = 0;
-    if (bandA > bandB) {
-      comparison = 1;
-    } else if (bandA < bandB) {
-      comparison = -1;
-    }
-    return comparison;
-  }
-
-  useEffect(() => {
-    const auxTreeTutorial = [];
-    // let menuFilter;
-    // let idVideo;
-    async function fetchData() {
-      // tutorials().then((resTutorials) => {
-      //   resTutorials.forEach((elem) => {
-      //     idVideo = elem.ttr_src.substring(30, elem.ttr_src.length);
-      //     menuFilter = auxTreeTutorial.filter((e) => e.title == elem.application_display_name);
-      //     if (auxTreeTutorial.filter((e) => e.title == elem.application_display_name).length > 0) {
-      //       menuFilter[0].videos.push({ title: elem.ttr_title, idVideo, description: elem.ttr_description });
-      //     } else {
-      //       auxTreeTutorial.push({ title: elem.application_display_name, videos: [{ title: elem.ttr_title, idVideo, description: elem.ttr_description }] });
-      //     }
-      //   });
-      //   // setVideoOnDisplay({ tutorial: response.data[0].application_display_name, video: response.data[0].ttr_title });
-      //   setIdPlayer('0');
-      // });
-    }
-    setTreeTutorial(auxTreeTutorial);
-    fetchData();
-  }, []);
+  const treeTutorial = [
+    {
+      id: 1,
+      title: 'Overview',
+      videos: [
+        {
+          title: 'Overview',
+          idVideo: 'nuPe8Ouo2oA',
+        },
+      ],
+    },
+  ];
 
   const [expanded, setExpanded] = React.useState('');
   const handleChange = (panel) => (event, newExpanded) => {
@@ -92,43 +67,40 @@ function Tutorials() {
           className={classes.root}
         >
           <Grid item xs={12} sm={4}>
-            {treeTutorial &&
-              treeTutorial.sort(compare).map((tutorial, index) => (
-                <ExpansionPanel
-                  square
-                  key={(index + 1).toString()}
-                  expanded={expanded === `panel${index + 1}`}
-                  onChange={handleChange(`panel${index + 1}`)}
+            {treeTutorial.map((tutorial, index) => (
+              <ExpansionPanel
+                square
+                key={tutorial.id}
+                expanded={expanded === `panel${index + 1}`}
+                onChange={handleChange(`panel${index + 1}`)}
+              >
+                <ExpansionPanelSummary
+                  aria-controls={`panel${index + 1}d-content`}
+                  id={`panel${index + 1}d-header`}
                 >
-                  <ExpansionPanelSummary
-                    aria-controls={`panel${index + 1}d-content`}
-                    id={`panel${index + 1}d-header`}
+                  {expanded === `panel${index + 1}` ? (
+                    <ArrowDropDownIcon />
+                  ) : (
+                    <ArrowRightIcon />
+                  )}
+                  <Typography>{tutorial.title}</Typography>
+                </ExpansionPanelSummary>
+                {tutorial.videos.map((video) => (
+                  <ListItem
+                    key={video.id}
+                    className={classes.item}
+                    onClick={() => {
+                      handleSelected(tutorial, video);
+                    }}
                   >
-                    {expanded === `panel${index + 1}` ? (
-                      <ArrowDropDownIcon />
-                    ) : (
-                      <ArrowRightIcon />
-                    )}
-                    <Typography>{tutorial.title}</Typography>
-                  </ExpansionPanelSummary>
-                  {tutorial.videos.map((video, indexVideos) => (
-                    <ListItem
-                      key={
-                        (index + 1).toString() + (indexVideos + 1).toString()
-                      }
-                      className={classes.item}
-                      onClick={() => {
-                        handleSelected(tutorial, video);
-                      }}
-                    >
-                      <ListItemIcon>
-                        <MovieIcon />
-                      </ListItemIcon>
-                      <ListItemText primary={video.title} />
-                    </ListItem>
-                  ))}
-                </ExpansionPanel>
-              ))}
+                    <ListItemIcon>
+                      <MovieIcon />
+                    </ListItemIcon>
+                    <ListItemText primary={video.title} />
+                  </ListItem>
+                ))}
+              </ExpansionPanel>
+            ))}
           </Grid>
           <Grid item xs={12} sm={8}>
             {idPlayer != '0' ? (
