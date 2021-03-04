@@ -1,10 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
-import InputLabel from '@material-ui/core/InputLabel';
-import Input from '@material-ui/core/Input';
-import MenuItem from '@material-ui/core/MenuItem';
-import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
 import clsx from 'clsx';
 import {
   PagingState,
@@ -20,7 +15,7 @@ import {
 import {
   Grid,
   VirtualTable,
-  Table as MuiTable,
+  Table as DxMuiTable,
   PagingPanel,
   TableColumnResizing,
   Toolbar,
@@ -29,9 +24,29 @@ import {
   TableColumnVisibility,
   TableGroupRow,
 } from '@devexpress/dx-react-grid-material-ui';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
+import {
+  MenuItem,
+  CircularProgress,
+  Button,
+  Grid as MuiGrid,
+  Toolbar as MuiToolbar,
+  IconButton,
+  TextField,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Table as MuiTable,
+  TableHead as MuiTableHead,
+  TableRow as MuiTableRow,
+  TableCell as MuiTableCell,
+  TableBody as MuiTableBody,
+} from '@material-ui/core';
+import {
+  FilterList as FilterListIcon,
+  AddBox as AddBoxIcon,
+  RemoveCircle as RemoveCircleIcon,
+} from '@material-ui/icons';
 import ColumnChooser from './ColumnChooser';
 import HeaderRowCell from './HeaderRowCell';
 import RowIndexer from './plugins/RowIndexer';
@@ -83,6 +98,7 @@ function Table({
   hasLineBreak,
   loading,
   defaultSelection,
+  selectedRow,
   setSelectedRow,
   isVirtualTable,
   height,
@@ -122,13 +138,24 @@ function Table({
     ) {
       return defaultSorting;
     }
-    if (customColumns && customColumns[0]) {
-      return [
-        {
-          columnName: customColumns[0].name,
-          direction: 'asc',
-        },
-      ];
+    if (customColumns) {
+      if (customColumns[0] && customColumns[0].name !== 'index') {
+        return [
+          {
+            columnName: customColumns[0].name,
+            direction: 'asc',
+          },
+        ];
+      }
+
+      if(customColumns[0] && customColumns[0].name === 'index' && customColumns[1]) {
+        return [
+          {
+            columnName: customColumns[1].name,
+            direction: 'asc',
+          },
+        ];
+      }
     }
     return null;
   };
@@ -141,10 +168,17 @@ function Table({
   const [currentPage, setCurrentPage] = useState(defaultCurrentPage);
   const [after, setAfter] = useState('');
   const [customPageSize, setCustomPageSize] = useState(pageSize);
-  const [filter, setFilter] = useState('all');
   const [searchValue, setSearchValue] = useState(defaultSearchValue);
   const [selection, setSelection] = useState(defaultSelection);
   const [customModalContent, setCustomModalContent] = useState('');
+  const [filterOpen, setFilterOpen] = useState(false);
+  const filterFormRef = useRef(null);
+  const [filterForm, setFilterForm] = useState({
+    property: '',
+    operator: '',
+  });
+  const [filterValues, setFilterValues] = useState([]);
+  const [filter, setFilter] = useState([]);
 
   const classes = useStyles();
 
@@ -182,6 +216,25 @@ function Table({
     setCustomTotalCount(totalCount);
     setCustomLoading(false);
   }, [data, totalCount, defaultExpandedGroups]);
+
+  useEffect(() => {
+    if (selectedRow) {
+      const megacubeOnTable =
+        data.filter((megacube) => megacube.id === selectedRow).length > 0;
+
+      if (!megacubeOnTable) {
+        changeSelection([]);
+      } else {
+        data.forEach((row, i) => {
+          if (row.id === selectedRow) {
+            if (selection[0] !== i) {
+              setSelection([i]);
+            }
+          }
+        });
+      }
+    }
+  }, [data, selectedRow]);
 
   useEffect(() => {
     if (loading !== null) setCustomLoading(loading);
@@ -251,14 +304,6 @@ function Table({
     setSelection(select);
   };
 
-  const handleChangeFilter = (evt) => {
-    if (remote === true) {
-      clearData();
-      setCustomLoading(true);
-    }
-    setFilter(evt.target.value);
-  };
-
   const onHideModal = () => setVisible(false);
 
   const renderModal = () => (
@@ -278,24 +323,6 @@ function Table({
         zIndex: '99',
       }}
     />
-  );
-
-  const renderFilter = () => (
-    <FormControl className={classes.formControl}>
-      <InputLabel shrink htmlFor="filter-label-placeholder">
-        Filter
-      </InputLabel>
-      <Select
-        value={filter}
-        onChange={handleChangeFilter}
-        input={<Input name="filter" id="filter-label-placeholder" />}
-        displayEmpty
-        name="filter"
-      >
-        <MenuItem value="all">All</MenuItem>
-        <MenuItem value="running">Running</MenuItem>
-      </Select>
-    </FormControl>
   );
 
   const onClickAction = (column, row) => {
@@ -320,7 +347,7 @@ function Table({
         );
       }
       return (
-        <MuiTable
+        <DxMuiTable
           columnExtensions={customColumnExtensions}
           noDataCellComponent={(props) =>
             CustomNoDataCellComponent({ ...props }, customLoading)
@@ -336,14 +363,236 @@ function Table({
         />
       );
     }
-    return <MuiTable columnExtensions={customColumnExtensions} />;
+    return <DxMuiTable columnExtensions={customColumnExtensions} />;
   };
+
+  const customToolbar = ({ children }) => (
+    <MuiToolbar className={classes.toolbar}>
+      <IconButton
+        className={classes.filterButton}
+        onClick={() => setFilterOpen(true)}
+      >
+        <FilterListIcon />
+      </IconButton>
+      {children}
+    </MuiToolbar>
+  );
+
+  const handleFormChange = (row, field) => {
+    setFilterForm((prevState) => ({
+      ...prevState,
+      [field]: row.target.value,
+    }));
+  };
+
+  const handleAddFilter = () => {
+    const { value } = filterFormRef.current.value;
+    const propertyName = JSON.parse(filterForm.property).name;
+    const filterProperty =
+      filterValues.length > 0
+        ? filterValues.filter((f) => f.propertyName === propertyName)
+        : [];
+    if (
+      filterProperty.length === 0 &&
+      value !== '' &&
+      filterForm.property !== '' &&
+      filterForm.operator !== ''
+    ) {
+      setFilterValues((prevState) => [
+        ...prevState,
+        {
+          propertyTitle: JSON.parse(filterForm.property).title,
+          propertyName: JSON.parse(filterForm.property).name,
+          operator: filterForm.operator,
+          value,
+        },
+      ]);
+
+      filterFormRef.current.reset();
+
+      setFilterForm({
+        property: '',
+        operator: '',
+      });
+    }
+  };
+
+  const removeFilter = (row) => {
+    const newFilter = filterValues.filter(
+      (f) => f.propertyName !== row.propertyName
+    );
+    setFilterValues(newFilter);
+
+    if (newFilter.length === 0) {
+      setFilter([]);
+    }
+  };
+
+  const handleFilterApply = () => {
+    const operators = {
+      is_equal_to: '',
+      is_not_equal_to: '!',
+      is_greater_than: '__gt',
+      is_greater_than_or_equal_to: '__gte',
+      is_less_than: '__lt',
+      is_less_than_or_equal_to: '__lte',
+    };
+
+    if (filterValues.length > 0) {
+      const filters = filterValues.map((f) => {
+        const property = f.propertyName;
+        const operator = operators[f.operator.split(' ').join('_')];
+        const { value } = f;
+
+        return `${property}${operator}=${encodeURIComponent(value)}`;
+      });
+
+      setFilter(filters);
+      setFilterOpen(false);
+    }
+  };
+
+  const renderFilter = () => (
+    <Dialog
+      onClose={() => setFilterOpen(false)}
+      open={filterOpen}
+      fullWidth
+      maxWidth="sm"
+    >
+      <DialogTitle>Filter</DialogTitle>
+      <DialogContent>
+        <form ref={filterFormRef} noValidate autoComplete="off">
+          <MuiGrid container justify="center" alignItems="flex-end" spacing={2}>
+            <MuiGrid item xs={12} md={11}>
+              <MuiGrid container spacing={2}>
+                <MuiGrid item xs={12} md={4}>
+                  <TextField
+                    select
+                    label="Property"
+                    name="property"
+                    margin="dense"
+                    onChange={(row) => handleFormChange(row, 'property')}
+                    value={filterForm.property}
+                    required
+                    fullWidth
+                  >
+                    {columns.map(
+                      (column) =>
+                        column.name !== 'index' && (
+                          <MenuItem
+                            key={column.name}
+                            value={`{ "name": "${column.name}", "title": "${column.title}" }`}
+                          >
+                            {column.title}
+                          </MenuItem>
+                        )
+                    )}
+                  </TextField>
+                </MuiGrid>
+                <MuiGrid item xs={12} md={4}>
+                  <TextField
+                    select
+                    label="Operator"
+                    name="operator"
+                    margin="dense"
+                    onChange={(row) => handleFormChange(row, 'operator')}
+                    value={filterForm.operator}
+                    required
+                    fullWidth
+                  >
+                    <MenuItem value="is equal to">is equal to</MenuItem>
+                    <MenuItem value="is not equal to">is not equal to</MenuItem>
+                    <MenuItem value="is greater than">is greater than</MenuItem>
+                    <MenuItem value="is greater than or equal to">
+                      is greater than or equal to
+                    </MenuItem>
+                    <MenuItem value="is less than">is less than</MenuItem>
+                    <MenuItem value="is less than or equal to">
+                      is less than or equal to
+                    </MenuItem>
+                  </TextField>
+                </MuiGrid>
+                <MuiGrid item xs={12} md={4}>
+                  <TextField
+                    label="Value"
+                    name="value"
+                    margin="dense"
+                    required
+                    fullWidth
+                  />
+                </MuiGrid>
+              </MuiGrid>
+            </MuiGrid>
+            <MuiGrid item xs={12} md={1}>
+              <IconButton
+                className={classes.addFilter}
+                disableRipple
+                onClick={handleAddFilter}
+              >
+                <AddBoxIcon fontSize="large" color="primary" />
+              </IconButton>
+            </MuiGrid>
+
+            <MuiGrid item xs={12}>
+              <MuiTable
+                className={classes.table}
+                size="small"
+                aria-label="a dense table"
+              >
+                <MuiTableHead>
+                  <MuiTableRow>
+                    <MuiTableCell className={classes.firstTableCell}>
+                      Property
+                    </MuiTableCell>
+                    <MuiTableCell>Operator</MuiTableCell>
+                    <MuiTableCell>Value</MuiTableCell>
+                    <MuiTableCell />
+                  </MuiTableRow>
+                </MuiTableHead>
+                <MuiTableBody>
+                  {filterValues.length > 0 &&
+                    filterValues.map((row) => (
+                      <MuiTableRow key={row.propertyName}>
+                        <MuiTableCell className={classes.firstTableCell}>
+                          {row.propertyTitle}
+                        </MuiTableCell>
+                        <MuiTableCell>{row.operator}</MuiTableCell>
+                        <MuiTableCell>{row.value}</MuiTableCell>
+                        <MuiTableCell align="right">
+                          <IconButton onClick={() => removeFilter(row)}>
+                            <RemoveCircleIcon color="error" />
+                          </IconButton>
+                        </MuiTableCell>
+                      </MuiTableRow>
+                    ))}
+                </MuiTableBody>
+              </MuiTable>
+            </MuiGrid>
+          </MuiGrid>
+        </form>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={() => setFilterOpen(false)} color="primary">
+          Cancel
+        </Button>
+        <Button
+          onClick={handleFilterApply}
+          disabled={filterValues.length === 0}
+          color="primary"
+        >
+          Apply
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
 
   const renderTable = (rows) => {
     if (remote === true) {
       return (
         <>
           <Grid rows={rows} columns={customColumns}>
+            {/* {hasToolbar ? <Toolbar /> : null} */}
+            {hasToolbar ? <Toolbar rootComponent={customToolbar} /> : null}
             {hasSearching ? (
               <SearchState onValueChange={changeSearchValue} />
             ) : null}
@@ -394,10 +643,11 @@ function Table({
             <HeaderRowCell hasSorting={hasSorting} />
             {hasGrouping ? <TableGroupRow /> : null}
             {hasPagination ? <PagingPanel pageSizes={pageSizes} /> : null}
-            {hasToolbar ? <Toolbar /> : null}
+            {/* {hasToolbar ? <Toolbar /> : null} */}
             {hasSearching ? <SearchPanel /> : null}
             {hasColumnVisibility ? <TableColumnVisibility /> : null}
             {hasColumnVisibility ? <ColumnChooser /> : null}
+
             <RowIndexer />
           </Grid>
           {renderModal()}
@@ -568,6 +818,7 @@ Table.defaultProps = {
   hasLineBreak: false,
   grouping: [{}],
   loading: null,
+  selectedRow: null,
   setSelectedRow: null,
   isVirtualTable: false,
   height: 'auto',
@@ -603,6 +854,7 @@ Table.propTypes = {
   remote: PropTypes.bool,
   grouping: PropTypes.arrayOf(PropTypes.object),
   loading: PropTypes.bool,
+  selectedRow: PropTypes.number,
   setSelectedRow: PropTypes.func,
   isVirtualTable: PropTypes.bool,
   height: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
