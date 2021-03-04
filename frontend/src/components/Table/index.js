@@ -448,7 +448,7 @@ function Table({
       });
 
       setFilter(filters);
-      // setFilterOpen(false);
+      setFilterOpen(false);
     }
   };
 
