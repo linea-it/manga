@@ -237,7 +237,7 @@ EMAIL_HOST = 'smtp.linea.gov.br'
 EMAIL_PORT = '587'
 EMAIL_HOST_USER = None
 EMAIL_HOST_PASSWORD = None
-EMAIL_USE_TLS = True
+EMAIL_USE_TLS = False
 # Email utilizado para enviar as notificacoes do science server
 EMAIL_NOTIFICATION = 'noreply@linea.gov.br'
 # Lista de email que receberão uma copia de todas as notificacoes

@@ -33,6 +33,6 @@ urlpatterns = [
     url(r'^api/', include(router.urls)),
     url(r'^api/obtain-auth-token/$', csrf_exempt(obtain_auth_token)),
     path('api/auth/', include('rest_framework.urls')),
-    url(r'^api/contact/', contact_us),
+    url(r'api/contact/', contact_us),
     url(r'^api/logout/', LogoutView),
 ]
