@@ -88,6 +88,6 @@ export const getDownloadInfo = (id) =>
 
 export const sendEmail = (formData) =>
   axios
-    .post('contact/', formData)
+    .post('/contact/', formData)
     .then((res) => res)
     .catch((err) => err);
