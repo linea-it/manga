@@ -231,8 +231,22 @@ if HOST_URL is not None:
     LOGOUT_REDIRECT_URL = HOST_URL
     LOGIN_REDIRECT_URL = HOST_URL
 
-# Email notification configs
-# EMAIL_HELPDESK = 'helpdesk@linea.gov.br'
-# EMAIL_HELPDESK_CONTACT = 'manga-portal@linea.gov.br'
-EMAIL_HELPDESK = 'matheus.freitas@linea.gov.br'
-EMAIL_HELPDESK_CONTACT = 'matheus.freitas@linea.gov.br'
+# Email Notification configs
+# Dados de configuração do servidor de email que será usado para envio das notificações.
+EMAIL_HOST = 'smtp.linea.gov.br'
+EMAIL_PORT = '587'
+EMAIL_HOST_USER = None
+EMAIL_HOST_PASSWORD = None
+EMAIL_USE_TLS = True
+# Email utilizado para enviar as notificacoes do science server
+EMAIL_NOTIFICATION = 'noreply@linea.gov.br'
+# Lista de email que receberão uma copia de todas as notificacoes
+EMAIL_NOTIFICATION_COPY_TO = list([])
+# Email para o helpdesk LIneA
+EMAIL_HELPDESK = 'helpdesk@linea.gov.br'
+# Email de contato do LIneA
+EMAIL_HELPDESK_CONTACT = 'manga-portal@linea.gov.br'
+# Email que recebera as notificacoes e relatorios gerados pelo science server
+EMAIL_ADMIN = ''
+# Enables or disables sending daily email access statistics.
+SEND_DAILY_STATISTICS_EMAIL = False
