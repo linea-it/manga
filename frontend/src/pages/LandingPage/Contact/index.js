@@ -1,6 +1,4 @@
-/* eslint-disable react/no-unescaped-entities */
-/* eslint-disable max-len */
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import {
   Grid,
   Container,
@@ -14,14 +12,20 @@ import {
 import { Alert, AlertTitle } from '@material-ui/lab';
 import EmailIcon from '@material-ui/icons/Email';
 import styles from './styles';
-// import { sendEmail } from '../../Services/api';
+import { sendEmail } from '../../../services/api';
+import ReCAPTCHA from 'react-google-recaptcha';
 
 function Contact() {
   const classes = styles();
 
   const formRef = useRef();
 
-  const [open, setOpen] = React.useState('');
+  const recaptchaKey = process.env.REACT_APP_RECAPTCHA_SITE_KEY;
+
+  const [open, setOpen] = useState('');
+  const [submitEnabled, setSubmitEnabled] = useState(
+    recaptchaKey ? false : true
+  );
 
   const handleClose = () => {
     setOpen('');
@@ -29,22 +33,31 @@ function Contact() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    // const formData = {
-    //   name: formRef.current.name.value,
-    //   subject: formRef.current.subject.value,
-    //   from: formRef.current.from.value,
-    //   message: formRef.current.message.value,
-    // };
-    // sendEmail(formData).then((res) => {
-    //   if (res.response.status === 200) {
-    //     setOpen('success');
-    //     formRef.current.reset();
-    //   } else if (res.response.status === 403) {
-    //     setOpen('unauthorized');
-    //   } else {
-    //     setOpen('unexpected');
-    //   }
-    // });
+    if (submitEnabled) {
+      const formData = {
+        name: formRef.current.name.value,
+        subject: formRef.current.subject.value,
+        from: formRef.current.from.value,
+        message: formRef.current.message.value,
+      };
+
+      sendEmail(formData).then((res) => {
+        if (res.status === 200) {
+          setOpen('success');
+          formRef.current.reset();
+        } else if (res.status === 403) {
+          setOpen('unauthorized');
+        } else {
+          setOpen('unexpected');
+        }
+      });
+    }
+  };
+
+  const onRecaptchaChange = (humanKey) => {
+    if (humanKey) {
+      setSubmitEnabled(true);
+    }
   };
 
   return (
@@ -129,7 +142,12 @@ function Contact() {
                   placeholder="Message"
                 />
               </div>
-
+              {recaptchaKey ? (
+                <ReCAPTCHA
+                  sitekey={recaptchaKey}
+                  onChange={onRecaptchaChange}
+                />
+              ) : null}
               <Grid container alignItems="flex-end">
                 <Grid item xs={10} />
                 <Grid item xs={2}>
@@ -138,6 +156,7 @@ function Contact() {
                     color="primary"
                     type="submit"
                     disableElevation
+                    disabled={!submitEnabled}
                   >
                     <EmailIcon />
                     &nbsp;Submit

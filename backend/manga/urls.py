@@ -19,7 +19,7 @@ from django.conf.urls import include, url
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.authtoken.views import obtain_auth_token
 from rest_framework import routers
-from common.views import UserViewSet, LogoutView
+from common.views import UserViewSet, LogoutView, contact_us
 from galaxy.views import ImageViewSet
 
 # Routers provide an easy way of automatically determining the URL conf.
@@ -33,5 +33,6 @@ urlpatterns = [
     url(r'^api/', include(router.urls)),
     url(r'^api/obtain-auth-token/$', csrf_exempt(obtain_auth_token)),
     path('api/auth/', include('rest_framework.urls')),
+    url(r'^api/contact/', contact_us),
     url(r'^api/logout/', LogoutView),
 ]
