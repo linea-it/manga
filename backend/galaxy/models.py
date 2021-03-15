@@ -376,7 +376,7 @@ class Image(models.Model):
         null=True,
         blank=True
     )
-    nsa_z = models.IntegerField(
+    nsa_z = models.FloatField(
         verbose_name='Heliocentric Redshift',
         help_text='Heliocentric redshift',
         null=True,
