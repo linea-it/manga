@@ -8,6 +8,7 @@ const styles = makeStyles((theme) => ({
     alignItems: 'center',
   },
   imgContainer: (props) => ({
+    position: 'relative',
     maxWidth: props.width - 87,
     margin: 'auto',
     paddingRight: 87,
@@ -16,6 +17,15 @@ const styles = makeStyles((theme) => ({
     width: 'auto',
     height: 'auto',
     maxWidth: '100%',
+  },
+  imgScale: {
+    position: 'absolute',
+    top: 5,
+    left: 5,
+    color: '#ffffff',
+    textTransform: 'uppercase',
+    fontWeight: 'bold',
+    fontFamily: 'monospace',
   },
 }));
 
