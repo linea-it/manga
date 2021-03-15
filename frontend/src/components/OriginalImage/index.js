@@ -39,6 +39,7 @@ function OriginalImage({ data, sectionWidth }) {
       <Heatmap z={data.z} width={width} height={height} />
       {data.sdss_image ? (
         <div className={classes.imgContainer}>
+          <span className={classes.imgScale}>Scale: 0.049515875</span>
           <img alt="Original" src={data.sdss_image} className={classes.img} />
         </div>
       ) : null}
