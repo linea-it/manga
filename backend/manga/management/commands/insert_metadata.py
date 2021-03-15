@@ -102,8 +102,6 @@ class Command(BaseCommand):
 
                     self.stdout.write('Inserted its metadata into database')
 
-                    images = Image.objects.all()
-
                 # Verifying that the there's not duplicates
                 except IntegrityError:
                     pass
