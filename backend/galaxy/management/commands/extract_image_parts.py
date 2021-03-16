@@ -109,6 +109,8 @@ class Command(BaseCommand):
 
             cube_data = mclass().get_cube_data(megacube, 'PoPBins')
 
+            cube_comments = mclass().get_comments(megacube, 'PoPBins')
+
             lHud = mclass().get_all_hud(
                 cube_header, cube_data)
 
@@ -118,7 +120,8 @@ class Command(BaseCommand):
                 # TODO: recuperar o display name para cada HUD
                 dHud.append({
                     'name': hud,
-                    'display_name': hud
+                    'display_name': hud,
+                    'comment': cube_comments[hud]
                 })
 
             dHud = sorted(dHud, key=lambda i: i['display_name'])

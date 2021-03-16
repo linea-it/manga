@@ -11,6 +11,7 @@ from django.conf import settings
 import json
 
 from manga.verifyer import mclass
+from astropy.io import fits as pf
 
 
 class ImageViewSet(viewsets.ModelViewSet):
@@ -349,3 +350,15 @@ class ImageViewSet(viewsets.ModelViewSet):
             data = json.load(f)
 
         return Response(data)
+
+    @action(detail=True, methods=['get'])
+    def test(self, request, pk=None):
+
+        galaxy = self.get_object()
+
+        megacube = self.get_megacube_path(galaxy.megacube)
+
+        comments = mclass().get_comments(
+            megacube, 'PoPBins')
+
+        return Response(comments)

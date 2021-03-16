@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import Grid from '@material-ui/core/Grid';
 import Skeleton from '@material-ui/lab/Skeleton';
 import Plot from 'react-plotly.js';
-import { getAllImagesHeatmap } from '../../services/api';
 
 const useStyles = makeStyles((theme) => ({
   plotWrapper: {
@@ -31,40 +30,39 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function VerifierGrid() {
-  const { id } = useParams();
+function VerifierGrid({ heatmaps, hudList }) {
   const classes = useStyles();
-  const [heatmaps, setHeatmaps] = useState([]);
-
-
-  useEffect(() => {
-    getAllImagesHeatmap(id)
-      .then((res) => {
-        setHeatmaps(res);
-      })
-      .catch((err) => {
-        setHeatmaps([{
-          error: err.message,
-        }]);
-      });
-  }, []);
 
   return (
     <Grid container className={classes.gridContainer}>
-      {heatmaps.length > 0
-        ? heatmaps.map((heatmap, i) => (
-          <Grid key={heatmap.title} item xs={12} sm={6} md={4} xl={3} className={classes.animateEnter}>
+      {heatmaps.length > 0 ? (
+        heatmaps.map((heatmap, i) => (
+          <Grid
+            key={heatmap.title}
+            item
+            xs={12}
+            sm={6}
+            md={4}
+            xl={3}
+            className={classes.animateEnter}
+          >
             <Plot
-              data={[{
-                z: heatmap.error ? [] : heatmap.z,
-                type: 'heatmap',
-                colorscale: 'Viridis',
-                showscale: false,
-              }]}
+              data={[
+                {
+                  z: heatmap.error ? [] : heatmap.z,
+                  type: 'heatmap',
+                  colorscale: 'Viridis',
+                  showscale: false,
+                },
+              ]}
               className={classes.plotWrapper}
               layout={{
+                title: `${heatmap.title} (${
+                  hudList
+                    .filter((hud) => hud.name === heatmap.title)[0]
+                    .comment.split('(')[0]
+                })`,
                 hovermode: 'closest',
-                title: heatmap.title,
                 yaxis: {
                   scaleanchor: 'x',
                 },
@@ -91,17 +89,42 @@ function VerifierGrid() {
               frame={{ duration: 300 }}
             />
           </Grid>
-        )) : (
-          <Grid container spacing={2}>
-            {Array(12).fill(0).map(() => (
+        ))
+      ) : (
+        <Grid container spacing={2}>
+          {Array(12)
+            .fill(0)
+            .map(() => (
               <Grid item xs={12} sm={6} md={4} xl={3}>
-                <Skeleton variant="rect" width={400} height={400} className={classes.skeletonMargin} />
+                <Skeleton
+                  variant="rect"
+                  width={400}
+                  height={400}
+                  className={classes.skeletonMargin}
+                />
               </Grid>
             ))}
-          </Grid>
-        )}
+        </Grid>
+      )}
     </Grid>
   );
 }
+
+VerifierGrid.propTypes = {
+  heatmaps: PropTypes.arrayOf(
+    PropTypes.shape({
+      title: PropTypes.string,
+      z: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.number)),
+      error: PropTypes.string,
+    })
+  ).isRequired,
+  hudList: PropTypes.arrayOf(
+    PropTypes.shape({
+      name: PropTypes.string,
+      display_name: PropTypes.string,
+      comment: PropTypes.string,
+    })
+  ).isRequired,
+};
 
 export default VerifierGrid;

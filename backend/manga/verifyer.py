@@ -61,6 +61,26 @@ class mclass:
         cube_header = pf.getheader(megacube, extension)
         return cube_header
 
+    def get_comments(self, megacube, extension):
+        cube_header = self.get_headers(megacube, 'PoPBins')
+
+        cube_data = self.get_cube_data(megacube, 'PoPBins')
+
+        z = np.shape(cube_data)[0]
+
+        cube_comments = dict()
+
+        for i in range(0, z, 1):
+            try:
+                cube_comments[cube_header['DATA' +
+                                          str(i)]] = cube_header.comments['DATA' + str(i)]
+
+            except:
+                cube_comments[cube_header['DATA' +
+                                          str(i)]] = ''
+
+        return cube_comments
+
     def get_cube_data(self, megacube, extension, x=None, y=None):
         cube_data = pf.getdata(megacube, extension)
 
@@ -98,7 +118,7 @@ class mclass:
         image_data = cube_data[idxHud, :, :]
 
         # Transforming "masked" values to zero:
-        image_data[np.isnan(image_data)] = -999
+        image_data[np.isnan(image_data)] = 0
 
         return image_data
 

@@ -17,7 +17,11 @@ import Skeleton from '@material-ui/lab/Skeleton';
 import Plot from 'react-plotly.js';
 import clsx from 'clsx';
 import styles from './styles';
-import { HeatmapSlider, HeatmapColorRange, HeatmapContourRange } from '../HeatmapSlider';
+import {
+  HeatmapSlider,
+  HeatmapColorRange,
+  HeatmapContourRange,
+} from '../HeatmapSlider';
 import useWindowSize from '../../hooks/useWindowSize';
 
 function Galaxy({
@@ -51,12 +55,11 @@ function Galaxy({
   useEffect(() => {
     const size = windowSize.width;
     let marginHeight = size * 0.787;
-    let marginWidth = size * 0.70;
+    let marginWidth = size * 0.7;
 
     if (selectedContour.id !== 0) {
       marginWidth = size * 0.737;
     }
-
 
     if (windowSize.width < 1920 && windowSize.width >= 960) {
       marginHeight = size * 0.702;
@@ -100,11 +103,10 @@ function Galaxy({
                         disabled={selectedMegacube === ''}
                       >
                         {hudList.map((hud, i) => (
-                          <MenuItem
-                            key={hud.name}
-                            value={i + 1}
-                          >
-                            {hud.display_name}
+                          <MenuItem key={hud.name} value={i + 1}>
+                            {`${hud.display_name} (${
+                              hud.comment.split('(')[0]
+                            })`}
                           </MenuItem>
                         ))}
                       </Select>
@@ -120,20 +122,26 @@ function Galaxy({
                         onChange={handleSelectContour}
                         disabled={selectedMegacube === ''}
                       >
-                        {hudList.filter((image, i) => i + 1 !== selectedImage.id).map((hud, i) => (
-                          <MenuItem
-                            key={hud.name}
-                            value={i + 1}
-                          >
-                            {hud.display_name}
-                          </MenuItem>
-                        ))}
+                        {hudList
+                          .filter((image, i) => i + 1 !== selectedImage.id)
+                          .map((hud, i) => (
+                            <MenuItem key={hud.name} value={i + 1}>
+                              {`${hud.display_name} (${
+                                hud.comment.split('(')[0]
+                              })`}
+                            </MenuItem>
+                          ))}
                       </Select>
                     </FormControl>
                   </form>
                 </Grid>
               </Grid>
-              <Grid id={selectedContour.id !== 0 ? 'galaxyHeatmap' : ''} item xs={12} className={classes.positionRelative}>
+              <Grid
+                id={selectedContour.id !== 0 ? 'galaxyHeatmap' : ''}
+                item
+                xs={12}
+                className={classes.positionRelative}
+              >
                 <Plot
                   data={[
                     {
@@ -164,12 +172,11 @@ function Galaxy({
                     },
                     {
                       type: 'scatter',
-                      x: [heatmapPoints[0] === 0
-                        ? null
-                        : heatmapPoints[0], 0],
-                      y: [heatmapPoints[1] === 0
-                        ? null
-                        : heatmapPoints[1], heatmapPoints[1]],
+                      x: [heatmapPoints[0] === 0 ? null : heatmapPoints[0], 0],
+                      y: [
+                        heatmapPoints[1] === 0 ? null : heatmapPoints[1],
+                        heatmapPoints[1],
+                      ],
                       mode: 'lines',
                       line: {
                         color: 'rgba(255, 255, 255, .7)',
@@ -180,12 +187,11 @@ function Galaxy({
                     },
                     {
                       type: 'scatter',
-                      x: [heatmapPoints[0] === 0
-                        ? null
-                        : heatmapPoints[0], heatmapPoints[0]],
-                      y: [heatmapPoints[1] === 0
-                        ? null
-                        : heatmapPoints[1], 0],
+                      x: [
+                        heatmapPoints[0] === 0 ? null : heatmapPoints[0],
+                        heatmapPoints[0],
+                      ],
+                      y: [heatmapPoints[1] === 0 ? null : heatmapPoints[1], 0],
                       mode: 'lines',
                       line: {
                         color: 'rgba(255, 255, 255, .4)',
@@ -195,12 +201,8 @@ function Galaxy({
                       showlegend: false,
                     },
                     {
-                      x: [heatmapPoints[0] === 0
-                        ? null
-                        : heatmapPoints[0]],
-                      y: [heatmapPoints[1] === 0
-                        ? null
-                        : heatmapPoints[1]],
+                      x: [heatmapPoints[0] === 0 ? null : heatmapPoints[0]],
+                      y: [heatmapPoints[1] === 0 ? null : heatmapPoints[1]],
                       type: 'scatter',
                       mode: 'markers',
                       marker: {
@@ -216,12 +218,11 @@ function Galaxy({
                     },
                     {
                       type: 'scatter',
-                      x: [heatmapPoints[0] === 0
-                        ? null
-                        : heatmapPoints[0], 0],
-                      y: [heatmapPoints[1] === 0
-                        ? null
-                        : heatmapPoints[1], heatmapPoints[1]],
+                      x: [heatmapPoints[0] === 0 ? null : heatmapPoints[0], 0],
+                      y: [
+                        heatmapPoints[1] === 0 ? null : heatmapPoints[1],
+                        heatmapPoints[1],
+                      ],
                       mode: 'lines',
                       line: {
                         color: 'rgba(0, 0, 0, .8)',
@@ -233,12 +234,11 @@ function Galaxy({
                     },
                     {
                       type: 'scatter',
-                      x: [heatmapPoints[0] === 0
-                        ? null
-                        : heatmapPoints[0], heatmapPoints[0]],
-                      y: [heatmapPoints[1] === 0
-                        ? null
-                        : heatmapPoints[1], 0],
+                      x: [
+                        heatmapPoints[0] === 0 ? null : heatmapPoints[0],
+                        heatmapPoints[0],
+                      ],
+                      y: [heatmapPoints[1] === 0 ? null : heatmapPoints[1], 0],
                       mode: 'lines',
                       line: {
                         color: 'rgba(0, 0, 0, .8)',
@@ -291,7 +291,7 @@ function Galaxy({
                     maxHeight: heatmapSize.height - 110,
                   }}
                   orientation="vertical"
-                        // aria-label="Heatmap Color Range"
+                  // aria-label="Heatmap Color Range"
                   max={heatmapValueLimits[1]}
                   min={heatmapValueLimits[0]}
                   value={heatmapColorRangeValue}
@@ -338,7 +338,9 @@ function Galaxy({
                   title="Play"
                   className={classes.playButton}
                 >
-                  <Icon className={`fa ${isPlaying ? 'fa-pause' : 'fa-play'}`} />
+                  <Icon
+                    className={`fa ${isPlaying ? 'fa-pause' : 'fa-play'}`}
+                  />
                 </IconButton>
               </Grid>
               {heatmapError !== '' ? (
@@ -351,12 +353,17 @@ function Galaxy({
                 >
                   <SnackbarContent
                     className={classes.error}
-                    message={(
+                    message={
                       <span className={classes.message}>
-                        <Icon className={clsx('fa fa-exclamation-triangle', classes.iconError)} />
+                        <Icon
+                          className={clsx(
+                            'fa fa-exclamation-triangle',
+                            classes.iconError
+                          )}
+                        />
                         {heatmapError}
                       </span>
-                    )}
+                    }
                   />
                 </Snackbar>
               ) : null}
