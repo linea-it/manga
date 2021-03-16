@@ -60,7 +60,7 @@ function VerifierGrid({ heatmaps, hudList }) {
                 title: `${heatmap.title} (${
                   hudList
                     .filter((hud) => hud.name === heatmap.title)[0]
-                    .comment.split('(')[0]
+                    .comment.split(' (')[0]
                 })`,
                 hovermode: 'closest',
                 yaxis: {
