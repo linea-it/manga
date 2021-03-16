@@ -313,7 +313,7 @@ function Explorer() {
       </Grid>
       {isGrid ? (
         <Grid item xs={12}>
-          <VerifierGrid megacube={id} />
+          <VerifierGrid megacube={id} heatmaps={heatmaps} hudList={hudList} />
         </Grid>
       ) : (
         <>
