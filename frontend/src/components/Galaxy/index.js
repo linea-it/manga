@@ -105,7 +105,7 @@ function Galaxy({
                         {hudList.map((hud, i) => (
                           <MenuItem key={hud.name} value={i + 1}>
                             {`${hud.display_name} (${
-                              hud.comment.split('(')[0]
+                              hud.comment.split(' (')[0]
                             })`}
                           </MenuItem>
                         ))}
@@ -127,7 +127,7 @@ function Galaxy({
                           .map((hud, i) => (
                             <MenuItem key={hud.name} value={i + 1}>
                               {`${hud.display_name} (${
-                                hud.comment.split('(')[0]
+                                hud.comment.split(' (')[0]
                               })`}
                             </MenuItem>
                           ))}
