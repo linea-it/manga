@@ -57,7 +57,7 @@ class Command(BaseCommand):
 
             # Set up the image URL and filename
 
-            image_url = "http://skyserver.sdss.org/dr16/SkyServerWS/ImgCutout/getjpeg?TaskName=Skyserver.Chart.Image&ra=%s&dec=%s&scale=0.049515875&width=1024&height=1024&opt=&query=" % (
+            image_url = "http://skyserver.sdss.org/dr16/SkyServerWS/ImgCutout/getjpeg?TaskName=Skyserver.Chart.Image&ra=%s&dec=%s&scale=0.099515875&width=512&height=512&opt=G&query=" % (
                 ra, dec)
             filename = 'sdss_image.jpg'
 

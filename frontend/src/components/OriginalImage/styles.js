@@ -18,15 +18,6 @@ const styles = makeStyles((theme) => ({
     height: 'auto',
     maxWidth: '100%',
   },
-  imgScale: {
-    position: 'absolute',
-    top: 5,
-    left: 5,
-    color: '#ffffff',
-    textTransform: 'uppercase',
-    fontWeight: 'bold',
-    fontFamily: 'monospace',
-  },
 }));
 
 export default styles;
