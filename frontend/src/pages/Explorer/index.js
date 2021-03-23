@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Grid, Button, Icon, Typography, Dialog } from '@material-ui/core';
+import { Grid, Button, Icon, Typography } from '@material-ui/core';
 import { useParams, useHistory } from 'react-router-dom';
 import useInterval from '../../hooks/useInterval';
 import {

@@ -82,8 +82,9 @@ function Verifier({ megacube }) {
   };
 
   const loadSpaxel = (x, y) => {
-    getSpaxelFitByPosition({ x, y, megacube })
-      .then((res) => setSpaxelTableData(res));
+    getSpaxelFitByPosition({ x, y, megacube }).then((res) =>
+      setSpaxelTableData(res)
+    );
   };
 
   useEffect(() => {
@@ -95,12 +96,20 @@ function Verifier({ megacube }) {
 
   useEffect(() => {
     if (selectedImage.id !== 0) {
-      const heatmap = localHeatmaps.filter((el) => el.title === selectedImage.name);
+      const heatmap = localHeatmaps.filter(
+        (el) => el.title === selectedImage.name
+      );
       if (heatmap.length > 0) {
         setHeatmapPlotImageData(heatmap[0]);
         const heatmapArr = [].concat.apply([], heatmap[0].z);
-        setHeatmapValueLimits([Math.min(...heatmapArr), Math.max(...heatmapArr)]);
-        setHeatmapColorRangeValue([Math.min(...heatmapArr), Math.max(...heatmapArr)]);
+        setHeatmapValueLimits([
+          Math.min(...heatmapArr),
+          Math.max(...heatmapArr),
+        ]);
+        setHeatmapColorRangeValue([
+          Math.min(...heatmapArr),
+          Math.max(...heatmapArr),
+        ]);
         setHeatmapError('');
       } else {
         getImageHeatmap({ megacube, hud: selectedImage.name })
@@ -123,7 +132,9 @@ function Verifier({ megacube }) {
 
   useEffect(() => {
     if (selectedContour.id !== 0) {
-      const heatmap = localHeatmaps.filter((el) => el.title === selectedContour.name);
+      const heatmap = localHeatmaps.filter(
+        (el) => el.title === selectedContour.name
+      );
       if (heatmap.length > 0) {
         setHeatmapPlotContourData(heatmap[0]);
         setHeatmapError('');
@@ -188,15 +199,15 @@ function Verifier({ megacube }) {
 
   const preloadHeatmaps = () => {
     hudList.forEach((hud) => {
-      getImageHeatmap({ megacube, hud: hud.name })
-        .then((res) => setLocalHeatmaps((localHeatmapsRef) => [...localHeatmapsRef, res]));
+      getImageHeatmap({ megacube, hud: hud.name }).then((res) =>
+        setLocalHeatmaps((localHeatmapsRef) => [...localHeatmapsRef, res])
+      );
     });
   };
 
   useEffect(() => {
     if (hudList.length > 0) preloadHeatmaps();
   }, [hudList]);
-
 
   useEffect(() => {
     if (hudList.length > 0) {
@@ -209,13 +220,16 @@ function Verifier({ megacube }) {
 
   const handlePlayClick = () => setIsPlaying(!isPlaying);
 
-  useInterval(() => {
-    if (heatmapSliderValue === hudList.length) {
-      setHeatmapSliderValue(1);
-    } else {
-      setHeatmapSliderValue(heatmapSliderValue + 1);
-    }
-  }, isPlaying ? 1000 : null);
+  useInterval(
+    () => {
+      if (heatmapSliderValue === hudList.length) {
+        setHeatmapSliderValue(1);
+      } else {
+        setHeatmapSliderValue(heatmapSliderValue + 1);
+      }
+    },
+    isPlaying ? 1000 : null
+  );
 
   return (
     <Grid container className={classes.gridContainer}>

@@ -16,13 +16,13 @@ function Footer() {
         className={classes.container}
       >
         <Grid item>
-          <Typography color="contrastText" className={classes.marginItem}>
+          <Typography color="inherit" className={classes.marginItem}>
             <span className={classes.poweredBy}>Testing</span>{' '}
             <span className={classes.versionLink}>1.0.0</span>
           </Typography>
         </Grid>
         <Grid item>
-          <Typography color="contrastText" className={classes.marginItem}>
+          <Typography color="inherit" className={classes.marginItem}>
             <span className={classes.poweredBy}>Powered by</span>
             <a
               href="http://www.linea.gov.br/"
