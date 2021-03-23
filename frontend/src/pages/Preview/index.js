@@ -56,16 +56,17 @@ function Preview() {
       name: 'nsa_iauname',
       title: 'Name',
       width: 180,
+      headerTooltip: 'IAU-style designation based on RA/Dec (NSA)',
     },
     {
       name: 'objra',
       title: 'RA',
-      // customElement: (row) => row.objra.toFixed(5),
+      headerTooltip: 'Right ascension of the science object in J2000 (degrees)',
     },
     {
       name: 'objdec',
       title: 'Dec',
-      // customElement: (row) => row.objdec.toFixed(5),
+      headerTooltip: 'Declination of the science object in J2000 (degrees)',
     },
     {
       name: 'mangaid',
@@ -74,25 +75,32 @@ function Preview() {
     {
       name: 'mjdmed',
       title: 'MJD',
+      headerTooltip: 'Median MJD across all exposures',
     },
     {
       name: 'exptime',
       title: 'Exp Time',
+      headerTooltip: 'Total exposure time (seconds)',
     },
     {
       name: 'airmsmed',
       title: 'Airmass',
       customElement: (row) => row.airmsmed.toFixed(2),
+      headerTooltip: 'Median airmass across all exposures',
     },
     {
       name: 'seemed',
       title: 'Seeing',
       customElement: (row) => row.seemed.toFixed(2),
+      headerTooltip: 'Median guider seeing (arcsec)',
     },
     {
       name: 'nsa_z',
       title: 'z',
+      customElement: (row) => row.airmsmed.toFixed(2),
       width: 80,
+      headerTooltip:
+        'The targeting redshift (identical to nsa_z for those targets in the NSA Catalog. For others, it is the redshift provided by the Ancillary programs)',
     },
   ];
 
@@ -136,7 +144,7 @@ function Preview() {
   }, [selectedMegacube]);
 
   useEffect(() => {
-    const headerHeight = 55.97;
+    const headerHeight = 64;
     const tableToolbarHeight = 64.99;
     const tablePager = 71.95;
 
