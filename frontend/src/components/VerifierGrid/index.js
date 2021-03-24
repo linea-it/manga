@@ -8,6 +8,7 @@ import Plot from 'react-plotly.js';
 const useStyles = makeStyles((theme) => ({
   animateEnter: {
     animation: 'fadein 1s',
+    padding: '0 16px',
   },
   skeletonMargin: {
     marginTop: '0.8em',

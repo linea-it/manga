@@ -97,7 +97,7 @@ function Preview() {
     {
       name: 'nsa_z',
       title: 'z',
-      customElement: (row) => row.airmsmed.toFixed(2),
+      customElement: (row) => row.nsa_z.toFixed(2),
       width: 80,
       headerTooltip:
         'The targeting redshift (identical to nsa_z for those targets in the NSA Catalog. For others, it is the redshift provided by the Ancillary programs)',

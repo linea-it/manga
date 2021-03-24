@@ -79,7 +79,6 @@ function Galaxy({
       }
 
       marginHeight = 382.5;
-      console.log('hello', marginHeight);
     }
 
     const ratioHeight = heightSize - marginHeight;
