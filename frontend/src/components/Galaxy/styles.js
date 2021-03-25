@@ -73,6 +73,12 @@ const styles = makeStyles((theme) => ({
   positionRelative: {
     position: 'relative',
   },
+  infoIcon: {
+    marginLeft: 5,
+    fontSize: '1rem',
+    color: 'rgba(0, 0, 0, .5)',
+    marginTop: -5,
+  },
 }));
 
 export default styles;
