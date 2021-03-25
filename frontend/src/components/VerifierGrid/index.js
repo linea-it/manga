@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import '@fortawesome/fontawesome-free/css/all.min.css';
-import Grid from '@material-ui/core/Grid';
+import { Grid, Typography } from '@material-ui/core';
 import Plot from 'react-plotly.js';
 
 const useStyles = makeStyles((theme) => ({
@@ -26,7 +26,7 @@ function VerifierGrid({ heatmaps, hudList }) {
   const classes = useStyles();
 
   return (
-    <Grid container className={classes.gridContainer}>
+    <Grid container className={classes.gridContainer} justify="center">
       {heatmaps.length > 0
         ? heatmaps.map((heatmap) => (
             <Grid
@@ -38,6 +38,18 @@ function VerifierGrid({ heatmaps, hudList }) {
               xl={3}
               className={classes.animateEnter}
             >
+              <Typography variant="h6" align="center">
+                {heatmap.title}
+              </Typography>
+              <Typography variant="subtitle1" align="center">
+                (
+                {
+                  hudList
+                    .filter((hud) => hud.name === heatmap.title)[0]
+                    .comment.split(' (')[0]
+                }
+                )
+              </Typography>
               <Plot
                 data={[
                   {
@@ -48,17 +60,13 @@ function VerifierGrid({ heatmaps, hudList }) {
                   },
                 ]}
                 layout={{
-                  title: `<span>${heatmap.title} <br /> (${
-                    hudList
-                      .filter((hud) => hud.name === heatmap.title)[0]
-                      .comment.split(' (')[0]
-                  })</span>`,
                   hovermode: 'closest',
                   yaxis: {
                     scaleanchor: 'x',
                   },
                   margin: {
-                    b: 25,
+                    t: 0,
+                    b: 40,
                     pad: 0,
                     autoexpand: true,
                   },

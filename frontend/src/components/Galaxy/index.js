@@ -13,6 +13,7 @@ import {
   CardHeader,
   CardContent,
 } from '@material-ui/core';
+import InfoIcon from '@material-ui/icons/Info';
 import Skeleton from '@material-ui/lab/Skeleton';
 import Plot from 'react-plotly.js';
 import clsx from 'clsx';
@@ -113,6 +114,10 @@ function Galaxy({
                             value={i + 1}
                           >
                             {hud.display_name}
+                            <InfoIcon
+                              fontSize="small"
+                              className={classes.infoIcon}
+                            />
                           </MenuItem>
                         ))}
                       </Select>
@@ -137,6 +142,10 @@ function Galaxy({
                               value={i + 1}
                             >
                               {hud.display_name}
+                              <InfoIcon
+                                fontSize="small"
+                                className={classes.infoIcon}
+                              />
                             </MenuItem>
                           ))}
                       </Select>
