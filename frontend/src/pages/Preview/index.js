@@ -85,19 +85,25 @@ function Preview() {
     {
       name: 'airmsmed',
       title: 'Airmass',
-      customElement: (row) => row.airmsmed.toFixed(2),
+      customElement: (row) => (
+        <span title={row.airmsmed}>{row.airmsmed.toFixed(2)}</span>
+      ),
       headerTooltip: 'Median airmass across all exposures',
     },
     {
       name: 'seemed',
       title: 'Seeing',
-      customElement: (row) => row.seemed.toFixed(2),
+      customElement: (row) => (
+        <span title={row.seemed}>{row.seemed.toFixed(2)}</span>
+      ),
       headerTooltip: 'Median guider seeing (arcsec)',
     },
     {
       name: 'nsa_z',
       title: 'z',
-      customElement: (row) => row.nsa_z.toFixed(2),
+      customElement: (row) => (
+        <span title={row.nsa_z}>{row.nsa_z.toFixed(3)}</span>
+      ),
       width: 80,
       headerTooltip:
         'The targeting redshift (identical to nsa_z for those targets in the NSA Catalog. For others, it is the redshift provided by the Ancillary programs)',
