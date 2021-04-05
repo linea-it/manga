@@ -79,6 +79,11 @@ const styles = makeStyles((theme) => ({
     color: 'rgba(0, 0, 0, .5)',
     marginTop: -5,
   },
+  select: {
+    '& svg': {
+      display: 'none',
+    },
+  },
 }));
 
 export default styles;

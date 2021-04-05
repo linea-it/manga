@@ -88,6 +88,10 @@ function Galaxy({
     setHeatmapSize({ width: ratioWidth, height: ratioHeight });
   }, [windowSize, selectedContour]);
 
+  useEffect(() => {
+    console.log('selectedImage', selectedImage);
+  }, [selectedImage]);
+
   return (
     <Card>
       <CardHeader title="Galaxy" />
@@ -106,6 +110,7 @@ function Galaxy({
                         value={selectedImage.id}
                         onChange={handleSelectImage}
                         disabled={selectedMegacube === ''}
+                        classes={{ select: classes.select }}
                       >
                         {hudList.map((hud, i) => (
                           <MenuItem
@@ -132,6 +137,7 @@ function Galaxy({
                         value={selectedContour.id}
                         onChange={handleSelectContour}
                         disabled={selectedMegacube === ''}
+                        classes={{ select: classes.select }}
                       >
                         {hudList
                           .filter((image, i) => i + 1 !== selectedImage.id)
