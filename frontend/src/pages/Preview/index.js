@@ -59,6 +59,11 @@ function Preview() {
       headerTooltip: 'IAU-style designation based on RA/Dec (NSA)',
     },
     {
+      name: 'plateifu',
+      title: 'PlateIFU',
+      headerTooltip: '	Plate+ifudesign name for this object',
+    },
+    {
       name: 'objra',
       title: 'RA',
       headerTooltip: 'Right ascension of the science object in J2000 (degrees)',
@@ -76,11 +81,13 @@ function Preview() {
       name: 'mjdmed',
       title: 'MJD',
       headerTooltip: 'Median MJD across all exposures',
+      width: 100,
     },
     {
       name: 'exptime',
       title: 'Exp Time',
       headerTooltip: 'Total exposure time (seconds)',
+      width: 110,
     },
     {
       name: 'airmsmed',
@@ -89,6 +96,7 @@ function Preview() {
         <span title={row.airmsmed}>{row.airmsmed.toFixed(2)}</span>
       ),
       headerTooltip: 'Median airmass across all exposures',
+      width: 100,
     },
     {
       name: 'seemed',
@@ -97,6 +105,7 @@ function Preview() {
         <span title={row.seemed}>{row.seemed.toFixed(2)}</span>
       ),
       headerTooltip: 'Median guider seeing (arcsec)',
+      width: 100,
     },
     {
       name: 'nsa_z',
