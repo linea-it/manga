@@ -12,6 +12,7 @@ class ImageSerializer(serializers.ModelSerializer):
             'id',
             'megacube',
             'mangaid',
+            'plateifu',
             'objra',
             'objdec',
             'nsa_iauname',

@@ -17,13 +17,13 @@ from astropy.io import fits as pf
 class ImageViewSet(viewsets.ModelViewSet):
     queryset = Image.objects.all()
     serializer_class = ImageSerializer
-    filter_fields = ('id', 'megacube', 'mangaid', 'objra', 'objdec',
+    filter_fields = ('id', 'megacube', 'mangaid', 'plateifu', 'objra', 'objdec',
                      'nsa_iauname', 'mjdmed', 'exptime', 'airmsmed', 'seemed',
                      'nsa_z',)
-    search_fields = ('id', 'megacube', 'mangaid', 'objra', 'objdec',
+    search_fields = ('id', 'megacube', 'mangaid', 'plateifu', 'objra', 'objdec',
                      'nsa_iauname', 'mjdmed', 'exptime', 'airmsmed', 'seemed',
                      'nsa_z',)
-    ordering_fields = ('id', 'megacube', 'mangaid', 'objra', 'objdec',
+    ordering_fields = ('id', 'megacube', 'mangaid', 'plateifu', 'objra', 'objdec',
                        'nsa_iauname', 'mjdmed', 'exptime', 'airmsmed', 'seemed',
                        'nsa_z',)
     ordering = ('mangaid',)
