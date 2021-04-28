@@ -136,50 +136,20 @@ function AboutUs() {
                 </ol>
                 <p>
                   <strong>
-                    <em>About the LIneA Science Server Interface</em>
+                    <em>About the MaNGA Portal</em>
                   </strong>
                 </p>
                 <p>
                   <span>
-                    Currently the LIneA Science Server provides access to the
-                    following services:
+                    This portal was developed to meet the immediate needs of
+                    members of the Brazilian Participation Group participating
+                    in the MaNGA survey of the Sloan Digital Sky Survey under
+                    LIneA’s auspices. The system was designed to enable the team
+                    to visualize not only the reduced IFU data but the results
+                    of the analysis of the data showing maps of various physical
+                    quantities derived from the spectra.
                   </span>
                 </p>
-                <ul>
-                  <li>
-                    <strong>Sky viewer:</strong>
-                    <span>
-                      {' '}
-                      display a panoramic view of DES images across its
-                      footprint.
-                    </span>
-                  </li>
-                  <li>
-                    <strong>Target viewer</strong>
-                    <span>
-                      : a tool to visualize and manage list of objects. One can
-                      rank, reject entries, filter by properties, and create
-                      mosaics.
-                    </span>
-                  </li>
-                  <li>
-                    <strong>User query:</strong>
-                    <span>
-                      {' '}
-                      it allows one to query the DES database which creates
-                      temporary tables, listing the results which can be
-                      immediately viewed using the Target Viewer.
-                    </span>
-                  </li>
-                  <li>
-                    <strong>Tile Inspection:</strong>
-                    <span>
-                      {' '}
-                      to quickly examine and validate coadded images, only
-                      available for members of the collaboration.
-                    </span>
-                  </li>
-                </ul>
                 <p>
                   <span>For more information see the tutorials.</span>
                 </p>
@@ -196,33 +166,16 @@ function AboutUs() {
                 </p>
                 <ul>
                   <li>
-                    <span>
-                      NCSA team for providing the infrastructure and some of the
-                      tools used by the Science Server
-                    </span>
+                    <span>Luiz Nicolaci;</span>
                   </li>
                   <li>
-                    <span>
-                      E. Bertin for the use of VisiOmatic and for helping in its
-                      installation
-                    </span>
+                    <span>Rogério Riffel;</span>
                   </li>
                   <li>
-                    <span>
-                      P. Fernique for helping in the integration of Aladin in
-                      the Science Server framework
-                    </span>
+                    <span>Glauber Costa;</span>
                   </li>
                   <li>
-                    <span>
-                      Cristiano Singulani (Technical Lead of the DES Science
-                      Portal)&nbsp;
-                    </span>
-                  </li>
-                  <li>
-                    <span>
-                      Glauber Costa (Technical Lead of the LIneA Science Server)
-                    </span>
+                    <span>Matheus Freitas;</span>
                   </li>
                   <li>
                     <span>Current and past LIneA IT team members.</span>
