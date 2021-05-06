@@ -20,14 +20,18 @@ import matplotlib
 from matplotlib import pyplot
 import numpy as np
 from astropy.io import fits as pf
-# from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg,
-#                                                NavigationToolbar2Tk)
-# from matplotlib.figure import Figure
-# from mpl_toolkits.axes_grid1 import make_axes_locatable
-# from numpy import ma
+
 
 # import the logging library
 import logging
+
+
+from matplotlib.patches import RegularPolygon
+from scipy.constants import pi
+from shapely.geometry import Point
+from shapely.geometry.polygon import Polygon
+import copy
+
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -98,12 +102,111 @@ class mclass:
 
         return lHud
 
+    def rad_flat(self, size):
+        '''
+        Finds smallest hexagon diameter (flat-to-flat)
+        '''
+        hexasizes_flat = [6, 10.4, 14.7, 19, 23.3,
+                          27.7]  # nominal flat diameters of all MaNGA bundles
+        hexasizes_flat_expanded = np.add(
+            hexasizes_flat, 4)  # border compensation
+        # 20 pix is the typical dimensional excess in the vertical direction
+        dist = [abs(item-(size-20)/2) for item in hexasizes_flat]
+        # find the hexagon y size corresponding compatible with the image shape
+        return hexasizes_flat_expanded[dist.index(np.min(dist))]
+
+    def rad_corner(self, size):
+        '''
+        Finds largest hexagon diameter (corner-to-corner)
+        '''
+        hexasizes_corner = [7, 12, 17, 22, 27,
+                            32]  # nominal corner diameters of all MaNGA bundles
+        hexasizes_corner_expanded = np.add(
+            hexasizes_corner, 4)  # border compensation
+        # 10 pix is the typical dimensional excess in the horizontal direction
+        dist = [abs(item-(size-10)/2) for item in hexasizes_corner]
+        # find the hexagon x size corresponding compatible with the image shape
+        return hexasizes_corner_expanded[dist.index(np.min(dist))]
+
+    def center_hexa(self, data_cube, x, y):
+        '''
+        Estimates the center of the hexagonal bundle
+        '''
+        xl = []
+        yl = []
+        for i in range(y):
+            for j in range(x):
+                if np.sum(data_cube[:, i, j], axis=0) != 0:
+                    xl.append(j)
+                    yl.append(i)
+        xran, yran = [np.max(xl)-np.min(xl), np.max(yl)-np.min(yl)]
+        minx, miny = [np.min(xl), np.min(yl)]
+        while yran < 2*self.rad_flat(y):
+            yran += 0.5
+            if np.average(yl) < (np.max(yl)-np.min(yl))/2.+np.min(yl):
+                miny -= 0.25
+        while xran < 2*self.rad_corner(y):
+            xran += 0.5
+            if np.average(xl) < (np.max(xl)-np.min(xl))/2.+np.min(xl):
+                minx -= 0.25
+        return (xran/2.+minx, yran/2.+miny)
+
+    def find_corners(self, center, radius):
+        xy_array = [[], []]
+        xy_tuple = []
+        xy_array[0].append(center[0]+radius-0.5)
+        xy_array[1].append(center[1]-0.5)
+        xy_tuple.append((center[0]+radius-0.5, center[1]-0.5))
+        xy_array[0].append(center[0]+radius/2.-0.5)
+        xy_array[1].append(center[1]+radius*np.sqrt(3)/2.-0.5)
+        xy_tuple.append(
+            (center[0]+radius/2.-0.5, center[1]+radius*np.sqrt(3)/2.-0.5))
+        xy_array[0].append(center[0]-radius/2.-0.5)
+        xy_array[1].append(center[1]+radius*np.sqrt(3)/2.-0.5)
+        xy_tuple.append(
+            (center[0]-radius/2.-0.5, center[1]+radius*np.sqrt(3)/2.-0.5))
+        xy_array[0].append(center[0]-radius-0.5)
+        xy_array[1].append(center[1]-0.5)
+        xy_tuple.append((center[0]-radius-0.5, center[1]-0.5))
+        xy_array[0].append(center[0]-radius/2.-0.5)
+        xy_array[1].append(center[1]-radius*np.sqrt(3)/2.-0.5)
+        xy_tuple.append(
+            (center[0]-radius/2.-0.5, center[1]-radius*np.sqrt(3)/2.-0.5))
+        xy_array[0].append(center[0]+radius/2.-0.5)
+        xy_array[1].append(center[1]-radius*np.sqrt(3)/2.-0.5)
+        xy_tuple.append(
+            (center[0]+radius/2.-0.5, center[1]-radius*np.sqrt(3)/2.-0.5))
+        return (xy_array, xy_tuple)
+
     def get_original_cube_data(self, megacube):
         cube_data = pf.getdata(megacube, 'FLUX')
 
-        z = np.sum(cube_data[:, :, :], axis=0).tolist()
+        (z, y, x) = np.shape(cube_data)
+        imag = np.sum(cube_data[:, :, :], axis=0)
+        center = self.center_hexa(cube_data, x, y)
+        corners_array, corners_tuple = self.find_corners(
+            center, self.rad_corner(y))
+        polygon = Polygon(corners_tuple)
 
-        return z
+        fig, ax = pyplot.subplots()
+        ax.set_aspect('equal')
+        imagb = copy.deepcopy(imag)
+
+        for i in range(x):
+            for j in range(y):
+                if polygon.contains(Point(j, i)) == False:
+                    imagb[i, j] = 'nan'
+
+        flux_image = ax.imshow(imagb, origin='lower').get_array()
+
+        return flux_image.tolist()
+
+    # def get_original_cube_data(self, megacube):
+    #     cube_data = pf.getdata(megacube, 'FLUX')
+
+    #     z = np.sum(cube_data[:, :, :], axis=0).tolist()
+
+    #     return z
 
     def image_by_hud(self, megacube, hud):
 
@@ -115,40 +218,61 @@ class mclass:
 
         idxHud = lHud.index(hud)
 
-        image_data = cube_data[idxHud, :, :]
+        (z, y, x) = np.shape(cube_data)
 
-        # Transforming "masked" values to zero:
-        image_data[np.isnan(image_data)] = 0
+        imag = cube_data[idxHud, :, :]
+        center = self.center_hexa(cube_data, x, y)
+        corners_array, corners_tuple = self.find_corners(
+            center, self.rad_corner(y))
+        polygon = Polygon(corners_tuple)
 
-        return image_data
+        fig, ax = pyplot.subplots()
+        ax.set_aspect('equal')
+        imagb = copy.deepcopy(imag)
 
-    def image_data_to_array(self, image_data):
-        """
-            Converte os dados da imagem para um array utilizando pcolormesh.
-            neste casa a matriz 52x52 vire um array 2704 elementos.
-            este array é dividido em pedaços de 52 elementos.
-            o retorno da função é um array com 52 elementos onde cada elemento tem tamanho 52.
-            o primeiro elemento corresponde a x=0, y=0, o segundo x=0, y=1 assim sucessivamente.
-            o segundo elemento é a posição x=1.
-        """
-        # Converte o ndarray para um mesh (matplotlib.collections.QuadMesh)
-        # https://matplotlib.org/3.1.1/api/collections_api.html#matplotlib.collections.QuadMesh)
+        for i in range(x):
+            for j in range(y):
+                if polygon.contains(Point(j, i)) == False:
+                    imagb[i, j] = 'nan'
 
-        mesh = pyplot.pcolormesh(image_data)
+        flux_image = ax.imshow(imagb, origin='lower').get_array()
 
-        # O mesh tem a funcao get_array que transforma
-        # m = Array com todos os 2704 = 52x52.
-        m = list(mesh.get_array())
+        return flux_image.tolist()
 
-        # Tamanho total da imagem 52
-        n = len(image_data)
+        # image_data = cube_data[idxHud, :, :]
 
-        # Divide o array em pedacos de tamanho igual
-        z = list()
-        for i in range(0, len(m), n):
-            z.append(m[i:i + n])
+        # # # Transforming "masked" values to zero:
+        # # image_data[np.isnan(image_data)] = 0
 
-        return z
+        # return image_data
+
+    # def image_data_to_array(self, image_data):
+    #     """
+    #         Converte os dados da imagem para um array utilizando pcolormesh.
+    #         neste casa a matriz 52x52 vire um array 2704 elementos.
+    #         este array é dividido em pedaços de 52 elementos.
+    #         o retorno da função é um array com 52 elementos onde cada elemento tem tamanho 52.
+    #         o primeiro elemento corresponde a x=0, y=0, o segundo x=0, y=1 assim sucessivamente.
+    #         o segundo elemento é a posição x=1.
+    #     """
+    #     # Converte o ndarray para um mesh (matplotlib.collections.QuadMesh)
+    #     # https://matplotlib.org/3.1.1/api/collections_api.html#matplotlib.collections.QuadMesh)
+
+    #     mesh = pyplot.pcolormesh(image_data)
+
+    #     # O mesh tem a funcao get_array que transforma
+    #     # m = Array com todos os 2704 = 52x52.
+    #     m = list(mesh.get_array())
+
+    #     # Tamanho total da imagem 52
+    #     n = len(image_data)
+
+    #     # Divide o array em pedacos de tamanho igual
+    #     z = list()
+    #     for i in range(0, len(m), n):
+    #         z.append(m[i:i + n])
+
+    #     return z
 
     def spaxel_fit_by_position(self, megacube, x, y, ):
         """

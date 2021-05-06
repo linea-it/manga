@@ -174,10 +174,10 @@ class Command(BaseCommand):
                 image_data = mclass().image_by_hud(
                     megacube, hud)
 
-                z = mclass().image_data_to_array(image_data)
+                # z = mclass().image_data_to_array(image_data)
 
                 content = dict({
-                    'z': z,
+                    'z': image_data,
                     'title': hud,
                 })
 
