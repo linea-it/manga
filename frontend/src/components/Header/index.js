@@ -21,6 +21,7 @@ import useStyles from './styles';
 import logo from '../../assets/img/logo.png';
 import { loggedUser, logout } from '../../services/auth';
 import TutorialDialog from './TutorialDialog';
+import ReactGA from 'react-ga';
 
 function Header() {
   const classes = useStyles();
@@ -41,6 +42,10 @@ function Header() {
     loggedUser().then((res) => {
       if (res) {
         setUsername(res.username);
+
+        ReactGA.set({
+          userId: res.username,
+        });
       }
     });
   }, []);

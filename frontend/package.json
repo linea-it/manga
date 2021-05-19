@@ -19,6 +19,7 @@
     "prop-types": "^15.7.2",
     "react": "^16.10.1",
     "react-dom": "^16.10.1",
+    "react-ga": "^3.3.0",
     "react-google-recaptcha": "^2.1.0",
     "react-image-magnifiers": "^1.4.0",
     "react-particles-js": "^3.4.1",

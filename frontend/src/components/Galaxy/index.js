@@ -88,10 +88,6 @@ function Galaxy({
     setHeatmapSize({ width: ratioWidth, height: ratioHeight });
   }, [windowSize, selectedContour]);
 
-  useEffect(() => {
-    console.log('selectedImage', selectedImage);
-  }, [selectedImage]);
-
   return (
     <Card>
       <CardHeader title="Galaxy" />

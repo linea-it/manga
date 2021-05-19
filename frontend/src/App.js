@@ -4,12 +4,22 @@ import { MuiThemeProvider } from '@material-ui/core/styles';
 import Routes from './routes';
 import history from './services/history';
 import light from './themes/light';
-// import Header from './components/Header';
+
+import ReactGA from 'react-ga';
+
+ReactGA.initialize(process.env.REACT_APP_GA_TRACKING_ID, {
+  cookieDomain: 'auto',
+  debug: true,
+});
+
+history.listen((location) => {
+  ReactGA.set({ page: location.pathname }); // Update the user's current page
+  ReactGA.pageview(location.pathname); // Record a pageview for the given page
+});
 
 function App() {
   return (
     <MuiThemeProvider theme={light}>
-      {/* <Header /> */}
       <Router history={history}>
         <Routes />
       </Router>
