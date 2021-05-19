@@ -14,10 +14,12 @@ import {
 } from '@material-ui/core';
 
 import { ExitToApp as ExitToAppIcon } from '@material-ui/icons';
-import { loggedUser, logout } from '../../services/auth'
+import { loggedUser, logout } from '../../services/auth';
 
 import useStyles from './styles';
-import desLogo from '../../assets/img/des-portal-logo.png';
+import logo from '../../assets/img/logo.png';
+import { loggedUser, logout } from '../../services/auth';
+import TutorialDialog from './TutorialDialog';
 
 function Header() {
   const classes = useStyles();
@@ -27,17 +29,13 @@ function Header() {
   const handleUserOpen = (e) => setUserSettingsAnchorEl(e.currentTarget);
   const handleUserClose = () => setUserSettingsAnchorEl(null);
 
-
   useEffect(() => {
-    loggedUser()
-      .then(res => {
-        if (res) {
-          setCurrentUser({ username: res ? res.username : null })
-        }
-      })
+    loggedUser().then((res) => {
+      if (res) {
+        setUsername(res.username);
+      }
+    });
   }, []);
-
-
 
   return (
     <AppBar position="relative">
@@ -50,7 +48,9 @@ function Header() {
                   <img src={desLogo} alt="DES Portal Logo" />
                 </Grid>
                 <Grid item>
-                  <Typography variant="h6" component="h1" color="inherit">MaNGA</Typography>
+                  <Typography variant="h6" component="h1" color="inherit">
+                    MaNGA
+                  </Typography>
                 </Grid>
               </Grid>
             </Link>
