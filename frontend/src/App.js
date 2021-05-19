@@ -7,10 +7,7 @@ import light from './themes/light';
 
 import ReactGA from 'react-ga';
 
-ReactGA.initialize(process.env.REACT_APP_GA_TRACKING_ID, {
-  cookieDomain: 'auto',
-  debug: true,
-});
+ReactGA.initialize(process.env.REACT_APP_GA_TRACKING_ID);
 
 history.listen((location) => {
   ReactGA.set({ page: location.pathname }); // Update the user's current page
