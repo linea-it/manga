@@ -1,13 +1,12 @@
 /* eslint-disable max-len */
-/* eslint-disable eqeqeq */
 import React, { useState, useEffect } from 'react';
 import YouTube from 'react-youtube';
 import {
   Container,
   Typography,
   Grid,
-  ExpansionPanel,
-  ExpansionPanelSummary,
+  Accordion,
+  AccordionSummary,
   ListItem,
   ListItemIcon,
   ListItemText,
@@ -44,10 +43,15 @@ function Tutorials() {
   const handleChange = (panel) => (event, newExpanded) => {
     setExpanded(newExpanded ? panel : false);
   };
+
   const handleSelected = (tutorial, video) => {
     setIdPlayer(video.idVideo);
     setVideoOnDisplay({ tutorial: tutorial.title, video: video.title });
   };
+
+  useEffect(() => {
+    handleSelected(treeTutorial[0], treeTutorial[0].videos[0]);
+  }, []);
 
   return (
     <div className={classes.initContainer}>
@@ -68,13 +72,13 @@ function Tutorials() {
         >
           <Grid item xs={12} sm={4}>
             {treeTutorial.map((tutorial, index) => (
-              <ExpansionPanel
-                square
+              <Accordion
                 key={tutorial.id}
+                square
                 expanded={expanded === `panel${index + 1}`}
                 onChange={handleChange(`panel${index + 1}`)}
               >
-                <ExpansionPanelSummary
+                <AccordionSummary
                   aria-controls={`panel${index + 1}d-content`}
                   id={`panel${index + 1}d-header`}
                 >
@@ -84,10 +88,10 @@ function Tutorials() {
                     <ArrowRightIcon />
                   )}
                   <Typography>{tutorial.title}</Typography>
-                </ExpansionPanelSummary>
+                </AccordionSummary>
                 {tutorial.videos.map((video) => (
                   <ListItem
-                    key={video.id}
+                    key={video.idVideo}
                     className={classes.item}
                     onClick={() => {
                       handleSelected(tutorial, video);
@@ -99,7 +103,7 @@ function Tutorials() {
                     <ListItemText primary={video.title} />
                   </ListItem>
                 ))}
-              </ExpansionPanel>
+              </Accordion>
             ))}
           </Grid>
           <Grid item xs={12} sm={8}>

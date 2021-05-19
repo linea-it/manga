@@ -17,13 +17,13 @@ from astropy.io import fits as pf
 class ImageViewSet(viewsets.ModelViewSet):
     queryset = Image.objects.all()
     serializer_class = ImageSerializer
-    filter_fields = ('id', 'megacube', 'mangaid', 'objra', 'objdec',
+    filter_fields = ('id', 'megacube', 'mangaid', 'plateifu', 'objra', 'objdec',
                      'nsa_iauname', 'mjdmed', 'exptime', 'airmsmed', 'seemed',
                      'nsa_z',)
-    search_fields = ('id', 'megacube', 'mangaid', 'objra', 'objdec',
+    search_fields = ('id', 'megacube', 'mangaid', 'plateifu', 'objra', 'objdec',
                      'nsa_iauname', 'mjdmed', 'exptime', 'airmsmed', 'seemed',
                      'nsa_z',)
-    ordering_fields = ('id', 'megacube', 'mangaid', 'objra', 'objdec',
+    ordering_fields = ('id', 'megacube', 'mangaid', 'plateifu', 'objra', 'objdec',
                        'nsa_iauname', 'mjdmed', 'exptime', 'airmsmed', 'seemed',
                        'nsa_z',)
     ordering = ('mangaid',)
@@ -81,6 +81,9 @@ class ImageViewSet(viewsets.ModelViewSet):
 
         with open(original_image_filepath) as f:
             data = json.load(f)
+
+        megacube = self.get_megacube_path(galaxy.megacube)
+
         # Only send the path if the file exists:
         if os.path.exists(
             self.get_sdss_image_path(
@@ -358,7 +361,10 @@ class ImageViewSet(viewsets.ModelViewSet):
 
         megacube = self.get_megacube_path(galaxy.megacube)
 
-        comments = mclass().get_comments(
-            megacube, 'PoPBins')
+        data = mclass().image_by_hud(
+            megacube, 'Adev')
 
-        return Response(comments)
+        z = mclass().image_data_to_array(
+            data,)
+
+        return Response(z)

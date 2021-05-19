@@ -1,11 +1,41 @@
 import { makeStyles } from '@material-ui/core/styles';
-import { blue } from '@material-ui/core/colors';
 
 const useStyles = makeStyles((theme) => ({
-  avatar: {
-    color: theme.palette.getContrastText(blue[800]),
-    backgroundColor: blue[800],
-    padding: 2,
+  media: {
+    height: '',
+    width: '',
+  },
+  grow: {
+    flexGrow: 1,
+  },
+  username: {
+    marginLeft: theme.spacing(2),
+    marginRight: theme.spacing(2),
+  },
+  menuButton: {
+    marginRight: theme.spacing(1),
+  },
+  menuIcon: {
+    marginRight: theme.spacing(1),
+  },
+
+  closeButton: {
+    position: 'absolute',
+    right: theme.spacing(1),
+    top: theme.spacing(1),
+    color: theme.palette.grey[500],
+  },
+  closeIcon: {
+    fontSize: '1rem',
+  },
+  playerWrapper: {
+    position: 'relative',
+  },
+  blockWrapper: {
+    marginBottom: theme.spacing(4),
+  },
+  contentWrapper: {
+    marginTop: theme.spacing(2),
   },
 }));
 

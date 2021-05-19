@@ -43,14 +43,17 @@ function Heatmap({ z, height, width }) {
           height,
           width,
           hovermode: 'closest',
+          plot_bgcolor: '#C7DAEC',
           yaxis: {
-            showticklabels: false,
-            visible: false,
+            zeroline: false,
+            showgrid: true,
+            visible: true,
             scaleanchor: 'x',
           },
           xaxis: {
-            showticklabels: false,
-            visible: false,
+            zeroline: false,
+            showgrid: true,
+            visible: true,
             constrain: 'domain',
           },
           margin: {

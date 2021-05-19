@@ -2,21 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import '@fortawesome/fontawesome-free/css/all.min.css';
-import Grid from '@material-ui/core/Grid';
-import Skeleton from '@material-ui/lab/Skeleton';
+import { Grid, Typography } from '@material-ui/core';
 import Plot from 'react-plotly.js';
 
 const useStyles = makeStyles((theme) => ({
-  plotWrapper: {
-    display: 'flex !important',
-    alignItems: 'center',
-    justifyContent: 'center',
-    [theme.breakpoints.down('lg')]: {
-      overflow: 'auto',
-    },
-  },
   animateEnter: {
     animation: 'fadein 1s',
+    padding: '0 16px',
   },
   skeletonMargin: {
     marginTop: '0.8em',
@@ -34,78 +26,67 @@ function VerifierGrid({ heatmaps, hudList }) {
   const classes = useStyles();
 
   return (
-    <Grid container className={classes.gridContainer}>
-      {heatmaps.length > 0 ? (
-        heatmaps.map((heatmap, i) => (
-          <Grid
-            key={heatmap.title}
-            item
-            xs={12}
-            sm={6}
-            md={4}
-            xl={3}
-            className={classes.animateEnter}
-          >
-            <Plot
-              data={[
+    <Grid container className={classes.gridContainer} justify="center">
+      {heatmaps.length > 0
+        ? heatmaps.map((heatmap) => (
+            <Grid
+              key={heatmap.title}
+              item
+              xs={12}
+              sm={6}
+              md={4}
+              xl={3}
+              className={classes.animateEnter}
+            >
+              <Typography variant="h6" align="center">
+                {heatmap.title}
+              </Typography>
+              <Typography variant="subtitle1" align="center">
+                (
                 {
-                  z: heatmap.error ? [] : heatmap.z,
-                  type: 'heatmap',
-                  colorscale: 'Viridis',
-                  showscale: false,
-                },
-              ]}
-              className={classes.plotWrapper}
-              layout={{
-                title: `${heatmap.title} (${
                   hudList
                     .filter((hud) => hud.name === heatmap.title)[0]
                     .comment.split(' (')[0]
-                })`,
-                hovermode: 'closest',
-                yaxis: {
-                  scaleanchor: 'x',
-                },
-                margin: {
-                  // l: 0,
-                  // r: 0,
-                  // t: 0,
-                  b: 0,
-                  pad: 0,
-                  autoexpand: true,
-                },
-              }}
-              config={{
-                scrollZoom: false,
-                displaylogo: false,
-                responsive: true,
-                displayModeBar: false,
-                staticPlot: true,
-              }}
-              transition={{
-                duration: 300,
-                easing: 'cubic-in-out',
-              }}
-              frame={{ duration: 300 }}
-            />
-          </Grid>
-        ))
-      ) : (
-        <Grid container spacing={2}>
-          {Array(12)
-            .fill(0)
-            .map(() => (
-              <Grid item xs={12} sm={6} md={4} xl={3}>
-                <Skeleton
-                  variant="rect"
-                  width={400}
-                  height={400}
-                  className={classes.skeletonMargin}
-                />
-              </Grid>
-            ))}
-        </Grid>
-      )}
+                }
+                )
+              </Typography>
+              <Plot
+                data={[
+                  {
+                    z: heatmap.error ? [] : heatmap.z,
+                    type: 'heatmap',
+                    colorscale: 'Viridis',
+                    showscale: false,
+                  },
+                ]}
+                layout={{
+                  hovermode: 'closest',
+                  yaxis: {
+                    scaleanchor: 'x',
+                  },
+                  margin: {
+                    t: 0,
+                    b: 40,
+                    pad: 0,
+                    autoexpand: true,
+                  },
+                }}
+                config={{
+                  scrollZoom: false,
+                  displaylogo: false,
+                  responsive: true,
+                  displayModeBar: false,
+                  staticPlot: true,
+                }}
+                transition={{
+                  duration: 300,
+                  easing: 'cubic-in-out',
+                }}
+                frame={{ duration: 300 }}
+              />
+            </Grid>
+          ))
+        : null}
     </Grid>
   );
 }

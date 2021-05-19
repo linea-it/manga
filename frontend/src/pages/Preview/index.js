@@ -56,16 +56,22 @@ function Preview() {
       name: 'nsa_iauname',
       title: 'Name',
       width: 180,
+      headerTooltip: 'IAU-style designation based on RA/Dec (NSA)',
+    },
+    {
+      name: 'plateifu',
+      title: 'PlateIFU',
+      headerTooltip: '	Plate+ifudesign name for this object',
     },
     {
       name: 'objra',
       title: 'RA',
-      // customElement: (row) => row.objra.toFixed(5),
+      headerTooltip: 'Right ascension of the science object in J2000 (degrees)',
     },
     {
       name: 'objdec',
       title: 'Dec',
-      // customElement: (row) => row.objdec.toFixed(5),
+      headerTooltip: 'Declination of the science object in J2000 (degrees)',
     },
     {
       name: 'mangaid',
@@ -74,25 +80,42 @@ function Preview() {
     {
       name: 'mjdmed',
       title: 'MJD',
+      headerTooltip: 'Median MJD across all exposures',
+      width: 100,
     },
     {
       name: 'exptime',
       title: 'Exp Time',
+      headerTooltip: 'Total exposure time (seconds)',
+      width: 110,
     },
     {
       name: 'airmsmed',
       title: 'Airmass',
-      customElement: (row) => row.airmsmed.toFixed(2),
+      customElement: (row) => (
+        <span title={row.airmsmed}>{row.airmsmed.toFixed(2)}</span>
+      ),
+      headerTooltip: 'Median airmass across all exposures',
+      width: 100,
     },
     {
       name: 'seemed',
       title: 'Seeing',
-      customElement: (row) => row.seemed.toFixed(2),
+      customElement: (row) => (
+        <span title={row.seemed}>{row.seemed.toFixed(2)}</span>
+      ),
+      headerTooltip: 'Median guider seeing (arcsec)',
+      width: 100,
     },
     {
       name: 'nsa_z',
       title: 'z',
+      customElement: (row) => (
+        <span title={row.nsa_z}>{row.nsa_z.toFixed(3)}</span>
+      ),
       width: 80,
+      headerTooltip:
+        'The targeting redshift (identical to nsa_z for those targets in the NSA Catalog. For others, it is the redshift provided by the Ancillary programs)',
     },
   ];
 
@@ -136,7 +159,7 @@ function Preview() {
   }, [selectedMegacube]);
 
   useEffect(() => {
-    const headerHeight = 55.97;
+    const headerHeight = 64;
     const tableToolbarHeight = 64.99;
     const tablePager = 71.95;
 

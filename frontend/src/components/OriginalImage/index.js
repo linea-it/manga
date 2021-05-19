@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import Heatmap from '../Plot/Heatmap';
 import useStyles from './styles';
 import useWindowSize from '../../hooks/useWindowSize';
+import { GlassMagnifier } from 'react-image-magnifiers';
 
 function OriginalImage({ data, sectionWidth }) {
   const windowSize = useWindowSize();
@@ -39,7 +40,14 @@ function OriginalImage({ data, sectionWidth }) {
       <Heatmap z={data.z} width={width} height={height} />
       {data.sdss_image ? (
         <div className={classes.imgContainer}>
-          <img alt="Original" src={data.sdss_image} className={classes.img} />
+          <GlassMagnifier
+            className={classes.img}
+            imageSrc={data.sdss_image}
+            imageAlt="SDSS Cutout"
+            magnifierSize="20%"
+            magnifierBorderSize={2}
+            // allowOverflow={true}
+          />
         </div>
       ) : null}
     </div>

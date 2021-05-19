@@ -13,6 +13,7 @@ import {
   CardHeader,
   CardContent,
 } from '@material-ui/core';
+import InfoIcon from '@material-ui/icons/Info';
 import Skeleton from '@material-ui/lab/Skeleton';
 import Plot from 'react-plotly.js';
 import clsx from 'clsx';
@@ -53,35 +54,39 @@ function Galaxy({
   const windowSize = useWindowSize();
 
   useEffect(() => {
-    const size = windowSize.width;
-    let marginHeight = size * 0.787;
-    let marginWidth = size * 0.7;
+    const widthSize = windowSize.width;
+    const heightSize = windowSize.height;
+
+    let marginHeight = 331.5; // Paddings, margins and heights of other elements.
+    let marginWidth = widthSize * 0.7;
 
     if (selectedContour.id !== 0) {
-      marginWidth = size * 0.737;
+      marginWidth = widthSize * 0.737;
     }
 
     if (windowSize.width < 1920 && windowSize.width >= 960) {
-      marginHeight = size * 0.702;
-      marginWidth = size * 0.6;
+      marginWidth = widthSize * 0.6;
 
       if (selectedContour.id !== 0) {
-        marginWidth = size * 0.69;
+        marginWidth = widthSize * 0.69;
       }
+
+      marginHeight = 170;
     } else if (windowSize.width < 960) {
-      marginHeight = size * 0.3;
-      marginWidth = size * 0.2;
+      marginWidth = widthSize * 0.2;
 
       if (selectedContour.id !== 0) {
-        marginWidth = size * 0.27;
+        marginWidth = widthSize * 0.27;
       }
+
+      marginHeight = 382.5;
     }
 
-    const ratioHeight = size - marginHeight;
-    const ratioWidth = size - marginWidth;
+    const ratioHeight = heightSize - marginHeight;
+    const ratioWidth = widthSize - marginWidth;
 
     setHeatmapSize({ width: ratioWidth, height: ratioHeight });
-  }, [windowSize.width, selectedContour]);
+  }, [windowSize, selectedContour]);
 
   return (
     <Card>
@@ -101,12 +106,19 @@ function Galaxy({
                         value={selectedImage.id}
                         onChange={handleSelectImage}
                         disabled={selectedMegacube === ''}
+                        classes={{ select: classes.select }}
                       >
                         {hudList.map((hud, i) => (
-                          <MenuItem key={hud.name} value={i + 1}>
-                            {`${hud.display_name} (${
-                              hud.comment.split(' (')[0]
-                            })`}
+                          <MenuItem
+                            key={hud.name}
+                            title={hud.comment.split(' (')[0]}
+                            value={i + 1}
+                          >
+                            {hud.display_name}
+                            <InfoIcon
+                              fontSize="small"
+                              className={classes.infoIcon}
+                            />
                           </MenuItem>
                         ))}
                       </Select>
@@ -121,14 +133,21 @@ function Galaxy({
                         value={selectedContour.id}
                         onChange={handleSelectContour}
                         disabled={selectedMegacube === ''}
+                        classes={{ select: classes.select }}
                       >
                         {hudList
                           .filter((image, i) => i + 1 !== selectedImage.id)
                           .map((hud, i) => (
-                            <MenuItem key={hud.name} value={i + 1}>
-                              {`${hud.display_name} (${
-                                hud.comment.split(' (')[0]
-                              })`}
+                            <MenuItem
+                              key={hud.name}
+                              title={hud.comment.split(' (')[0]}
+                              value={i + 1}
+                            >
+                              {hud.display_name}
+                              <InfoIcon
+                                fontSize="small"
+                                className={classes.infoIcon}
+                              />
                             </MenuItem>
                           ))}
                       </Select>
