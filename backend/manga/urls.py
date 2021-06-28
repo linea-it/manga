@@ -19,14 +19,18 @@ from django.conf.urls import include, url
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.authtoken.views import obtain_auth_token
 from rest_framework import routers
-from common.views import UserViewSet, LogoutView, contact_us
+from common.views import UserViewSet, LogoutView, contact_us, send_statistic_email
 from galaxy.views import ImageViewSet
+from activity_statistic.views import ActivityStatisticViewSet
 
 # Routers provide an easy way of automatically determining the URL conf.
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet)
 
 router.register(r'images', ImageViewSet)
+
+# Statistics API
+router.register(r'statistics', ActivityStatisticViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -35,4 +39,6 @@ urlpatterns = [
     path('api/auth/', include('rest_framework.urls')),
     url(r'api/contact/', contact_us),
     url(r'^api/logout/', LogoutView),
+
+    url(r'^api/send_statistic_email/', send_statistic_email),
 ]

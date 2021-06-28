@@ -1,23 +1,3 @@
-# #!/bin/sh
-
-# if [ "$DATABASE" = "postgres" ]
-# then
-#   echo "Waiting for postgres..."
-
-#   while ! nc -z $SQL_HOST $SQL_PORT; do
-#     sleep 0.1
-#   done
-
-#   echo "PostgreSQL started"
-# fi
-
-# python manage.py flush --no-input
-# python manage.py migrate
-# python manage.py collectstatic --no-input --clear
-
-# exec "$@"
-
-
 #!/bin/sh
 
 cd $APP_PATH
@@ -37,6 +17,12 @@ then
 
     echo "Running Collect Statics"
     python manage.py collectstatic --clear --noinput --verbosity 0
+
+    # Start Celery Workers
+    celery worker --workdir /app --app manga -l info &> /log/celery.log  &
+
+    # Start Celery Beat
+    celery worker --workdir /app --app manga -l info --beat &> /log/celery_beat.log  &
 
     python manage.py runserver 0.0.0.0:$GUNICORN_PORT
 

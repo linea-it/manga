@@ -1,6 +1,5 @@
-version: "3.6"
+version: '3.6'
 services:
-
   # Database
   database:
     image: postgres:12.3-alpine
@@ -26,3 +25,10 @@ services:
       - ./images:/images
     depends_on:
       - backend
+
+  # Message-Broker Software RabbitMQ
+  rabbit:
+    image: rabbitmq:3-management
+    hostname: rabbit_manga
+    env_file:
+      - .env.prod

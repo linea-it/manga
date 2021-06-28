@@ -1,4 +1,4 @@
-version: "3.6"
+version: '3.6'
 services:
   # Database
   database:
@@ -12,7 +12,6 @@ services:
     volumes:
       - ./pg_data:/var/lib/postgresql/data
 
-
   # Backend Django
   backend:
     build: ./backend
@@ -21,6 +20,9 @@ services:
     volumes:
       - ./backend:/app
       - ./images:/images
+    depends_on:
+      - rabbit
+      - database
 
   # Frontend React
   frontend:
@@ -43,3 +45,10 @@ services:
     depends_on:
       - backend
       - frontend
+
+  # Message-Broker Software RabbitMQ
+  rabbit:
+    image: rabbitmq:3-management
+    hostname: rabbit_manga
+    env_file:
+      - .env.dev

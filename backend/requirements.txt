@@ -50,3 +50,5 @@ urllib3==1.26.4
 Werkzeug==0.16.0
 wrapt==1.11.2
 zipp==3.4.1
+celery==4.4.7
+django-celery-results==1.2.1

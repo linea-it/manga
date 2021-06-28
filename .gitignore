@@ -32,3 +32,6 @@ __pycache__
 # Postgres data file in development
 /pg_data
 /pg_backups
+
+# Celery Files
+backend/celerybeat-schedule
