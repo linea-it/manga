@@ -28,7 +28,8 @@
     "react-scripts": "3.1.2",
     "react-simple-resizer": "^2.1.0",
     "react-sizeme": "^2.6.7",
-    "react-youtube": "^7.9.0"
+    "react-youtube": "^7.9.0",
+    "tsparticles": "^1.30.0"
   },
   "scripts": {
     "start": "react-scripts start",

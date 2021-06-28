@@ -44,12 +44,14 @@ INSTALLED_APPS = [
     # Third-party
     'rest_framework',
     'rest_framework.authtoken',
+    'django_celery_results',
 
     # Apps
     'manga.apps.MangaConfig',
     'galaxy.apps.GalaxyConfig',
     'classification.apps.ClassificationConfig',
     'common.apps.CommonConfig',
+    'activity_statistic.apps.ActivityStatisticConfig'
 
 ]
 
@@ -287,3 +289,18 @@ EMAIL_NOTIFICATION = os.environ.get('EMAIL_NOTIFICATION')
 EMAIL_HELPDESK = os.environ.get('EMAIL_HELPDESK')
 # Email de contato do LIneA
 EMAIL_HELPDESK_CONTACT = os.environ.get('EMAIL_HELPDESK_CONTACT')
+# Enables or disables sending daily email access statistics
+SEND_DAILY_STATISTICS_EMAIL = os.environ.get('SEND_DAILY_STATISTICS_EMAIL')
+# Email that will receive the notifications and reports
+EMAIL_ADMIN = os.environ.get('EMAIL_ADMIN')
+
+
+# CELERY SETTINGS
+CELERY = {
+    'BROKER_URL': os.environ.get('CELERY_BROKER', 'localhost'),
+    'CELERY_IMPORTS': ('activity_statistic.tasks',),
+    'CELERY_RESULT_BACKEND': 'django-db',
+    'CELERY_TASK_SERIALIZER': 'json',
+    'CELERY_RESULT_SERIALIZER': 'json',
+    'CELERY_ACCEPT_CONTENT': ['json'],
+}

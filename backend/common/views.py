@@ -103,3 +103,24 @@ def LogoutView(request):
     response = redirect(home)
 
     return response
+
+
+@api_view(['GET'])
+def send_statistic_email(request):
+    """
+    Este metodo e usado para enviar o email de estatistica a qualquer momento.
+    independente da task diaria.
+    :param request:
+    :return:
+    """
+    if request.method == 'GET':
+        from activity_statistic.reports import ActivityReports
+        import datetime
+
+        try:
+            ActivityReports().report_email_unique_visits(datetime.date.today())
+            return Response(dict({'status': "success"}))
+
+        except Exception as e:
+
+            return Response(dict({'status': "failure", "Exception": e}))
