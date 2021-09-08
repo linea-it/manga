@@ -1,4 +1,4 @@
-# MaNGA
+# MaNGA Portal
 
 
 ## Installation
