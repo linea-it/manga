@@ -182,18 +182,14 @@ if AUTH_LDAP_ENABLED == 'True':
     # The password of the LDAP server:
     AUTH_LDAP_BIND_PASSWORD = os.environ.get('AUTH_LDAP_BIND_PASSWORD')
 
-    # Variable created for the part of the distinguishable name
-    # that repeats over bind, user and group search:
-    AUTH_LDAP_DN = os.environ.get('AUTH_LDAP_DN')
-
-    # The distinguishable name, used to identify entries:
-    AUTH_LDAP_BIND_DN = 'uid=authbind,ou=people,%s' % AUTH_LDAP_DN
+    # The bind domain:
+    AUTH_LDAP_BIND_DN = os.environ.get('AUTH_LDAP_BIND_DN')
 
     # The distinguishable name for searching users, used to identify entries:
-    AUTH_LDAP_USER_SEARCH_DN = 'ou=people,%s' % AUTH_LDAP_DN
+    AUTH_LDAP_USER_SEARCH_DN = os.environ.get('AUTH_LDAP_USER_SEARCH_DN')
 
     # The distinguishable name for searching groups, used to identify entries:
-    AUTH_LDAP_GROUP_SEARCH_DN = 'ou=groups,%s' % AUTH_LDAP_DN
+    AUTH_LDAP_GROUP_SEARCH_DN = os.environ.get('AUTH_LDAP_GROUP_SEARCH_DN')
 
     # An LDAPSearch object that finds LDAP groups that users might belong to:
     AUTH_LDAP_GROUP_SEARCH = LDAPSearch(
@@ -205,13 +201,8 @@ if AUTH_LDAP_ENABLED == 'True':
     # Describes the type of group returned by AUTH_LDAP_GROUP_SEARCH:
     AUTH_LDAP_GROUP_TYPE = PosixGroupType(name_attr='cn')
 
-    # The common name for a required authentication group:
-    AUTH_LDAP_REQUIRE_GROUP_CN = os.environ.get('AUTH_LDAP_REQUIRE_GROUP_CN')
-
-    # The distinguished name of a group;
-    # authentication will fail for any user that does not belong to this group:
-    AUTH_LDAP_REQUIRE_GROUP = '%s,ou=groups,%s' % (
-        AUTH_LDAP_REQUIRE_GROUP_CN, AUTH_LDAP_DN)
+    # The group required for authentication:
+    AUTH_LDAP_REQUIRE_GROUP = os.environ.get('AUTH_LDAP_REQUIRE_GROUP')
 
     # An LDAPSearch object that will locate a user in the directory:
     AUTH_LDAP_USER_SEARCH = LDAPSearch(
