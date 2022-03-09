@@ -25,10 +25,10 @@ function Header() {
   });
 
   const [user, setUser] = useState(undefined);
+
   useEffect(() => {
     loggedUser().then((result) => setUser(result));
   }, []);
-  useEffect(() => {}, [user]);
 
   const [anchorEl, setAnchorEl] = React.useState(null);
 
