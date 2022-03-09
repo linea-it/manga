@@ -1,7 +1,6 @@
 import React from 'react';
-import { CardMedia,Typography, Grid } from '@material-ui/core';
+import { CardMedia, Typography, Grid } from '@material-ui/core';
 import styles from './styles';
-
 
 function Supporters() {
   const classes = styles();
@@ -19,20 +18,24 @@ function Supporters() {
     },
     {
       id: 2,
+      title: 'FAPERGS',
+      image: 'fapergs.png',
+    },
+    {
+      id: 3,
       title: 'FAPERJ',
       image: 'faperj.png',
     },
     {
-      id: 3,
+      id: 4,
       title: 'Finep',
       image: 'finep.png',
     },
     {
-      id: 4,
+      id: 5,
       title: 'INCT do Universo',
       image: 'e-universo.png',
     },
-
   ];
   return (
     <div className={classes.root}>
@@ -47,16 +50,16 @@ function Supporters() {
         alignItems="stretch"
       >
         {interfaces.map((item) => (
-            <Grid key={item.id} item>
-              <CardMedia
-                className={classes.carouselItem}
-                component="img"
-                alt={item.title}
-                image={`${process.env.PUBLIC_URL}/img/supporters/${item.image}`}
-                title={item.title}
-              />
-            </Grid>
-          ))}
+          <Grid key={item.id} item>
+            <CardMedia
+              className={classes.carouselItem}
+              component="img"
+              alt={item.title}
+              image={`${process.env.PUBLIC_URL}/img/supporters/${item.image}`}
+              title={item.title}
+            />
+          </Grid>
+        ))}
       </Grid>
     </div>
   );
