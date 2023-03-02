@@ -10,7 +10,7 @@ services:
       # isto permite acessar o banco de dados a partir de outros apps como o DBeaver
       - 5432
     volumes:
-      - ./pg_data:/var/lib/postgresql/data
+      - postgres-data:/var/lib/postgresql/data
 
   # Backend Django
   backend:
@@ -20,6 +20,7 @@ services:
     volumes:
       - ./backend:/app
       - ./images:/images
+      - ./log:/log
     depends_on:
       - rabbit
       - database
@@ -52,3 +53,6 @@ services:
     hostname: rabbit_manga
     env_file:
       - .env.dev
+
+volumes:
+  postgres-data:
