@@ -51,37 +51,29 @@ class Command(BaseCommand):
 
     def update_metadata(self):
 
-        mpl4 = self.get_megacube_path('mpl-4/drpall-v1_5_1.fits')
-        mpl9 = self.get_megacube_path('mpl-9/drpall-v2_7_1.fits')
-
-        mpl4_metadata = mclass().get_metadata(mpl4)
-        self.stdout.write('Fetched MPL4')
-
-        mpl9_metadata = mclass().get_metadata(mpl9)
-        self.stdout.write('Fetched MPL9')
-
+        drpall = self.get_megacube_path('drpall-v3_1_1.fits')
+        drpall_metadata = mclass().get_metadata(drpall)
+        self.stdout.write('Fetched drpall')
+        
         columns = self.get_model_fields(Image)
         columns.remove('id')
 
-        for column in list(mpl4_metadata):
+        for column in list(drpall_metadata):
             if column not in columns:
-                del mpl4_metadata[column]
+                del drpall_metadata[column]
 
-        for column in list(mpl9_metadata):
-            if column not in columns:
-                del mpl9_metadata[column]
-
-        self.stdout.write('Merged the two MPL file data')
-
-        dict_metadata = self.merge_same_keys_dict(mpl4_metadata, mpl9_metadata)
-        list_metadata = self.dict_list_to_list_dict(dict_metadata)
+        # Exemplo concatenando 2 arquivos de metadados.
+        # dict_metadata = self.merge_same_keys_dict(mpl4_metadata, mpl9_metadata)
+        # list_metadata = self.dict_list_to_list_dict(dict_metadata)
+        
+        list_metadata = self.dict_list_to_list_dict(drpall_metadata)
 
         self.stdout.write(
             'Transformed the dictionary of lists to a list of dictionaries')
 
         for row in list_metadata:
 
-            filename = 'manga-%s-MEGA.fits.fz' % row['plateifu']
+            filename = 'manga-%s-MEGACUBE.fits' % row['plateifu']
             megacube = self.get_megacube_path(filename)
 
             if os.path.isfile(megacube):

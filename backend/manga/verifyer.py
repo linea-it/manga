@@ -38,7 +38,7 @@ logger = logging.getLogger(__name__)
 
 
 class mclass:
-    def flux_by_position(self, megacube, x, y, hud='FLXNORM'):
+    def flux_by_position(self, megacube, x, y, hud='FLXOBS'):
         flux = pf.getdata(megacube, hud)
 
         lamb = self.get_lamb(megacube, flux, hud)
@@ -52,7 +52,7 @@ class mclass:
 
         return (synt[:, int(y), int(x)], lamb)
 
-    def get_lamb(self, megacube, flux, hud='FLXNORM'):
+    def get_lamb(self, megacube, flux, hud='FLXOBS'):
         l0 = pf.getheader(megacube, hud)['CRVAL3']
         dl = pf.getheader(megacube, hud)['CD3_3']
 
@@ -195,7 +195,10 @@ class mclass:
         for i in range(x):
             for j in range(y):
                 if polygon.contains(Point(j, i)) == False:
-                    imagb[i, j] = 'nan'
+                    # imagb[i, j] = 'nan'
+                    imagb[i, j] = 0
+
+
 
         flux_image = ax.imshow(imagb, origin='lower').get_array()
 
@@ -233,7 +236,8 @@ class mclass:
         for i in range(x):
             for j in range(y):
                 if polygon.contains(Point(j, i)) == False:
-                    imagb[i, j] = 'nan'
+                    # imagb[i, j] = 'nan'
+                    imagb[i, j] = 0
 
         flux_image = ax.imshow(imagb, origin='lower').get_array()
 
