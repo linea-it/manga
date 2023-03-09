@@ -1,7 +1,6 @@
 images/*.*
-images/mpl-4/*.*
-images/mpl-9/*.*
-images/megacube_parts
+images/megacube_parts/*.*
+images/cache/*.*
 
 # testing
 /coverage
