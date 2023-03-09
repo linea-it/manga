@@ -162,8 +162,14 @@ IMAGES_DIR = "/images"
 MEGACUBE_ROOT = 'megacube_parts'
 MEGACUBE_PARTS = os.path.join(IMAGES_DIR, MEGACUBE_ROOT)
 
+MEGACUBE_CACHE_ROOT = 'cache'
+MEGACUBE_CACHE = os.path.join(IMAGES_DIR, MEGACUBE_CACHE_ROOT)
+
 if not os.path.exists(MEGACUBE_PARTS):
     os.mkdir(MEGACUBE_PARTS)
+
+if not os.path.exists(MEGACUBE_CACHE):
+    os.mkdir(MEGACUBE_CACHE)
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',

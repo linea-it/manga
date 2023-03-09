@@ -241,42 +241,12 @@ class mclass:
 
         flux_image = ax.imshow(imagb, origin='lower').get_array()
 
-        return flux_image.tolist()
+        result = flux_image.tolist()
 
-        # image_data = cube_data[idxHud, :, :]
+        # Close images resolve the Warning "figure.max_open_warning"
+        pyplot.close('all')
+        return result
 
-        # # # Transforming "masked" values to zero:
-        # # image_data[np.isnan(image_data)] = 0
-
-        # return image_data
-
-    # def image_data_to_array(self, image_data):
-    #     """
-    #         Converte os dados da imagem para um array utilizando pcolormesh.
-    #         neste casa a matriz 52x52 vire um array 2704 elementos.
-    #         este array é dividido em pedaços de 52 elementos.
-    #         o retorno da função é um array com 52 elementos onde cada elemento tem tamanho 52.
-    #         o primeiro elemento corresponde a x=0, y=0, o segundo x=0, y=1 assim sucessivamente.
-    #         o segundo elemento é a posição x=1.
-    #     """
-    #     # Converte o ndarray para um mesh (matplotlib.collections.QuadMesh)
-    #     # https://matplotlib.org/3.1.1/api/collections_api.html#matplotlib.collections.QuadMesh)
-
-    #     mesh = pyplot.pcolormesh(image_data)
-
-    #     # O mesh tem a funcao get_array que transforma
-    #     # m = Array com todos os 2704 = 52x52.
-    #     m = list(mesh.get_array())
-
-    #     # Tamanho total da imagem 52
-    #     n = len(image_data)
-
-    #     # Divide o array em pedacos de tamanho igual
-    #     z = list()
-    #     for i in range(0, len(m), n):
-    #         z.append(m[i:i + n])
-
-    #     return z
 
     def spaxel_fit_by_position(self, megacube, x, y, ):
         """

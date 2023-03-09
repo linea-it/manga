@@ -84,8 +84,8 @@ class Command(BaseCommand):
         # list_metadata = self.dict_list_to_list_dict(dict_metadata)
         
         list_metadata = self.dict_list_to_list_dict(drpall_metadata)
-        self.stdout.write(
-            'Transformed the dictionary of lists to a list of dictionaries')
+        # self.stdout.write(
+        #     'Transformed the dictionary of lists to a list of dictionaries')
 
         self.stdout.write(
             '%s Objects in %s.' %(len(list_metadata), filename))
@@ -93,7 +93,7 @@ class Command(BaseCommand):
         count = 0
         for row in list_metadata:
 
-            filename = 'manga-%s-MEGACUBE.fits' % row['plateifu']
+            filename = 'manga-%s-MEGACUBE.fits.tar.bz2' % row['plateifu']
             megacube = self.get_megacube_path(filename)
 
             if os.path.isfile(megacube):
@@ -117,4 +117,5 @@ class Command(BaseCommand):
                 # Verifying that the there's not duplicates
                 except IntegrityError:
                     pass
+
         self.stdout.write('Finished! %s of %s objects are registered.' % (count, len(list_metadata)))

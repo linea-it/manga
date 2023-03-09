@@ -12,6 +12,7 @@ import json
 
 from manga.verifyer import mclass
 from astropy.io import fits as pf
+import tarfile
 
 
 class ImageViewSet(viewsets.ModelViewSet):
@@ -29,27 +30,55 @@ class ImageViewSet(viewsets.ModelViewSet):
     ordering = ('mangaid',)
 
     def get_megacube_path(self, filename):
-        return os.path.join(os.getenv('IMAGE_PATH', '/images/'), filename)
+        return os.path.join(settings.IMAGES_DIR, filename)
 
     def get_megacube_size(self, filename):
         return os.stat(self.get_megacube_path(filename)).st_size
 
+    def get_megacube_from_cache(self, filename):
+        # Verificar se existe o arquivo megacubo descompactado no diretório de cache.
+        megacube_path = self.get_megacube_path(filename)
+        fitsfile = filename.split('.tar.bz2')[0]
+        cache_dir = settings.MEGACUBE_CACHE
+        cache_filepath = os.path.join(settings.MEGACUBE_CACHE, fitsfile)
+        if os.path.exists(cache_filepath):
+            return cache_filepath
+        else:
+            # Extrai o megacubo no diretório de cache.
+            self.extract_bz2(megacube_path, cache_dir)
+            return cache_filepath
+
+    def extract_bz2(self, filename, path):
+        with tarfile.open(filename, "r:bz2") as tar:
+            tar.extractall(path)          
+
+    def get_obj_path(self, megacube_name):
+        objdir = megacube_name.split('.fits.tar.bz2')[0]
+        objpath = os.path.join(settings.MEGACUBE_PARTS, objdir)
+        return objpath
+
     def get_image_part_path(self, megacube_name, filename):
         # Join and make the path for the extracted files:
-        filepath = os.path.join(
-            settings.MEGACUBE_PARTS,
-            str(megacube_name) + '/' + filename
-        )
+        objpath = self.get_obj_path(megacube_name)
+        return os.path.join(objpath, filename)
 
+    def get_sdss_base_url(self, megacube_name):
+        objdir = megacube_name.split('.fits.tar.bz2')[0]
+        base = os.path.join('/data/megacube_parts', objdir)
+        return base
+
+    def get_sdss_base_path(self, megacube_name):
+        objdir = megacube_name.split('.fits.tar.bz2')[0]
+        base = os.path.join('/images/megacube_parts', objdir)
+        return base
+
+    def get_sdss_image_url(self, megacube_name, filename='sdss_image.jpg'):
+        # Join and make the url for the sdss image:
+        filepath = os.path.join(self.get_sdss_base_url(megacube_name), filename)
         return filepath
 
-    def get_sdss_image_path(self, megacube_name, filename, root_folder="data"):
-        # Join and make the path for the sdss image:
-        filepath = os.path.join(
-            '/' + root_folder + '/megacube_parts/',
-            str(megacube_name) + '/' + filename
-        )
-
+    def get_sdss_image_path(self, megacube_name, filename='sdss_image.jpg'):
+        filepath = os.path.join(self.get_sdss_base_path(megacube_name), filename)
         return filepath
 
     @action(detail=True, methods=['get'])
@@ -74,22 +103,15 @@ class ImageViewSet(viewsets.ModelViewSet):
         galaxy = self.get_object()
 
         original_image_filepath = self.get_image_part_path(
-            galaxy.megacube.split('.fits.fz')[0], 'original_image.json')
-
-        sdss_image_filepath = self.get_sdss_image_path(
-            galaxy.megacube.split('.fits.fz')[0], 'sdss_image.jpg')
+            galaxy.megacube, 'original_image.json')
 
         with open(original_image_filepath) as f:
             data = json.load(f)
 
-        megacube = self.get_megacube_path(galaxy.megacube)
 
         # Only send the path if the file exists:
-        if os.path.exists(
-            self.get_sdss_image_path(
-                galaxy.megacube.split('.fits.fz')[0], 'sdss_image.jpg',
-                'images')):
-            data['sdss_image'] = sdss_image_filepath
+        if os.path.exists(self.get_sdss_image_path(galaxy.megacube)):
+            data['sdss_image'] = self.get_sdss_image_url(galaxy.megacube)
         else:
             data['sdss_image'] = None
 
@@ -111,7 +133,7 @@ class ImageViewSet(viewsets.ModelViewSet):
         galaxy = self.get_object()
 
         list_hud_filepath = self.get_image_part_path(
-            galaxy.megacube.split('.fits.fz')[0], 'list_hud.json')
+            galaxy.megacube, 'list_hud.json')
 
         with open(list_hud_filepath) as f:
             data = json.load(f)
@@ -174,7 +196,7 @@ class ImageViewSet(viewsets.ModelViewSet):
         filename = 'image_heatmap_%s.json' % params['hud']
 
         image_heatmap_filepath = self.get_image_part_path(
-            galaxy.megacube.split('.fits.fz')[0], filename)
+            galaxy.megacube, filename)
 
         with open(image_heatmap_filepath) as f:
             data = json.load(f)
@@ -201,7 +223,7 @@ class ImageViewSet(viewsets.ModelViewSet):
         galaxy = self.get_object()
 
         list_hud_filepath = self.get_image_part_path(
-            galaxy.megacube.split('.fits.fz')[0], 'list_hud.json')
+            galaxy.megacube, 'list_hud.json')
 
         with open(list_hud_filepath) as f:
             list_hud = json.load(f)
@@ -212,7 +234,7 @@ class ImageViewSet(viewsets.ModelViewSet):
             filename = 'image_heatmap_%s.json' % hud['name']
 
             image_heatmap_filepath = self.get_image_part_path(
-                galaxy.megacube.split('.fits.fz')[0], filename)
+                galaxy.megacube, filename)
 
             with open(image_heatmap_filepath) as f:
                 image = json.load(f)
@@ -247,7 +269,7 @@ class ImageViewSet(viewsets.ModelViewSet):
 
         galaxy = self.get_object()
 
-        megacube = self.get_megacube_path(galaxy.megacube)
+        megacube = self.get_megacube_from_cache(galaxy.megacube)
 
         flux, lamb = mclass().flux_by_position(
             megacube, int(params['x']), int(params['y']))
@@ -289,7 +311,7 @@ class ImageViewSet(viewsets.ModelViewSet):
 
         galaxy = self.get_object()
 
-        megacube = self.get_megacube_path(galaxy.megacube)
+        megacube = self.get_megacube_from_cache(galaxy.megacube)
 
         log_age = mclass().log_age_by_position(
             megacube, int(params['x']), int(params['y']))
@@ -323,7 +345,7 @@ class ImageViewSet(viewsets.ModelViewSet):
 
         galaxy = self.get_object()
 
-        megacube = self.get_megacube_path(galaxy.megacube)
+        megacube = self.get_megacube_from_cache(galaxy.megacube)
 
         vecs = mclass().vecs_by_position(
             megacube, int(params['x']), int(params['y']))
@@ -347,7 +369,7 @@ class ImageViewSet(viewsets.ModelViewSet):
         galaxy = self.get_object()
 
         cube_header_filepath = self.get_image_part_path(
-            galaxy.megacube.split('.fits.fz')[0], 'cube_header.json')
+            galaxy.megacube, 'cube_header.json')
 
         with open(cube_header_filepath) as f:
             data = json.load(f)
@@ -359,7 +381,7 @@ class ImageViewSet(viewsets.ModelViewSet):
 
         galaxy = self.get_object()
 
-        megacube = self.get_megacube_path(galaxy.megacube)
+        megacube = self.get_megacube_from_cache(galaxy.megacube)
 
         data = mclass().image_by_hud(
             megacube, 'Adev')
