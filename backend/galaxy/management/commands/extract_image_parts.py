@@ -17,10 +17,24 @@ import statistics
 class Command(BaseCommand):
     help = 'Extracting image parts to separate files to gain performance'
 
+    def add_arguments(self, parser):
+
+        parser.add_argument(
+            '--limit',
+            dest='limit',
+            default=None,
+            help='Limit max objects executed in one run.',
+        )
+
+        parser.add_argument(
+            '--force',
+            dest='force_overwrite',
+            default=False,
+            help='Use this parameter to overwrite pre-existing data.',
+        )
+
     def handle(self, *args, **kwargs):
         # TODO: Implementar paralelismo com Celery
-        # TODO: Parametro para ignorar objetos já executados
-        # TODO: Parametro para gerar tudo de novo
         # TODO: Task para Remover arquivos do diretório cache
 
         t0 = datetime.now()
@@ -28,8 +42,16 @@ class Command(BaseCommand):
         self.stdout.write('Started [%s]' %
                           t0.strftime("%Y-%m-%d %H:%M:%S"))
 
-        objs = Image.objects.all()
-        # objs = objs[0:1]
+        if kwargs['force_overwrite']:
+            # Todos os objetos independente de já ter sido executado.
+            objs = Image.objects.all()
+        else:
+            # Apenas objetos que ainda não foram executados.
+            objs = Image.objects.filter(had_parts_extracted=False)
+
+        if kwargs['limit']:
+            objs = objs[0:int(kwargs['limit'])]
+
         current = 0
         exec_times = []
         for obj in objs:
@@ -87,6 +109,9 @@ class Command(BaseCommand):
 
         os.remove(fitspath)
         self.stdout.write('Removed Fits file.')
+
+        obj.had_parts_extracted = True
+        obj.save()
 
         t1 = datetime.now()
         tdelta = t1 - t0

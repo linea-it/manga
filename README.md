@@ -71,16 +71,16 @@ docker-compose exec backend python manage.py insert_metadata drpall-v3_1_1.fits
 Proximo passo é extrair os HDUs do megacubo em arquivos menores. isto é necessário para permitir um acesso rápido aos dados pela interface. Cada megacubo tem ~1GB o que torna inviavel a sua leitura em tempo real, para isso esse comando abre cada megacubo que foi registrado pelo `insert_metada` e executa rotinas para extrair os dados. Para cada megacubo no diretório /images que tenha cido registrado na etapa anterior, será criado um diretório `/images/megacube_parts/manga-<plateifu>-MEGACUBE.fits/` com um arquivo .json para cada HDU extraido.
 
 ```bash
-docker-compose exec backend python manage.py insert_metadata drpall-v3_1_1.fits
+docker-compose exec backend python manage.py extract_image_parts
 ```
 
-Download SDSS Images
+<!-- Download SDSS Images
 This will download the SDSS image by the object's RA and Dec.
 You can check the images in here: <http://skyserver.sdss.org/dr16/en/tools/chart/image.aspx>.
 Executar o seguinte comando para baixar as imagens para cada objeto.
 
 ```bash
 docker-compose exec backend python manage.py download_sdss_images
-```
+``` -->
 
 ---
