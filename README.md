@@ -84,3 +84,5 @@ docker-compose exec backend python manage.py download_sdss_images
 ``` -->
 
 ---
+
+https://github.com/danielrd6/ifscube

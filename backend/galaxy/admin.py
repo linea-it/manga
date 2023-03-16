@@ -7,4 +7,4 @@ from .models import Image
 @admin.register(Image)
 class ImageAdmin(admin.ModelAdmin):
     list_display = ('id', 'megacube', 'mangaid', 'objra', 'objdec',
-                    'nsa_iauname', 'mjdmed', 'exptime', 'airmsmed', 'seemed', 'nsa_z',)
+                    'nsa_iauname', 'mjdmed', 'exptime', 'airmsmed', 'seemed', 'nsa_z', 'had_parts_extracted')

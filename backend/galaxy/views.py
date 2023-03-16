@@ -16,7 +16,7 @@ import tarfile
 
 
 class ImageViewSet(viewsets.ModelViewSet):
-    queryset = Image.objects.all()
+    queryset = Image.objects.filter(had_parts_extracted=True)
     serializer_class = ImageSerializer
     filter_fields = ('id', 'megacube', 'mangaid', 'plateifu', 'objra', 'objdec',
                      'nsa_iauname', 'mjdmed', 'exptime', 'airmsmed', 'seemed',
