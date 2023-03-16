@@ -450,6 +450,13 @@ class Image(models.Model):
         null=True,
         blank=True
     )
+
+    # Flag que indica se o processo extract_image_parts foi executado para este objeto.
+    had_parts_extracted = models.BooleanField(
+        verbose_name='Extracted',
+        default=False,
+        help_text='Indicates whether the process of extracting parts of the image was performed for this object.'
+    )
     # nsa_sersic_flux = ''
     # nsa_sersic_flux_ivar= ''
 
