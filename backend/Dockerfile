@@ -80,6 +80,7 @@ COPY ./entrypoint.sh /entrypoint.sh
 COPY ./start.sh /start.sh
 COPY ./start-celery-worker.sh /start-celery-worker.sh
 COPY ./start-celery-beat.sh /start-celery-beat.sh
+COPY ./start-celery-flower.sh /start-celery-flower.sh
 
 # Switch to non-priviliged user and run app
 USER manga

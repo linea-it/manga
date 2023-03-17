@@ -29,7 +29,8 @@ services:
     env_file:
       - .env.dev
     depends_on:
-      - backend
+      - rabbit
+      - database
 
   # Handling Periodic Tasks in Django with Celery and Docker
   # https://testdriven.io/blog/django-celery-periodic-tasks/    
@@ -45,7 +46,28 @@ services:
     env_file:
       - .env.dev
     depends_on:
-      - backend
+      - rabbit
+      - database
+
+  # Handling Periodic Tasks in Django with Celery and Docker
+  # https://testdriven.io/blog/django-celery-periodic-tasks/    
+  # https://testdriven.io/courses/django-celery/docker/
+  flower:
+    user: 1000:1000
+    build: ./backend
+    command: /start-celery-flower.sh
+    volumes:
+      - ./backend:/usr/src/app
+      - ./images:/images
+      - ./log:/log
+    ports:
+      - 5555:5555
+    env_file:
+      - .env.dev
+    depends_on:
+      - rabbit
+      - database
+
 
   # Frontend React
   frontend:

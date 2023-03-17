@@ -23,7 +23,6 @@ flower==0.9.7
 fonttools==4.39.2
 humanize==3.1.0
 idna==2.10
-ifscube @ git+https://github.com/danielrd6/ifscube.git@51475a1d6e085424510508207ee1591084ace70d
 importlib-metadata==3.7.2
 importlib-resources==5.12.0
 isort==4.3.21
