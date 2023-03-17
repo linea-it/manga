@@ -22,11 +22,6 @@ then
     # # Start Celery Beat
     # celery worker --workdir /app --app manga -l info --beat &> /log/celery_beat.log  &
 
-    # python manage.py runserver 0.0.0.0:$GUNICORN_PORT
-
-    # # Dar Permissao aos arquivos de log
-    # chmod -R 775 $LOG_DIR
-
     # uWSGI para servir o app e ter compatibilidade com Shibboleth
     # https://uwsgi-docs.readthedocs.io/en/latest/WSGIquickstart.html
     # TODO: Em produção não é recomendado o auto reload. utilizar uma variavel de ambiente para ligar ou desligar esta opção.
