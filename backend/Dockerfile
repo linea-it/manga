@@ -1,41 +1,31 @@
-FROM python:3.6
+FROM python:3.8-slim
 
-ENV GUNICORN_PORT=8001
-ENV GUNICORN_MODULE=manga.wsgi
-ENV GUNICORN_CALLABLE=application
-ENV APP_PATH=/app
+RUN mkdir /images /log /usr/src/app
+WORKDIR /usr/src/app
 
-RUN apt-get update && apt-get install -y  \
+RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
+  && apt-get -y install --no-install-recommends \
   python-dev \
   libaio-dev \
   build-essential \
-  vim \
-  expect \
-  telnet \
-  ftp \
-  libcfitsio-bin \
-  && rm -rf /var/lib/apt/lists/*
+  libcfitsio-bin \ 
+  libsasl2-dev \
+  libldap2-dev \
+  libssl-dev \
+  libpq-dev \
+  gfortran \
+  git \
+  && apt-get clean \
+  && apt-get autoclean \
+  && apt-get autoremove --purge  -y \
+  && rm -rf /var/lib/apt/lists/* 
 
-# Install python-ldap dependencies
-RUN apt-get update && apt-get install libsasl2-dev libldap2-dev libssl-dev -y
+COPY requirements.txt /tmp/pip-tmp/
+RUN pip install --upgrade pip wheel \
+    && pip --disable-pip-version-check --no-cache-dir install -r /tmp/pip-tmp/requirements.txt \
+    && pip install --upgrade git+https://github.com/danielrd6/ifscube.git \
+    && rm -rf /tmp/pip-tmp
 
-RUN mkdir $APP_PATH
+COPY . /usr/src/app
 
-WORKDIR $APP_PATH
-
-ADD requirements.txt $APP_PATH
-
-RUN pip install --upgrade pip
-
-# Lint
-RUN pip install --upgrade pip
-RUN pip install flake8
-COPY . /usr/src/app/
-RUN flake8 --ignore=E501,F401 .
-
-RUN pip install -r requirements.txt
-
-COPY . $APP_PATH
-
-WORKDIR $APP_PATH
-ENTRYPOINT $APP_PATH/entrypoint.sh
+ENTRYPOINT ./entrypoint.sh

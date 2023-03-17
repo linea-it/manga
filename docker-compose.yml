@@ -6,12 +6,13 @@ services:
     env_file:
       - .env.dev
     volumes:
-      - ./backend:/app
+      - ./backend:/usr/src/app
       - ./images:/images
       - ./log:/log
     depends_on:
       - rabbit
       - database
+    command: /usr/src/app/entrypoint.sh
 
   # Frontend React
   frontend:
