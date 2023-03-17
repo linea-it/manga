@@ -32,7 +32,7 @@ RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
 # Install python packages
-COPY requirements.txt /tmp/pip-tmp/
+COPY ./requirements.txt /tmp/pip-tmp/
 RUN pip install --upgrade pip wheel \
     && pip --disable-pip-version-check --no-cache-dir install -r /tmp/pip-tmp/requirements.txt \
     && pip install --upgrade git+https://github.com/danielrd6/ifscube.git \
@@ -49,6 +49,7 @@ ARG USER_GID=$USER_UID
 COPY --from=builder /usr/lib/x86_64-linux-gnu /usr/lib/x86_64-linux-gnu
 
 # add user so we can run things as non-root
+# https://code.visualstudio.com/remote/advancedcontainers/add-nonroot-user
 RUN mkdir /images /log \
     && groupadd --gid $USER_GID $USERNAME \
     && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME \
@@ -75,12 +76,16 @@ ENV SHELL /bin/bash
 WORKDIR /usr/src/app
 COPY . /usr/src/app
 
-RUN 
+COPY ./entrypoint.sh /entrypoint.sh
+COPY ./start.sh /start.sh
+COPY ./start-celery-worker.sh /start-celery-worker.sh
+COPY ./start-celery-beat.sh /start-celery-beat.sh
 
 # Switch to non-priviliged user and run app
 USER manga
 
-ENTRYPOINT ./entrypoint.sh
+# ENTRYPOINT ./entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
 
 
 # RUN mkdir /images /log /usr/src/app

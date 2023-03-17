@@ -2,21 +2,53 @@ version: '3.6'
 services:
   # Backend Django
   backend:
+    user: 1000:1000
     build: ./backend
-    env_file:
-      - .env.dev
+    command: /start.sh    
     volumes:
       - ./backend:/usr/src/app
       - ./images:/images
       - ./log:/log
+    env_file:
+      - .env.dev      
     depends_on:
       - rabbit
       - database
-    command: /usr/src/app/entrypoint.sh
+  
+  # Handling Periodic Tasks in Django with Celery and Docker
+  # https://testdriven.io/blog/django-celery-periodic-tasks/
+  # https://testdriven.io/courses/django-celery/docker/
+  celery_worker:
+    user: 1000:1000
+    build: ./backend
+    command: /start-celery-worker.sh
+    volumes:
+      - ./backend:/usr/src/app
+      - ./images:/images
+      - ./log:/log
+    env_file:
+      - .env.dev
+    depends_on:
+      - backend
+
+  # Handling Periodic Tasks in Django with Celery and Docker
+  # https://testdriven.io/blog/django-celery-periodic-tasks/    
+  # https://testdriven.io/courses/django-celery/docker/
+  celery_beat: 
+    user: 1000:1000
+    build: ./backend
+    command: /start-celery-beat.sh
+    volumes:
+      - ./backend:/usr/src/app
+      - ./images:/images
+      - ./log:/log
+    env_file:
+      - .env.dev
+    depends_on:
+      - backend
 
   # Frontend React
   frontend:
-    # image: node:8.10
     image: node:12.16.2
     working_dir: /app
     volumes:
@@ -51,7 +83,7 @@ services:
   # Message-Broker Software RabbitMQ
   rabbit:
     image: rabbitmq:3-management-alpine
-    hostname: rabbit_manga
+    # hostname: rabbit_manga
     env_file:
       - .env.dev
 
