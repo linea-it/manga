@@ -85,7 +85,7 @@ COPY ./start-celery-flower.sh /start-celery-flower.sh
 # Switch to non-priviliged user and run app
 USER manga
 
-# ENTRYPOINT ./entrypoint.sh
+
 ENTRYPOINT ["/entrypoint.sh"]
 
 
