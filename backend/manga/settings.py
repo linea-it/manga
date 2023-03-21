@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 import os
 import ldap
 from django_auth_ldap.config import LDAPSearch, PosixGroupType
+from pathlib import Path
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -22,14 +23,14 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get("SECRET_KEY")
+SECRET_KEY = os.environ.get("SECRET_KEY", "development_secret_key_please_generate_a_unique_key")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = int(os.environ.get("DEBUG", default=0))
 
 # 'DJANGO_ALLOWED_HOSTS' should be a single string of hosts with a space between each.
 # For example: 'DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1 [::1]'
-ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")
+ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "localhost 127.0.0.1 [::1]").split(" ")
 
 # Application definition
 
@@ -92,11 +93,11 @@ WSGI_APPLICATION = 'manga.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': os.environ.get('SQL_ENGINE', 'django.db.backends.sqlite3'),
-        'NAME': os.environ.get('SQL_DATABASE', os.path.join(BASE_DIR, 'db.sqlite3')),
-        'USER': os.environ.get('SQL_USER', 'user'),
-        'PASSWORD': os.environ.get('SQL_PASSWORD', 'password'),
-        'HOST': os.environ.get('SQL_HOST', 'localhost'),
-        'PORT': os.environ.get('SQL_PORT', '5432'),
+        'NAME': os.environ.get('SQL_DATABASE', os.path.join(BASE_DIR, 'db_manga')),
+        'USER': os.environ.get('SQL_USER', None),
+        'PASSWORD': os.environ.get('SQL_PASSWORD', None),
+        'HOST': os.environ.get('SQL_HOST', None),
+        'PORT': os.environ.get('SQL_PORT', None),
     }
 }
 
@@ -136,9 +137,12 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
+STATIC_URL = "/django_static/"
+STATIC_ROOT = Path(BASE_DIR).joinpath("django_static")
 
-STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+# https://docs.djangoproject.com/en/4.1/ref/settings/#csrf-cookie-name
+# TODO: alterar o frontend para ter um csrftoken unico
+# CSRF_COOKIE_NAME = "manga.csrftoken"
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -160,16 +164,11 @@ IMAGES_DIR = "/images"
 
 # Sub directories of /images
 MEGACUBE_ROOT = 'megacube_parts'
-MEGACUBE_PARTS = os.path.join(IMAGES_DIR, MEGACUBE_ROOT)
+MEGACUBE_PARTS = Path(IMAGES_DIR).joinpath(MEGACUBE_ROOT).mkdir( parents=True, exist_ok=True )
 
 MEGACUBE_CACHE_ROOT = 'cache'
-MEGACUBE_CACHE = os.path.join(IMAGES_DIR, MEGACUBE_CACHE_ROOT)
+MEGACUBE_CACHE = Path(IMAGES_DIR).joinpath(MEGACUBE_CACHE_ROOT).mkdir( parents=True, exist_ok=True )
 
-if not os.path.exists(MEGACUBE_PARTS):
-    os.mkdir(MEGACUBE_PARTS)
-
-if not os.path.exists(MEGACUBE_CACHE):
-    os.mkdir(MEGACUBE_CACHE)
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
@@ -178,9 +177,9 @@ AUTHENTICATION_BACKENDS = (
 
 # LDAP Authentication
 # Responsible for turn on and off the LDAP authentication:
-AUTH_LDAP_ENABLED = os.environ.get('AUTH_LDAP_ENABLED')
+AUTH_LDAP_ENABLED = bool(os.environ.get('AUTH_LDAP_ENABLED', False))
 
-if AUTH_LDAP_ENABLED == 'True':
+if AUTH_LDAP_ENABLED == True:
 
     # The address of the LDAP server:
     AUTH_LDAP_SERVER_URI = os.environ.get('AUTH_LDAP_SERVER_URI')
@@ -246,16 +245,11 @@ LOGGING = {
 
 # HOST URL url para onde o app está disponivel. em desenvolvimento //localhost
 # No ambiente de testes é //manga.linea.gov.br
-HOST_URL = None
-try:
-    HOST_URL = os.environ["HOST_URL"]
-except:
-    raise ("Environment variable HOST_URL can not be null.")
+HOST_URL = os.environ.get("HOST_URL", "//localhost")
 
 # Configurando os redirects padrao de login e logout, para apontar para o HOST_URL.
-if HOST_URL is not None:
-    LOGOUT_REDIRECT_URL = HOST_URL
-    LOGIN_REDIRECT_URL = HOST_URL
+LOGOUT_REDIRECT_URL = HOST_URL
+LOGIN_REDIRECT_URL = HOST_URL
 
 # # Email Notification configs
 # # Dados de configuração do servidor de email que será usado para envio das notificações.
@@ -287,14 +281,14 @@ EMAIL_HELPDESK = os.environ.get('EMAIL_HELPDESK')
 # Email de contato do LIneA
 EMAIL_HELPDESK_CONTACT = os.environ.get('EMAIL_HELPDESK_CONTACT')
 # Enables or disables sending daily email access statistics
-SEND_DAILY_STATISTICS_EMAIL = os.environ.get('SEND_DAILY_STATISTICS_EMAIL')
+SEND_DAILY_STATISTICS_EMAIL = os.environ.get('SEND_DAILY_STATISTICS_EMAIL', False)
 # Email that will receive the notifications and reports
 EMAIL_ADMIN = os.environ.get('EMAIL_ADMIN')
 
 
 # CELERY SETTINGS
 CELERY = {
-    'BROKER_URL': os.environ.get('CELERY_BROKER', 'localhost'),
+    'BROKER_URL': os.environ.get('CELERY_BROKER', 'amqp://guest:guest@rabbit:5672'),
     'CELERY_IMPORTS': ('activity_statistic.tasks',),
     'CELERY_RESULT_BACKEND': 'django-db',
     'CELERY_TASK_SERIALIZER': 'json',
