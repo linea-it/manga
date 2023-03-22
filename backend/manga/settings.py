@@ -164,10 +164,12 @@ IMAGES_DIR = "/images"
 
 # Sub directories of /images
 MEGACUBE_ROOT = 'megacube_parts'
-MEGACUBE_PARTS = Path(IMAGES_DIR).joinpath(MEGACUBE_ROOT).mkdir( parents=True, exist_ok=True )
+MEGACUBE_PARTS = Path(IMAGES_DIR).joinpath(MEGACUBE_ROOT)
+MEGACUBE_PARTS.mkdir( parents=True, exist_ok=True )
 
 MEGACUBE_CACHE_ROOT = 'cache'
-MEGACUBE_CACHE = Path(IMAGES_DIR).joinpath(MEGACUBE_CACHE_ROOT).mkdir( parents=True, exist_ok=True )
+MEGACUBE_CACHE = Path(IMAGES_DIR).joinpath(MEGACUBE_CACHE_ROOT)
+MEGACUBE_CACHE.mkdir( parents=True, exist_ok=True )
 
 
 AUTHENTICATION_BACKENDS = (

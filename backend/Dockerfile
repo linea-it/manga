@@ -13,6 +13,7 @@ ENV PYTHONUNBUFFERED=1
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
   && apt-get -y install --no-install-recommends \
   python-dev \
+  python3-tk \
   libaio-dev \
   build-essential \
   libcfitsio-bin \ 
@@ -33,7 +34,7 @@ ENV PATH="/opt/venv/bin:$PATH"
 
 # Install python packages
 COPY ./requirements.txt /tmp/pip-tmp/
-RUN pip install --upgrade pip wheel \
+RUN pip install --upgrade pip wheel numpy==1.24.2 \
     && pip --disable-pip-version-check --no-cache-dir install -r /tmp/pip-tmp/requirements.txt \
     && pip install --upgrade git+https://github.com/danielrd6/ifscube.git \
     && rm -rf /tmp/pip-tmp

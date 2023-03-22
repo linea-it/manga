@@ -7,6 +7,7 @@ from galaxy.models import Image
 from galaxy.serializers import ImageSerializer
 
 import os
+from pathlib import Path
 from django.conf import settings
 import json
 
@@ -30,7 +31,7 @@ class ImageViewSet(viewsets.ModelViewSet):
     ordering = ('mangaid',)
 
     def get_megacube_path(self, filename):
-        return os.path.join(settings.IMAGES_DIR, filename)
+        return Path(settings.IMAGES_DIR).joinpath(filename)
 
     def get_megacube_size(self, filename):
         return os.stat(self.get_megacube_path(filename)).st_size
@@ -39,28 +40,28 @@ class ImageViewSet(viewsets.ModelViewSet):
         # Verificar se existe o arquivo megacubo descompactado no diretório de cache.
         megacube_path = self.get_megacube_path(filename)
         fitsfile = filename.split('.tar.bz2')[0]
-        cache_dir = settings.MEGACUBE_CACHE
-        cache_filepath = os.path.join(settings.MEGACUBE_CACHE, fitsfile)
-        if os.path.exists(cache_filepath):
+        cache_dir = Path(settings.MEGACUBE_CACHE)
+        cache_filepath = cache_dir.joinpath(fitsfile)
+        if cache_filepath.exists():
             return cache_filepath
         else:
             # Extrai o megacubo no diretório de cache.
-            self.extract_bz2(megacube_path, cache_dir)
+            self.extract_bz2(compressed_file=megacube_path, local_path=cache_dir)
             return cache_filepath
 
-    def extract_bz2(self, filename, path):
-        with tarfile.open(filename, "r:bz2") as tar:
-            tar.extractall(path)          
+    def extract_bz2(self, compressed_file, local_path):
+        with tarfile.open(compressed_file, "r:bz2") as tar:
+            tar.extractall(local_path)          
 
     def get_obj_path(self, megacube_name):
         objdir = megacube_name.split('.fits.tar.bz2')[0]
-        objpath = os.path.join(settings.MEGACUBE_PARTS, objdir)
+        objpath = Path(settings.MEGACUBE_PARTS).joinpath(objdir)
         return objpath
 
     def get_image_part_path(self, megacube_name, filename):
         # Join and make the path for the extracted files:
         objpath = self.get_obj_path(megacube_name)
-        return os.path.join(objpath, filename)
+        return objpath.joinpath(filename)
 
     def get_sdss_base_url(self, megacube_name):
         objdir = megacube_name.split('.fits.tar.bz2')[0]

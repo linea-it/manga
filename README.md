@@ -86,3 +86,9 @@ docker-compose exec backend python manage.py download_sdss_images
 ---
 
 https://github.com/danielrd6/ifscube
+
+tar -xvjf manga-8261-3702-MEGACUBE.fits.tar.bz2 manga-8261-3702-MEGACUBE.fits
+
+https://github.com/danielrd6/ifscube/blob/master/bin/fit_scrutinizer
+
+fit_scrutinizer manga-8261-3702-MEGACUBE.fits --small-screen
