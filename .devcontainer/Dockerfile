@@ -32,7 +32,9 @@ RUN pip install --upgrade pip wheel numpy==1.24.2 \
 COPY ./backend/entrypoint.sh /entrypoint.sh
 
 RUN sudo mkdir /images /log \
-    && sudo chown -R $USER_UID:$USER_GID /images /log
+    && chmod -R 775 /images /log
+    && sudo chown -R 1000:1000 /images /log \
+
 
 ENTRYPOINT ["/entrypoint.sh"]
 

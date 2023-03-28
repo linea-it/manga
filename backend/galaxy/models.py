@@ -457,6 +457,46 @@ class Image(models.Model):
         default=False,
         help_text='Indicates whether the process of extracting parts of the image was performed for this object.'
     )
+    
+    compression = models.CharField(
+        verbose_name='Compression',
+        max_length=10,
+        blank=True,
+        null=True,
+        default='.tar.bz2'
+    )
+
+    compressed_size = models.IntegerField(
+        verbose_name='Compressed Size',
+        null=True,
+        blank=True,
+        default=0
+    )
+
+    path = models.FilePathField(
+        verbose_name='Path',
+        null=True,
+        blank=True,
+        default=None,
+        help_text='Complete Path to original file.'
+    )
+
+    folder_name = models.FilePathField(
+        verbose_name='Folder',
+        null=True,
+        blank=True,
+        default=None,
+        help_text='Folder Name in megacube_parts'
+    )
+    
+    size = models.IntegerField(
+        verbose_name='Size',
+        null=True,
+        blank=True,
+        default=0,
+        help_text='Size of fits file uncompressed'
+    )
+
     # nsa_sersic_flux = ''
     # nsa_sersic_flux_ivar= ''
 
