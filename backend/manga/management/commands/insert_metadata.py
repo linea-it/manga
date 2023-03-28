@@ -7,7 +7,9 @@ from manga.verifyer import mclass
 from optparse import make_option
 import os
 import numpy as np
-
+from pathlib import Path
+from django.conf import settings
+from manga.megacubo_utils import get_megacube_path
 
 class Command(BaseCommand):
     help = 'Integrating metadata files into the database'
@@ -41,9 +43,6 @@ class Command(BaseCommand):
     def delete_table(self, model):
         model.objects.all().delete()
 
-    def get_megacube_path(self, filename):
-        return os.path.join(os.getenv("IMAGE_PATH", "/images/"), filename)
-
     def get_model_fields(self, model):
 
         fields = []
@@ -69,7 +68,10 @@ class Command(BaseCommand):
         self.stdout.write(
             'Reading object list from : %s' % filename)
 
-        drpall = self.get_megacube_path(filename)
+        drpall = get_megacube_path(filename)
+        if not drpall.exists():
+            raise Exception('No input files found: %s' % str(drpall))
+
         drpall_metadata = mclass().get_metadata(drpall)
 
         columns = self.get_model_fields(Image)
@@ -93,21 +95,35 @@ class Command(BaseCommand):
         count = 0
         for row in list_metadata:
 
-            filename = 'manga-%s-MEGACUBE.fits.tar.bz2' % row['plateifu']
-            megacube = self.get_megacube_path(filename)
+            original_filename = 'manga-%s-MEGACUBE.fits.tar.bz2' % row['plateifu']
+            folder_name = 'manga-%s' % row['plateifu']
+            original_megacube_path = get_megacube_path(original_filename)
 
-            if os.path.isfile(megacube):
+            self.stdout.write("original_megacube_path: %s" % str(original_megacube_path))
+
+            if original_megacube_path.exists() and original_megacube_path.is_file():
 
                 try:
-                    # self.stdout.write('File {} was found!'.format(filename))
-
                     new_image = Image()
 
                     for key in row.keys():
                         setattr(new_image, key, row[key])
 
                     # Adding the filename to table
+                    filename = 'manga-%s-MEGACUBE.fits' % row['plateifu']
                     setattr(new_image, 'megacube', filename)
+
+                    # Adding compression
+                    setattr(new_image, 'compression', '.tar.bz2')
+
+                    # Complete path to original file
+                    setattr(new_image, 'path', original_megacube_path)
+
+                    # Compressed file size
+                    setattr(new_image, 'compressed_size', original_megacube_path.stat().st_size)
+
+                    # Folder name (used in megacubo_parts_directory)
+                    setattr(new_image, 'folder_name', folder_name)
 
                     new_image.save()
 

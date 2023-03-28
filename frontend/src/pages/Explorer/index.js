@@ -62,6 +62,7 @@ function Explorer() {
     m: [],
     mlegend: [],
   });
+  const [isLoadingFlux, setLoadingFlux] = React.useState(false)
 
   useEffect(() => {
     getHudList(id).then((res) => {
@@ -79,7 +80,22 @@ function Explorer() {
   }, [hudList]);
 
   const loadFluxMap = (x, y) => {
-    getFluxByPosition({ x, y, id }).then((res) => setFluxPlotData(res));
+    setLoadingFlux(true)
+    getFluxByPosition({ x, y, id })
+      .then(res => {
+        setLoadingFlux(false)
+        setFluxPlotData(res)
+      })
+      .catch(res => {
+        setLoadingFlux(false)
+        if (res.response.status === 400) {
+          // Tratamento para erro nos campos
+          // catchFormError(res.response.data)
+        }
+        if (res.response.status === 500) {
+          // catchFormError(res.response.data)
+        }
+      })
   };
 
   useEffect(() => {
@@ -352,6 +368,7 @@ function Explorer() {
               selectedImage={selectedImage}
               vecsPlotData={vecsPlotData}
               agePlotData={agePlotData}
+              isLoading={isLoadingFlux}
             />
           </Grid>
         </>

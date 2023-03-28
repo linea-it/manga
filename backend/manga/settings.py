@@ -14,6 +14,8 @@ import os
 import ldap
 from django_auth_ldap.config import LDAPSearch, PosixGroupType
 from pathlib import Path
+from urllib.parse import urljoin
+import posixpath
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -160,14 +162,20 @@ REST_FRAMEWORK = {
 }
 
 # Project Path
-IMAGES_DIR = "/images"
+IMAGES_DIR = Path(os.getenv('IMAGE_PATH', '/images'))
+DATA_BASE_URL = os.getenv('DATA_BASE_URL', '/data')
 
 # Sub directories of /images
 MEGACUBE_ROOT = 'megacube_parts'
-MEGACUBE_PARTS = Path(IMAGES_DIR).joinpath(MEGACUBE_ROOT).mkdir( parents=True, exist_ok=True )
+MEGACUBE_PARTS = Path(IMAGES_DIR).joinpath(MEGACUBE_ROOT)
+MEGACUBE_PARTS.mkdir( parents=True, exist_ok=True )
+
+MEGACUBE_PARTS_URL = posixpath.join(DATA_BASE_URL, MEGACUBE_ROOT)
 
 MEGACUBE_CACHE_ROOT = 'cache'
-MEGACUBE_CACHE = Path(IMAGES_DIR).joinpath(MEGACUBE_CACHE_ROOT).mkdir( parents=True, exist_ok=True )
+MEGACUBE_CACHE = Path(IMAGES_DIR).joinpath(MEGACUBE_CACHE_ROOT)
+MEGACUBE_CACHE.mkdir( parents=True, exist_ok=True )
+
 
 
 AUTHENTICATION_BACKENDS = (

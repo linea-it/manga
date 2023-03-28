@@ -6,6 +6,7 @@ ENV PYTHONUNBUFFERED 1
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && apt-get -y install --no-install-recommends \
     python-dev \
+    python3-tk \
     libaio-dev \
     build-essential \
     libcfitsio-bin \ 
@@ -23,12 +24,17 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
 
 # [Optional] If your requirements rarely change, uncomment this section to add them to the image.
 COPY ./backend/requirements.txt /tmp/pip-tmp/
-RUN pip install --upgrade pip wheel \
+RUN pip install --upgrade pip wheel numpy==1.24.2 \
     && pip --disable-pip-version-check --no-cache-dir install -r /tmp/pip-tmp/requirements.txt \
     && pip install --upgrade git+https://github.com/danielrd6/ifscube.git \
     && rm -rf /tmp/pip-tmp
 
 COPY ./backend/entrypoint.sh /entrypoint.sh
+
+RUN sudo mkdir /images /log \
+    && chmod -R 775 /images /log
+    && sudo chown -R 1000:1000 /images /log \
+
 
 ENTRYPOINT ["/entrypoint.sh"]
 

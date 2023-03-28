@@ -6,7 +6,7 @@ export const getFluxByPosition = ({ id, x, y }) => {
   const params = { x, y };
 
   return axios
-    .get(`/images/${id}/flux_by_position`, { params })
+    .get(`/images/${id}/flux_by_position`, { params }, {timeout: 300000})
     .then((res) => res.data);
 };
 
@@ -68,7 +68,7 @@ export const getLogAgeByPosition = ({ id, x, y }) => {
   const params = { x, y };
 
   return axios
-    .get(`/images/${id}/log_age_by_position`, { params })
+    .get(`/images/${id}/log_age_by_position`, { params }, {timeout: 300000})
     .then((res) => res.data);
 };
 
@@ -76,7 +76,7 @@ export const getVecsByPosition = ({ id, x, y }) => {
   const params = { x, y };
 
   return axios
-    .get(`/images/${id}/vecs_by_position`, { params })
+    .get(`/images/${id}/vecs_by_position`, { params }, {timeout: 300000})
     .then((res) => res.data);
 };
 

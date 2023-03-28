@@ -1,18 +1,20 @@
 
-from django.core.management.base import BaseCommand
-
-from galaxy.models import Image
-from manga.verifyer import mclass
-
-import os
 import json
-from django.conf import settings
-from datetime import datetime, timedelta
-import humanize
-import tarfile
-import requests
+import os
 import shutil
 import statistics
+from datetime import datetime, timedelta
+from pathlib import Path
+
+import humanize
+import requests
+from astropy.io import fits as pf
+from django.conf import settings
+from django.core.management.base import BaseCommand
+from galaxy.models import Image
+
+from manga.verifyer import mclass
+from manga.megacubo_utils import get_megacube_parts_root_path, get_megacube_cache_root_path, extract_bz2, compress_bz2
 
 class Command(BaseCommand):
     help = 'Extracting image parts to separate files to gain performance'
@@ -29,7 +31,7 @@ class Command(BaseCommand):
         parser.add_argument(
             '--force',
             dest='force_overwrite',
-            default=False,
+            action='store_true',
             help='Use this parameter to overwrite pre-existing data.',
         )
 
@@ -58,7 +60,6 @@ class Command(BaseCommand):
             title = " [%s/%s] " % (current, len(objs))
             self.stdout.write(title.center(80, '-'))
 
-
             exec_time = self.process_single_object(obj)
             exec_times.append(exec_time)
             current += 1
@@ -68,10 +69,10 @@ class Command(BaseCommand):
             # Calculo estimativa de tempo de execução.
             estimated = (len(objs) - current) * statistics.mean(exec_times)
             estimated_delta = timedelta(seconds=estimated)
-            self.stdout.write("Processed %s of %s objects" % (current, len(objs)))
+            self.stdout.write("Processed %s of %s objects" %
+                              (current, len(objs)))
             self.stdout.write("Estimated Execution time: %s" % humanize.naturaldelta(
                 estimated_delta, minimum_unit="seconds"))
-
 
         t1 = datetime.now()
 
@@ -84,63 +85,99 @@ class Command(BaseCommand):
 
         self.stdout.write('Done!')
 
-
     def process_single_object(self, obj):
-
         t0 = datetime.now()
 
-        filepath = self.get_megacube_path(obj.megacube)
-        objdir = obj.megacube.split('.fits.tar.bz2')[0]
-        objpath = os.path.join(settings.MEGACUBE_PARTS, objdir)
-        fitspath = os.path.join(objpath, obj.megacube.split('.tar.bz2')[0])
+        # Original file compressed
+        orinal_filepath = Path(obj.path)
+        self.stdout.write("Original File: [%s]" % str(orinal_filepath))
 
-        self.stdout.write('Processing file: [%s]' % filepath)
+        obj_folder_name = obj.folder_name
+        self.stdout.write("Folder Name: [%s]" % str(obj_folder_name))
+
+        # Object directory in Megacube Parts.
+        obj_path = get_megacube_parts_root_path().joinpath(obj_folder_name)
+        self.stdout.write("Megacube Parts Path: [%s]" % str(obj_path))
+        obj_path.mkdir(parents=True, exist_ok=True)
+
+        # Object Cache directory.
+        # obj_cache_path = get_megacube_cache_root_path().joinpath(obj.megacube)
+        # self.stdout.write("Megacube Cache Path: [%s]" % str(obj_cache_path))
+
+
+        # Uncompressed Fits file in images cache directory.
+        # fits_filepath = obj_path.joinpath(obj.megacube)
+        
+        fits_filepath = get_megacube_cache_root_path().joinpath(obj.megacube)
+        self.stdout.write("Extracted Fits: [%s]" % str(fits_filepath))
+
+        self.stdout.write('Processing file: [%s]' % orinal_filepath)
         self.stdout.write('Plate IFU: [%s]' % obj.plateifu)
         self.stdout.write('Manga ID: [%s]' % obj.mangaid)
-        
-        self.extract_bz2(filepath, objpath)
-        self.stdout.write('Fits file: [%s]' % fitspath)
-        
-        self.extract_megacube_header(obj, fitspath, objpath)
-        self.exctract_original_image(obj, fitspath, objpath)
-        self.extract_list_hud(obj, fitspath, objpath)
-        self.extract_image_heatmap(obj, fitspath, objpath)
-        self.download_sdss_images(obj, objpath)
 
-        os.remove(fitspath)
-        self.stdout.write('Removed Fits file.')
+        self.stdout.write('Extracting tar.bz2 file.')
+        extract_bz2(
+            compressed_file=orinal_filepath, 
+            local_dir=fits_filepath.parent)
+        self.stdout.write('Fits file Exists: [%s] Filepath: [%s]' % (
+            fits_filepath.exists(), fits_filepath))
+
+        # Rename orinal file to keep backup
+        backup_filepath = Path(orinal_filepath.parent , f"{obj.megacube}{obj.compression}_backup")
+        orinal_filepath.rename(backup_filepath)
+        self.stdout.write('Backup Original file: [%s]' % backup_filepath)
+
+        # Update Megacubo Headers
+        self.update_megacube_header(fits_filepath)
+
+        self.extract_megacube_header(fits_filepath, obj_path)
+        self.exctract_original_image(fits_filepath, obj_path)
+        self.extract_list_hud(fits_filepath, obj_path)
+        self.extract_image_heatmap(fits_filepath, obj_path)
+
+        self.download_sdss_images(obj, obj_path)
+
+        self.stdout.write('Compressing to tar.bz2 file.')
+        new_compressed_file = Path(obj.path)
+        compress_bz2(
+            filepath=fits_filepath, 
+            compressed_file=new_compressed_file)
+
+        # TODO: Temporariamente não estou removendo os arquivos extraidos para ter o cache para interface 
+        # Ate decidirmos se vamos usar o arquivo extraido ou comprimido.
+        # fits_filepath.unlink()
+        # self.stdout.write('Removed Fits file. Exists: [%s]' % fits_filepath.exists())
 
         obj.had_parts_extracted = True
         obj.save()
 
         t1 = datetime.now()
         tdelta = t1 - t0
-        self.stdout.write('Execution Time: [%s]' % humanize.precisedelta(tdelta))
+        self.stdout.write('Execution Time: [%s]' %
+                          humanize.precisedelta(tdelta))
 
         return tdelta.total_seconds()
 
-    def get_megacube_path(self, filename):
-        return os.path.join(os.getenv('IMAGE_PATH', '/images/'), filename)
+    # def get_megacube_path(self, filename):
+    #     return Path(os.getenv('IMAGE_PATH', '/images/')).joinpath(filename)
 
     def write_in_megacube_path(self, path, filename, content):
-
-        # Join and make the path for the extracted files:
-        filepath = os.path.join(path,filename)
-
         # Create directories, if they don't exist already:
-        os.makedirs(os.path.dirname(filepath), exist_ok=True)
+        path = Path(path)
+        path.mkdir(parents=True, exist_ok=True)
+        # Join and make the path for the extracted files:
+        filepath = path.joinpath(filename)
 
         # If file already exists, remove it:
-        if os.path.exists(filepath):
-            os.remove(filepath)
+        if filepath.exists():
+            filepath.unlink()
 
         with open(filepath, "w") as f:
             json.dump(content, f)
 
         return filepath
 
-
-    def exctract_original_image(self, image, megacube, path):
+    def exctract_original_image(self, megacube, path):
         """
             It extracts the Origimal Image (zero) data from 'FLUX' HUD
             for each image and save them in a very small JSON file in the path
@@ -160,7 +197,7 @@ class Command(BaseCommand):
         filepath = self.write_in_megacube_path(path, filename, content)
         self.stdout.write('Original Image created: [%s]' % filepath)
 
-    def extract_list_hud(self, image, megacube, path):
+    def extract_list_hud(self, megacube, path):
         """
             It extracts the List of HUDs from 'PoPBins' HUD
             for each image and save them in a very small JSON file in the path
@@ -198,8 +235,7 @@ class Command(BaseCommand):
         filepath = self.write_in_megacube_path(path, filename, content)
         self.stdout.write('HUD List created: [%s]' % filepath)
 
-
-    def extract_image_heatmap(self, image, megacube, path):
+    def extract_image_heatmap(self, megacube, path):
         """
             It extracts all the Image Heatmaps from 'PoPBins' HUD
             for each image and for each HUD saved in the file
@@ -233,20 +269,19 @@ class Command(BaseCommand):
             filepath = self.write_in_megacube_path(
                 path, filename, content)
 
-            self.stdout.write('HUD [%s] created: [%s]' % (hud.ljust(10, ' '), filepath.ljust(80, ' ')))
+            self.stdout.write('HUD [%s] created: [%s]' % (
+                hud.ljust(10, ' '), str(filepath).ljust(80, ' ')))
 
             count += 1
         self.stdout.write('Images Heatmap Files created [%s]' % count)
 
-
-    def extract_megacube_header(self, image, megacube, path):
+    def extract_megacube_header(self, megacube, path):
         """
             It extracts the Megacube Header from 'PoPBins' HUD
             for each image and save them in a very small JSON file in the path
             /images/megacube_parts/megacube_{JOB_ID}/cube_header.json.
         """
         # self.stdout.write('Extracting Megacube Header.')
-
         content = repr(mclass().get_headers(
             megacube, 'PoPBins')).split('\n')
 
@@ -256,12 +291,15 @@ class Command(BaseCommand):
 
         self.stdout.write('Megacube Header created: [%s]' % filepath)
 
+    # def extract_bz2(self, compressed_file, local_dir):
+    #     self.stdout.write('Extracting tar.bz2 file.')
+    #     with tarfile.open(compressed_file, "r:bz2") as tar:
+    #         tar.extractall(local_dir)
 
-    def extract_bz2(self, filename, path):
-        self.stdout.write('Extracting tar.bz2 file.')
-        with tarfile.open(filename, "r:bz2") as tar:
-            tar.extractall(path)
-
+    # def compress_bz2(self, filepath, compressed_file):
+    #     self.stdout.write('Compressing to tar.bz2 file.')
+    #     with tarfile.open(compressed_file, "w:bz2") as tar:
+    #         tar.add(filepath, arcname='.')
 
     def download_sdss_images(self, image, path):
         """
@@ -278,13 +316,13 @@ class Command(BaseCommand):
         # Set up the image URL and filename
         image_url = "http://skyserver.sdss.org/dr16/SkyServerWS/ImgCutout/getjpeg?TaskName=Skyserver.Chart.Image&ra=%s&dec=%s&scale=0.099515875&width=512&height=512&opt=G&query=" % (
             ra, dec)
-        
+
         filename = 'sdss_image.jpg'
-        filepath = os.path.join(path, filename)
+        filepath = Path(path).joinpath(filename)
 
         # If file already exists, remove it:
-        if os.path.exists(filepath):
-            os.remove(filepath)
+        if filepath.exists():
+            filepath.unlink()
 
         # Open the url image, set stream to True, this will return the stream content.
         r = requests.get(image_url, stream=True)
@@ -296,10 +334,19 @@ class Command(BaseCommand):
 
             # Open a local file with wb ( write binary ) permission.
             with open(filepath, 'wb') as f:
-                shutil.copyfileobj(r.raw, f)            
+                shutil.copyfileobj(r.raw, f)
 
-            self.stdout.write('SDSS Image was downloaded. [%s]' % str(filepath))
+            self.stdout.write(
+                'SDSS Image was downloaded. [%s]' % str(filepath))
         else:
             self.stdout.write('SDSS Image could not be retrieved')
 
-            
+    def update_megacube_header(self, filepath):
+        self.stdout.write('Updating fits headers.')
+        with pf.open(filepath, mode="update") as file:
+            header = file["PopBins"].header
+            header.update(
+                DATA27=('Mstar', 'Present mass in stars (M_sun, M* from starligh)'))
+            header.update(
+                DATA28=('Mpross', 'Mass that has been processed in stars (~2xMstar)'))
+            file.flush()

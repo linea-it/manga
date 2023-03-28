@@ -14,9 +14,10 @@ services:
     volumes:
       # Update this to wherever you want VS Code to mount the folder of your project
       - ..:/workspaces:cached
-      # - ../backend:/usr/src/app/:cached
-      # - ../images:/images:cached
-      # - ../log:/log:cached
+      - ../backend:/usr/src/app/:cached
+      - ../images:/images:cached
+      - ../log:/log:cached
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw 
 
     # Uncomment the next four lines if you will use a ptrace-based debugger like C++, Go, and Rust.
     # cap_add:

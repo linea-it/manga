@@ -1,6 +1,6 @@
 import React from 'react';
 import Plot from 'react-plotly.js';
-import { Card, CardHeader, CardContent, Grid } from '@material-ui/core';
+import { Card, CardHeader, CardContent, Grid, CircularProgress, Typography, Box } from '@material-ui/core';
 import Age from '../../components/Plot/Age';
 import Vecs from '../../components/Plot/Vecs';
 import styles from './styles';
@@ -10,15 +10,48 @@ function Spectre({
   fluxPlotData,
   heatmapSize,
   agePlotData,
-  vecsPlotData
+  vecsPlotData,
+  isLoading
 }) {
   const classes = styles();
 
+  if (isLoading === true) {
+    return (
+      <Card>
+        <CardHeader title="Spectrum and Histograms" />
+        <CardContent >      
+          <Box 
+          display="flex" 
+          height={heatmapSize.height + 97} 
+          alignItems="center"
+          justifyContent="center"
+          m="auto"
+          flexDirection="column" 
+        >
+            <Box p={1} alignSelf="center">
+              <CircularProgress color="secondary" />
+            </Box>
+            <Box p={1} alignSelf="center">
+              <Typography variant="body2" color="textSecondary" component="p">
+                This request can take a while, but only the first time for each object. {' '}
+              </Typography>
+            </Box> 
+            <Box p={1} alignSelf="center">
+              <Typography variant="body2" color="textSecondary" component="p">            
+                We keep the compressed files and in the first request we uncompress the file and it is available in the cache for a while. If there is any failure try again after a few minutes.
+              </Typography>
+            </Box>             
+          </Box>                  
+        </CardContent>
+      </Card>    
+    )
+  }
+  
   return (
     <Card>
       <CardHeader title="Spectrum and Histograms" />
       <CardContent>
-        {heatmapPoints[0] !== 0 && heatmapPoints[1] !== 0 ? (
+          {heatmapPoints[0] !== 0 && heatmapPoints[1] !== 0 ? (
           <Grid container className={classes.animateEnter}>
             <Grid item xs={12}>
               <Plot
