@@ -29,12 +29,7 @@ RUN pip install --upgrade pip wheel numpy==1.24.2 \
     && pip install --upgrade git+https://github.com/danielrd6/ifscube.git \
     && rm -rf /tmp/pip-tmp
 
-COPY ./backend/entrypoint.sh /entrypoint.sh
-
-RUN sudo mkdir /images /log \
-    && chmod -R 775 /images /log
-    && sudo chown -R 1000:1000 /images /log \
-
+COPY --chmod=0755 ./backend/entrypoint.sh /entrypoint.sh
 
 ENTRYPOINT ["/entrypoint.sh"]
 

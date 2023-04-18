@@ -7,8 +7,8 @@ services:
     command: /start.sh    
     volumes:
       - ./backend:/usr/src/app
-      - ./images:/images
-      - ./log:/log
+      - ./images:/usr/src/app/images
+      - ./log:/usr/src/app/log
     env_file:
       - .env.dev      
     depends_on:
@@ -24,8 +24,8 @@ services:
     command: /start-celery-worker.sh
     volumes:
       - ./backend:/usr/src/app
-      - ./images:/images
-      - ./log:/log
+      - ./images:/usr/src/app/images
+      - ./log:/usr/src/app/log
     env_file:
       - .env.dev
     depends_on:
@@ -41,8 +41,8 @@ services:
     command: /start-celery-beat.sh
     volumes:
       - ./backend:/usr/src/app
-      - ./images:/images
-      - ./log:/log
+      - ./images:/usr/src/app/images
+      - ./log:/usr/src/app/log
     env_file:
       - .env.dev
     depends_on:
@@ -58,8 +58,8 @@ services:
     command: /start-celery-flower.sh
     volumes:
       - ./backend:/usr/src/app
-      - ./images:/images
-      - ./log:/log
+      - ./images:/usr/src/app/images
+      - ./log:/usr/src/app/log
     ports:
       - 5555:5555
     env_file:
