@@ -33,10 +33,16 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
 # ENV PATH="/opt/venv/bin:$PATH"
 
 # Install python packages
+# COPY ./requirements.txt /tmp/pip-tmp/
+# RUN pip install --upgrade pip wheel numpy==1.24.2 \
+#     && pip --disable-pip-version-check --no-cache-dir install -r /tmp/pip-tmp/requirements.txt \
+#     && pip install --upgrade git+https://github.com/danielrd6/ifscube.git \
+#     && rm -rf /tmp/pip-tmp
+
 COPY ./requirements.txt /tmp/pip-tmp/
-RUN pip install --upgrade pip wheel numpy==1.24.2 \
+RUN pip install --upgrade pip wheel setuptools \
     && pip --disable-pip-version-check --no-cache-dir install -r /tmp/pip-tmp/requirements.txt \
-    && pip install --upgrade git+https://github.com/danielrd6/ifscube.git \
+    && pip install --upgrade git+https://github.com/danielrd6/ifscube.git@split_plot \
     && rm -rf /tmp/pip-tmp
 
 #  Runtime Stage

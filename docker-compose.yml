@@ -9,6 +9,7 @@ services:
       - ./backend:/usr/src/app
       - ./images:/usr/src/app/images
       - ./log:/usr/src/app/log
+      - /tmp/.X11-unix:/tmp/.X11-unix
     env_file:
       - .env.dev      
     depends_on:
