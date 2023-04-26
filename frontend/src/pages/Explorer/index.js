@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Grid, Button, Icon, Typography } from '@material-ui/core';
+import { Grid, Button, Icon, Typography, CardContent, Card, CardHeader, } from '@material-ui/core';
 import { useParams, useHistory } from 'react-router-dom';
 import useInterval from '../../hooks/useInterval';
 import {
@@ -18,6 +18,9 @@ import Switch from '../../components/Switch';
 import { mergeArrayOfArrays } from '../../services/utils';
 import MegacubeHeader from '../../components/MegacubeHeader';
 import MegacubeDownload from '../../components/MegacubeDownload';
+import SpectrumPlot from '../../components/Spectre/Plot';
+import Age from '../../components/Plot/Age';
+import Vecs from '../../components/Plot/Vecs';
 
 function Explorer() {
   const { id } = useParams();
@@ -275,6 +278,8 @@ function Explorer() {
     });
   };
 
+  // if (selectedImage.id === 0) return null
+
   return (
     <Grid container spacing={2} style={{ padding: 16, maxWidth: '100%' }}>
       <Grid item xs={12}>
@@ -361,6 +366,27 @@ function Explorer() {
             />
           </Grid>
           <Grid item xs={12} md={6} xl={8}>
+            <Card>
+              <CardHeader title='Spectrum and Histograms' />
+              <CardContent style={{minHeight: '40vw'}}>
+                  {/* <SpectrumPlot id={selectedImage.id} x={heatmapPoints[0]} y={heatmapPoints[1]}></SpectrumPlot> */}
+                  {heatmapPoints[0] !== 0 && heatmapPoints[1] !== 0 && (
+                    <Grid container sx={{height: '100%'}}>                    
+                      <Grid container item xs={12}>
+                        <SpectrumPlot id={1} x={heatmapPoints[0]} y={heatmapPoints[1]}></SpectrumPlot>
+                      </Grid>
+                      <Grid container item xs={12} md={6}>
+                        <Age data={agePlotData} height={heatmapSize.height / 2} />
+                      </Grid>
+                      <Grid container item xs={12} md={6}>
+                        <Vecs data={vecsPlotData} height={heatmapSize.height / 2} />
+                      </Grid>                      
+                    </Grid>
+                  )}
+              </CardContent>
+            </Card>
+          </Grid>          
+          {/* <Grid item xs={12} md={6} xl={8}>
             <Spectre
               heatmapPoints={heatmapPoints}
               fluxPlotData={fluxPlotData}
@@ -370,7 +396,7 @@ function Explorer() {
               agePlotData={agePlotData}
               isLoading={isLoadingFlux}
             />
-          </Grid>
+          </Grid>          */}
         </>
       )}
       <MegacubeHeader

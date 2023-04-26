@@ -10,6 +10,16 @@ export const getFluxByPosition = ({ id, x, y }) => {
     .then((res) => res.data);
 };
 
+export const spectrumLinesByPosition = ({ queryKey }) => {
+  const [_, params] = queryKey
+  const { id, x, y } = params
+  if (!id) {
+    return
+  }
+
+  return axios.get(`/images/${id}/spectrum_lines_by_position`, { params: { x, y } }).then(res => res.data)
+}
+
 export const getSpaxelFitByPosition = ({ id, x, y }) => {
   const params = { x, y };
 
