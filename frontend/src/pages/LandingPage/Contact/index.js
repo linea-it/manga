@@ -11,9 +11,9 @@ import {
 } from '@material-ui/core';
 import { Alert, AlertTitle } from '@material-ui/lab';
 import EmailIcon from '@material-ui/icons/Email';
+import ReCAPTCHA from 'react-google-recaptcha';
 import styles from './styles';
 import { sendEmail } from '../../../services/api';
-import ReCAPTCHA from 'react-google-recaptcha';
 
 function Contact() {
   const classes = styles();
@@ -24,7 +24,7 @@ function Contact() {
 
   const [open, setOpen] = useState('');
   const [submitEnabled, setSubmitEnabled] = useState(
-    recaptchaKey ? false : true
+    !recaptchaKey
   );
 
   const handleClose = () => {

@@ -1,8 +1,8 @@
 import React from 'react';
 import Plot from 'react-plotly.js';
 import { Card, CardHeader, CardContent, Grid, CircularProgress, Typography, Box } from '@material-ui/core';
-import Age from '../../components/Plot/Age';
-import Vecs from '../../components/Plot/Vecs';
+import Age from "../Plot/Age";
+import Vecs from "../Plot/Vecs";
 import styles from './styles';
 
 function Spectre({

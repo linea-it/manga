@@ -10,8 +10,8 @@ import {
   Button,
 } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
-import useStyles from './styles';
 import filesize from 'filesize';
+import useStyles from './styles';
 
 function MegacubeDownload({ data, setOpen }) {
 
@@ -21,7 +21,7 @@ function MegacubeDownload({ data, setOpen }) {
     <Dialog
       disableBackdropClick
       disableEscapeKeyDown
-      fullWidth={true}
+      fullWidth
       maxWidth="sm"
       aria-labelledby="download-megacube"
       open={data.open}

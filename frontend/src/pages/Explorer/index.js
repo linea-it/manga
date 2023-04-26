@@ -373,7 +373,7 @@ function Explorer() {
                   {heatmapPoints[0] !== 0 && heatmapPoints[1] !== 0 && (
                     <Grid container sx={{height: '100%'}}>                    
                       <Grid container item xs={12}>
-                        <SpectrumPlot id={1} x={heatmapPoints[0]} y={heatmapPoints[1]}></SpectrumPlot>
+                        <SpectrumPlot id={1} x={heatmapPoints[0]} y={heatmapPoints[1]} />
                       </Grid>
                       <Grid container item xs={12} md={6}>
                         <Age data={agePlotData} height={heatmapSize.height / 2} />

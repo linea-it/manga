@@ -6,6 +6,7 @@ import * as serviceWorker from './services/serviceWorker';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
 import { QueryClient, QueryClientProvider } from "react-query";
+
 const queryClient = new QueryClient();
 ReactDOM.render(
     <QueryClientProvider client={queryClient}>
