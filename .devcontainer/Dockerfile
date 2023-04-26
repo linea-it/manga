@@ -24,17 +24,15 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
 
 # [Optional] If your requirements rarely change, uncomment this section to add them to the image.
 COPY ./backend/requirements.txt /tmp/pip-tmp/
-RUN pip install --upgrade pip wheel numpy==1.24.2 \
+RUN pip install --upgrade pip wheel setuptools \
     && pip --disable-pip-version-check --no-cache-dir install -r /tmp/pip-tmp/requirements.txt \
-    && pip install --upgrade git+https://github.com/danielrd6/ifscube.git \
+    # && pip install --upgrade git+https://github.com/danielrd6/ifscube.git \
+    && pip install --upgrade git+https://github.com/danielrd6/ifscube.git@split_plot \
     && rm -rf /tmp/pip-tmp
 
-COPY ./backend/entrypoint.sh /entrypoint.sh
+COPY --chmod=0755 ./backend/entrypoint.sh /entrypoint.sh
 
-RUN sudo mkdir /images /log \
-    && chmod -R 775 /images /log
-    && sudo chown -R 1000:1000 /images /log \
-
+COPY --chmod=0775 ./backend/start.sh /start.sh
 
 ENTRYPOINT ["/entrypoint.sh"]
 

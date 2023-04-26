@@ -45,7 +45,7 @@ function Vecs({ data, height }) {
       <Plot
         data={rows}
         layout={{
-          height: height,
+          height,
           margin: {
             t: 30,
             b: 30,

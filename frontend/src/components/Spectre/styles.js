@@ -22,7 +22,7 @@ const styles = makeStyles((theme) => ({
     margin: 0,
   },
   plotWrapper: {
-    display: 'block',
+    // display: 'block',
     // display: 'flex !important',
     // alignItems: 'center',
     // justifyContent: 'center',

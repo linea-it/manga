@@ -17,6 +17,7 @@ import tarfile
 from manga.megacubo_utils import get_megacube_parts_root_path, extract_bz2
 from urllib.parse import urljoin
 import posixpath
+from manga.emission_lines import EmissionLines
 
 class ImageViewSet(viewsets.ModelViewSet):
     queryset = Image.objects.filter(had_parts_extracted=True)
@@ -267,7 +268,6 @@ class ImageViewSet(viewsets.ModelViewSet):
 
         synt, lamb2 = mclass().synt_by_position(
             megacube, int(params['x']), int(params['y']))
-
         result = dict({
             'flux': flux.tolist(),
             'lamb': lamb.tolist(),
@@ -275,6 +275,19 @@ class ImageViewSet(viewsets.ModelViewSet):
         })
 
         return Response(result)
+
+        # my_cube = EmissionLines(megacube)
+        # df = my_cube.to_dataframe(int(params['x']),  int(params['y'])
+
+        # for prop in df.columns:
+
+        # result = dict({
+        #     'flux': flux.tolist(),
+        #     'lamb': lamb.tolist(),
+        #     'synt': synt.tolist(),
+        # })
+
+        # return Response(result)
 
     @action(detail=True, methods=['get'])
     def log_age_by_position(self, request, pk=None):
@@ -381,3 +394,79 @@ class ImageViewSet(viewsets.ModelViewSet):
             data,)
 
         return Response(z)
+
+
+    @action(detail=True, methods=['get'])
+    def spectrum_lines_by_position(self, request, pk=None):
+        params = request.query_params
+
+        if 'x' not in params:
+            raise Exception("Parameter x is required")
+
+        if 'y' not in params:
+            raise Exception("Parameter y is required")
+
+        x = int(params['x'])
+        y = int(params['y'])
+
+        galaxy = self.get_object()
+
+        megacube = self.get_megacube_from_cache(galaxy)
+
+        my_cube = EmissionLines(megacube)
+        df = my_cube.to_dataframe(x, y)
+
+        data = dict({
+            "wavelength": list(),
+            "obs_spec": list(),
+            "synt_spec": list(),
+        })
+
+        for label in df.columns:
+            data[label] = df[label].tolist()        
+        return Response(data)
+
+    @action(detail=True, methods=['get'])
+    def plot_emission_lines(self, request, pk=None):
+        """
+        Args: <br>
+            x ([number]): position X on Image. <br>
+            y ([number]): position Y on Image.
+
+        Returns: <br>
+            [dict]: a dictionary with the 'flux', 'lamb' and 'synt'. <br>
+                - flux ([list[number]]) <br>
+                - lamb ([list[number]]) <br>
+                - synt ([list[number]])
+        """
+
+        params = request.query_params
+
+        if 'x' not in params:
+            raise Exception("Parameter x is required")
+
+        if 'y' not in params:
+            raise Exception("Parameter y is required")
+
+        x = int(params['x'])
+        y = int(params['y'])
+
+        galaxy = self.get_object()
+
+        megacube = self.get_megacube_from_cache(galaxy)
+
+        plot_filename = f"{megacube.name.split('.')[0]}_spec_plot_{x}_{y}.html"
+
+        dir = Path(settings.MEGACUBE_PARTS)
+        filepath = dir.joinpath(plot_filename)
+
+        cache_url = posixpath.join(settings.DATA_BASE_URL, plot_filename)
+        file_url = posixpath.join(settings.MEGACUBE_PARTS_URL, galaxy.folder_name, plot_filename)
+    
+        my_cube = EmissionLines(megacube)
+        my_cube.plot(x, y, filepath, "html")
+
+        return Response(dict({
+            "filepath": str(filepath),
+            "url": file_url
+        }))

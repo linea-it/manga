@@ -162,7 +162,7 @@ REST_FRAMEWORK = {
 }
 
 # Project Path
-IMAGES_DIR = Path(os.getenv('IMAGE_PATH', '/images'))
+IMAGES_DIR = Path(os.getenv('IMAGE_PATH', '/usr/src/app/images'))
 DATA_BASE_URL = os.getenv('DATA_BASE_URL', '/data')
 
 # Sub directories of /images

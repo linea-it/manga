@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
+import { GlassMagnifier } from 'react-image-magnifiers';
 import Heatmap from '../Plot/Heatmap';
 import useStyles from './styles';
 import useWindowSize from '../../hooks/useWindowSize';
-import { GlassMagnifier } from 'react-image-magnifiers';
 
 function OriginalImage({ data, sectionWidth }) {
   const windowSize = useWindowSize();
