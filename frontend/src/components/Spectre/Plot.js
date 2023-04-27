@@ -100,10 +100,7 @@ function SpectrumPlot(props) {
 
     if (isLoading === true) {
       return (
-        <Card>
-          <CardHeader title="Spectrum and Histograms" />
-          <CardContent >      
-            <Box 
+        <Box 
             display="flex" 
             height={props.height} 
             alignItems="center"
@@ -125,8 +122,6 @@ function SpectrumPlot(props) {
                 </Typography>
               </Box>             
             </Box>                  
-          </CardContent>
-        </Card>    
       )
     }
 
@@ -150,9 +145,14 @@ function SpectrumPlot(props) {
                   //   orientation: "h",
                   // }
                   margin: {
-                    t: 30,
-                    b: 20,
+                    autoexpand: true,
                   },
+                  xaxis: {
+                    title: 'Wavelength ($\AA$)',
+                  },
+                  yaxis: {
+                    title: 'Spectral flux density',
+                  }                  
                 }}
                 config={{
                   scrollZoom: false,
