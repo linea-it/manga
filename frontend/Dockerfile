@@ -1,12 +1,13 @@
 FROM node:12.16.2 as builder
 
-COPY . /app
-
 WORKDIR /app
+COPY package.json /app/package.json
 
 RUN yarn -v
 
 RUN yarn --ignore-optional
+
+COPY . /app
 
 RUN yarn run build
 
