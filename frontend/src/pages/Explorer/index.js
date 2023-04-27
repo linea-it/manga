@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Grid, Button, Icon, Typography, CardContent, Card, CardHeader, } from '@material-ui/core';
+import { Grid, Button, Icon, Typography, CardContent, Card, CardHeader,Box } from '@material-ui/core';
 import { useParams, useHistory } from 'react-router-dom';
 import useInterval from '../../hooks/useInterval';
 import {
@@ -281,6 +281,7 @@ function Explorer() {
   // if (selectedImage.id === 0) return null
 
   return (
+    <Box>
     <Grid container spacing={2} style={{ padding: 16, maxWidth: '100%' }}>
       <Grid item xs={12}>
         <Grid container justify="space-between">
@@ -332,6 +333,14 @@ function Explorer() {
           </Grid>
         </Grid>
       </Grid>
+    </Grid>
+    <Grid
+      container
+      spacing={2}
+      direction="row"
+      justifyContent="flex-start"
+      alignItems="stretch"
+    >      
       {isGrid ? (
         <Grid item xs={12}>
           <VerifierGrid megacube={id} heatmaps={heatmaps} hudList={hudList} />
@@ -365,15 +374,14 @@ function Explorer() {
               handleHeatmapContourRangeChange={handleHeatmapContourRangeChange}
             />
           </Grid>
-          <Grid item xs={12} md={6} xl={8}>
+          {/* <Grid item xs={12} md={6} xl={8}>
             <Card>
               <CardHeader title='Spectrum and Histograms' />
               <CardContent style={{minHeight: '40vw'}}>
-                  {/* <SpectrumPlot id={selectedImage.id} x={heatmapPoints[0]} y={heatmapPoints[1]}></SpectrumPlot> */}
                   {heatmapPoints[0] !== 0 && heatmapPoints[1] !== 0 && (
                     <Grid container sx={{height: '100%'}}>                    
                       <Grid container item xs={12}>
-                        <SpectrumPlot id={1} x={heatmapPoints[0]} y={heatmapPoints[1]} />
+                        <SpectrumPlot id={id} x={heatmapPoints[0]} y={heatmapPoints[1]} />
                       </Grid>
                       <Grid container item xs={12} md={6}>
                         <Age data={agePlotData} height={heatmapSize.height / 2} />
@@ -385,7 +393,37 @@ function Explorer() {
                   )}
               </CardContent>
             </Card>
-          </Grid>          
+          </Grid>   */}
+          <Grid item xs={12} md={6} xl={8}>
+            <Card>
+              <CardHeader title='Spectrum and Histograms' />
+              <CardContent style={{minHeight: '40vw'}}>
+                {heatmapPoints[0] !== 0 && heatmapPoints[1] !== 0 && (
+                  <SpectrumPlot id={id} x={heatmapPoints[0]} y={heatmapPoints[1]} height={heatmapSize.height} />
+                )}
+              </CardContent>
+            </Card>
+          </Grid>                  
+          <Grid item xs={12} md={6}>
+            <Card>
+              <CardHeader title='Stellar Population Vectors' />
+              <CardContent style={{minHeight: '20vw'}}>
+                  {heatmapPoints[0] !== 0 && heatmapPoints[1] !== 0 && (
+                    <Age data={agePlotData} height={heatmapSize.height} />
+                  )}
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <Card>
+              <CardHeader title='Bined Population Vectors' />
+              <CardContent style={{minHeight: '20vw'}}>
+                  {heatmapPoints[0] !== 0 && heatmapPoints[1] !== 0 && (
+                    <Vecs data={vecsPlotData} height={heatmapSize.height} />
+                  )}
+              </CardContent>
+            </Card>
+          </Grid>                              
           {/* <Grid item xs={12} md={6} xl={8}>
             <Spectre
               heatmapPoints={heatmapPoints}
@@ -418,6 +456,7 @@ function Explorer() {
         }
       />
     </Grid>
+    </Box>
   );
 }
 

@@ -13,19 +13,12 @@ function SpectrumPlot(props) {
     const {id, x, y } = props
     const [series, setSeries] = React.useState([])
     const [error, setError] = React.useState(null)
-    const [width, setWidth] = useState(0);
-    const [height, setHeight] = useState(0);
-
-    useLayoutEffect(() => {
-        setWidth(ref.current.offsetWidth);
-        setHeight(ref.current.offsetHeight);
-      }, []);
 
 
     const { status, isLoading } = useQuery({
         queryKey: ['SpectrumLinesPlotData', { id, x, y}],
         queryFn: spectrumLinesByPosition,
-        keepPreviousData: true,
+        keepPreviousData: false,
         refetchInterval: false,
         retry: false,
         onSuccess: data => {
@@ -60,8 +53,7 @@ function SpectrumPlot(props) {
       function makePlotData(data) {
 
         const plotData = []
-        const {wavelength} = data
-        
+       
         const obs_spec = {
             name: "Obs. Spec",
             x: data.wavelength,
@@ -106,13 +98,41 @@ function SpectrumPlot(props) {
 
     if (x === 0 && x === 0 ) return (<box />)
 
-    //     {/* <h2>Width: {width}</h2>
-    // <h2>Height: {height}</h2> */}
+    if (isLoading === true) {
+      return (
+        <Box 
+            display="flex" 
+            height={props.height} 
+            alignItems="center"
+            justifyContent="center"
+            m="auto"
+            flexDirection="column" 
+          >
+              <Box p={1} alignSelf="center">
+                <CircularProgress color="secondary" />
+              </Box>
+              <Box p={1} alignSelf="center">
+                <Typography variant="body2" color="textSecondary" component="p">
+                  This request can take a while, but only the first time for each object. {' '}
+                </Typography>
+              </Box> 
+              <Box p={1} alignSelf="center">
+                <Typography variant="body2" color="textSecondary" component="p">            
+                  We keep the compressed files and in the first request we uncompress the file and it is available in the cache for a while. If there is any failure try again after a few minutes.
+                </Typography>
+              </Box>             
+            </Box>                  
+      )
+    }
+
     return (
         <Box 
             ref={ref}
-            minWidth={600}
-            minHeight={400}>
+            // minWidth={600}
+            m="auto"
+            alignItems="center"
+            justifyContent="center"           
+            minHeight={550}>
             <Plot
                 data={series}
                 className={classes.plotWrapper}
@@ -120,9 +140,19 @@ function SpectrumPlot(props) {
                   hovermode: 'closest',
                   autosize: true,
                   title: `x=${x}, y=${y}`,
+                  height: props.height,
                   // legend:{ 
                   //   orientation: "h",
                   // }
+                  margin: {
+                    autoexpand: true,
+                  },
+                  xaxis: {
+                    title: 'Wavelength ($\AA$)',
+                  },
+                  yaxis: {
+                    title: 'Spectral flux density',
+                  }                  
                 }}
                 config={{
                   scrollZoom: false,
