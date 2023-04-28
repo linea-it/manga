@@ -126,18 +126,6 @@ function SpectrumPlot(props) {
     }
 
     return (
-        // <div className={classes.vecTooltipWrapper}>
-        //   <Tooltip
-        //     title={data.mlegend.map((item, i) => (
-        //       <p>
-        //         {data.m[i]}: {item}
-        //       </p>
-        //     ))}
-        //   >
-        //     <InfoIcon fontSize="inherit" />
-        //   </Tooltip>
-        // </div>
-
         <Box 
             ref={ref}
             // minWidth={600}

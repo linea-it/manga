@@ -74,6 +74,18 @@ Proximo passo é extrair os HDUs do megacubo em arquivos menores. isto é necess
 docker-compose exec backend python manage.py extract_image_parts
 ```
 
+## Build Manual das imagens docker
+
+```bash
+cd frontend
+docker build -t linea/manga_frontend:$(git describe --always) .
+```
+
+```bash
+cd backend
+docker build -t linea/manga_backend:$(git describe --always) .
+```
+
 <!-- Download SDSS Images
 This will download the SDSS image by the object's RA and Dec.
 You can check the images in here: <http://skyserver.sdss.org/dr16/en/tools/chart/image.aspx>.
@@ -85,6 +97,7 @@ docker-compose exec backend python manage.py download_sdss_images
 
 ---
 Arquivos de exemplo: https://www.dropbox.com/sh/ksyxnnm4l7rgbjy/AADRj3hu6b7FIetRThbZCWpJa?dl=0
+
 
 https://github.com/danielrd6/ifscube
 
