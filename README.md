@@ -57,7 +57,7 @@ O arquivo contem varios atributos dos objetos, mas para o portal o importante s�
 
 Pontos de atenção:
 
-- Só é ingerido no banco os objetos que possuem o arquivo Megacubo no diretóiro /images.
+- Só é ingerido no banco os objetos que possuem o arquivo Megacubo no diretório /images.
 - O filename do arquivo está sendo montado dinamicamente dentro do código, pode acontecer dos arquivos no diretório estarem com um nome diferente, neste caso é necessário alterar o código. O filename é `manga-<plateifu>-MEGACUBE.fits` sendo plateifu extraido da lista de objetos.
 
 Considerando que o arquivo de objetos se chama `drpall-v3_1_1.fits` e está no diretório montado como /images e que existam arquivos megacubo neste diretório.
@@ -68,7 +68,9 @@ Estando com os containers do ambiente ligado execute o seguinte comando para pre
 docker-compose exec backend python manage.py insert_metadata drpall-v3_1_1.fits
 ```
 
-Proximo passo é extrair os HDUs do megacubo em arquivos menores. isto é necessário para permitir um acesso rápido aos dados pela interface. Cada megacubo tem ~1GB o que torna inviavel a sua leitura em tempo real, para isso esse comando abre cada megacubo que foi registrado pelo `insert_metada` e executa rotinas para extrair os dados. Para cada megacubo no diretório /images que tenha cido registrado na etapa anterior, será criado um diretório `/images/megacube_parts/manga-<plateifu>-MEGACUBE.fits/` com um arquivo .json para cada HDU extraido.
+Proximo passo é extrair os HDUs do megacubo em arquivos menores. isto é necessário para permitir um acesso rápido aos dados pela interface. Cada megacubo tem ~1GB o que torna inviavel a sua leitura em tempo real, para isso esse comando abre cada megacubo que foi registrado pelo `insert_metada` e executa rotinas para extrair os dados. Para cada megacubo no diretório /images que tenha cido registrado na etapa anterior, será criado um diretório `/images/megacube_parts/manga-<plateifu>/` com um arquivo .json para cada HDU extraido.
+
+OBS: Atualmente só são suportados megacubos compactados (tar.bz2)
 
 ```bash
 docker-compose exec backend python manage.py extract_image_parts
