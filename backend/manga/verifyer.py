@@ -180,6 +180,7 @@ class mclass:
 
     def get_original_cube_data(self, megacube):
         cube_data = pf.getdata(megacube, 'FLUX')
+        mask = pf.getdata(megacube,'SN_MASKS_1') 
 
         (z, y, x) = np.shape(cube_data)
         imag = np.sum(cube_data[:, :, :], axis=0)
@@ -198,11 +199,11 @@ class mclass:
                     # imagb[i, j] = 'nan'
                     imagb[i, j] = 0
 
-
+        imagb[np.where(mask == 1)] = np.nan
 
         flux_image = ax.imshow(imagb, origin='lower').get_array()
 
-        return flux_image.tolist()
+        return flux_image.tolist(fill_value=None)
 
     # def get_original_cube_data(self, megacube):
     #     cube_data = pf.getdata(megacube, 'FLUX')
@@ -220,6 +221,8 @@ class mclass:
         lHud = self.get_all_hud(cube_header, cube_data)
 
         idxHud = lHud.index(hud)
+
+        mask = pf.getdata(megacube,'SN_MASKS_1') 
 
         (z, y, x) = np.shape(cube_data)
 
@@ -239,9 +242,11 @@ class mclass:
                     # imagb[i, j] = 'nan'
                     imagb[i, j] = 0
 
+        imagb[np.where(mask == 1)] = np.nan
+
         flux_image = ax.imshow(imagb, origin='lower').get_array()
 
-        result = flux_image.tolist()
+        result = flux_image.tolist(fill_value=None)
 
         # Close images resolve the Warning "figure.max_open_warning"
         pyplot.close('all')

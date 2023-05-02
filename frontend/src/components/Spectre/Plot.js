@@ -143,7 +143,11 @@ function SpectrumPlot(props) {
                   height: props.height,
                   // legend:{ 
                   //   orientation: "h",
-                  // }
+                  //   // xanchor: "center", 
+                  //   x: 1, 
+                  //   y: 1.2
+                  //   // yanchor: "top"
+                  // },
                   margin: {
                     autoexpand: true,
                   },
@@ -166,6 +170,9 @@ function SpectrumPlot(props) {
                 }}
                 frame={{ duration: 500 }}
               />
+              <Typography variant="body2" color="textSecondary" component="p">            
+                <strong>Obs. Spec: </strong>Observed spectrum. <strong>Synt. Spec: </strong>Synthetic spectrum. <strong>Emission-lines: </strong>Emission lines + stellar and pseudo continuum.
+              </Typography>
         </Box>
     )
 }

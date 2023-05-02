@@ -15,6 +15,7 @@ from galaxy.models import Image
 
 from manga.verifyer import mclass
 from manga.megacubo_utils import get_megacube_parts_root_path, get_megacube_cache_root_path, extract_bz2, compress_bz2
+from manga.gas_maps import GasMaps
 
 class Command(BaseCommand):
     help = 'Extracting image parts to separate files to gain performance'
@@ -124,8 +125,11 @@ class Command(BaseCommand):
 
         # Rename orinal file to keep backup
         backup_filepath = Path(orinal_filepath.parent , f"{obj.megacube}{obj.compression}_backup")
-        orinal_filepath.rename(backup_filepath)
-        self.stdout.write('Backup Original file: [%s]' % backup_filepath)
+        if not backup_filepath.exists():
+            orinal_filepath.rename(backup_filepath)
+            self.stdout.write('Backup Original file: [%s]' % backup_filepath)
+        else:
+            self.stdout.write('A backup file already exists: [%s]' % backup_filepath)
 
         # Update Megacubo Headers
         self.update_megacube_header(fits_filepath)
@@ -134,6 +138,8 @@ class Command(BaseCommand):
         self.exctract_original_image(fits_filepath, obj_path)
         self.extract_list_hud(fits_filepath, obj_path)
         self.extract_image_heatmap(fits_filepath, obj_path)
+        self.extract_image_gas_heatmap(fits_filepath, obj_path)
+
 
         self.download_sdss_images(obj, obj_path)
 
@@ -350,3 +356,18 @@ class Command(BaseCommand):
             header.update(
                 DATA28=('Mpross', 'Mass that has been processed in stars (~2xMstar)'))
             file.flush()
+
+    def extract_image_gas_heatmap(self, megacube, path):
+
+        self.stdout.write('Started Image Gas Heatmap.')
+
+        my_cube = GasMaps(megacube)
+
+        maps_names = my_cube.extract_all_maps(path)
+        for map in maps_names:
+            self.stdout.write('MAP [%s] created: [%s]' % (
+                map['name'].ljust(15, ' '), str(map['filepath']).ljust(90, ' ')))
+
+        self.stdout.write('Images Gas Heatmap Files created [%s]' % len(maps_names))
+
+        

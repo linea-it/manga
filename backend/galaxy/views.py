@@ -109,13 +109,42 @@ class ImageViewSet(viewsets.ModelViewSet):
 
         return Response(data)
 
+    def get_huds(self, galaxy):
+
+        list_hud_filepath = self.get_image_part_path(
+            galaxy, 'list_hud.json')
+        
+        list_gas_filepath = self.get_image_part_path(
+            galaxy, 'list_gas_map.json')
+        
+        result = dict({
+            'hud': list(),
+            'gas_maps': list()
+        })
+        with open(list_hud_filepath) as f:
+            huds = json.load(f)
+            result['hud'] = huds['hud']
+
+            with open(list_gas_filepath) as f:
+                gas = json.load(f)
+                result['gas_maps'] = gas['gas_maps']
+
+                # TODO: Provisóriamente a lista de mapas está indo no mesmo array dos hdus. 
+                # Solução ideal é a interface ser atualizada para entender o atributo novo gas_maps
+                # e renderizar os mapas de gas de forma agrupada.
+                for map in gas['gas_maps']:
+                    result['hud'].append(map)
+        return result
+
     @action(detail=True, methods=['get'])
     def list_hud(self, request, pk=None):
         """
         Returns a list of all HUDs titles.
 
         It's being read by the file in:
-        `/images/megacube_parts/megacube_{JOB_ID}/list_hud.json`
+        `/images/megacube_parts/megacube_{JOB_ID}/list_hud.json` 
+        and 
+        `/images/megacube_parts/megacube_{JOB_ID}/list_gas_map.json` 
         that has been extracted from `.fits.fz` file.
 
         Returns: <br>
@@ -123,14 +152,32 @@ class ImageViewSet(viewsets.ModelViewSet):
         """
 
         galaxy = self.get_object()
+        result = self.get_huds(galaxy)
+        # list_hud_filepath = self.get_image_part_path(
+        #     galaxy, 'list_hud.json')
+        
+        # list_gas_filepath = self.get_image_part_path(
+        #     galaxy, 'list_gas_map.json')
+        
+        # result = dict({
+        #     'hud': list(),
+        #     'gas_maps': list()
+        # })
+        # with open(list_hud_filepath) as f:
+        #     huds = json.load(f)
+        #     result['hud'] = huds['hud']
 
-        list_hud_filepath = self.get_image_part_path(
-            galaxy, 'list_hud.json')
+        #     with open(list_gas_filepath) as f:
+        #         gas = json.load(f)
+        #         result['gas_maps'] = gas['gas_maps']
 
-        with open(list_hud_filepath) as f:
-            data = json.load(f)
+        #         # TODO: Provisóriamente a lista de mapas está indo no mesmo array dos hdus. 
+        #         # Solução ideal é a interface ser atualizada para entender o atributo novo gas_maps
+        #         # e renderizar os mapas de gas de forma agrupada.
+        #         for map in gas['gas_maps']:
+        #             result['hud'].append(map)
 
-        return Response(data)
+        return Response(result)
 
     @action(detail=True, methods=['get'])
     def download_info(self, request, pk=None):
@@ -214,15 +261,11 @@ class ImageViewSet(viewsets.ModelViewSet):
 
         galaxy = self.get_object()
 
-        list_hud_filepath = self.get_image_part_path(
-            galaxy, 'list_hud.json')
+        huds = self.get_huds(galaxy)
 
-        with open(list_hud_filepath) as f:
-            list_hud = json.load(f)
-
+        list_huds = huds['hud'] + huds['gas_maps']
         data = []
-
-        for hud in list_hud['hud']:
+        for hud in list_huds:
             filename = 'image_heatmap_%s.json' % hud['name']
 
             image_heatmap_filepath = self.get_image_part_path(
@@ -269,9 +312,9 @@ class ImageViewSet(viewsets.ModelViewSet):
         synt, lamb2 = mclass().synt_by_position(
             megacube, int(params['x']), int(params['y']))
         result = dict({
-            'flux': flux.tolist(),
-            'lamb': lamb.tolist(),
-            'synt': synt.tolist(),
+            'flux': flux.tolist(fill_value=None),
+            'lamb': lamb.tolist(fill_value=None),
+            'synt': synt.tolist(fill_value=None),
         })
 
         return Response(result)
@@ -423,7 +466,7 @@ class ImageViewSet(viewsets.ModelViewSet):
         })
 
         for label in df.columns:
-            data[label] = df[label].tolist()        
+            data[label] = df[label].tolist(fill_value=None)        
         return Response(data)
 
     @action(detail=True, methods=['get'])
