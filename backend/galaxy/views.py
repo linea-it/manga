@@ -312,9 +312,9 @@ class ImageViewSet(viewsets.ModelViewSet):
         synt, lamb2 = mclass().synt_by_position(
             megacube, int(params['x']), int(params['y']))
         result = dict({
-            'flux': flux.tolist(),
-            'lamb': lamb.tolist(),
-            'synt': synt.tolist(),
+            'flux': flux.tolist(fill_value=None),
+            'lamb': lamb.tolist(fill_value=None),
+            'synt': synt.tolist(fill_value=None),
         })
 
         return Response(result)
@@ -466,7 +466,7 @@ class ImageViewSet(viewsets.ModelViewSet):
         })
 
         for label in df.columns:
-            data[label] = df[label].tolist()        
+            data[label] = df[label].tolist(fill_value=None)        
         return Response(data)
 
     @action(detail=True, methods=['get'])
