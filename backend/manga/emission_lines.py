@@ -125,11 +125,11 @@ class EmissionLines():
 
     def obs_spec(self, x: int, y: int) -> list:
         obs_flux = self.fitspec[:,y,x]  
-        return obs_flux.tolist(fill_value=None)
+        return obs_flux.tolist()
 
     def synt_spec(self, x: int, y: int) -> list:
         stellar_flux = self.stelar[:,y,x]
-        return stellar_flux.tolist(fill_value=None)
+        return stellar_flux.tolist()
 
     def to_dataframe(self, x, y) -> pd.DataFrame:
         wavelength = self.wavelength
