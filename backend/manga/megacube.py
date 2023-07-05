@@ -1,27 +1,18 @@
 import copy
 import json
-import re
+import os
 import shutil
-import sys
 import tarfile
+from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Union
 
-import matplotlib
 import matplotlib.pylab as plt
 import numpy as np
-import pandas as pd
-import plotly as pl
-import plotly.express as px
-import plotly.graph_objects as go
-from astropy.constants import c
 from astropy.io import fits as pf
 from matplotlib import pyplot
-from matplotlib.patches import RegularPolygon
-from scipy.constants import pi
 from shapely.geometry import Point
 from shapely.geometry.polygon import Polygon
-
+import argparse
 
 class MangaMegacube():
     megacube: Path
@@ -31,11 +22,58 @@ class MangaMegacube():
     is_bz2: bool = False
     fits_filename: str
     fits_filepath: Path
+    bz2_filename: str
+    bz2_filepath: Path
     parts_folder: Path
+
+    GAS_DESC = {
+        "Flux_hb": "Hβ Flux",
+        "Ew_hb": "Hβ Equivalent width",
+        "Vel_hb": "Hβ Velocity",
+        "Sigma_hb": "Hβ Velocity dispersion",
+        "Flux_o3_4959": "[O III]λ4959 Flux",
+        "Ew_o3_4959": "[O III]λ4959 Equivalent width",
+        "Vel_o3_4959": "[O III]λ4959 Velocity",
+        "Sigma_o3_4959": "[O III]λ4959 Velocity dispersion",
+        "Flux_o3_5007": "[O III]λ5007 Flux",
+        "Ew_o3_5007": "[O III]λ5007 Equivalent width",
+        "Vel_o3_5007": "[O III]λ5007 Velocity",
+        "Sigma_o3_5007": "[O III]λ5007 Velocity dispersion",
+        "Flux_He1_5876": "He I λ5876 Flux",
+        "Ew_He1_5876": "He I λ5876 Equivalent width",
+        "Vel_He1_5876": "He I λ5876 Velocity",
+        "Sigma_He1_5876": "He I λ5876 Velocity dispersion",
+        "Flux_o1_6300": "[O I]λ6300 Flux",
+        "Ew_o1_6300": "[O I]λ6300 Equivalent width",
+        "Vel_o1_6300": "[O I]λ6300 Velocity",
+        "Sigma_o1_6300": "[O I]λ6300 Velocity dispersion",
+        "Flux_n2_6548": "[N II]λ6548 Flux",
+        "Ew_n2_6548": "[N II]λ6548 Equivalent width",
+        "Vel_n2_6548": "[N II]λ6548 Velocity",
+        "Sigma_n2_6548": "[N II]λ6548 Velocity dispersion",
+        "Flux_ha": "HΑ Flux",
+        "Ew_ha": "HΑ Equivalent width",
+        "Vel_ha": "HΑ Velocity",
+        "Sigma_ha": "HΑ Velocity dispersion",
+        "Flux_n2_6583": "[N II]λ6583 Flux",
+        "Ew_n2_6583": "[N II]λ6583 Equivalent width",
+        "Vel_n2_6583": "[N II]λ6583 Velocity",
+        "Sigma_n2_6583": "[N II]λ6583 Velocity dispersion",
+        "Flux_s2_6716": "[S II]λ6716 Flux",
+        "Ew_s2_6716": "[S II]λ6716 Equivalent width",
+        "Vel_s2_6716": "[S II]λ6716 Velocity",
+        "Sigma_s2_6716": "[S II]λ6716 Velocity dispersion",
+        "Flux_s2_6731": "[S II]λ6731 Flux",
+        "Ew_s2_6731": "[S II]λ6731 Equivalent width",
+        "Vel_s2_6731": "[S II]λ6731 Velocity",
+        "Sigma_s2_6731": "[S II]λ6731 Velocity dispersion"
+    }
 
     def __init__(self, megacube: Path):
 
         self.megacube = Path(megacube)
+        if not self.megacube.exists():
+            raise Exception(f"File not found: {self.megacube}")
 
         self.name = megacube.name.split('-MEGACUBE')[0]
         print(f"Name: {self.name}")
@@ -49,11 +87,17 @@ class MangaMegacube():
         self.is_bz2 = True if '.tar.bz2' in megacube.name else False
         print(f"Is Bz2: {self.is_bz2}")
 
-        self.fits_filename = f"{self.filename}.fits"
-        print(f"Fits filename: {self.fits_filename}")
+        base_filename = megacube.name.split('.')[0]
 
-        if self.is_bz2 == False:
-            self.fits_filepath = megacube
+        self.fits_filename = f"{base_filename}.fits"
+        print(f"Fits filename: {self.fits_filename}")
+        self.fits_filepath = self.megacube.parent.joinpath(self.fits_filename)
+        print(f"Fits filepath: {self.fits_filepath}")
+
+        self.bz2_filename = f"{base_filename}.fits.tar.bz2"
+        print(f"Bz2 filename: {self.bz2_filename}")
+        self.bz2_filepath = self.megacube.parent.joinpath(self.bz2_filename)
+        print(f"Bz2 filepath: {self.bz2_filepath}")
 
     def extract_bz2(self, dest_dir=None):
         if not dest_dir:
@@ -72,9 +116,18 @@ class MangaMegacube():
             raise Exception(
                 f"After unpacking fits file not found. {fits_filepath}")
 
-    def compress_bz2(filepath, compressed_file):
-        with tarfile.open(compressed_file, "w:bz2") as tar:
-            tar.add(filepath, recursive=False, arcname=filepath.name)
+    def compress_bz2(self):
+        print(f"Compressing Bz2 {self.fits_filepath} -> {self.bz2_filepath}")
+        with tarfile.open(self.bz2_filepath, "w:bz2") as tar:
+            tar.add(self.fits_filepath, recursive=False,
+                    arcname=self.bz2_filename)
+
+        if self.bz2_filepath.exists():
+            self.fits_filepath.unlink()
+            return self.bz2_filepath
+        else:
+            raise Exception(
+                f"After compress bz2 file not found. {self.bz2_filepath}")
 
     def write_parts_json(self, filename, content):
         # Create directories, if they don't exist already:
@@ -93,7 +146,7 @@ class MangaMegacube():
 
     def write_list_map_json(self, map_names):
         filepath = self.parts_folder
-        filename = 'list_gas_map.json'        
+        filename = 'list_gas_map.json'
         filepath.mkdir(parents=True, exist_ok=True)
         filepath = filepath.joinpath(filename)
         # If file already exists, remove it:
@@ -103,9 +156,9 @@ class MangaMegacube():
         data = list()
         for name in map_names:
             data.append({
-                "name": name, 
-                "display_name": name, 
-                "comment": ""
+                "name": name,
+                "display_name": name,
+                "comment": self.GAS_DESC.get(name, "")
             })
         with open(filepath, "w") as f:
             json.dump(dict({
@@ -376,6 +429,7 @@ class MangaMegacube():
         solution = pf.getdata(self.fits_filepath, 'SOLUTION')
         flux = pf.getdata(self.fits_filepath, 'FLUX_M')
         eqw = pf.getdata(self.fits_filepath, 'EQW_M')
+        mask = pf.getdata(self.fits_filepath, 'SN_MASKS_1')
 
         i = 0  # indice do solution
         j = 0  # indice do flux e do eqw
@@ -394,6 +448,7 @@ class MangaMegacube():
                 save_name_flux = 'Flux_'+p[0]
                 # array (44,44) com os valores do mapa de flux a serem salvos
                 save_flux = flux[j]
+                save_flux[np.where(mask == 1)] = np.nan
                 plt.subplot(plots, 4, k)
                 k = k+1
                 # data = plt.imshow(save_flux,origin='lower')
@@ -403,7 +458,7 @@ class MangaMegacube():
                 # plot para tu poder conferir (note o origim do matplotlib que precisa ser lower para o 0,0 ser no canto inferior esquerdo)
                 data = plt.imshow(save_flux, origin='lower').get_array()
                 maps.append(dict({
-                    'z': data.tolist(fill_value=0),
+                    'z': data.tolist(fill_value=None),
                     'title': save_name_flux,
                 }))
 
@@ -411,6 +466,7 @@ class MangaMegacube():
                 save_name_ew = 'Ew_'+p[0]
                 # array (44,44) com os valores do mapa de ew a serem salvos
                 save_ew = -1*eqw[j]
+                save_ew[np.where(mask == 1)] = np.nan
                 # NOTA: O EW precisa ser multiplicado por -1 para inverter o sinal (nao pode usar abs)
                 plt.subplot(plots, 4, k)
                 k = k+1
@@ -421,7 +477,7 @@ class MangaMegacube():
                 # plot para tu poder conferir (note o origim do matplotlib que precisa ser lower para o 0,0 ser no canto inferior esquerdo)
                 data = plt.imshow(save_ew, origin='lower').get_array()
                 maps.append(dict({
-                    'z': data.tolist(fill_value=0),
+                    'z': data.tolist(fill_value=None),
                     'title': save_name_ew,
                 }))
 
@@ -432,7 +488,7 @@ class MangaMegacube():
                 save_name_vel = 'Vel_'+p[0]
                 # array (44,44) com os valores do mapa de velocidade a serem salvos
                 save_vel = solution[i]
-
+                save_vel[np.where(mask == 1)] = np.nan
                 plt.subplot(plots, 4, k)
                 k = k+1
                 # plt.imshow(save_vel,origin='lower') # plot para tu poder conferir (note o origim do matplotlib que precisa ser lower para o 0,0 ser no canto inferior esquerdo)
@@ -442,7 +498,7 @@ class MangaMegacube():
                 # plot para tu poder conferir (note o origim do matplotlib que precisa ser lower para o 0,0 ser no canto inferior esquerdo)
                 data = plt.imshow(save_vel, origin='lower').get_array()
                 maps.append(dict({
-                    'z': data.tolist(fill_value=0),
+                    'z': data.tolist(fill_value=None),
                     'title': save_name_vel,
                 }))
 
@@ -451,6 +507,7 @@ class MangaMegacube():
                 save_name_sig = 'Sigma_'+p[0]
                 # array (44,44) com os valores do mapa de sigma a serem salvos
                 save_sig = solution[i]
+                save_sig[np.where(mask == 1)] = np.nan
                 plt.subplot(plots, 4, k)
                 k = k+1
                 # plt.imshow(save_sig,origin='lower')  # plot para tu poder conferir (note o origim do matplotlib que precisa ser lower para o 0,0 ser no canto inferior esquerdo)
@@ -460,7 +517,7 @@ class MangaMegacube():
                 # plot para tu poder conferir (note o origim do matplotlib que precisa ser lower para o 0,0 ser no canto inferior esquerdo)
                 plt.imshow(save_sig, origin='lower').get_array()
                 maps.append(dict({
-                    'z': data.tolist(fill_value=0),
+                    'z': data.tolist(fill_value=None),
                     'title': save_name_sig,
                 }))
 
@@ -469,7 +526,7 @@ class MangaMegacube():
 
         result = []
         for map in maps:
-            filepath = self.write_parts_json(map['title'], map)
+            filepath = self.write_parts_json(f"{map['title']}.json", map)
             result.append({
                 'name': map['title'],
                 'filepath': str(filepath)
@@ -667,30 +724,45 @@ class MangaMegacube():
 
 if __name__ == '__main__':
 
-    original_file = Path(
-        '/workspaces/manga/images/manga-9894-3701-MEGACUBE.fits.tar.bz2')
-    workdir = Path('/tmp/workdir')
+    parser = argparse.ArgumentParser(description='Extract MANGA megacube.')
+    parser.add_argument('filepath')
+
+    args = parser.parse_args() 
+    filepath = Path(args.filepath)
+
+    t0 = datetime.now()
+
+    print(f"Running: {filepath}")
+
+    cube = MangaMegacube(filepath)
+
+    # print("Extraindo arquivo bz2.")
+    fits_filepath = cube.extract_bz2()
+    os.rename(filepath, filepath.with_suffix('.bz2.bk'))
+    # sample_cube.unlink()
+
+    # print("Updating Headers")
+    cube.update_megacube_header()
+    # print("Extracting images")
+    cube.extract_megacube_parts()
+    # print("Compressing Bz2")
+    cube.compress_bz2()
+
+    t1 = datetime.now()
+    tdelta = t1 - t0
+    print(f"Exec Time: {tdelta}")
+
+    # Run local copy same file every time
+    # original_file = Path(
+    #     '/workspaces/manga/images/manga-9894-3701-MEGACUBE.fits.tar.bz2')
+    # workdir = Path('/tmp/workdir')
+
     # sample_cube = workdir.joinpath('manga-9894-3701-MEGACUBE.fits.tar.bz2')
     # print(f"Sample Cube: {sample_cube}")
     # if sample_cube.exists():
     #     print("Removing sample cube")
-    #     # shutil.rmtree(sample_cube)
     #     sample_cube.unlink()
     # print("Copying Sample Cube")
     # shutil.copy(original_file, sample_cube)
-    # cube = MangaMegacube(sample_cube)
-    # fits_filepath = cube.extract_bz2()
 
-    original_file = Path(
-        '/workspaces/manga/images/manga-9894-3701-MEGACUBE.fits')
-    sample_cube = workdir.joinpath('manga-9894-3701-MEGACUBE.fits')
-    print(f"Sample Cube: {sample_cube}")
-    if sample_cube.exists():
-        print("Removing sample cube")
-        sample_cube.unlink()
-    print("Copying Sample Cube")
-    shutil.copy(original_file, sample_cube)
-
-    cube = MangaMegacube(sample_cube)
-    # cube.update_megacube_header()
-    cube.extract_megacube_parts()
+# /tmp/workdir/manga-9894-3701-MEGACUBE.fits.tar.bz2
