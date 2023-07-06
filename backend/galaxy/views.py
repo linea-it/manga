@@ -18,7 +18,7 @@ from manga.megacubo_utils import get_megacube_parts_root_path, extract_bz2
 from urllib.parse import urljoin
 import posixpath
 from manga.emission_lines import EmissionLines
-
+from manga.megacube import MangaMegacube
 class ImageViewSet(viewsets.ModelViewSet):
     queryset = Image.objects.filter(had_parts_extracted=True)
     serializer_class = ImageSerializer
@@ -48,8 +48,10 @@ class ImageViewSet(viewsets.ModelViewSet):
         if cache_filepath.exists():
             return cache_filepath
         else:
+            cube = MangaMegacube(megacube_path)
+            cube.extract_bz2(cache_dir)
             # Extrai o megacubo no diretório de cache.
-            extract_bz2(compressed_file=megacube_path, local_dir=cache_filepath)
+            # extract_bz2(compressed_file=megacube_path, local_dir=cache_filepath)
             return cache_filepath
 
     def get_obj_path(self, obj):
