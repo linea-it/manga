@@ -473,16 +473,18 @@ class Image(models.Model):
         default=0
     )
 
-    path = models.FilePathField(
+    path = models.CharField(
         verbose_name='Path',
+        max_length=1024,
         null=True,
         blank=True,
         default=None,
         help_text='Complete Path to original file.'
     )
 
-    folder_name = models.FilePathField(
+    folder_name = models.CharField(
         verbose_name='Folder',
+        max_length=150,
         null=True,
         blank=True,
         default=None,

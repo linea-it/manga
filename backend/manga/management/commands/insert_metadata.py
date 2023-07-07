@@ -9,7 +9,7 @@ import os
 import numpy as np
 from pathlib import Path
 from django.conf import settings
-from manga.megacubo_utils import get_megacube_path
+from manga.megacubo_utils import get_megacube_path, get_megacube_parts_root_path
 
 class Command(BaseCommand):
     help = 'Integrating metadata files into the database'
@@ -92,17 +92,18 @@ class Command(BaseCommand):
         self.stdout.write(
             '%s Objects in %s.' %(len(list_metadata), filename))
 
+        parts_folder = get_megacube_parts_root_path()
+
         count = 0
         for row in list_metadata:
 
             original_filename = 'manga-%s-MEGACUBE.fits.tar.bz2' % row['plateifu']
             folder_name = 'manga-%s' % row['plateifu']
             original_megacube_path = get_megacube_path(original_filename)
-
-            self.stdout.write("original_megacube_path: %s" % str(original_megacube_path))
+            megacube_parts = parts_folder.joinpath(folder_name)
 
             if original_megacube_path.exists() and original_megacube_path.is_file():
-
+                self.stdout.write("original_megacube_path: %s" % str(original_megacube_path))
                 try:
                     new_image = Image()
 
@@ -124,6 +125,10 @@ class Command(BaseCommand):
 
                     # Folder name (used in megacubo_parts_directory)
                     setattr(new_image, 'folder_name', folder_name)
+
+                    self.stdout.write('Have parts folder %s' % megacube_parts.exists())
+                    if megacube_parts.exists():
+                        setattr(new_image, 'had_parts_extracted', True)
 
                     new_image.save()
 
