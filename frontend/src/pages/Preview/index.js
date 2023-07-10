@@ -53,12 +53,6 @@ function Preview() {
       sortingEnabled: false,
     },
     {
-      name: 'nsa_iauname',
-      title: 'Name',
-      width: 180,
-      headerTooltip: 'IAU-style designation based on RA/Dec (NSA)',
-    },
-    {
       name: 'plateifu',
       title: 'PlateIFU',
       headerTooltip: '	Plate+ifudesign name for this object',
@@ -76,46 +70,6 @@ function Preview() {
     {
       name: 'mangaid',
       title: 'MaNGA-ID',
-    },
-    {
-      name: 'mjdmed',
-      title: 'MJD',
-      headerTooltip: 'Median MJD across all exposures',
-      width: 100,
-    },
-    {
-      name: 'exptime',
-      title: 'Exp Time',
-      headerTooltip: 'Total exposure time (seconds)',
-      width: 110,
-    },
-    {
-      name: 'airmsmed',
-      title: 'Airmass',
-      customElement: (row) => (
-        <span title={row.airmsmed}>{row.airmsmed.toFixed(2)}</span>
-      ),
-      headerTooltip: 'Median airmass across all exposures',
-      width: 100,
-    },
-    {
-      name: 'seemed',
-      title: 'Seeing',
-      customElement: (row) => (
-        <span title={row.seemed}>{row.seemed.toFixed(2)}</span>
-      ),
-      headerTooltip: 'Median guider seeing (arcsec)',
-      width: 100,
-    },
-    {
-      name: 'nsa_z',
-      title: 'z',
-      customElement: (row) => (
-        <span title={row.nsa_z}>{row.nsa_z.toFixed(3)}</span>
-      ),
-      width: 80,
-      headerTooltip:
-        'The targeting redshift (identical to nsa_z for those targets in the NSA Catalog. For others, it is the redshift provided by the Ancillary programs)',
     },
   ];
 

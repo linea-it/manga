@@ -22,15 +22,9 @@ from manga.megacube import MangaMegacube
 class ImageViewSet(viewsets.ModelViewSet):
     queryset = Image.objects.filter(had_parts_extracted=True)
     serializer_class = ImageSerializer
-    filter_fields = ('id', 'megacube', 'mangaid', 'plateifu', 'objra', 'objdec',
-                     'nsa_iauname', 'mjdmed', 'exptime', 'airmsmed', 'seemed',
-                     'nsa_z',)
-    search_fields = ('id', 'megacube', 'mangaid', 'plateifu', 'objra', 'objdec',
-                     'nsa_iauname', 'mjdmed', 'exptime', 'airmsmed', 'seemed',
-                     'nsa_z',)
-    ordering_fields = ('id', 'megacube', 'mangaid', 'plateifu', 'objra', 'objdec',
-                       'nsa_iauname', 'mjdmed', 'exptime', 'airmsmed', 'seemed',
-                       'nsa_z',)
+    filter_fields = ('id', 'megacube', 'mangaid', 'plateifu', 'objra', 'objdec',)
+    search_fields = ('megacube',)
+    ordering_fields = ('id', 'mangaid', 'plateifu', 'objra', 'objdec',)
     ordering = ('mangaid',)
 
     def get_original_megacube_path(self, obj):
