@@ -19,12 +19,40 @@ from urllib.parse import urljoin
 import posixpath
 from manga.emission_lines import EmissionLines
 from manga.megacube import MangaMegacube
+
+
 class ImageViewSet(viewsets.ModelViewSet):
     queryset = Image.objects.filter(had_parts_extracted=True)
     serializer_class = ImageSerializer
-    filter_fields = ('id', 'megacube', 'mangaid', 'plateifu', 'objra', 'objdec',)
+    filter_fields = ('id', 'mangaid', 'plateifu', 'objra', 'objdec',
+        'fcfc1_50', 'xyy_light', 'xyo_light', 'xiy_light', 'xii_light', 'xio_light',
+        'xo_light', 'xyy_mass', 'xyo_mass', 'xiy_mass', 'xii_mass', 'xio_mass',
+        'xo_mass', 'sfr_1', 'sfr_5', 'sfr_10', 'sfr_14', 'sfr_20', 'sfr_30', 'sfr_56',
+        'sfr_100', 'sfr_200', 'av_star', 'mage_l', 'mage_m', 'mz_l', 'mz_m',
+        'mstar', 'sigma_star', 'vrot_star', 'f_hb', 'f_o3_4959', 'f_o3_5007',
+        'f_he1_5876', 'f_o1_6300', 'f_n2_6548', 'f_ha', 'f_n2_6583', 'f_s2_6716',
+        'f_s2_6731', 'eqw_hb', 'eqw_o3_4959','eqw_o3_5007','eqw_he1_5876','eqw_o1_6300',
+        'eqw_n2_6548','eqw_ha','eqw_n2_6583','eqw_s2_6716','eqw_s2_6731','v_hb',
+        'v_o3_4959','v_o3_5007','v_he1_5876','v_o1_6300','v_n2_6548','v_ha','v_n2_6583',
+        'v_s2_6716','v_s2_6731','sigma_hb','sigma_o3_4959','sigma_o3_5007','sigma_he1_5876',
+        'sigma_o1_6300','sigma_n2_6548','sigma_ha','sigma_n2_6583','sigma_s2_6716',
+        'sigma_s2_6731')
+
     search_fields = ('megacube',)
-    ordering_fields = ('id', 'mangaid', 'plateifu', 'objra', 'objdec',)
+    ordering_fields = ('id', 'mangaid', 'plateifu', 'objra', 'objdec',
+        'fcfc1_50', 'xyy_light', 'xyo_light', 'xiy_light', 'xii_light', 'xio_light',
+        'xo_light', 'xyy_mass', 'xyo_mass', 'xiy_mass', 'xii_mass', 'xio_mass',
+        'xo_mass', 'sfr_1', 'sfr_5', 'sfr_10', 'sfr_14', 'sfr_20', 'sfr_30', 'sfr_56',
+        'sfr_100', 'sfr_200', 'av_star', 'mage_l', 'mage_m', 'mz_l', 'mz_m',
+        'mstar', 'sigma_star', 'vrot_star', 'f_hb', 'f_o3_4959', 'f_o3_5007',
+        'f_he1_5876', 'f_o1_6300', 'f_n2_6548', 'f_ha', 'f_n2_6583', 'f_s2_6716',
+        'f_s2_6731', 'eqw_hb', 'eqw_o3_4959','eqw_o3_5007','eqw_he1_5876','eqw_o1_6300',
+        'eqw_n2_6548','eqw_ha','eqw_n2_6583','eqw_s2_6716','eqw_s2_6731','v_hb',
+        'v_o3_4959','v_o3_5007','v_he1_5876','v_o1_6300','v_n2_6548','v_ha','v_n2_6583',
+        'v_s2_6716','v_s2_6731','sigma_hb','sigma_o3_4959','sigma_o3_5007','sigma_he1_5876',
+        'sigma_o1_6300','sigma_n2_6548','sigma_ha','sigma_n2_6583','sigma_s2_6716',
+        'sigma_s2_6731')
+    
     ordering = ('mangaid',)
 
     def get_original_megacube_path(self, obj):
@@ -55,16 +83,16 @@ class ImageViewSet(viewsets.ModelViewSet):
         # Join and make the path for the extracted files:
         return self.get_obj_path(obj).joinpath(filename)
 
-
     def get_sdss_image_url(self, obj, filename='sdss_image.jpg'):
         # Join and make the url for the sdss image:
-        file_url = posixpath.join(settings.MEGACUBE_PARTS_URL, obj.folder_name, filename)
+        file_url = posixpath.join(
+            settings.MEGACUBE_PARTS_URL, obj.folder_name, filename)
         print(file_url)
-        base_url =  "{0}://{1}".format(self.request.scheme, self.request.get_host())
+        base_url = "{0}://{1}".format(self.request.scheme,
+                                      self.request.get_host())
         print(base_url)
         return file_url
         # return urljoin(base_url, file_url)
-
 
     def get_sdss_image_path(self, obj, filename='sdss_image.jpg'):
         objpath = self.get_obj_path(obj)
@@ -91,11 +119,11 @@ class ImageViewSet(viewsets.ModelViewSet):
 
         galaxy = self.get_object()
 
-        original_image_filepath = self.get_image_part_path(galaxy, 'original_image.json')
+        original_image_filepath = self.get_image_part_path(
+            galaxy, 'original_image.json')
 
         with open(original_image_filepath) as f:
             data = json.load(f)
-
 
         # Only send the path if the file exists:
         if os.path.exists(self.get_sdss_image_path(galaxy)):
@@ -109,10 +137,10 @@ class ImageViewSet(viewsets.ModelViewSet):
 
         list_hud_filepath = self.get_image_part_path(
             galaxy, 'list_hud.json')
-        
+
         list_gas_filepath = self.get_image_part_path(
             galaxy, 'list_gas_map.json')
-        
+
         result = dict({
             'hud': list(),
             'gas_maps': list()
@@ -125,7 +153,7 @@ class ImageViewSet(viewsets.ModelViewSet):
                 gas = json.load(f)
                 result['gas_maps'] = gas['gas_maps']
 
-                # TODO: Provisóriamente a lista de mapas está indo no mesmo array dos hdus. 
+                # TODO: Provisóriamente a lista de mapas está indo no mesmo array dos hdus.
                 # Solução ideal é a interface ser atualizada para entender o atributo novo gas_maps
                 # e renderizar os mapas de gas de forma agrupada.
                 for map in gas['gas_maps']:
@@ -151,10 +179,10 @@ class ImageViewSet(viewsets.ModelViewSet):
         result = self.get_huds(galaxy)
         # list_hud_filepath = self.get_image_part_path(
         #     galaxy, 'list_hud.json')
-        
+
         # list_gas_filepath = self.get_image_part_path(
         #     galaxy, 'list_gas_map.json')
-        
+
         # result = dict({
         #     'hud': list(),
         #     'gas_maps': list()
@@ -167,7 +195,7 @@ class ImageViewSet(viewsets.ModelViewSet):
         #         gas = json.load(f)
         #         result['gas_maps'] = gas['gas_maps']
 
-        #         # TODO: Provisóriamente a lista de mapas está indo no mesmo array dos hdus. 
+        #         # TODO: Provisóriamente a lista de mapas está indo no mesmo array dos hdus.
         #         # Solução ideal é a interface ser atualizada para entender o atributo novo gas_maps
         #         # e renderizar os mapas de gas de forma agrupada.
         #         for map in gas['gas_maps']:
@@ -434,7 +462,6 @@ class ImageViewSet(viewsets.ModelViewSet):
 
         return Response(z)
 
-
     @action(detail=True, methods=['get'])
     def spectrum_lines_by_position(self, request, pk=None):
         params = request.query_params
@@ -462,7 +489,7 @@ class ImageViewSet(viewsets.ModelViewSet):
         })
 
         for label in df.columns:
-            data[label] = df[label].tolist()        
+            data[label] = df[label].tolist()
         return Response(data)
 
     @action(detail=True, methods=['get'])
@@ -500,8 +527,9 @@ class ImageViewSet(viewsets.ModelViewSet):
         filepath = dir.joinpath(plot_filename)
 
         cache_url = posixpath.join(settings.DATA_BASE_URL, plot_filename)
-        file_url = posixpath.join(settings.MEGACUBE_PARTS_URL, galaxy.folder_name, plot_filename)
-    
+        file_url = posixpath.join(
+            settings.MEGACUBE_PARTS_URL, galaxy.folder_name, plot_filename)
+
         my_cube = EmissionLines(megacube)
         my_cube.plot(x, y, filepath, "html")
 

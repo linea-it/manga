@@ -45,92 +45,6 @@ class Command(BaseCommand):
     def delete_table(self, model):
         model.objects.all().delete()
 
-    def get_model_fields(self, model):
-
-        fields = []
-        options = model._meta
-
-        for field in options.concrete_fields + options.many_to_many:
-            fields.append(field.name)
-
-        return fields
-
-    def merge_same_keys_dict(self, d1, d2):
-        ds = [d1, d2]
-        d = {}
-        for k in d1.keys():
-            d[k] = np.concatenate(list(d[k] for d in ds))
-
-        return d
-
-    def dict_list_to_list_dict(self, dl):
-        return [dict(zip(dl, t)) for t in zip(*dl.values())]
-
-    def read_object_list_fits(self, filename):
-        drpall_metadata = mclass().get_metadata(filename)
-
-        columns = self.get_model_fields(Image)
-        columns.remove('id')
-
-        for column in list(drpall_metadata):
-            if column not in columns:
-                del drpall_metadata[column]
-
-        list_metadata = self.dict_list_to_list_dict(drpall_metadata)
-
-        parts_folder = get_megacube_parts_root_path()
-
-        count = 0
-        for row in list_metadata:
-
-            original_filename = 'manga-%s-MEGACUBE.fits.tar.bz2' % row['plateifu']
-            folder_name = 'manga-%s' % row['plateifu']
-            original_megacube_path = get_megacube_path(original_filename)
-            megacube_parts = parts_folder.joinpath(folder_name)
-
-            if original_megacube_path.exists() and original_megacube_path.is_file():
-                self.stdout.write("original_megacube_path: %s" %
-                                  str(original_megacube_path))
-                try:
-                    new_image = Image()
-
-                    for key in row.keys():
-                        setattr(new_image, key, row[key])
-
-                    # Adding the filename to table
-                    filename = 'manga-%s-MEGACUBE.fits' % row['plateifu']
-                    setattr(new_image, 'megacube', filename)
-
-                    # Adding compression
-                    setattr(new_image, 'compression', '.tar.bz2')
-
-                    # Complete path to original file
-                    setattr(new_image, 'path', original_megacube_path)
-
-                    # Compressed file size
-                    setattr(new_image, 'compressed_size',
-                            original_megacube_path.stat().st_size)
-
-                    # Folder name (used in megacubo_parts_directory)
-                    setattr(new_image, 'folder_name', folder_name)
-
-                    self.stdout.write('Have parts folder %s' %
-                                      megacube_parts.exists())
-                    if megacube_parts.exists():
-                        setattr(new_image, 'had_parts_extracted', True)
-
-                    new_image.save()
-
-                    self.stdout.write('Inserted metadata for %s' % filename)
-                    count += 1
-
-                # Verifying that the there's not duplicates
-                except IntegrityError:
-                    pass
-
-        self.stdout.write('Finished! %s of %s objects are registered.' % (
-            count, len(list_metadata)))
-
     def read_object_list_csv(self, filename):
         df = pd.read_csv(filename, skiprows=1,
                          names=[
@@ -265,10 +179,7 @@ class Command(BaseCommand):
             raise Exception('No input files found: %s' %
                             str(obj_list_filepath))
 
-        print(obj_list_filepath.suffix)
-        if obj_list_filepath.suffix == '.fits':
-            list_metadata = self.read_object_list_fits(obj_list_filepath)
-        elif obj_list_filepath.suffix == '.csv':
+        if obj_list_filepath.suffix == '.csv':
             list_metadata = self.read_object_list_csv(obj_list_filepath)
         else:
             self.stdout.write(
