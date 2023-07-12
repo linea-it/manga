@@ -598,7 +598,7 @@ class MangaMegacube:
             self.parts_folder = self.megacube.parent.joinpath(self.name)
 
         if self.parts_folder.exists():
-            shutil.rmtree(self.parts_folder)
+            shutil.rmtree(self.parts_folder)            
 
         self.parts_folder.mkdir(parents=True, exist_ok=False)
         print(f"Parts Folder: {self.parts_folder}")
@@ -838,14 +838,14 @@ if __name__ == "__main__":
     args = parser.parse_args()
     filepath = Path(args.filepath)
     filename = filepath.name
-    result_folder = Path("/tmp/images")
+    result_folder = filepath.parent
 
     try:
         log_file = result_folder.joinpath(f"{filename}.log")
 
-        orig_stdout = sys.stdout
-        f = open(log_file, "w")
-        sys.stdout = f
+        # orig_stdout = sys.stdout
+        # f = open(log_file, "w")
+        # sys.stdout = f
 
         t0 = datetime.now()
 
@@ -855,22 +855,24 @@ if __name__ == "__main__":
 
         # print("Extraindo arquivo bz2.")
         fits_filepath = cube.extract_bz2()
-        os.rename(filepath, filepath.with_suffix(".bz2.bk"))
-        # sample_cube.unlink()
+        # os.rename(filepath, filepath.with_suffix(".bz2.bk"))
+        # filepath.unlink()
 
         # print("Updating Headers")
-        cube.update_megacube_header()
+        # cube.update_megacube_header()
         # print("Extracting images")
         cube.extract_megacube_parts()
         # print("Compressing Bz2")
-        cube.compress_bz2()
+        # cube.compress_bz2()
+        fits_filepath = cube.fits_filepath()
+        fits_filepath.unlink()
 
         t1 = datetime.now()
         tdelta = t1 - t0
         print(f"Exec Time: {tdelta}")
 
-        sys.stdout = orig_stdout
-        f.close()
+        # sys.stdout = orig_stdout
+        # f.close()
 
         success_file = result_folder.joinpath(f"{filename}_ok")
         with open(success_file, "w") as f:

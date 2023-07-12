@@ -72,6 +72,11 @@ function Preview() {
       title: 'MaNGA-ID',
     },
     {
+      name: 'had_bcomp',
+      title: 'B. Comp',
+      sortingEnabled: true,      
+    },
+    {
       name: 'fcfc1_50',
       title: 'FCFC1.50',
       sortingEnabled: true,      

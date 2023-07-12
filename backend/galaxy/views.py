@@ -36,7 +36,7 @@ class ImageViewSet(viewsets.ModelViewSet):
         'v_o3_4959','v_o3_5007','v_he1_5876','v_o1_6300','v_n2_6548','v_ha','v_n2_6583',
         'v_s2_6716','v_s2_6731','sigma_hb','sigma_o3_4959','sigma_o3_5007','sigma_he1_5876',
         'sigma_o1_6300','sigma_n2_6548','sigma_ha','sigma_n2_6583','sigma_s2_6716',
-        'sigma_s2_6731')
+        'sigma_s2_6731', 'had_bcomp')
 
     search_fields = ('megacube',)
     ordering_fields = ('id', 'mangaid', 'plateifu', 'objra', 'objdec',
@@ -51,7 +51,7 @@ class ImageViewSet(viewsets.ModelViewSet):
         'v_o3_4959','v_o3_5007','v_he1_5876','v_o1_6300','v_n2_6548','v_ha','v_n2_6583',
         'v_s2_6716','v_s2_6731','sigma_hb','sigma_o3_4959','sigma_o3_5007','sigma_he1_5876',
         'sigma_o1_6300','sigma_n2_6548','sigma_ha','sigma_n2_6583','sigma_s2_6716',
-        'sigma_s2_6731')
+        'sigma_s2_6731', 'had_bcomp')
     
     ordering = ('mangaid',)
 
@@ -60,6 +60,20 @@ class ImageViewSet(viewsets.ModelViewSet):
 
     def get_original_megacube_url(self, obj):
         return posixpath.join(settings.DATA_BASE_URL, f'{obj.megacube}{obj.compression}')
+
+    def get_bcomp_megacube_url(self, obj):
+        bcomp_filename = self.get_bcomp_filename(obj)
+        if bcomp_filename is not None:
+            return posixpath.join(settings.DATA_BASE_URL, bcomp_filename)
+        else:
+            return None
+        
+    def get_bcomp_filename(self, obj):
+        if obj.had_bcomp == True:
+            bcomp_filename = Path(obj.bcomp_path).name
+            return bcomp_filename       
+        else:
+            return None
 
     def get_megacube_from_cache(self, obj):
         # Verificar se existe o arquivo megacubo descompactado no diretório de cache.
@@ -174,32 +188,8 @@ class ImageViewSet(viewsets.ModelViewSet):
         Returns: <br>
             ([list[string]]): a list of HUDs titles.
         """
-
         galaxy = self.get_object()
         result = self.get_huds(galaxy)
-        # list_hud_filepath = self.get_image_part_path(
-        #     galaxy, 'list_hud.json')
-
-        # list_gas_filepath = self.get_image_part_path(
-        #     galaxy, 'list_gas_map.json')
-
-        # result = dict({
-        #     'hud': list(),
-        #     'gas_maps': list()
-        # })
-        # with open(list_hud_filepath) as f:
-        #     huds = json.load(f)
-        #     result['hud'] = huds['hud']
-
-        #     with open(list_gas_filepath) as f:
-        #         gas = json.load(f)
-        #         result['gas_maps'] = gas['gas_maps']
-
-        #         # TODO: Provisóriamente a lista de mapas está indo no mesmo array dos hdus.
-        #         # Solução ideal é a interface ser atualizada para entender o atributo novo gas_maps
-        #         # e renderizar os mapas de gas de forma agrupada.
-        #         for map in gas['gas_maps']:
-        #             result['hud'].append(map)
 
         return Response(result)
 
@@ -217,14 +207,14 @@ class ImageViewSet(viewsets.ModelViewSet):
                 - link ([string]): the url of the megacube. <br>
                 - size ([number]): the size of the file.
         """
-
         galaxy = self.get_object()
-
         result = ({
             'mangaid': galaxy.mangaid,
-            'name': galaxy.nsa_iauname,
+            'name': galaxy.megacube,
+            'bcomp_name': self.get_bcomp_filename(galaxy),
             'megacube': galaxy.megacube,
             'link': self.get_original_megacube_url(galaxy),
+            'link_bcomp': self.get_bcomp_megacube_url(galaxy),
             'size': galaxy.compressed_size
         })
 

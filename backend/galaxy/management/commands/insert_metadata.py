@@ -15,14 +15,13 @@ import pandas as pd
 
 class Command(BaseCommand):
     help = 'Integrating metadata files into the database'
+    verbosity = 1
 
     def add_arguments(self, parser):
         # filename
         parser.add_argument(
             'filename',
-            # dest='filename',
-            # default='drpall-v3_1_1.fits',
-            help='Arquivo .fits contendo a lista de objetos. ex: drpall-v3_1_1.fits',
+            help='Arquivo .csv contendo a lista de objetos. ex: megacube_mean_properties_table_Riffel_2023.csv',
         )
 
         parser.add_argument(
@@ -38,6 +37,7 @@ class Command(BaseCommand):
             self.stdout.write('Removing all existing entries from the table')            
             self.delete_table(Image)
 
+        self.verbosity = kwargs['verbosity']
         self.update_metadata(kwargs['filename'])
 
         self.stdout.write('Done!')
@@ -46,6 +46,14 @@ class Command(BaseCommand):
         model.objects.all().delete()
 
     def read_object_list_csv(self, filename):
+        # df = pd.read_csv(
+        #     filename, 
+        #     )
+        # print(df.head())
+        # rows = list(df.to_dict("records"))
+        # print(type(rows[0]['bcomp']))
+
+        # raise Exception()
         df = pd.read_csv(
             filename, 
             skiprows=1,
@@ -64,7 +72,7 @@ class Command(BaseCommand):
                 'v_o1_6300', 'v_n2_6548', 'v_ha', 'v_n2_6583', 'v_s2_6716', 
                 'v_s2_6731', 'sigma_hb', 'sigma_o3_4959', 'sigma_o3_5007', 'sigma_he1_5876', 
                 'sigma_o1_6300', 'sigma_n2_6548', 'sigma_ha', 'sigma_n2_6583', 
-                'sigma_s2_6716', 'sigma_s2_6731'
+                'sigma_s2_6716', 'sigma_s2_6731', 'bcomp'
             ])
         
         # df = df.fillna(0)
@@ -76,12 +84,16 @@ class Command(BaseCommand):
 
         count_registered = 0
         count_original_file_exists = 0
+        count_bcomp_exist = 0        
         count_parts_exist = 0
+        
 
         for galaxy in rows:
             original_filename = f"{galaxy['megacube']}.tar.bz2"
+            bcomp_filename = f"{galaxy['megacube'].replace('-MEGACUBE.fits', '-MEGACUBE-BComp.fits')}.tar.bz2"
             folder_name = 'manga-%s' % galaxy['plateifu']
             original_megacube_path = get_megacube_path(original_filename)
+            bcomp_path = get_megacube_path(bcomp_filename)
             megacube_parts = parts_folder.joinpath(folder_name)
 
             obj, created = Image.objects.update_or_create(
@@ -91,8 +103,9 @@ class Command(BaseCommand):
             count_registered += 1
 
             if original_megacube_path.exists() and original_megacube_path.is_file():
-                self.stdout.write("original_megacube_path: %s" %
-                                  str(original_megacube_path))
+
+                if self.verbosity > 1:
+                    self.stdout.write(f"original_megacube_path: {original_megacube_path}")
                 
                 count_original_file_exists += 1
                 # Adding compression            
@@ -104,16 +117,29 @@ class Command(BaseCommand):
                 # Folder name (used in megacubo_parts_directory)
                 obj.folder_name = folder_name
 
-                self.stdout.write('Have parts folder %s' %
-                                    megacube_parts.exists())
+                if self.verbosity > 1:
+                    self.stdout.write(f"Have parts folder: {megacube_parts.exists()}")
+
                 obj.had_parts_extracted = megacube_parts.exists()            
                 if megacube_parts.exists():
                     count_parts_exist += 1
+
+                # Check Bcomp atribute
+                if galaxy['bcomp'] == True:
+                    if bcomp_path.exists():
+                        obj.had_bcomp = True
+                        obj.bcomp_path = bcomp_path
+                        if self.verbosity > 1:
+                            self.stdout.write(f"Have BComp bz2: {bcomp_path.exists()}")
+                        count_bcomp_exist += 1
+                    else:
+                        raise Exception(f"{galaxy['plateifu']} object is marked with bcomp=True flag but bz2 file {bcomp_path} was not found.")
                 obj.save()
 
-        self.stdout.write('%s Objects in %s.' % (len(rows), filename))
+        self.stdout.write(f'{len(rows)} Objects in {filename}.')
         self.stdout.write(f'Original bz2 file Exists: {count_original_file_exists}')
         self.stdout.write(f'Megacubo Parts Exists: {count_parts_exist}')
+        self.stdout.write(f'BComp bz2 file Exists: {count_bcomp_exist}')
 
     def update_metadata(self, filename):
         self.stdout.write(
@@ -129,4 +155,5 @@ class Command(BaseCommand):
         else:
             self.stdout.write(
                 f'File format {obj_list_filepath.suffix} is not valid use .fits or .csv')
+
 

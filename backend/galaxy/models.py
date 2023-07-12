@@ -29,6 +29,14 @@ class Image(models.Model):
         verbose_name='Dec',
         default=0
     )    
+    # Flag que indica se o Objeto tem arquivo bz2 extra para downlaod
+    # O arquivo extra possui uma tributo a mais comp_larga.
+    had_bcomp = models.BooleanField(
+        verbose_name='Broad component',
+        default=False,
+        help_text='Indicates whether the object has an extra bz2 file containing the Broad component attribute. when true, it affects the download function, which makes 2 files available.'
+    )    
+    
     # Flag que indica se o processo extract_image_parts foi executado para este objeto.
     had_parts_extracted = models.BooleanField(
         verbose_name='Extracted',
@@ -58,6 +66,15 @@ class Image(models.Model):
         blank=True,
         default=None,
         help_text='Complete Path to original file.'
+    )
+    
+    bcomp_path = models.CharField(
+        verbose_name='Bcomp Path',
+        max_length=1024,
+        null=True,
+        blank=True,
+        default=None,
+        help_text='Complete Path to extra bz2 file contain comp_larga ex: manga-xxx-MEGACUBE-BComp.fits.tar.bz2.'
     )
 
     folder_name = models.CharField(
