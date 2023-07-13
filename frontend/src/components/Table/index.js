@@ -378,7 +378,12 @@ function Table({
       >
         <FilterListIcon />
       </IconButton>
-      {children}
+      <div>
+        <Button variant="contained" color="primary" href='/data/megacube_mean_properties_table_Riffel_2023.fits' >
+            Download List
+        </Button>       
+      </div>
+      {children}         
     </MuiToolbar>
   );
 

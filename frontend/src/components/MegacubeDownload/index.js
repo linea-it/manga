@@ -48,7 +48,7 @@ function MegacubeDownload({ data, setOpen }) {
         </Button>
         {data.link_bcomp && (
           <Button variant="contained" color="primary" href={data.link_bcomp} onClick={setOpen}>
-          Broad component
+          Download Broad component
           </Button>
         )}
         <Button variant="contained" color="primary" href={data.link} onClick={setOpen}>
