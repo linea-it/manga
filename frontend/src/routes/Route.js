@@ -59,11 +59,12 @@ export default function RouteWrapper({
             </>
           )}
         />
-      ) : !authenticated ? (
-        <Backdrop className={classes.backdrop} open>
-          <CircularProgress color="inherit" />
-        </Backdrop>
-      ) : (
+        ) : (        
+      // ) : !authenticated ? (
+      //   <Backdrop className={classes.backdrop} open>
+      //     <CircularProgress color="inherit" />
+      //   </Backdrop>
+      // ) : (
         <Route
         {...rest}
         render={(props) => (
