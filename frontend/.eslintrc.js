@@ -5,7 +5,10 @@ module.exports = {
     es6: true,
     jest: true,
   },
-  extends: ['airbnb', 'prettier', 'prettier/react'],
+  extends: [
+    "plugin:react/recommended",
+    "standard"
+  ],
   globals: {
     Atomics: 'readonly',
     SharedArrayBuffer: 'readonly',
@@ -14,10 +17,10 @@ module.exports = {
     ecmaFeatures: {
       jsx: true,
     },
-    ecmaVersion: 2018,
+    ecmaVersion: 2022,
     sourceType: 'module',
   },
-  plugins: ['react', 'jsx-a11y', 'import', 'react-hooks', 'prettier'],
+  plugins: ['react', 'prettier'],
   rules: {
     'react/jsx-filename-extension': [1, {
       extensions: ['.js', '.jsx']
@@ -25,6 +28,7 @@ module.exports = {
     'react/no-array-index-key': 0,
     'no-plusplus': 0,
     'react/jsx-props-no-spreading': 0,
-    'prefer-spread': 0
+    'prefer-spread': 0,
+    'no-shadow': 'off'
   }
 };

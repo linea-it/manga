@@ -221,6 +221,81 @@ function Table({
     setCustomLoading(false);
   }, [data, totalCount, defaultExpandedGroups]);
 
+  const onClickAction = (column, row) => {
+    if (modalContent !== null) {
+      setCustomModalContent('');
+      setVisible(true);
+    }
+    column.action(row);
+  };
+
+  const rows = customData.map((row) => {
+    const line = {};
+    Object.keys(row).forEach((key) => {
+      const column = columns.filter((el) => el.name === key)[0];
+      if (key in row) {
+        if (
+          (column && column.icon && typeof row[key] !== 'object') ||
+          /*
+          If the current row is an array or object, then verify if its length is higher than 1.
+          This was created for the "Release" column,
+          that sometimes has multiple releases for a single dataset.
+          */
+          (column &&
+            column.icon &&
+            typeof row[key] === 'object' &&
+            row[key].length > 1 &&
+            !column.customElement)
+        ) {
+          if (column.action) {
+            line[key] = (
+              <>
+                <Button onClick={() => onClickAction(column, row)}>
+                  {column.icon}
+                </Button>
+              </>
+            );
+          } else {
+            line[key] = <>{column.icon}</>;
+          }
+          /*
+            If the current row has a custom element, than render it, instead of the default.
+          */
+        } else if (column && column.customElement) {
+          line[key] = column.customElement(row);
+        } else {
+          line[key] = row[key];
+        }
+      } else if (column && column.customElement) {
+        line[key] = column.customElement(row);
+      } else {
+        line[key] = '-';
+      }
+    });
+    return line;
+  });
+
+
+
+  const changeSelection = (value) => {
+    let select = value;
+
+    if (value.length > 0) {
+      const diff = value.filter((x) => !selection.includes(x));
+      select = diff;
+    } else {
+      select = [];
+    }
+
+    setSelectedRow(null);
+    if (setSelectedRow && select.length > 0) {
+      setSelectedRow(rows[select].id);
+    }
+
+    setSelection(select);
+  };
+
+
   useEffect(() => {
     if (selectedRow) {
       const megacubeOnTable =
@@ -290,23 +365,7 @@ function Table({
     }
   };
 
-  const changeSelection = (value) => {
-    let select = value;
 
-    if (value.length > 0) {
-      const diff = value.filter((x) => !selection.includes(x));
-      select = diff;
-    } else {
-      select = [];
-    }
-
-    setSelectedRow(null);
-    if (setSelectedRow && select.length > 0) {
-      setSelectedRow(rows[select].id);
-    }
-
-    setSelection(select);
-  };
 
   const onHideModal = () => setVisible(false);
 
@@ -329,13 +388,7 @@ function Table({
     />
   );
 
-  const onClickAction = (column, row) => {
-    if (modalContent !== null) {
-      setCustomModalContent('');
-      setVisible(true);
-    }
-    column.action(row);
-  };
+
 
   const renderTableOrVirtualTable = () => {
     if (loading !== null) {
@@ -739,51 +792,6 @@ function Table({
     );
   };
 
-  const rows = customData.map((row) => {
-    const line = {};
-    Object.keys(row).forEach((key) => {
-      const column = columns.filter((el) => el.name === key)[0];
-      if (key in row) {
-        if (
-          (column && column.icon && typeof row[key] !== 'object') ||
-          /*
-          If the current row is an array or object, then verify if its length is higher than 1.
-          This was created for the "Release" column,
-          that sometimes has multiple releases for a single dataset.
-          */
-          (column &&
-            column.icon &&
-            typeof row[key] === 'object' &&
-            row[key].length > 1 &&
-            !column.customElement)
-        ) {
-          if (column.action) {
-            line[key] = (
-              <>
-                <Button onClick={() => onClickAction(column, row)}>
-                  {column.icon}
-                </Button>
-              </>
-            );
-          } else {
-            line[key] = <>{column.icon}</>;
-          }
-          /*
-            If the current row has a custom element, than render it, instead of the default.
-          */
-        } else if (column && column.customElement) {
-          line[key] = column.customElement(row);
-        } else {
-          line[key] = row[key];
-        }
-      } else if (column && column.customElement) {
-        line[key] = column.customElement(row);
-      } else {
-        line[key] = '-';
-      }
-    });
-    return line;
-  });
 
   useEffect(() => {
     const handleKeyDown = (e) => {
