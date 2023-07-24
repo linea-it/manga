@@ -27,4 +27,10 @@ COPY --from=builder /app/build /var/www/frontend
 RUN chgrp nginx /var/www/frontend
 RUN chmod -R g+w /var/www/frontend
 
+RUN mkdir /var/www/table \
+    && chmod -R g+w /var/www/table
+
+COPY ./data/megacube_mean_properties_table_Riffel_2023.fits.tar.gz /var/www/table/megacube_mean_properties_table_Riffel_2023.fits.tar.gz
+COPY ./nginx/production.conf /etc/nginx/conf.d/default.conf
+
 USER nginx

@@ -72,11 +72,6 @@ function Preview() {
       title: 'MaNGA-ID',
     },
     {
-      name: 'had_bcomp',
-      title: 'B. Comp',
-      sortingEnabled: true,      
-    },
-    {
       name: 'fcfc1_50',
       title: 'FCFC1.50',
       sortingEnabled: true,      
@@ -425,7 +420,12 @@ function Preview() {
       name: 'sigma_s2_6731',
       title: 'sigma(s2_6731)',
       sortingEnabled: true,      
-    },    
+    },   
+    {
+      name: 'had_bcomp',
+      title: 'B. Comp',
+      sortingEnabled: true,      
+    },     
   ];
 
   const loadData = ({

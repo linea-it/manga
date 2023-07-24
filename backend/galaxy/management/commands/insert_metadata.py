@@ -46,12 +46,14 @@ class Command(BaseCommand):
         model.objects.all().delete()
 
     def read_object_list_csv(self, filename):
+
         # df = pd.read_csv(
         #     filename, 
         #     )
         # print(df.head())
         # rows = list(df.to_dict("records"))
-        # print(type(rows[0]['bcomp']))
+
+        # print(rows[0])
 
         # raise Exception()
         df = pd.read_csv(
@@ -72,9 +74,9 @@ class Command(BaseCommand):
                 'v_o1_6300', 'v_n2_6548', 'v_ha', 'v_n2_6583', 'v_s2_6716', 
                 'v_s2_6731', 'sigma_hb', 'sigma_o3_4959', 'sigma_o3_5007', 'sigma_he1_5876', 
                 'sigma_o1_6300', 'sigma_n2_6548', 'sigma_ha', 'sigma_n2_6583', 
-                'sigma_s2_6716', 'sigma_s2_6731', 'bcomp'
+                'sigma_s2_6716', 'sigma_s2_6731', 'had_bcomp'
             ])
-        
+
         # df = df.fillna(0)
         df = df.fillna(np.nan).replace([np.nan], [None])
 
@@ -125,7 +127,7 @@ class Command(BaseCommand):
                     count_parts_exist += 1
 
                 # Check Bcomp atribute
-                if galaxy['bcomp'] == True:
+                if galaxy['had_bcomp'] == True:
                     if bcomp_path.exists():
                         obj.had_bcomp = True
                         obj.bcomp_path = bcomp_path
