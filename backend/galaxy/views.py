@@ -21,7 +21,7 @@ from manga.emission_lines import EmissionLines
 from manga.megacube import MangaMegacube
 
 
-class ImageViewSet(viewsets.ModelViewSet):
+class ImageViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Image.objects.filter(had_parts_extracted=True)
     serializer_class = ImageSerializer
     filter_fields = ('id', 'mangaid', 'plateifu', 'objra', 'objdec',
