@@ -9,8 +9,7 @@ import styles from './styles';
 function SpectrumCard(props) {
     const {id, x, y } = props
 
-    return (
-    )
+     
 }
 
 export default SpectrumCard;    

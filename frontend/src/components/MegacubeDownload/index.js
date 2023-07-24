@@ -11,8 +11,8 @@ import {
 } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import filesize from 'filesize';
-import useStyles from './styles';
 import Link from '@material-ui/core/Link';
+import useStyles from './styles';
 
 function MegacubeDownload({ data, setOpen }) {
 

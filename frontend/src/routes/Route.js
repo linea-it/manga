@@ -1,11 +1,12 @@
 /* eslint-disable consistent-return */
 /* eslint-disable no-nested-ternary */
-import React, { useState, useEffect } from 'react';
+// import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Route, Redirect } from 'react-router-dom';
-import Backdrop from '@material-ui/core/Backdrop';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import useStyles from './styles';
+// import Backdrop from '@material-ui/core/Backdrop';
+// import CircularProgress from '@material-ui/core/CircularProgress';
+// import useStyles from './styles';
 import { isAuthenticated, url } from '../services/auth';
 import Header from '../components/Header';
 import HeaderHome from '../components/LandingPage/Header';
@@ -18,12 +19,12 @@ export default function RouteWrapper({
   ...rest
 }) {
 
-  const [authenticated, setAuthenticated] = useState(false);
-  const classes = useStyles();
+  // const [authenticated, setAuthenticated] = useState(false);
+  // const classes = useStyles();
 
   useEffect(() => {
     isAuthenticated().then((res) => {
-      setAuthenticated(res);
+      // setAuthenticated(res);
       if (res && !isPrivate) {
         return <Redirect to="/" />;
       }

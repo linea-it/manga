@@ -177,7 +177,7 @@ function Contact() {
           <AlertTitle>Success</AlertTitle>
           <p>
             Your message was sent! A ticket was opened on our issue tracking
-            system and you'll receive a feedback when it gets approved.
+            system and you`&apos;`ll receive a feedback when it gets approved.
           </p>
         </Alert>
       </Snackbar>
@@ -200,7 +200,7 @@ function Contact() {
             >
               click here
             </Link>
-            <span> to go to the "Contact Us" page on our website</span>
+            <span> to go to the `&ldquo;`Contact Us`&rdquo;` page on our website</span>
           </p>
         </Alert>
       </Snackbar>
@@ -215,7 +215,7 @@ function Contact() {
           <p>
             <span>
               Sorry, an unexpected error has occurred. Could you please try
-              again? If it still didn't work, you can{' '}
+              again? If it still didn`&apos;`t work, you can{' '}
             </span>
             <Link
               href="https://www.linea.gov.br/6-faleconosco/"
@@ -223,7 +223,7 @@ function Contact() {
             >
               click here
             </Link>
-            <span> to go to the "Contact Us" page on our website.</span>
+            <span> to go to the  `&ldquo;`Contact Us`&rdquo;` page on our website.</span>
           </p>
         </Alert>
       </Snackbar>

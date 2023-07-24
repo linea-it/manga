@@ -3,7 +3,6 @@ import { Grid, Button, Icon, Typography, CardContent, Card, CardHeader,Box } fro
 import { useParams, useHistory } from 'react-router-dom';
 import useInterval from '../../hooks/useInterval';
 import {
-  getFluxByPosition,
   getHudList,
   getAllImagesHeatmap,
   getLogAgeByPosition,
@@ -13,7 +12,6 @@ import {
 } from '../../services/api';
 import VerifierGrid from '../../components/VerifierGrid';
 import Galaxy from '../../components/Galaxy';
-import Spectre from '../../components/Spectre';
 import Switch from '../../components/Switch';
 import { mergeArrayOfArrays } from '../../services/utils';
 import MegacubeHeader from '../../components/MegacubeHeader';
@@ -36,7 +34,6 @@ function Explorer() {
   });
   const [selectedImage, setSelectedImage] = useState({ id: 0, name: '' });
   const [selectedContour, setSelectedContour] = useState({ id: 0, name: '' });
-  const [fluxPlotData, setFluxPlotData] = useState({});
   const [heatmapPlotImageData, setHeatmapPlotImageData] = useState({
     z: [],
     title: '',
@@ -65,7 +62,6 @@ function Explorer() {
     m: [],
     mlegend: [],
   });
-  const [isLoadingFlux, setLoadingFlux] = React.useState(false)
 
   useEffect(() => {
     getHudList(id).then((res) => {
@@ -81,31 +77,6 @@ function Explorer() {
       });
     }
   }, [hudList]);
-
-  const loadFluxMap = (x, y) => {
-    setLoadingFlux(true)
-    getFluxByPosition({ x, y, id })
-      .then(res => {
-        setLoadingFlux(false)
-        setFluxPlotData(res)
-      })
-      .catch(res => {
-        setLoadingFlux(false)
-        if (res.response.status === 400) {
-          // Tratamento para erro nos campos
-          // catchFormError(res.response.data)
-        }
-        if (res.response.status === 500) {
-          // catchFormError(res.response.data)
-        }
-      })
-  };
-
-  useEffect(() => {
-    if (heatmapPoints[0] !== 0 && heatmapPoints[1] !== 0) {
-      loadFluxMap(heatmapPoints[0], heatmapPoints[1]);
-    }
-  }, [heatmapPoints]);
 
   useEffect(() => {
     if (heatmaps.length > 0 && selectedImage.id !== 0) {
@@ -194,7 +165,7 @@ function Explorer() {
 
   const handleSelectImage = (e) => {
     setHeatmapPoints([0, 0]);
-    setFluxPlotData({});
+    // setFluxPlotData({});
     setSelectedImage({
       id: e.target.value,
       name: hudList[e.target.value - 1].name,
@@ -210,7 +181,6 @@ function Explorer() {
   };
 
   const handleHeatmapClick = (e) => {
-    setFluxPlotData({});
     setHeatmapPoints([e.points[0].x, e.points[0].y]);
   };
 
@@ -374,26 +344,6 @@ function Explorer() {
               handleHeatmapContourRangeChange={handleHeatmapContourRangeChange}
             />
           </Grid>
-          {/* <Grid item xs={12} md={6} xl={8}>
-            <Card>
-              <CardHeader title='Spectrum and Histograms' />
-              <CardContent style={{minHeight: '40vw'}}>
-                  {heatmapPoints[0] !== 0 && heatmapPoints[1] !== 0 && (
-                    <Grid container sx={{height: '100%'}}>                    
-                      <Grid container item xs={12}>
-                        <SpectrumPlot id={id} x={heatmapPoints[0]} y={heatmapPoints[1]} />
-                      </Grid>
-                      <Grid container item xs={12} md={6}>
-                        <Age data={agePlotData} height={heatmapSize.height / 2} />
-                      </Grid>
-                      <Grid container item xs={12} md={6}>
-                        <Vecs data={vecsPlotData} height={heatmapSize.height / 2} />
-                      </Grid>                      
-                    </Grid>
-                  )}
-              </CardContent>
-            </Card>
-          </Grid>   */}
           <Grid item xs={12} md={6} xl={8}>
             <Card>
               <CardHeader title='Spectrum and Histograms' />
@@ -424,17 +374,6 @@ function Explorer() {
               </CardContent>
             </Card>
           </Grid>                              
-          {/* <Grid item xs={12} md={6} xl={8}>
-            <Spectre
-              heatmapPoints={heatmapPoints}
-              fluxPlotData={fluxPlotData}
-              heatmapSize={heatmapSize}
-              selectedImage={selectedImage}
-              vecsPlotData={vecsPlotData}
-              agePlotData={agePlotData}
-              isLoading={isLoadingFlux}
-            />
-          </Grid>          */}
         </>
       )}
       <MegacubeHeader

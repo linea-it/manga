@@ -107,7 +107,7 @@ function Tutorials() {
             ))}
           </Grid>
           <Grid item xs={12} sm={8}>
-            {idPlayer != '0' ? (
+            {idPlayer !== '0' ? (
               <>
                 <YouTube videoId={idPlayer} opts={opts} />
                 <Typography variant="subtitle1" align="center" gutterBottom>
