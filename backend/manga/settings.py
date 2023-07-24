@@ -173,9 +173,11 @@ MEGACUBE_PARTS.mkdir( parents=True, exist_ok=True )
 MEGACUBE_PARTS_URL = posixpath.join(DATA_BASE_URL, MEGACUBE_ROOT)
 
 MEGACUBE_CACHE_ROOT = 'cache'
-MEGACUBE_CACHE = Path(IMAGES_DIR).joinpath(MEGACUBE_CACHE_ROOT)
+if os.getenv('IMAGE_CACHE_PATH', None):
+    MEGACUBE_CACHE = Path(os.getenv('IMAGE_CACHE_PATH'))
+else:
+    MEGACUBE_CACHE = Path(IMAGES_DIR).joinpath(MEGACUBE_CACHE_ROOT)
 MEGACUBE_CACHE.mkdir( parents=True, exist_ok=True )
-
 
 
 AUTHENTICATION_BACKENDS = (

@@ -12,6 +12,7 @@ import {
 import CloseIcon from '@material-ui/icons/Close';
 import filesize from 'filesize';
 import useStyles from './styles';
+import Link from '@material-ui/core/Link';
 
 function MegacubeDownload({ data, setOpen }) {
 
@@ -37,13 +38,21 @@ function MegacubeDownload({ data, setOpen }) {
         <Typography>Name: {data.name}</Typography>
         <Typography>File: {data.megacube}</Typography>
         <Typography>Size: {filesize(data.size)}</Typography>
+        {data.bcomp_name && (
+            <Typography>Broad component: {data.bcomp_name}</Typography>
+        )}
       </DialogContent>
       <DialogActions>
         <Button variant="contained" color="secondary" onClick={setOpen}>
           Cancel
         </Button>
+        {data.link_bcomp && (
+          <Button variant="contained" color="primary" href={data.link_bcomp} onClick={setOpen}>
+          Download Broad component
+          </Button>
+        )}
         <Button variant="contained" color="primary" href={data.link} onClick={setOpen}>
-          Ok
+          Download
         </Button>
       </DialogActions>
     </Dialog>

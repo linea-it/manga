@@ -44,19 +44,13 @@ function Preview() {
           selection: [],
         }
   );
-
+ 
   const columns = [
     {
       name: 'index',
       title: ' ',
       width: 80,
       sortingEnabled: false,
-    },
-    {
-      name: 'nsa_iauname',
-      title: 'Name',
-      width: 180,
-      headerTooltip: 'IAU-style designation based on RA/Dec (NSA)',
     },
     {
       name: 'plateifu',
@@ -78,45 +72,360 @@ function Preview() {
       title: 'MaNGA-ID',
     },
     {
-      name: 'mjdmed',
-      title: 'MJD',
-      headerTooltip: 'Median MJD across all exposures',
-      width: 100,
+      name: 'fcfc1_50',
+      title: 'FCFC1.50',
+      sortingEnabled: true,      
     },
     {
-      name: 'exptime',
-      title: 'Exp Time',
-      headerTooltip: 'Total exposure time (seconds)',
-      width: 110,
+      name: 'xyy_light',
+      title: 'xyy_light',
+      sortingEnabled: true,      
     },
     {
-      name: 'airmsmed',
-      title: 'Airmass',
-      customElement: (row) => (
-        <span title={row.airmsmed}>{row.airmsmed.toFixed(2)}</span>
-      ),
-      headerTooltip: 'Median airmass across all exposures',
-      width: 100,
+      name: 'xyo_light',
+      title: 'xyo_light',
+      sortingEnabled: true,      
     },
     {
-      name: 'seemed',
-      title: 'Seeing',
-      customElement: (row) => (
-        <span title={row.seemed}>{row.seemed.toFixed(2)}</span>
-      ),
-      headerTooltip: 'Median guider seeing (arcsec)',
-      width: 100,
+      name: 'xiy_light',
+      title: 'xiy_light',
+      sortingEnabled: true,      
     },
     {
-      name: 'nsa_z',
-      title: 'z',
-      customElement: (row) => (
-        <span title={row.nsa_z}>{row.nsa_z.toFixed(3)}</span>
-      ),
-      width: 80,
-      headerTooltip:
-        'The targeting redshift (identical to nsa_z for those targets in the NSA Catalog. For others, it is the redshift provided by the Ancillary programs)',
+      name: 'xii_light',
+      title: 'xii_light',
+      sortingEnabled: true,      
     },
+    {
+      name: 'xio_light',
+      title: 'xio_light',
+      sortingEnabled: true,      
+    },
+    {
+      name: 'xo_light',
+      title: 'xo_light',
+      sortingEnabled: true,      
+    },
+    {
+      name: 'xyy_mass',
+      title: 'xyy_mass',
+      sortingEnabled: true,      
+    },
+    {
+      name: 'xyo_mass',
+      title: 'xyo_mass',
+      sortingEnabled: true,      
+    },
+    {
+      name: 'xiy_mass',
+      title: 'xiy_mass',
+      sortingEnabled: true,      
+    },
+    {
+      name: 'xii_mass',
+      title: 'xii_mass',
+      sortingEnabled: true,      
+    },
+    {
+      name: 'xio_mass',
+      title: 'xio_mass',
+      sortingEnabled: true,      
+    },                                
+    {
+      name: 'xo_mass',
+      title: 'xo_mass',
+      sortingEnabled: true,      
+    },
+    {
+      name: 'sfr_1',
+      title: 'SFR_1',
+      sortingEnabled: true,      
+    },
+    {
+      name: 'sfr_5',
+      title: 'SFR_5',
+      sortingEnabled: true,      
+    },
+    {
+      name: 'sfr_10',
+      title: 'SFR_10',
+      sortingEnabled: true,      
+    },
+    {
+      name: 'sfr_14',
+      title: 'SFR_14',
+      sortingEnabled: true,      
+    },
+    {
+      name: 'sfr_20',
+      title: 'SFR_20',
+      sortingEnabled: true,      
+    },
+    {
+      name: 'sfr_30',
+      title: 'SFR_30',
+      sortingEnabled: true,      
+    },
+    {
+      name: 'sfr_56',
+      title: 'SFR_56',
+      sortingEnabled: true,      
+    },
+    {
+      name: 'sfr_100',
+      title: 'SFR_100',
+      sortingEnabled: true,      
+    },
+    {
+      name: 'sfr_200',
+      title: 'SFR_200',
+      sortingEnabled: true,      
+    },
+    {
+      name: 'av_star',
+      title: 'Av_star',
+      sortingEnabled: true,      
+    },
+    {
+      name: 'mage_l',
+      title: 'Mage_L',
+      sortingEnabled: true,      
+    },
+    {
+      name: 'mage_m',
+      title: 'Mage_M',
+      sortingEnabled: true,      
+    },
+    {
+      name: 'mz_l',
+      title: 'MZ_L',
+      sortingEnabled: true,      
+    },
+    {
+      name: 'mz_m',
+      title: 'MZ_M',
+      sortingEnabled: true,      
+    },
+    {
+      name: 'mstar',
+      title: 'Mstar',
+      sortingEnabled: true,      
+    },
+    {
+      name: 'sigma_star',
+      title: 'Sigma_star',
+      sortingEnabled: true,      
+    },
+    {
+      name: 'vrot_star',
+      title: 'vrot_star',
+      sortingEnabled: true,      
+    },
+    {
+      name: 'f_hb',
+      title: 'f(hb)',
+      sortingEnabled: true,      
+    },
+    {
+      name: 'f_o3_4959',
+      title: 'f(o3_4959)',
+      sortingEnabled: true,      
+    },
+    {
+      name: 'f_o3_5007',
+      title: 'f(o3_5007)',
+      sortingEnabled: true,      
+    },
+    {
+      name: 'f_he1_5876',
+      title: 'f(He1_5876)',
+      sortingEnabled: true,      
+    },
+    {
+      name: 'f_o1_6300',
+      title: 'f(o1_6300)',
+      sortingEnabled: true,      
+    }, 
+    {
+      name: 'f_n2_6548',
+      title: 'f(n2_6548)',
+      sortingEnabled: true,      
+    },
+    {
+      name: 'f_ha',
+      title: 'f(ha)',
+      sortingEnabled: true,      
+    },
+    {
+      name: 'f_n2_6583',
+      title: 'f(n2_6583)',
+      sortingEnabled: true,      
+    },
+    {
+      name: 'f_s2_6716',
+      title: 'f(s2_6716)',
+      sortingEnabled: true,      
+    },
+    {
+      name: 'f_s2_6731',
+      title: 'f(s2_6731)',
+      sortingEnabled: true,      
+    },
+    {
+      name: 'eqw_hb',
+      title: 'eqw(hb)',
+      sortingEnabled: true,      
+    },
+    {
+      name: 'eqw_o3_4959',
+      title: 'eqw(o3_4959)',
+      sortingEnabled: true,      
+    },
+    {
+      name: 'eqw_o3_5007',
+      title: 'eqw(o3_5007)',
+      sortingEnabled: true,      
+    },
+    {
+      name: 'eqw_he1_5876',
+      title: 'eqw(He1_5876)',
+      sortingEnabled: true,      
+    },
+    {
+      name: 'eqw_o1_6300',
+      title: 'eqw(o1_6300)',
+      sortingEnabled: true,      
+    },
+    {
+      name: 'eqw_n2_6548',
+      title: 'eqw_n2_6548',
+      sortingEnabled: true,      
+    },
+    {
+      name: 'eqw_ha',
+      title: 'eqw(ha)',
+      sortingEnabled: true,      
+    },
+    {
+      name: 'eqw_n2_6583',
+      title: 'eqw(n2_6583)',
+      sortingEnabled: true,      
+    },
+    {
+      name: 'eqw_s2_6716',
+      title: 'eqw(s2_6716)',
+      sortingEnabled: true,      
+    },
+    {
+      name: 'eqw_s2_6731',
+      title: 'eqw(s2_6731)',
+      sortingEnabled: true,      
+    },
+    {
+      name: 'v_hb',
+      title: 'v(hb)',
+      sortingEnabled: true,      
+    },
+    {
+      name: 'v_o3_4959',
+      title: 'v(o3_4959)',
+      sortingEnabled: true,      
+    },      
+    {
+      name: 'v_o3_5007',
+      title: 'v(o3_5007)',
+      sortingEnabled: true,      
+    },
+    {
+      name: 'v_he1_5876',
+      title: 'v(He1_5876)',
+      sortingEnabled: true,      
+    },
+    {
+      name: 'v_o1_6300',
+      title: 'v(o1_6300)',
+      sortingEnabled: true,      
+    },
+    {
+      name: 'v_n2_6548',
+      title: 'v(n2_6548)',
+      sortingEnabled: true,      
+    },
+    {
+      name: 'v_ha',
+      title: 'v(ha)',
+      sortingEnabled: true,      
+    },
+    {
+      name: 'v_n2_6583',
+      title: 'v(n2_6583)',
+      sortingEnabled: true,      
+    },
+    {
+      name: 'v_s2_6716',
+      title: 'v(s2_6716)',
+      sortingEnabled: true,      
+    },
+    {
+      name: 'v_s2_6731',
+      title: 'v(s2_6731)',
+      sortingEnabled: true,      
+    },
+    {
+      name: 'sigma_hb',
+      title: 'sigma(hb)',
+      sortingEnabled: true,      
+    },
+    {
+      name: 'sigma_o3_4959',
+      title: 'sigma(o3_4959)',
+      sortingEnabled: true,      
+    },
+    {
+      name: 'sigma_o3_5007',
+      title: 'sigma(o3_5007)',
+      sortingEnabled: true,      
+    },
+    {
+      name: 'sigma_he1_5876',
+      title: 'sigma(He1_5876)',
+      sortingEnabled: true,      
+    },
+    {
+      name: 'sigma_o1_6300',
+      title: 'sigma(o1_6300)',
+      sortingEnabled: true,      
+    },
+    {
+      name: 'sigma_n2_6548',
+      title: 'sigma(n2_6548)',
+      sortingEnabled: true,      
+    },
+    {
+      name: 'sigma_ha',
+      title: 'sigma(ha)',
+      sortingEnabled: true,      
+    },
+    {
+      name: 'sigma_n2_6583',
+      title: 'sigma(n2_6583)',
+      sortingEnabled: true,      
+    },
+    {
+      name: 'sigma_s2_6716',
+      title: 'sigma(s2_6716)',
+      sortingEnabled: true,      
+    },
+    {
+      name: 'sigma_s2_6731',
+      title: 'sigma(s2_6731)',
+      sortingEnabled: true,      
+    },   
+    {
+      name: 'had_bcomp',
+      title: 'B. Comp',
+      sortingEnabled: true,      
+    },     
   ];
 
   const loadData = ({

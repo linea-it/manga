@@ -370,6 +370,13 @@ function Table({
     return <DxMuiTable columnExtensions={customColumnExtensions} />;
   };
 
+  const onDownload = () => {
+    const link = document.createElement("a");
+    link.download = `megacube_mean_properties_table_Riffel_2023.fits.tar.gz`;
+    link.href = "/table/megacube_mean_properties_table_Riffel_2023.fits.tar.gz";
+    link.click();
+  };
+
   const customToolbar = ({ children }) => (
     <MuiToolbar className={classes.toolbar}>
       <IconButton
@@ -378,7 +385,12 @@ function Table({
       >
         <FilterListIcon />
       </IconButton>
-      {children}
+      <div>
+        <Button variant="contained" color="primary" onClick={onDownload} >
+          Download mean properties file
+        </Button>       
+      </div>
+      {children}         
     </MuiToolbar>
   );
 

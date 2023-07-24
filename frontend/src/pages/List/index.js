@@ -47,6 +47,7 @@ function List() {
       align: 'center',
       sortingEnabled: false,
     },
+                                                     
   ];
 
   const loadData = () => {

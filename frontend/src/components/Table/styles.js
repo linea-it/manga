@@ -31,16 +31,19 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     justifyContent: 'end',
     '& button:nth-child(1)': {
-      order: 2,
+      order: 3,
     },
     '& div:nth-child(2)': {
-      display: 'none',
-    },
+      order: 5,
+    },   
     '& div:nth-child(3)': {
+      order: 4,
+    },        
+    '& div:nth-child(4)': {
       order: 1,
     },
-    '& button:nth-child(4)': {
-      order: 3,
+    '& button:nth-child(5)': {
+      order: 2,
     },
   },
   filterButton: {
