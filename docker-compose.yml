@@ -72,7 +72,7 @@ services:
 
   # Frontend React
   frontend:
-    image: node:16
+    image: node:16.0.0
     working_dir: /app
     volumes:
       - ./frontend:/app

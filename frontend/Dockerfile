@@ -1,8 +1,8 @@
-FROM node:12.16.2 as builder
+FROM node:16.0.0 as builder
 
 WORKDIR /app
 COPY package.json /app/package.json
-COPY yarn.lock /app/yarn.lock
+# COPY yarn.lock /app/yarn.lock
 
 RUN yarn -v
 
