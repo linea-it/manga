@@ -1,4 +1,5 @@
 import pink from '@material-ui/core/colors/pink';
+import blue from '@material-ui/core/colors/blue';
 
 import { createTheme } from '@material-ui/core/styles';
 
@@ -10,7 +11,7 @@ const light = createTheme({
       dark: '#161a1d',
       contrastText: '#fff',
     },
-    secondary: pink,
+    secondary: blue,
   },
   typography: {
     useNextVariants: true,

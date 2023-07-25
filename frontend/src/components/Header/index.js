@@ -29,11 +29,10 @@ import TutorialDialog from './TutorialDialog';
 function Header() {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
-  const [usernameAnchorEl, setUsernameAnchorEl] = useState(null);
-
   const [tutorialOpen, setTutorialOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [user, setUser] = useState(undefined);
+  // const [user, setUser] = useState(undefined);
+  // const [usernameAnchorEl, setUsernameAnchorEl] = useState(null);
 
   const tutorials = [
     {
@@ -48,10 +47,10 @@ function Header() {
     loggedUser().then((res) => {
       if (res === null) {
         setIsAuthenticated(false)
-        setUser(undefined)
+        // setUser(undefined)
       }
       if (res) {
-        setUser(res)
+        // setUser(res)
         setIsAuthenticated(true)
       }
     });
@@ -97,57 +96,57 @@ function Header() {
     window.open(location);
   };
 
-  const handleUsernameClick = (event) => {
-    setUsernameAnchorEl(event.currentTarget);
-  };
+  // const handleUsernameClick = (event) => {
+  //   setUsernameAnchorEl(event.currentTarget);
+  // };
 
-  const handleUsernameClose = () => {
-    setUsernameAnchorEl(null);
-  };
+  // const handleUsernameClose = () => {
+  //   setUsernameAnchorEl(null);
+  // };
 
-  const usernameOpen = Boolean(usernameAnchorEl);
+  // const usernameOpen = Boolean(usernameAnchorEl);
 
-  function UserLogged() {
-    return (
-      <>
-        <Button color="inherit" onClick={handleUsernameClick}>
-          {user.username || ''}
-        </Button>
-        <Popover
-          id="simple-popover"
-          anchorEl={usernameAnchorEl}
-          open={usernameOpen}
-          onClose={handleUsernameClose}
-          PaperProps={{
-            style: {
-              transform: 'translateX(calc(100vw - 185px)) translateY(45px)',
-            },
-          }}
-        >
-          <List className={classes.list}>
-            <ListItem button>
-              <Button
-                href={urlLogout}
-                color="inherit"
-                startIcon={<ExitToAppIcon />}
-              >
-                Logout
-              </Button>
-            </ListItem>
-          </List>
-        </Popover>
-      </>
-    );
-  }
-  function UserUnLogged() {
-    return (
-      <>
-        <Button href={urlLogin} color="inherit">
-          Sign in
-        </Button>
-      </>
-    );
-  }
+  // function UserLogged() {
+  //   return (
+  //     <>
+  //       <Button color="inherit" onClick={handleUsernameClick}>
+  //         {user.username || ''}
+  //       </Button>
+  //       <Popover
+  //         id="simple-popover"
+  //         anchorEl={usernameAnchorEl}
+  //         open={usernameOpen}
+  //         onClose={handleUsernameClose}
+  //         PaperProps={{
+  //           style: {
+  //             transform: 'translateX(calc(100vw - 185px)) translateY(45px)',
+  //           },
+  //         }}
+  //       >
+  //         <List className={classes.list}>
+  //           <ListItem button>
+  //             <Button
+  //               href={urlLogout}
+  //               color="inherit"
+  //               startIcon={<ExitToAppIcon />}
+  //             >
+  //               Logout
+  //             </Button>
+  //           </ListItem>
+  //         </List>
+  //       </Popover>
+  //     </>
+  //   );
+  // }
+  // function UserUnLogged() {
+  //   return (
+  //     <>
+  //       <Button href={urlLogin} color="inherit">
+  //         Sign in
+  //       </Button>
+  //     </>
+  //   );
+  // }
 
 
   return (
@@ -161,7 +160,7 @@ function Header() {
             MaNGA
           </Typography>
 
-          {user && user.username ? <UserLogged /> : <UserUnLogged />}
+          {/* {user && user.username ? <UserLogged /> : <UserUnLogged />} */}
 
           <IconButton
             color="inherit"
