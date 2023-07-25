@@ -34,7 +34,7 @@ function Supporters() {
     {
       id: 5,
       title: 'INCT do Universo',
-      image: 'e-universo.png',
+      image: 'e-universo_square.png',
     },
   ];
   return (
