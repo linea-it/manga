@@ -1,8 +1,8 @@
 import { makeStyles } from '@material-ui/core/styles';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   root: {
-    position: 'fixed',
+    // position: 'fixed',
     left: 0,
     right: 0,
     bottom: 0,
