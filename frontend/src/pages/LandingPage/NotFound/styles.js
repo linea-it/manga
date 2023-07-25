@@ -1,6 +1,6 @@
 import { makeStyles } from '@material-ui/core/styles';
 
-const styles = makeStyles((theme) => ({
+const styles = makeStyles(() => ({
   initContainer: {
     paddingTop: 20,
     paddingBottom: 100,

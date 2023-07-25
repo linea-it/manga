@@ -34,7 +34,7 @@ function Supporters() {
     {
       id: 5,
       title: 'INCT do Universo',
-      image: 'e-universo.png',
+      image: 'e-universo_square.png',
     },
   ];
   return (
@@ -46,7 +46,7 @@ function Supporters() {
         container
         spacing={2}
         direction="row"
-        justify="center"
+        justifyContent="center"
         alignItems="stretch"
       >
         {interfaces.map((item) => (
