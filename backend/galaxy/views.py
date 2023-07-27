@@ -53,7 +53,7 @@ class ImageViewSet(viewsets.ReadOnlyModelViewSet):
         'sigma_o1_6300','sigma_n2_6548','sigma_ha','sigma_n2_6583','sigma_s2_6716',
         'sigma_s2_6731', 'had_bcomp')
     
-    ordering = ('mangaid',)
+    # ordering = ('id',)
 
     def get_original_megacube_path(self, obj):
         return Path(obj.path)

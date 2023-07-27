@@ -44,12 +44,17 @@ function Preview() {
 
 
   const columns = [
+    // {
+    //   name: 'index',
+    //   title: ' ',
+    //   width: 80,
+    //   sortingEnabled: false,
+    // },
     {
-      name: 'index',
-      title: ' ',
-      width: 80,
-      sortingEnabled: false,
-    },
+      name: 'id',
+      title: 'ID',
+      headerTooltip: 'Internal ID for this object',
+    },    
     {
       name: 'plateifu',
       title: 'PlateIFU',
@@ -497,15 +502,17 @@ function Preview() {
     console.log("onChangeSelectedRow", selected)
 
     // Store last submitted period on local storage:
-    localStorage.setItem(
-      'previewSelections',
-      JSON.stringify({
-        ...tableOptions,
-        selectedMegacube:selected,
-      })
-    );
+    if (selected !== selectedMegacube) {
+      localStorage.setItem(
+        'previewSelections',
+        JSON.stringify({
+          ...tableOptions,
+          selectedMegacube:selected,
+        })
+      );
 
-    setSelectedMegacube(selected)
+      setSelectedMegacube(selected)
+    }
   }
 
   return (
