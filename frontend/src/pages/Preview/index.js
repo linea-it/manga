@@ -23,10 +23,11 @@ function Preview() {
   const memorizedSelections = localStorage.getItem('previewSelections');
 
   const [selectedMegacube, setSelectedMegacube] = useState(
-    memorizedSelections
+      memorizedSelections
       ? JSON.parse(memorizedSelections).selectedMegacube
       : null
   );
+
   const [tableOptions, setTableOptions] = useState(
     memorizedSelections
       ? {
@@ -34,17 +35,18 @@ function Preview() {
           pageSize: JSON.parse(memorizedSelections).pageSize,
           currentPage: JSON.parse(memorizedSelections).currentPage,
           searchValue: JSON.parse(memorizedSelections).searchValue,
-          selection: JSON.parse(memorizedSelections).selection,
+          // selection: JSON.parse(memorizedSelections).selection,
         }
       : {
           sorting: [],
           pageSize: 20,
           currentPage: 0,
           searchValue: '',
-          selection: [],
+          // selection: [],
         }
   );
- 
+
+
   const columns = [
     {
       name: 'index',
@@ -433,7 +435,6 @@ function Preview() {
     pageSize,
     currentPage,
     searchValue,
-    selection,
     filter,
   }) => {
     setTableOptions({
@@ -441,7 +442,6 @@ function Preview() {
       pageSize,
       currentPage,
       searchValue,
-      selection,
     });
 
     getMegacubesList({
@@ -455,6 +455,21 @@ function Preview() {
         data: res.results,
         totalCount: res.count,
       });
+      // Store last submitted period on local storage:
+      localStorage.setItem(
+        'previewSelections',
+        JSON.stringify({
+          sorting,
+          pageSize,
+          currentPage,
+          searchValue,
+          selectedMegacube
+        })
+      );
+
+      if (selectedMegacube === null && res.results.length > 0) {
+        setSelectedMegacube(res.results[0].id)
+      }
     });
   };
 
@@ -480,17 +495,23 @@ function Preview() {
   const handleSectionWidthChange = (size) => setSectionWidth(size);
 
   const handleExplorerClick = () => {
+    history.push(`/explorer/${selectedMegacube}`);
+  };
+
+  const onChangeSelectedRow = (selected) => {
+    console.log("onChangeSelectedRow", selected)
+
     // Store last submitted period on local storage:
     localStorage.setItem(
       'previewSelections',
       JSON.stringify({
         ...tableOptions,
-        selectedMegacube,
+        selectedMegacube:selected,
       })
     );
 
-    history.push(`/explorer/${selectedMegacube}`);
-  };
+    setSelectedMegacube(selected)
+  }
 
   return (
     <Container>
@@ -500,12 +521,12 @@ function Preview() {
           data={megacubes.data}
           totalCount={megacubes.totalCount}
           selectedRow={selectedMegacube}
-          setSelectedRow={setSelectedMegacube}
+          onChangeSelectedRow={onChangeSelectedRow}
           defaultSearchValue={tableOptions.searchValue}
           defaultCurrentPage={tableOptions.currentPage}
-          defaultSelection={tableOptions.selection}
+          // defaultSelection={tableOptions.selection}
           pageSize={tableOptions.pageSize}
-          pageSizes={[20, 50, 100]}
+          pageSizes={[1,20, 50, 100]}
           hasFiltering
           loadData={loadData}
           height={tableHeight}
