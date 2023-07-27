@@ -34,15 +34,11 @@ function Preview() {
           sorting: JSON.parse(memorizedSelections).sorting,
           pageSize: JSON.parse(memorizedSelections).pageSize,
           currentPage: JSON.parse(memorizedSelections).currentPage,
-          searchValue: JSON.parse(memorizedSelections).searchValue,
-          // selection: JSON.parse(memorizedSelections).selection,
         }
       : {
           sorting: [],
           pageSize: 20,
           currentPage: 0,
-          searchValue: '',
-          // selection: [],
         }
   );
 
@@ -462,7 +458,6 @@ function Preview() {
           sorting,
           pageSize,
           currentPage,
-          searchValue,
           selectedMegacube
         })
       );
@@ -522,11 +517,10 @@ function Preview() {
           totalCount={megacubes.totalCount}
           selectedRow={selectedMegacube}
           onChangeSelectedRow={onChangeSelectedRow}
-          defaultSearchValue={tableOptions.searchValue}
+          // defaultSearchValue={tableOptions.searchValue}
           defaultCurrentPage={tableOptions.currentPage}
-          // defaultSelection={tableOptions.selection}
           pageSize={tableOptions.pageSize}
-          pageSizes={[1,20, 50, 100]}
+          pageSizes={[20, 50, 100]}
           hasFiltering
           loadData={loadData}
           height={tableHeight}
