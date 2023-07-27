@@ -99,7 +99,7 @@ function Table({
   loading,
   defaultSelection,
   selectedRow,
-  setSelectedRow,
+  onChangeSelectedRow,
   isVirtualTable,
   height,
   defaultSearchValue,
@@ -275,23 +275,31 @@ function Table({
     return line;
   });
 
-
-
   const changeSelection = (value) => {
     let select = value;
 
+    // So permite uma seleção por vez
+    // Compara a seleção anterior com a atual e guarda a diferença
+    // A selecao na tabela utiliza o idx do array.
     if (value.length > 0) {
       const diff = value.filter((x) => !selection.includes(x));
-      select = diff;
+      select = diff;  
     } else {
       select = [];
     }
 
-    setSelectedRow(null);
-    if (setSelectedRow && select.length > 0) {
-      setSelectedRow(rows[select].id);
-    }
+    // Funcao recebida por props que e 
+    // executada toda vez que a seleao e alterada
+    // Tem a funcao de avisar ao componente pai que houve uma selecao
+    // Componente pai utiliza o id do registro. 
+    if (select.length > 0) {
+      onChangeSelectedRow(rows[select].id)
+    } 
+    // else {
+    //   onChangeSelectedRow(null)
+    // }
 
+    // Funcao interna da table que altera a linha selecionada pelo idx.
     setSelection(select);
   };
 
@@ -846,7 +854,6 @@ Table.defaultProps = {
   grouping: [{}],
   loading: null,
   selectedRow: null,
-  setSelectedRow: null,
   isVirtualTable: false,
   height: 'auto',
   defaultSearchValue: '',
@@ -882,7 +889,7 @@ Table.propTypes = {
   grouping: PropTypes.arrayOf(PropTypes.object),
   loading: PropTypes.bool,
   selectedRow: PropTypes.number,
-  setSelectedRow: PropTypes.func,
+  onChangeSelectedRow: PropTypes.func,
   isVirtualTable: PropTypes.bool,
   height: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   defaultSearchValue: PropTypes.string,
