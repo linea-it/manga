@@ -1,32 +1,29 @@
-import React, {useLayoutEffect, useRef, useState} from 'react';
+import React, {useRef} from 'react';
 import Plot from 'react-plotly.js';
-import { Card, CardHeader, CardMedia, CardContent, Grid, CircularProgress, Typography, Box } from '@material-ui/core';
-// import styles from './styles';
+import { CircularProgress, Typography, Box } from '@material-ui/core';
 import { useQuery } from 'react-query'
 import { spectrumLinesByPosition } from '../../services/api';
 import styles from './styles';
 
-function SpectrumPlot(props) {
+function SpectrumLinesPlot(props) {
     const ref = useRef(null);
     const classes = styles();
 
     const {id, x, y } = props
-    const [series, setSeries] = React.useState([])
     const [error, setError] = React.useState(null)
 
-
-    const { status, isLoading } = useQuery({
+    const { data, isLoading } = useQuery({
         queryKey: ['SpectrumLinesPlotData', { id, x, y}],
         queryFn: spectrumLinesByPosition,
         keepPreviousData: false,
         refetchInterval: false,
         retry: false,
+        staleTime: 1 * 60 * 60 * 1000,
+        select: makePlotData,
         onSuccess: data => {
           if (!data) {
-            return
+            return []
           }
-          console.log(data)
-          makePlotData(data)
         },
         onError: error => {
           let msg = error.message
@@ -92,11 +89,8 @@ function SpectrumPlot(props) {
                 showlegend = false
             }
         }
-        setSeries(plotData)
+        return plotData
       }
-
-
-    if (x === 0 && x === 0 ) return (<box />)
 
     if (isLoading === true) {
       return (
@@ -128,26 +122,18 @@ function SpectrumPlot(props) {
     return (
         <Box 
             ref={ref}
-            // minWidth={600}
             m="auto"
             alignItems="center"
             justifyContent="center"           
             minHeight={550}>
             <Plot
-                data={series}
+                data={data}
                 className={classes.plotWrapper}
                 layout={{
                   hovermode: 'closest',
                   autosize: true,
                   title: `x=${x}, y=${y}`,
                   height: props.height,
-                  // legend:{ 
-                  //   orientation: "h",
-                  //   // xanchor: "center", 
-                  //   x: 1, 
-                  //   y: 1.2
-                  //   // yanchor: "top"
-                  // },
                   margin: {
                     autoexpand: true,
                   },
@@ -177,4 +163,4 @@ function SpectrumPlot(props) {
     )
 }
 
-export default SpectrumPlot;
+export default SpectrumLinesPlot;

@@ -197,14 +197,12 @@ function Header() {
               <Typography>Help</Typography>
             </MenuItem>
 
+            <Divider />
             {isAuthenticated === true && (
-              <>
-                <Divider />
                 <MenuItem onClick={handleLogout}>
                   <LogoutIcon className={classes.menuIcon} fontSize="small" />
                   <Typography>Logout</Typography>
                 </MenuItem>
-              </>
             )}
           </Menu>
         </Toolbar>
