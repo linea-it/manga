@@ -1,7 +1,7 @@
 
 from django.core.management.base import BaseCommand
 from django.db import connection, IntegrityError
-
+from django.db import connection
 from galaxy.models import Image
 from manga.verifyer import mclass
 from optparse import make_option
@@ -44,6 +44,13 @@ class Command(BaseCommand):
 
     def delete_table(self, model):
         model.objects.all().delete()
+        self.reset_sequence()
+
+
+    def reset_sequence(self):
+        with connection.cursor() as cursor:
+            cursor.execute("ALTER SEQUENCE galaxy_image_id_seq RESTART WITH 1")
+        self.stdout.write('Restarted sequence to 1')            
 
     def read_object_list_csv(self, filename):
 
@@ -76,7 +83,8 @@ class Command(BaseCommand):
                 'sigma_o1_6300', 'sigma_n2_6548', 'sigma_ha', 'sigma_n2_6583', 
                 'sigma_s2_6716', 'sigma_s2_6731', 'had_bcomp'
             ])
-
+        
+        df = df.sort_values(by=['plateifu'], ascending=True)
         # df = df.fillna(0)
         df = df.fillna(np.nan).replace([np.nan], [None])
 
