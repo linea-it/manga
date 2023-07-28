@@ -8,6 +8,7 @@ services:
     volumes:
       - ./backend:/usr/src/app
       - ./images:/tmp/images
+      - ./images:/tmp/cache      
       - ./log:/usr/src/app/log
       - /tmp/.X11-unix:/tmp/.X11-unix
     env_file:
@@ -26,6 +27,7 @@ services:
     volumes:
       - ./backend:/usr/src/app
       - ./images:/tmp/images
+      - ./images:/tmp/cache
       - ./log:/usr/src/app/log
     env_file:
       - .env.dev
@@ -43,6 +45,7 @@ services:
     volumes:
       - ./backend:/usr/src/app
       - ./images:/tmp/images
+      - ./images:/tmp/cache      
       - ./log:/usr/src/app/log
     env_file:
       - .env.dev
@@ -60,6 +63,7 @@ services:
     volumes:
       - ./backend:/usr/src/app
       - ./images:/tmp/images
+      - ./images:/tmp/cache
       - ./log:/usr/src/app/log
     ports:
       - 5555:5555
