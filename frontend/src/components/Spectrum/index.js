@@ -133,7 +133,7 @@ function SpectrumLinesPlot(props) {
                     autoexpand: true,
                   },
                   xaxis: {
-                    title: 'Wavelength ($\AA$)',
+                    title: 'Wavelength (&#8491;)',
                   },
                   yaxis: {
                     title: 'Spectral flux density',
