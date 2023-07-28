@@ -7,7 +7,15 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 
 import { QueryClient, QueryClientProvider } from "react-query";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+    keepPreviousData: true,
+    // refetchInterval: false,
+    // // refetchOnWindowFocus: false,
+    // // refetchOnmount: false,
+    // // refetchOnReconnect: false,
+    retry: 1,
+    staleTime: 1 * 60 * 60 * 1000,
+});
 ReactDOM.render(
     <QueryClientProvider client={queryClient}>
         <App />

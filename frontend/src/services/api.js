@@ -12,6 +12,16 @@ export const getGalaxyById = ({ queryKey }) => {
   return axios.get(`/images/${id}/`).then(res => res.data)
 }
 
+export const getMegacubeHeadersById = ({ queryKey }) => {
+  const [_, params] = queryKey
+  const { id } = params
+  if (!id) {
+    return
+  }
+
+  return axios.get(`/images/${id}/megacube_header`).then(res => res.data)
+}
+
 export const getFluxByPosition = ({ id, x, y }) => {
   const params = { x, y };
 
@@ -29,6 +39,7 @@ export const spectrumLinesByPosition = ({ queryKey }) => {
 
   return axios.get(`/images/${id}/spectrum_lines_by_position`, { params: { x, y } }).then(res => res.data)
 }
+
 
 export const getSpaxelFitByPosition = ({ id, x, y }) => {
   const params = { x, y };
@@ -104,8 +115,8 @@ export const vecsByPosition = ({ queryKey }) => {
   return axios.get(`/images/${id}/vecs_by_position`, { params: { x, y } }).then(res => res.data)
 }
 
-export const getHeader = (id) =>
-  axios.get(`/images/${id}/megacube_header`).then((res) => res.data);
+// export const getHeader = (id) =>
+//   axios.get(`/images/${id}/megacube_header`).then((res) => res.data);
 
 export const getDownloadInfo = (id) =>
   axios.get(`/images/${id}/download_info`).then((res) => res.data);
