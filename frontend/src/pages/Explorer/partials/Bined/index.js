@@ -15,7 +15,7 @@ export default function GalaxyBinedCard({
   const classes = useStyles();
 
   return (
-    <Card>
+    <Card elevation={3}>
       <CardHeader title="Bined Population Vectors" />
       <CardContent style={{ minHeight: minHeight }}>
         {

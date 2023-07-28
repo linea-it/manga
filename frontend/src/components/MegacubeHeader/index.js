@@ -44,7 +44,7 @@ function MegacubeHeader({galaxyId, open, onClose  }) {
       maxWidth="md"
     >
       <DialogTitle>Megacube Header</DialogTitle>
-      <DialogContent>
+      <DialogContent dividers>
         {isLoading && (
           generate_skeleton(<Skeleton animation="wave" height={40}/>)
         )}

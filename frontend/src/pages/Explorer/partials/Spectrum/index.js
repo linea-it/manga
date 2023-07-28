@@ -16,7 +16,7 @@ export default function GalaxySpectrumCard({
   const classes = useStyles();
 
   return (
-    <Card>
+    <Card elevation={3}>
       <CardHeader title="Spectrum and Histograms" />
       <CardContent style={{ minHeight: minHeight }}>
         {

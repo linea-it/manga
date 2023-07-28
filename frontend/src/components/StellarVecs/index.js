@@ -1,6 +1,6 @@
-import React, { useLayoutEffect, useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import Plot from 'react-plotly.js';
-import { Card, CardHeader, CardMedia, CardContent, Grid, CircularProgress, Typography, Box } from '@material-ui/core';
+import { CircularProgress, Typography, Box } from '@material-ui/core';
 import { useQuery } from 'react-query'
 import { vecsByPosition } from '../../services/api';
 import styles from './styles';
@@ -10,43 +10,35 @@ function BinedPopulationPlot(props) {
   const classes = styles();
 
   const { id, x, y } = props
-  const [series, setSeries] = React.useState([])
-  const [error, setError] = React.useState(null)
-
-
-  const { status, isLoading } = useQuery({
+  // const [error, setError] = React.useState(null)
+  const { data, isLoading } = useQuery({
     queryKey: ['BinedStellarPlotData', { id, x, y }],
     queryFn: vecsByPosition,
     keepPreviousData: false,
     refetchInterval: false,
     retry: false,
-    onSuccess: data => {
-      if (!data) {
-        return
-      }
-      console.log(data)
-      makePlotData(data)
-    },
-    onError: error => {
-      let msg = error.message
-      if (error.response) {
-        // The request was made and the server responded with a status code
-        // that falls out of the range of 2xx
-        // console.log(error.response.data);
-        // console.log(error.response.status);
-        // console.log(error.response.headers);
-        msg = error.response.data.message
-      } else if (error.request) {
-        // The request was made but no response was received
-        // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-        // http.ClientRequest in node.js
-        console.log(error.request)
-      } else {
-        // Something happened in setting up the request that triggered an Error
-        console.log('Error', error.message)
-      }
-      setError(msg)
-    }
+    staleTime: 1 * 60 * 60 * 1000,
+    select: makePlotData,
+    // onError: error => {
+    //   let msg = error.message
+    //   if (error.response) {
+    //     // The request was made and the server responded with a status code
+    //     // that falls out of the range of 2xx
+    //     // console.log(error.response.data);
+    //     // console.log(error.response.status);
+    //     // console.log(error.response.headers);
+    //     msg = error.response.data.message
+    //   } else if (error.request) {
+    //     // The request was made but no response was received
+    //     // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+    //     // http.ClientRequest in node.js
+    //     console.log(error.request)
+    //   } else {
+    //     // Something happened in setting up the request that triggered an Error
+    //     console.log('Error', error.message)
+    //   }
+    //   setError(msg)
+    // }
   })
 
   function makePlotData(data) {
@@ -64,7 +56,7 @@ function BinedPopulationPlot(props) {
       });
     });
 
-    setSeries(plotData)
+    return plotData
   }
 
   if (x === 0 && x === 0) return (<box />)
@@ -104,7 +96,7 @@ function BinedPopulationPlot(props) {
       justifyContent="center"
       minHeight={550}>
       <Plot
-        data={series}
+        data={data}
         className={classes.plotWrapper}
         layout={{
           hovermode: 'closest',

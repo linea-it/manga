@@ -22,6 +22,16 @@ export const getMegacubeHeadersById = ({ queryKey }) => {
   return axios.get(`/images/${id}/megacube_header`).then(res => res.data)
 }
 
+export const getMegacubeDownloadInfo = ({ queryKey }) => {
+  const [_, params] = queryKey
+  const { id } = params
+  if (!id) {
+    return
+  }
+
+  return axios.get(`/images/${id}/download_info`).then(res => res.data)
+}
+
 export const getFluxByPosition = ({ id, x, y }) => {
   const params = { x, y };
 
@@ -118,8 +128,8 @@ export const vecsByPosition = ({ queryKey }) => {
 // export const getHeader = (id) =>
 //   axios.get(`/images/${id}/megacube_header`).then((res) => res.data);
 
-export const getDownloadInfo = (id) =>
-  axios.get(`/images/${id}/download_info`).then((res) => res.data);
+// export const getDownloadInfo = (id) =>
+//   axios.get(`/images/${id}/download_info`).then((res) => res.data);
 
 export const sendEmail = (formData) =>
   axios

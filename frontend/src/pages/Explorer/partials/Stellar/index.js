@@ -15,7 +15,7 @@ export default function GalaxyStellarCard({
   const classes = useStyles();
 
   return (
-    <Card>
+    <Card elevation={3}>
       <CardHeader title="Stellar Population Vectors" />
       <CardContent style={{ minHeight: minHeight }}>
         {

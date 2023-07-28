@@ -14,7 +14,7 @@ export default function GalaxyMapCard({
   const classes = useStyles();
 
   return (
-    <Card>
+    <Card elevation={3}>
       <CardHeader title={`Galaxy: ${galaxyPlateifu}`} />
       <CardContent style={{ minHeight: minHeight }}>
         Galaxy
