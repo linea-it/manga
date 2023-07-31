@@ -66,7 +66,7 @@ function Header() {
 
   const handleAbout = () => {
     handleClose();
-    window.open('http://www.linea.gov.br');
+    window.open('http://www.linea.org.br');
   };
 
   const handleLogout = () => {
