@@ -32,6 +32,20 @@ export const getMegacubeDownloadInfo = ({ queryKey }) => {
   return axios.get(`/images/${id}/download_info`).then(res => res.data)
 }
 
+export const getHdus = ({ queryKey }) => {
+  const [_, params] = queryKey
+  const { id } = params
+  if (!id) {
+    return
+  }
+
+  return axios.get(`/images/${id}/hdus`).then(res => res.data)
+}
+
+export const getImagesHeatmap = ({ id, pageParam }) => {
+  return axios.get(`/images/${id}/images_heatmap`, { params: { cursor:pageParam } }).then(res => res.data)
+}
+
 export const getFluxByPosition = ({ id, x, y }) => {
   const params = { x, y };
 
@@ -74,8 +88,8 @@ export const getAllImagesHeatmap = (id) => {
   return axios.get(`/images/${id}/all_images_heatmap/`).then((res) => res.data);
 };
 
-export const getHudList = (id) =>
-  axios.get(`/images/${id}/list_hud/`).then((res) => res.data);
+// export const getHudList = (id) =>
+//   axios.get(`/images/${id}/list_hud/`).then((res) => res.data);
 
 export const getMegacubesList = ({
   ordering,

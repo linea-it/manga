@@ -1,43 +1,144 @@
 import React, { } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import { Grid } from '@material-ui/core';
-import Card from '@material-ui/core/Card';
-import CardHeader from '@material-ui/core/CardHeader';
-import CardContent from '@material-ui/core/CardContent';
+import { useInfiniteQuery } from 'react-query'
+import { Grid, Box, Typography } from '@material-ui/core';
 import PropTypes from 'prop-types';
-import Skeleton from '@material-ui/lab/Skeleton';
+import { getImagesHeatmap } from '../../../../services/api';
+import Plot from 'react-plotly.js';
+import GenericError from '../../../../components/Alerts/GenericError';
+import { useInView } from 'react-intersection-observer'
 
-const useStyles = makeStyles((theme) => ({}));
-
-export default function ExplorerGridLayout({ 
-  galaxy, 
+export default function ExplorerGridLayout({
+  galaxy,
 }) {
-  const classes = useStyles();
+
+  const { ref, inView } = useInView({ threshold: 0.30 })
+  const [errorIsOpen, setErrorIsOpen] = React.useState(false)
+
+  const {
+    data,
+    isLoading,
+    isFetchingNextPage,
+    fetchNextPage,
+  } = useInfiniteQuery({
+    queryKey: ['ImagesByGalaxyId', { id: galaxy.id }],
+    queryFn: async ({
+      pageParam = 0,
+      id = galaxy.id }) => { return getImagesHeatmap({ id, pageParam }) },
+    getPreviousPageParam: (firstPage) => firstPage.previousId ?? undefined,
+    getNextPageParam: (lastPage) => lastPage.nextId ?? undefined,
+    keepPreviousData: true,
+    refetchInterval: false,
+    refetchOnmount: false,
+    retry: 1,
+    staleTime: 5 * 60 * 1000,
+    onError: () => { setErrorIsOpen(true) }
+  })
+
+  React.useEffect(() => {
+    if (inView) {
+      fetchNextPage()
+    }
+  }, [inView])
+
+  function generate_skeleton(element) {
+    return [0, 1, 2].map((value) =>
+      React.cloneElement(element, {
+        key: value,
+      }),
+    );
+  }
+
+  function loading_layout() {
+    return (
+      <Box
+        display="flex"
+        flexWrap="wrap"
+        justifyContent="flex-start"
+      >
+        {generate_skeleton(
+          <Box sx={{ width: 400, height: 400 }} bgcolor="grey.300" m={2} />
+        )}
+      </Box>
+    )
+  }
+
+  function plot(hdu) {
+    return (
+      <Box>
+        <Typography variant="h6" align="center">
+          {hdu.title}
+        </Typography>
+        <Typography variant="subtitle1" align="center">
+          ({hdu.comment.split(' (')[0]})
+        </Typography>
+        <Plot
+          data={[
+            {
+              z: hdu.error ? [] : hdu.z,
+              type: 'heatmap',
+              colorscale: 'Viridis',
+              showscale: true,
+            },
+          ]}
+          layout={{
+            hovermode: 'closest',
+            yaxis: {
+              scaleanchor: 'x',
+            },
+            margin: {
+              t: 0,
+              pad: 0,
+              autoexpand: true,
+            },
+          }}
+          config={{
+            scrollZoom: false,
+            displaylogo: false,
+            responsive: true,
+            displayModeBar: false,
+            staticPlot: true,
+          }}
+          transition={{
+            duration: 300,
+            easing: 'cubic-in-out',
+          }}
+          frame={{ duration: 300 }}
+        />
+      </Box>
+    )
+  }
+  if (isLoading) { return loading_layout()}
   return (
-    <div>Grid Layout</div>
-    // <Grid
-    //   container
-    //   direction="row"
-    //   justifyContent="space-between"
-    //   alignItems="stretch"
-    //   spacing={2}
-    // >
-    //   <Grid item xs={6}>
-    //     <GalaxyMapCard
-    //       galaxyId={galaxy?.id}
-    //       galaxyPlateifu={galaxy?.plateifu}
-    //       minHeight='40vw'
-    //     ></GalaxyMapCard>
-    //   </Grid>
-    //   <Grid item xs={6}>
-    //     <GalaxySpectrumCard
-    //       galaxyId={galaxy?.id}
-    //       position={[49, 43]}
-    //       minHeight='40vw'
-    //     >
-    //     </GalaxySpectrumCard>
-    //   </Grid>
-    // </Grid>
+    // https://tanstack.com/query/v4/docs/react/examples/react/load-more-infinite-scroll
+    // https://github.com/danbovey/react-infinite-scroller#readme
+    <Box>
+      {/* {isLoading && loading_layout()} */}
+      {errorIsOpen && (<GenericError open={errorIsOpen} onClose={() => setErrorIsOpen(false)} />)}
+      <Grid
+        container
+        direction="row"
+        justifyContent="space-between"
+        alignItems="stretch"
+        spacing={2}
+      >
+        {data?.pages.map((page, idx) => (
+          <React.Fragment key={`page_fragment_${idx}`}>
+            {page.data.map((hdu, idx) => (
+              <Grid key={`plot_${idx}`} item
+                xs={12}
+                sm={6}
+                md={4}
+                xl={3}>
+                {plot(hdu)}
+              </Grid>
+            ))}
+          </React.Fragment>
+        ))}
+      </Grid>
+      <Box height={300} ref={ref}>
+        {isFetchingNextPage && (loading_layout())}
+      </Box>
+    </Box>
   );
 }
 ExplorerGridLayout.defaultProps = {
