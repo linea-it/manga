@@ -83,8 +83,8 @@ function Explorer() {
       <Box ml={3} mr={3}>
         {/* {!isGrid && renderImageLayout()} */}
         {/* {isGrid && renderGridLayout()} */}
-        {!isGrid && !!galaxy && (<ExplorerImageLayout galaxy={galaxy} />)}
-        {isGrid && !!galaxy && (<ExplorerGridLayout galaxy={galaxy} />)}
+        {!isGrid && galaxy && (<ExplorerImageLayout galaxy={galaxy} />)}
+        {isGrid && galaxy && (<ExplorerGridLayout galaxy={galaxy} />)}
        
         {/* Modal Windows */}
         {galaxy?.id && (

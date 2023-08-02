@@ -66,10 +66,10 @@ export default function ExplorerGridLayout({
     return (
       <Box>
         <Typography variant="h6" align="center">
-          {hdu.title}
+          {hdu.name}
         </Typography>
         <Typography variant="subtitle1" align="center">
-          ({hdu.comment.split(' (')[0]})
+          ({hdu.comment})
         </Typography>
         <Plot
           data={[
@@ -122,9 +122,9 @@ export default function ExplorerGridLayout({
         spacing={2}
       >
         {data?.pages.map((page, idx) => (
-          <React.Fragment key={`page_fragment_${idx}`}>
+          <React.Fragment key={{idx}}>
             {page.data.map((hdu, idx) => (
-              <Grid key={`plot_${idx}`} item
+              <Grid key={{idx}} item
                 xs={12}
                 sm={6}
                 md={4}

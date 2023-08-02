@@ -159,13 +159,24 @@ class ImageViewSet(viewsets.ReadOnlyModelViewSet):
             'stellar_maps': list(),
             'gas_maps': list()
         })
+
         with open(list_hdu_filepath) as f:
-            huds = json.load(f)
-            result['stellar_maps'] = huds['hud']
+            hdus = json.load(f)
+            for hdu in hdus['hud']:
+                hdu.update({
+                    'comment': hdu['comment'].split('(')[0],
+                    'internal_name': hdu['name'].lower().replace(' ', '_').replace('.', '_')                    
+                })
+                result['stellar_maps'].append(hdu)
 
         with open(list_gas_filepath) as f:
-            gas = json.load(f)
-            result['gas_maps'] = gas['gas_maps']
+            hdus = json.load(f)
+            for hdu in hdus['gas_maps']:
+                hdu.update({
+                    'comment': hdu['comment'].split('(')[0],
+                    'internal_name': hdu['name'].lower().replace(' ', '_').replace('.', '_')                    
+                })
+                result['gas_maps'].append(hdu)
 
         return result
 
@@ -184,9 +195,9 @@ class ImageViewSet(viewsets.ReadOnlyModelViewSet):
             ([list[string]]): a list of HUDs titles.
         """
         galaxy = self.get_object()
-        result = self.get_huds(galaxy)
+        hdus = self.get_huds(galaxy)
 
-        return Response(result)
+        return Response(hdus)
 
     @action(detail=True, methods=['get'])
     def download_info(self, request, pk=None):
@@ -305,8 +316,9 @@ class ImageViewSet(viewsets.ReadOnlyModelViewSet):
 
             image.update({
                 'id': idx + (cursor * page_size + 1),
+                'internal_name': hdu['internal_name'],                
+                'name': hdu['name'],
                 'comment': hdu['comment'],
-                'name': hdu['name'].lower().replace(' ', '_')
             })
             data.append(image)
 
