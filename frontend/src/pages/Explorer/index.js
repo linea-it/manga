@@ -45,26 +45,6 @@ function Explorer() {
 
   const handleLayoutChange = () => setIsGrid((prev) => !prev);
 
-  const renderImageLayout = () => {
-    // TODO: Criar os skeleton quando estiver carregando.
-    if (isLoading) {
-      return (<Backdrop open={true}></Backdrop>)
-    }
-    if (galaxy) {
-      return (<ExplorerImageLayout galaxy={galaxy} />)
-    }
-  }
-
-  const renderGridLayout = () => {
-    // TODO: Criar os skeleton quando estiver carregando.
-    if (isLoading) {
-      return (<Backdrop open={true}></Backdrop>)
-    }
-    if (galaxy) {
-      return (<ExplorerGridLayout galaxy={galaxy} />)
-    }
-  }
-
   return (
     <Box>
       <Box>
@@ -81,8 +61,6 @@ function Explorer() {
         />
       </Box>
       <Box ml={3} mr={3}>
-        {/* {!isGrid && renderImageLayout()} */}
-        {/* {isGrid && renderGridLayout()} */}
         {!isGrid && galaxy && (<ExplorerImageLayout galaxy={galaxy} />)}
         {isGrid && galaxy && (<ExplorerGridLayout galaxy={galaxy} />)}
        

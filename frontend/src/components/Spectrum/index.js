@@ -127,7 +127,7 @@ function SpectrumLinesPlot(props) {
                 layout={{
                   hovermode: 'closest',
                   autosize: true,
-                  title: `x=${x}, y=${y}`,
+                  title: x !== undefined ? `x=${x}, y=${y}` : '',
                   height: props.height,
                   margin: {
                     autoexpand: true,

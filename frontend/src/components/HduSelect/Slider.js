@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
 
 function HduSlider(props) {
   const classes = useStyles();
-  const { galaxyId, selected, onChange, disabled } = props
+  const { galaxyId, selected, onChange } = props
   const [isPlaying, setIsPlaying] = React.useState(false);
 
   const { data, isLoading } = useQuery({
@@ -73,14 +73,15 @@ function HduSlider(props) {
         value={selectedIdx ? selectedIdx : 0}
         marks
         step={1}
-        // valueLabelDisplay="on"
-        // className={classes.slider}
+        valueLabelDisplay="off"
+        disabled={isLoading}
         onChange={handleChange}
       />
       <IconButton
         aria-label="play/pause"
         className={classes.marginLeft}
         onClick={handlePlayStop}
+        disabled={isLoading}
       >
         {isPlaying ? <PauseIcon /> : <PlayArrowIcon />}
       </IconButton>

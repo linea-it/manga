@@ -13,6 +13,12 @@ export default function ExplorerImageLayout({
   galaxy,
 }) {
 
+  const [position, setPosition] = React.useState([])
+
+  const onChangePosition = value => {
+    setPosition(value);
+  }
+
   return (
     <Grid
       container
@@ -25,12 +31,13 @@ export default function ExplorerImageLayout({
         <GalaxyMapCard
           galaxy={galaxy}
           minHeight='40vw'
+          onClick={onChangePosition}
         ></GalaxyMapCard>
       </Grid>
-      {/* <Grid item xs={6}>
+      <Grid item xs={6}>
         <GalaxySpectrumCard
           galaxyId={galaxy?.id}
-          position={[49, 43]}
+          position={position}
           minHeight='40vw'
         >
         </GalaxySpectrumCard>
@@ -38,7 +45,7 @@ export default function ExplorerImageLayout({
       <Grid item xs={6}>
         <GalaxyStellarCard
           galaxyId={galaxy?.id}
-          position={[36, 35]}
+          position={position}
           minHeight='20vw'
         >
         </GalaxyStellarCard>
@@ -46,11 +53,11 @@ export default function ExplorerImageLayout({
       <Grid item xs={6}>
         <GalaxyBinedCard
           galaxyId={galaxy?.id}
-          position={[42, 30]}
+          position={position}
           minHeight='20vw'
         >
         </GalaxyBinedCard> 
-      </Grid>*/}
+      </Grid>
     </Grid>
   );
 }

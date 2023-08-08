@@ -58,7 +58,9 @@ export const getImagesHeatmap = ({ id, pageParam }) => {
 
 export const getFluxByPosition = ({ id, x, y }) => {
   const params = { x, y };
-
+  if (!id || !x || !y) {
+    return
+  }
   return axios
     .get(`/images/${id}/flux_by_position`, { params }, {timeout: 300000})
     .then((res) => res.data);
@@ -67,7 +69,7 @@ export const getFluxByPosition = ({ id, x, y }) => {
 export const spectrumLinesByPosition = ({ queryKey }) => {
   const [_, params] = queryKey
   const { id, x, y } = params
-  if (!id) {
+  if (!id || !x || !y) {
     return
   }
 
@@ -132,7 +134,7 @@ export const getMegacubesList = ({
 export const logAgeByPosition = ({ queryKey }) => {
   const [_, params] = queryKey
   const { id, x, y } = params
-  if (!id) {
+  if (!id || !x || !y) {
     return
   }
 
@@ -142,7 +144,7 @@ export const logAgeByPosition = ({ queryKey }) => {
 export const vecsByPosition = ({ queryKey }) => {
   const [_, params] = queryKey
   const { id, x, y } = params
-  if (!id) {
+  if (!id || !x || !y) {
     return
   }
 

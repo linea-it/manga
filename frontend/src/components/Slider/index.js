@@ -45,13 +45,28 @@ export const IOSSlider = withStyles({
     height: 2,
     padding: '15px 0',
   },
+  // thumb: {
+  //   height: 28,
+  //   width: 28,
+  //   backgroundColor: '#fff',
+  //   boxShadow: iOSBoxShadow,
+  //   marginTop: -14,
+  //   marginLeft: -14,
+  //   '&:focus, &:hover, &$active': {
+  //     boxShadow: '0 3px 1px rgba(0,0,0,0.1),0 4px 8px rgba(0,0,0,0.3),0 0 0 1px rgba(0,0,0,0.02)',
+  //     // Reset on touch devices, it doesn't add specificity
+  //     '@media (hover: none)': {
+  //       boxShadow: iOSBoxShadow,
+  //     },
+  //   },
+  // },
   thumb: {
-    height: 28,
-    width: 28,
-    backgroundColor: '#fff',
+    height: 16,
+    width: 16,
+    // backgroundColor: '#fff',
     boxShadow: iOSBoxShadow,
-    marginTop: -14,
-    marginLeft: -14,
+    marginTop: -8,
+    marginLeft: -8,
     '&:focus, &:hover, &$active': {
       boxShadow: '0 3px 1px rgba(0,0,0,0.1),0 4px 8px rgba(0,0,0,0.3),0 0 0 1px rgba(0,0,0,0.02)',
       // Reset on touch devices, it doesn't add specificity
@@ -60,6 +75,7 @@ export const IOSSlider = withStyles({
       },
     },
   },
+
   active: {},
   valueLabel: {
     left: 'calc(-50% + 12px)',

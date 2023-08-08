@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import { useQuery } from 'react-query'
+import { CircularProgress } from '@material-ui/core';
 import ColorRange from './ColorRange';
 import Box from '@material-ui/core/Box';
 import Plot from 'react-plotly.js';
@@ -18,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
 
 function Heatmap(props) {
   const classes = useStyles();
-  const { galaxyId, mapHdu, contourHdu } = props
+  const { galaxyId, mapHdu, contourHdu, onClick } = props
 
   const [map, setMap] = React.useState()
   const [mapRange, setMapRange] = React.useState([0, 100])
@@ -28,12 +29,13 @@ function Heatmap(props) {
   const [plotData, setPlotData] = React.useState([])
   const [errorIsOpen, setErrorIsOpen] = React.useState(false)
 
-  const { data: maps, isLoadingMap } = useQuery({
+  const { data: maps, isLoading } = useQuery({
     queryKey: ['MapsByGalaxyId', { id: galaxyId }],
     queryFn: getAllHeatmaps,
     keepPreviousData: true,
     refetchInterval: false,
     refetchOnmount: false,
+    refetchOnWindowFocus: false,
     // retry: 1,
     staleTime: 5 * 60 * 1000,
     onError: () => { setErrorIsOpen(true) }
@@ -92,7 +94,7 @@ function Heatmap(props) {
       mode: 'lines',
       line: {
         color: 'rgba(255, 255, 255, .7)',
-        width: 6,
+        width: 3,
       },
       hoverinfo: 'skip',
       showlegend: false,
@@ -107,7 +109,7 @@ function Heatmap(props) {
       mode: 'lines',
       line: {
         color: 'rgba(255, 255, 255, .4)',
-        width: 6,
+        width: 3,
       },
       hoverinfo: 'skip',
       showlegend: false,
@@ -119,7 +121,7 @@ function Heatmap(props) {
       mode: 'markers',
       marker: {
         color: 'rgba(0, 0, 0, .8)',
-        size: 13,
+        size: 6,
         line: {
           color: 'rgba(255, 255, 255, .5)',
           width: 3,
@@ -195,7 +197,7 @@ function Heatmap(props) {
 
   React.useEffect(() => {
     makePlotData()
-  }, [map, mapRange, contour, contourRange])
+  }, [map, mapRange, contour, contourRange, points])
 
   const onChangeMapRange = (e, value) => {
     setMapRange(value)
@@ -203,6 +205,32 @@ function Heatmap(props) {
   const onChangeContourRange = (e, value) => {
     setContourRange(value)
   }
+
+  const handleHeatmapClick = (e) => {
+    const newPoints = [e.points[0].x, e.points[0].y]
+    if (newPoints !== points) {
+      setPoints(newPoints);
+      onClick(newPoints)
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <Box 
+      display="flex" 
+      alignItems="center"
+      justifyContent="center"
+      m="auto"
+      flexDirection="column" 
+      sx={{ height: '100%' }}
+    >
+      <Box p={1} alignSelf="center">
+        <CircularProgress color="secondary" />
+      </Box>
+    </Box>
+    )
+  }
+
   return (
     <Box
       display="flex"
@@ -230,6 +258,12 @@ function Heatmap(props) {
           useResizeHandler={true}
           data={plotData}
           layout={{
+            title: {
+              text: map ? `${map?.comment}` : '',
+              font: {
+                size: 12
+              }
+            },
             autosize: true,
             hovermode: 'closest',
             colorscale: {
@@ -238,14 +272,14 @@ function Heatmap(props) {
             },
             margin: {
               l: 30,
-              t: 10,
+              t: 30,
               b: 30,
               pad: 0,
             },
             yaxis: {
               scaleanchor: 'x',
             },
-            showSendToCloud: true,
+            showSendToCloud: false,
           }}
           config={{
             scrollZoom: false,
@@ -258,7 +292,7 @@ function Heatmap(props) {
             easing: 'cubic-in-out',
           }}
           frame={{ duration: 500 }}
-        // onClick={handleHeatmapClick}
+          onClick={handleHeatmapClick}
         />
       </Box>
       {/* Contour Range Filter */}
@@ -275,20 +309,14 @@ function Heatmap(props) {
 }
 
 Heatmap.defaultProps = {
-  //   min: 0,
-  //   max: 100,
-  //   value: [],
-  //   disabled: false
+  contourHdu: ''
 }
 
 Heatmap.propTypes = {
   galaxyId: PropTypes.number.isRequired,
   mapHdu: PropTypes.string.isRequired,
-  contourHdu: PropTypes.string
-  //   onChange: PropTypes.func.isRequired,
-  //   min: PropTypes.number,
-  //   max: PropTypes.number,
-  //   disabled: PropTypes.bool,
+  contourHdu: PropTypes.string,
+  onClick: PropTypes.func.isRequired
 };
 
 export default Heatmap
