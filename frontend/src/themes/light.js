@@ -5,13 +5,13 @@ import { createTheme } from '@material-ui/core/styles';
 
 const light = createTheme({
   palette: {
-    primary: {
-      light: '#4f5964',
-      main: '#24292e',
-      dark: '#161a1d',
-      contrastText: '#fff',
-    },
-    secondary: blue,
+    // primary: {
+    //   light: '#4f5964',
+    //   main: '#24292e',
+    //   dark: '#161a1d',
+    //   contrastText: '#fff',
+    // },
+    // secondary: blue,
   },
   typography: {
     useNextVariants: true,

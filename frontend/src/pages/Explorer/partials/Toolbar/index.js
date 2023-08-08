@@ -57,7 +57,12 @@ export default function ExplorerToolbar({ disabled, handleBackNavigation, handle
       <Typography variant="button" color="inherit">
         Image
       </Typography>
-      <Switch checked={isGrid} onChange={handleLayout} disabled={disabled}></Switch>
+      <Switch 
+        checked={isGrid} 
+        onChange={handleLayout} 
+        disabled={disabled}
+        color="primary"
+        ></Switch>
       <Typography variant="button" color="inherit">
         Grid
       </Typography>

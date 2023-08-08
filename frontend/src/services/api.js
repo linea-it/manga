@@ -42,6 +42,16 @@ export const getHdus = ({ queryKey }) => {
   return axios.get(`/images/${id}/hdus`).then(res => res.data)
 }
 
+export const getAllHeatmaps = ({ queryKey }) => {
+  const [_, params] = queryKey
+  const { id } = params
+  if (!id) {
+    return
+  }
+
+  return axios.get(`/images/${id}/all_images_heatmap`).then(res => res.data)
+}
+
 export const getImagesHeatmap = ({ id, pageParam }) => {
   return axios.get(`/images/${id}/images_heatmap`, { params: { cursor:pageParam } }).then(res => res.data)
 }

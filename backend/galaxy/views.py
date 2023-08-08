@@ -19,6 +19,7 @@ from urllib.parse import urljoin
 import posixpath
 from manga.emission_lines import EmissionLines
 from manga.megacube import MangaMegacube
+import numpy as np
 
 
 class ImageViewSet(viewsets.ReadOnlyModelViewSet):
@@ -259,6 +260,55 @@ class ImageViewSet(viewsets.ReadOnlyModelViewSet):
 
         with open(image_heatmap_filepath) as f:
             data = json.load(f)
+
+        return Response(data)
+
+    @action(detail=True, methods=['get'])
+    def all_images_heatmap(self, request, pk=None):
+        """
+        Returns a Object with all images data by all HUDs to create heatmaps.
+
+        It's being read by the files in:
+        `/images/megacube_parts/megacube_{JOB_ID}/image_heatmap_{HUD}.json`
+        that has been extracted from `.fits.fz` file.
+
+        Returns: <br>
+            (dict): dictionaries
+            and 'title'. <br>
+                - z ([list[list[number]]]): image data (Matrix 52x52:
+                20704 elements) converted utilizing pcolormesh. <br>
+                - title ([string]): the title of the HUD.
+        """
+
+        galaxy = self.get_object()
+
+        hdus = self.get_huds(galaxy)
+
+        all_hdus = hdus['stellar_maps'] + hdus['gas_maps']
+
+        data = dict()
+
+        for idx, hdu in enumerate(all_hdus):
+            filename = 'image_heatmap_%s.json' % hdu['name']
+
+            image_heatmap_filepath = self.get_image_part_path(
+                galaxy, filename)
+
+            with open(image_heatmap_filepath) as f:
+                image = json.load(f)
+
+            z = np.array(image['z'], dtype=np.float64)
+            min = np.nanmin(z)
+            max = np.nanmax(z)
+
+            image.update({
+                'internal_name': hdu['internal_name'],                
+                'name': hdu['name'],
+                'comment': hdu['comment'],
+                'min': float(min),
+                'max': float(max)
+            })
+            data[hdu['internal_name']] = image
 
         return Response(data)
 
