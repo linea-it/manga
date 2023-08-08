@@ -53,7 +53,7 @@ function MegacubeHeader({galaxyId, open, onClose  }) {
         ))}
       </DialogContent>
       <DialogActions>
-          <Button onClick={onClose} color="secondary">
+          <Button onClick={onClose} color="primary">
             Close
           </Button>
       </DialogActions>      
