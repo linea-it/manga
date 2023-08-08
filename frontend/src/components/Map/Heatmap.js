@@ -222,7 +222,9 @@ function Heatmap(props) {
       justifyContent="center"
       m="auto"
       flexDirection="column" 
-      sx={{ height: '100%' }}
+      sx={{ 
+        width: '100%',
+        height: '100%' }}
     >
       <Box p={1} alignSelf="center">
         <CircularProgress color="secondary" />

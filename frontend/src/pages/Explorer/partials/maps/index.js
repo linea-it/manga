@@ -53,6 +53,7 @@ export default function GalaxyMapCard({
             justifyContent="space-between"
             alignItems="stretch"
             flex={1}
+            width="100%"
           >
             <Box display="flex" justifyContent="space-between" mb={2}>
               <HduSelect
