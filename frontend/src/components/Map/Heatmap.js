@@ -13,7 +13,10 @@ const useStyles = makeStyles((theme) => ({
   margin: theme.spacing(1),
   plotWrapper: {
     width: '100%',
-    height: '100%'
+    height: '100%',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center'
   },
 }));
 
@@ -214,25 +217,6 @@ function Heatmap(props) {
     }
   };
 
-  if (isLoading) {
-    return (
-      <Box 
-      display="flex" 
-      alignItems="center"
-      justifyContent="center"
-      m="auto"
-      flexDirection="column" 
-      sx={{ 
-        width: '100%',
-        height: '100%' }}
-    >
-      <Box p={1} alignSelf="center">
-        <CircularProgress color="secondary" />
-      </Box>
-    </Box>
-    )
-  }
-
   return (
     <Box
       display="flex"
@@ -255,47 +239,51 @@ function Heatmap(props) {
         flexGrow={1}
         position="relative"
       >
-        <Plot
-          className={classes.plotWrapper}
-          useResizeHandler={true}
-          data={plotData}
-          layout={{
-            title: {
-              text: map ? `${map?.comment}` : '',
-              font: {
-                size: 12
-              }
-            },
-            autosize: true,
-            hovermode: 'closest',
-            colorscale: {
-              zmin: mapRange[0],
-              zmax: mapRange[1],
-            },
-            margin: {
-              l: 30,
-              t: 30,
-              b: 30,
-              pad: 0,
-            },
-            yaxis: {
-              scaleanchor: 'x',
-            },
-            showSendToCloud: false,
-          }}
-          config={{
-            scrollZoom: false,
-            displaylogo: false,
-            responsive: true,
-            displayModeBar: 'hover',
-          }}
-          transition={{
-            duration: 500,
-            easing: 'cubic-in-out',
-          }}
-          frame={{ duration: 500 }}
-          onClick={handleHeatmapClick}
-        />
+        {isLoading && (
+        <div className={classes.plotWrapper}><CircularProgress color="secondary" /></div>)}
+        {!isLoading && (
+          <Plot
+            className={classes.plotWrapper}
+            useResizeHandler={true}
+            data={plotData}
+            layout={{
+              title: {
+                text: map ? `${map?.comment}` : '',
+                font: {
+                  size: 12
+                }
+              },
+              autosize: true,
+              hovermode: 'closest',
+              colorscale: {
+                zmin: mapRange[0],
+                zmax: mapRange[1],
+              },
+              margin: {
+                l: 30,
+                t: 30,
+                b: 30,
+                pad: 0,
+              },
+              yaxis: {
+                scaleanchor: 'x',
+              },
+              showSendToCloud: false,
+            }}
+            config={{
+              scrollZoom: false,
+              displaylogo: false,
+              responsive: true,
+              displayModeBar: 'hover',
+            }}
+            transition={{
+              duration: 500,
+              easing: 'cubic-in-out',
+            }}
+            frame={{ duration: 500 }}
+            onClick={handleHeatmapClick}
+          />
+        )}
       </Box>
       {/* Contour Range Filter */}
       <ColorRange

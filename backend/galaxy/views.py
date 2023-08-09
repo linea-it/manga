@@ -21,6 +21,8 @@ from manga.emission_lines import EmissionLines
 from manga.megacube import MangaMegacube
 import numpy as np
 
+from django.core.cache import cache
+
 
 class ImageViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Image.objects.filter(had_parts_extracted=True)
@@ -102,12 +104,12 @@ class ImageViewSet(viewsets.ReadOnlyModelViewSet):
         # Join and make the url for the sdss image:
         file_url = posixpath.join(
             settings.MEGACUBE_PARTS_URL, obj.folder_name, filename)
-        print(file_url)
+
         base_url = "{0}://{1}".format(self.request.scheme,
                                       self.request.get_host())
-        print(base_url)
+
         return file_url
-        # return urljoin(base_url, file_url)
+
 
     def get_sdss_image_path(self, obj, filename='sdss_image.jpg'):
         objpath = self.get_obj_path(obj)
@@ -150,13 +152,20 @@ class ImageViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_huds(self, galaxy):
 
+        cache_key = f"galaxy_hdus_{galaxy.pk}"
+
+        data = cache.get(cache_key)
+        if data:
+            print("Retornou do CACHE")
+            return data
+
         list_hdu_filepath = self.get_image_part_path(
             galaxy, 'list_hud.json')
 
         list_gas_filepath = self.get_image_part_path(
             galaxy, 'list_gas_map.json')
 
-        result = dict({
+        data = dict({
             'stellar_maps': list(),
             'gas_maps': list()
         })
@@ -168,7 +177,7 @@ class ImageViewSet(viewsets.ReadOnlyModelViewSet):
                     'comment': hdu['comment'].split('(')[0],
                     'internal_name': hdu['name'].lower().replace(' ', '_').replace('.', '_')                    
                 })
-                result['stellar_maps'].append(hdu)
+                data['stellar_maps'].append(hdu)
 
         with open(list_gas_filepath) as f:
             hdus = json.load(f)
@@ -177,9 +186,12 @@ class ImageViewSet(viewsets.ReadOnlyModelViewSet):
                     'comment': hdu['comment'].split('(')[0],
                     'internal_name': hdu['name'].lower().replace(' ', '_').replace('.', '_')                    
                 })
-                result['gas_maps'].append(hdu)
+                data['gas_maps'].append(hdu)
 
-        return result
+        cache.set(cache_key, data)
+        print("Criou o  CACHE")
+
+        return data
 
     @action(detail=True, methods=['get'])
     def hdus(self, request, pk=None):
@@ -279,9 +291,13 @@ class ImageViewSet(viewsets.ReadOnlyModelViewSet):
                 20704 elements) converted utilizing pcolormesh. <br>
                 - title ([string]): the title of the HUD.
         """
-
         galaxy = self.get_object()
 
+        cache_key = f"galaxy_all_Images_{galaxy.pk}"
+        data = cache.get(cache_key)
+        if data:
+            return Response(data)
+        
         hdus = self.get_huds(galaxy)
 
         all_hdus = hdus['stellar_maps'] + hdus['gas_maps']
@@ -310,6 +326,7 @@ class ImageViewSet(viewsets.ReadOnlyModelViewSet):
             })
             data[hdu['internal_name']] = image
 
+        cache.set(cache_key, data)
         return Response(data)
 
     @action(detail=True, methods=['get'])
@@ -335,11 +352,17 @@ class ImageViewSet(viewsets.ReadOnlyModelViewSet):
 
         galaxy = self.get_object()
 
-        hdus = self.get_huds(galaxy)
-
         params = request.query_params
         cursor = int(params.get('cursor', 0))
         page_size = int(params.get('pageSize', 12))
+
+        cache_key = f"galaxy_images_{galaxy.pk}_{cursor}"
+        data = cache.get(cache_key)
+        if data:
+            return Response(data)
+
+        hdus = self.get_huds(galaxy)
+
 
         all_hdus = hdus['stellar_maps'] + hdus['gas_maps']
 
@@ -387,6 +410,7 @@ class ImageViewSet(viewsets.ReadOnlyModelViewSet):
             'count': total_count,
             'pageParam': cursor,
         })
+        cache.set(cache_key, result)
         return Response(result)
 
     @action(detail=True, methods=['get'])

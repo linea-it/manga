@@ -31,7 +31,7 @@ from scipy.constants import pi
 from shapely.geometry import Point
 from shapely.geometry.polygon import Polygon
 import copy
-
+from django.core.cache import cache
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -39,7 +39,12 @@ logger = logging.getLogger(__name__)
 
 class mclass:
     def flux_by_position(self, megacube, x, y, hud='FLXOBS'):
-        flux = pf.getdata(megacube, hud)
+
+        cache_key = f"{megacube.name}_{hud}"
+        flux = cache.get(cache_key)
+        if not flux:
+            flux = pf.getdata(megacube, hud)
+            cache.set(cache_key, flux)
 
         lamb = self.get_lamb(megacube, flux, hud)
 
