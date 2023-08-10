@@ -195,7 +195,7 @@ function Contact() {
               message. In case you still need to contact us,{' '}
             </span>
             <Link
-              href="https://www.linea.gov.br/6-faleconosco/"
+              href="https://www.linea.org.br/6-faleconosco/"
               target="_blank"
             >
               click here
@@ -218,7 +218,7 @@ function Contact() {
               again? If it still didn`&apos;`t work, you can{' '}
             </span>
             <Link
-              href="https://www.linea.gov.br/6-faleconosco/"
+              href="https://www.linea.org.br/6-faleconosco/"
               target="_blank"
             >
               click here

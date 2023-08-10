@@ -66,7 +66,7 @@ function Header() {
 
   const handleAbout = () => {
     handleClose();
-    window.open('http://www.linea.gov.br');
+    window.open('http://www.linea.org.br');
   };
 
   const handleLogout = () => {
@@ -151,7 +151,7 @@ function Header() {
 
   return (
     <>
-      <AppBar position="static">
+      <AppBar position="static" className={classes.appbar}>
         <Toolbar>
           <IconButton color="inherit" onClick={handleHome}>
             <img alt="LIneA Dark Logo" src={logo} />
@@ -197,14 +197,12 @@ function Header() {
               <Typography>Help</Typography>
             </MenuItem>
 
+            <Divider />
             {isAuthenticated === true && (
-              <>
-                <Divider />
                 <MenuItem onClick={handleLogout}>
                   <LogoutIcon className={classes.menuIcon} fontSize="small" />
                   <Typography>Logout</Typography>
                 </MenuItem>
-              </>
             )}
           </Menu>
         </Toolbar>

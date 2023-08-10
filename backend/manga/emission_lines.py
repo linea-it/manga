@@ -9,7 +9,6 @@ import plotly as pl
 import plotly.express as px
 import plotly.graph_objects as go
 
-
 class EmissionLines():
     megacube: Path
     parameters: pf.fitsrec.FITS_rec
@@ -29,6 +28,7 @@ class EmissionLines():
 
     def __init__(self, megacube: Path):
         self.megacube = Path(megacube)
+      
         self.parameters = pf.getdata(self.megacube, 'PARNAMES')
 
         self.solution = pf.getdata(self.megacube, 'SOLUTION')

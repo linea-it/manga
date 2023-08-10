@@ -47,7 +47,7 @@ function Footer({ open }) {
             </span>
           </Typography>
           <Typography color="inherit">Powered by</Typography>
-          <a href="http://www.linea.gov.br/" target="blank" className={classes.logoLink}>
+          <a href="http://www.linea.org.br/" target="blank" className={classes.logoLink}>
             <img
               src={logo}
               title="LIneA"

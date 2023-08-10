@@ -1,57 +1,74 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
-  Card,
-  CardHeader,
-  CardContent,
   Dialog,
-  IconButton,
-  Grid,
+  Button,
   Typography,
+  DialogTitle,
+  DialogContent,
+  DialogActions
 } from '@material-ui/core'
-import CloseIcon from '@material-ui/icons/Close'
+import Skeleton from '@material-ui/lab/Skeleton';
+import { useQuery } from 'react-query'
+import { getMegacubeHeadersById } from '../../services/api';
+import GenericError from '../Alerts/GenericError';
 
-function MegacubeHeader({ data, open, setOpen }) {
+function MegacubeHeader({galaxyId, open, onClose  }) {
+
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ['megacubeHeadersById', { id: galaxyId }],
+    queryFn: getMegacubeHeadersById,
+    enabled: open,
+    keepPreviousData: true,
+    staleTime: 1 * 60 * 60 * 1000,    
+  })
+
+  function generate_skeleton(element) {
+    return [0, 1, 2, 3, 4].map((value) =>
+      React.cloneElement(element, {
+        key: value,
+      }),
+    );
+  }
+
+  if (isError) return (
+    <GenericError open={open} onClose={onClose}/>
+  )
 
   return (
     <Dialog
-      onClose={setOpen}
-      aria-labelledby="megacube-header"
       open={open}
+      onClose={onClose}
+      aria-labelledby="megacube-header"
+      fullWidth={true}
+      maxWidth="md"
     >
-      <Grid container>
-        <Grid item xs={12}>
-          <Card>
-            <CardHeader
-              title="Megacube Header"
-              action={(
-                <IconButton aria-label="close" onClick={setOpen}>
-                  <CloseIcon />
-                </IconButton>
-              )}
-            />
-            <CardContent>
-              <Grid container spacing={2}>
-                <Grid item xs={12}>
-                  {data.map(row => (
-                    <Typography key={row} paragraph>{row}</Typography>
-                  ))}
-                </Grid>
-              </Grid>
-            </CardContent>
-          </Card>
-
-        </Grid>
-      </Grid>
+      <DialogTitle>Megacube Header</DialogTitle>
+      <DialogContent dividers>
+        {isLoading && (
+          generate_skeleton(<Skeleton animation="wave" height={40}/>)
+        )}
+        {data?.map(row => (
+          <Typography key={row} paragraph>{row}</Typography>
+        ))}
+      </DialogContent>
+      <DialogActions>
+          <Button onClick={onClose} color="primary">
+            Close
+          </Button>
+      </DialogActions>      
     </Dialog>
-  );
+  )
+}
+MegacubeHeader.defaultProps = {
+  galaxyId: undefined,
+  open: false,
 }
 
-
 MegacubeHeader.propTypes = {
-  data: PropTypes.arrayOf(PropTypes.string).isRequired,
   open: PropTypes.bool.isRequired,
-  setOpen: PropTypes.func.isRequired,
+  onClose: PropTypes.func.isRequired,
+  galaxyId: PropTypes.number,
 };
 
 

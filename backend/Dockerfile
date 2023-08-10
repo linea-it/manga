@@ -22,6 +22,8 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
   libssl-dev \
   libpq-dev \
   gfortran \
+  libmemcached-dev \
+  zlib1g-dev \
   git \
   && apt-get clean \
   && apt-get autoclean \

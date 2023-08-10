@@ -306,3 +306,12 @@ CELERY = {
     'CELERY_RESULT_SERIALIZER': 'json',
     'CELERY_ACCEPT_CONTENT': ['json'],
 }
+
+CACHE_HOST=os.environ.get('CACHE_HOST', 'memcached')
+CACHE_PORT=os.environ.get('CACHE_PORT', 11211)
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.memcached.PyLibMCCache',
+        'LOCATION': f'{CACHE_HOST}:{CACHE_PORT}',
+    }
+}
