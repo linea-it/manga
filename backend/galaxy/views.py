@@ -43,20 +43,19 @@ class ImageViewSet(viewsets.ReadOnlyModelViewSet):
 
     search_fields = ('megacube',)
     ordering_fields = ('id', 'mangaid', 'plateifu', 'objra', 'objdec',
-                       'fcfc1_50', 'xyy_light', 'xyo_light', 'xiy_light', 'xii_light', 'xio_light',
-                       'xo_light', 'xyy_mass', 'xyo_mass', 'xiy_mass', 'xii_mass', 'xio_mass',
-                       'xo_mass', 'sfr_1', 'sfr_5', 'sfr_10', 'sfr_14', 'sfr_20', 'sfr_30', 'sfr_56',
-                       'sfr_100', 'sfr_200', 'av_star', 'mage_l', 'mage_m', 'mz_l', 'mz_m',
-                       'mstar', 'sigma_star', 'vrot_star', 'f_hb', 'f_o3_4959', 'f_o3_5007',
-                       'f_he1_5876', 'f_o1_6300', 'f_n2_6548', 'f_ha', 'f_n2_6583', 'f_s2_6716',
-                       'f_s2_6731', 'eqw_hb', 'eqw_o3_4959', 'eqw_o3_5007', 'eqw_he1_5876', 'eqw_o1_6300',
-                       'eqw_n2_6548', 'eqw_ha', 'eqw_n2_6583', 'eqw_s2_6716', 'eqw_s2_6731', 'v_hb',
-                       'v_o3_4959', 'v_o3_5007', 'v_he1_5876', 'v_o1_6300', 'v_n2_6548', 'v_ha', 'v_n2_6583',
-                       'v_s2_6716', 'v_s2_6731', 'sigma_hb', 'sigma_o3_4959', 'sigma_o3_5007', 'sigma_he1_5876',
-                       'sigma_o1_6300', 'sigma_n2_6548', 'sigma_ha', 'sigma_n2_6583', 'sigma_s2_6716',
-                       'sigma_s2_6731', 'had_bcomp')
-
-    # ordering = ('id',)
+        'fcfc1_50', 'xyy_light', 'xyo_light', 'xiy_light', 'xii_light', 'xio_light',
+        'xo_light', 'xyy_mass', 'xyo_mass', 'xiy_mass', 'xii_mass', 'xio_mass',
+        'xo_mass', 'sfr_1', 'sfr_5', 'sfr_10', 'sfr_14', 'sfr_20', 'sfr_30', 'sfr_56',
+        'sfr_100', 'sfr_200', 'av_star', 'mage_l', 'mage_m', 'mz_l', 'mz_m',
+        'mstar', 'sigma_star', 'vrot_star', 'f_hb', 'f_o3_4959', 'f_o3_5007',
+        'f_he1_5876', 'f_o1_6300', 'f_n2_6548', 'f_ha', 'f_n2_6583', 'f_s2_6716',
+        'f_s2_6731', 'eqw_hb', 'eqw_o3_4959','eqw_o3_5007','eqw_he1_5876','eqw_o1_6300',
+        'eqw_n2_6548','eqw_ha','eqw_n2_6583','eqw_s2_6716','eqw_s2_6731','v_hb',
+        'v_o3_4959','v_o3_5007','v_he1_5876','v_o1_6300','v_n2_6548','v_ha','v_n2_6583',
+        'v_s2_6716','v_s2_6731','sigma_hb','sigma_o3_4959','sigma_o3_5007','sigma_he1_5876',
+        'sigma_o1_6300','sigma_n2_6548','sigma_ha','sigma_n2_6583','sigma_s2_6716',
+        'sigma_s2_6731', 'had_bcomp')
+    
 
     def get_original_megacube_path(self, obj):
         return Path(obj.path)
