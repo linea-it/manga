@@ -55,6 +55,9 @@ function Interfaces() {
                 </CardMedia>
               </CardActionArea>
             </Card>
+            <span>
+              Click the figure above to enter the portal.
+            </span>
           </Grid>
         ))}
       </Grid>
