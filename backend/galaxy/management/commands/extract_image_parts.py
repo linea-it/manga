@@ -1,29 +1,84 @@
 
-from django.core.management.base import BaseCommand
+import statistics
+from datetime import datetime, timedelta
+from pathlib import Path
 
-from galaxy.models import Image
-from manga.verifyer import mclass
-
-import os
-import json
-from django.conf import settings
-from datetime import datetime
 import humanize
+from django.core.management.base import BaseCommand
+from galaxy.models import Image
 
+from manga.megacubo_utils import get_megacube_parts_root_path
+from manga.megacube import MangaMegacube
+import json
+import requests
+import shutil
 
 class Command(BaseCommand):
     help = 'Extracting image parts to separate files to gain performance'
 
+    def add_arguments(self, parser):
+
+        parser.add_argument(
+            '--name',
+            dest='name',
+            help='Megacube name',
+        )
+
+        parser.add_argument(
+            '--limit',
+            dest='limit',
+            default=None,
+            help='Limit max objects executed in one run.',
+        )
+
+        parser.add_argument(
+            '--force',
+            dest='force_overwrite',
+            action='store_true',
+            help='Use this parameter to overwrite pre-existing data.',
+        )
+
     def handle(self, *args, **kwargs):
+        # TODO: Implementar paralelismo com Celery
+        # TODO: Task para Remover arquivos do diretório cache
 
         t0 = datetime.now()
 
         self.stdout.write('Started [%s]' %
                           t0.strftime("%Y-%m-%d %H:%M:%S"))
-        self.extract_megacube_header()
-        self.exctract_original_image()
-        self.extract_list_hud()
-        self.extract_image_heatmap()
+
+        if kwargs['force_overwrite']:
+            # Todos os objetos independente de já ter sido executado.
+            objs = Image.objects.all()
+        elif kwargs['name']:
+            objs = Image.objects.filter(megacube=kwargs['name'])
+        else:
+            # Apenas objetos que ainda não foram executados.
+            objs = Image.objects.filter(had_parts_extracted=False)
+
+        if kwargs['limit']:
+            objs = objs[0:int(kwargs['limit'])]
+
+        current = 0
+        exec_times = []
+        for obj in objs:
+            title = " [%s/%s] " % (current, len(objs))
+            self.stdout.write(title.center(80, '-'))
+            
+            if obj.path != None:
+                exec_time = self.process_single_object(obj)
+                exec_times.append(exec_time)
+                current += 1
+
+            self.stdout.write("".ljust(80, '-'))
+
+            # Calculo estimativa de tempo de execução.
+            estimated = (len(objs) - current) * statistics.mean(exec_times)
+            estimated_delta = timedelta(seconds=estimated)
+            self.stdout.write("Processed %s of %s objects" %
+                              (current, len(objs)))
+            self.stdout.write("Estimated Execution time: %s" % humanize.naturaldelta(
+                estimated_delta, minimum_unit="seconds"))
 
         t1 = datetime.now()
 
@@ -36,195 +91,73 @@ class Command(BaseCommand):
 
         self.stdout.write('Done!')
 
-    def get_megacube_path(self, filename):
-        return os.path.join(os.getenv('IMAGE_PATH', '/images/'), filename)
+    def process_single_object(self, obj):
+        t0 = datetime.now()
 
-    def write_in_megacube_path(self, megacube_name, filename, content):
+        # Original file compressed
+        orinal_filepath = Path(obj.path)
+        self.stdout.write("Original File: [%s]" % str(orinal_filepath))
+        self.stdout.write('Plate IFU: [%s]' % obj.plateifu)
+        self.stdout.write('Manga ID: [%s]' % obj.mangaid)
+        # Object directory in Images Megacube Parts.
+        parts_path = get_megacube_parts_root_path().joinpath(obj.folder_name)
+        self.stdout.write("Megacube Parts: [%s]" % str(parts_path))
 
-        # Join and make the path for the extracted files:
-        filepath = os.path.join(
-            settings.MEGACUBE_PARTS,
-            str(megacube_name) + '/' + filename
-        )
+        cube = MangaMegacube(orinal_filepath)
 
-        # Create directories, if they don't exist already:
-        os.makedirs(os.path.dirname(filepath), exist_ok=True)
+        #  Extrair o megacubo bz2 -> fits
+        cube.extract_bz2()
+        cube.extract_megacube_parts(parts_path)
+        # cube.compress_bz2()
 
-        # If file already exists, remove it:
-        if os.path.exists(filepath):
-            os.remove(filepath)
+        obj.had_parts_extracted = True
+        obj.save()
 
-        with open(filepath, "w") as f:
-            json.dump(content, f)
+        self.download_images(obj)
 
-    def exctract_original_image(self):
+        t1 = datetime.now()
+        tdelta = t1 - t0
+        self.stdout.write('Execution Time: [%s]' %
+                        humanize.precisedelta(tdelta))
+
+        return tdelta.total_seconds()
+
+
+    def download_images(self, obj):
         """
-            It extracts the Origimal Image (zero) data from 'FLUX' HUD
-            for each image and save them in a very small JSON file in the path
-            /images/megacube_parts/megacube_{JOB_ID}/original_image.json.
+            It downloads the SDSS Image by its RA and Dec
+            for each image and save them in the path
+            /images/megacube_parts/megacube_{JOB_ID}/sdss_image.jpg
         """
+        self.stdout.write('Downloading SDSS Image [%s]' % str(obj.megacube))
+        # Object directory in Images Megacube Parts.
+        parts_path = get_megacube_parts_root_path().joinpath(obj.folder_name)
+        ra = obj.objra
+        dec = obj.objdec
 
-        self.stdout.write("".ljust(100, '-'))
-        self.stdout.write('Started Original Image Extraction')
+        # Set up the image URL and filename
+        image_url = "http://skyserver.sdss.org/dr16/SkyServerWS/ImgCutout/getjpeg?TaskName=Skyserver.Chart.Image&ra=%s&dec=%s&scale=0.099515875&width=512&height=512&opt=G&query=" % (ra, dec)
+        filename = 'sdss_image.jpg'
 
-        images = Image.objects.all()
+        # Open the url image, set stream to True, this will return the stream content.
+        r = requests.get(image_url, stream=True)
 
-        for image in images:
-            self.stdout.write('Extracting Original Image [%s]' % str(image.id))
+        # Check if the image was retrieved successfully
+        if r.status_code == 200:
+            # Set decode_content value to True, otherwise the downloaded image file's size will be zero.
+            r.raw.decode_content = True
 
-            megacube = self.get_megacube_path(image.megacube)
+            filepath = Path(parts_path).joinpath(filename)
+            if filepath.exists():
+                filepath.unlink()
 
-            cube_data = mclass().get_original_cube_data(megacube)
-
-            content = dict({
-                'z': cube_data,
-                'title': 'FLUX',
-            })
-
-            filename = 'original_image.json'
-
-            self.write_in_megacube_path(
-                image.megacube.split('.fits.fz')[0], filename, content)
-
-        self.stdout.write('Finished Original Image Extraction!')
-
-    def extract_list_hud(self):
-        """
-            It extracts the List of HUDs from 'PoPBins' HUD
-            for each image and save them in a very small JSON file in the path
-            /images/megacube_parts/megacube_{JOB_ID}/list_hud.json.
-        """
-
-        self.stdout.write("".ljust(100, '-'))
-        self.stdout.write('Started List Of HUD Extraction')
-
-        images = Image.objects.all()
-
-        for image in images:
-            self.stdout.write('Extracting List Of HUD [%s]' % str(image.id))
-
-            megacube = self.get_megacube_path(image.megacube)
-
-            cube_header = mclass().get_headers(megacube, 'PoPBins')
-
-            cube_data = mclass().get_cube_data(megacube, 'PoPBins')
-
-            cube_comments = mclass().get_comments(megacube, 'PoPBins')
-
-            lHud = mclass().get_all_hud(
-                cube_header, cube_data)
-
-            dHud = list()
-
-            for hud in lHud:
-                # TODO: recuperar o display name para cada HUD
-                dHud.append({
-                    'name': hud,
-                    'display_name': hud,
-                    'comment': cube_comments[hud]
-                })
-
-            dHud = sorted(dHud, key=lambda i: i['display_name'])
-
-            content = ({
-                'hud': dHud
-            })
-
-            filename = 'list_hud.json'
-
-            self.write_in_megacube_path(
-                image.megacube.split('.fits.fz')[0], filename, content)
-
-        self.stdout.write('Finished List Of HUD Extraction!')
-
-    def extract_image_heatmap(self):
-        """
-            It extracts all the Image Heatmaps from 'PoPBins' HUD
-            for each image and for each HUD saved in the file
-            /images/megacube_parts/megacube_{JOB_ID}/list_hud.json
-            and save them in very small JSON files in the path
-            /images/megacube_parts/megacube_{JOB_ID}/image_heatmap_{HUD}.json.json.
-        """
-
-        self.stdout.write("".ljust(100, '-'))
-        self.stdout.write('Started Image Heatmap Extraction')
-
-        images = Image.objects.all()
-
-        for i, image in enumerate(images):
-            t0 = datetime.now()
-            self.stdout.write('Started Image Heatmap By ID [%s]: [%s]' % (
-                image.id, t0.strftime("%Y-%m-%d %H:%M:%S")))
-
-            megacube = self.get_megacube_path(image.megacube)
-
-            cube_header = mclass().get_headers(megacube, 'PoPBins')
-
-            cube_data = mclass().get_cube_data(megacube, 'PoPBins')
-
-            lHud = mclass().get_all_hud(
-                cube_header, cube_data)
-
-            for hud in lHud:
-                self.stdout.write('Extracting Image Heatmap [%s] Of HUD [%s]' % (
-                    str(image.id), str(hud)))
-
-                megacube = self.get_megacube_path(image.megacube)
-
-                image_data = mclass().image_by_hud(
-                    megacube, hud)
-
-                # z = mclass().image_data_to_array(image_data)
-
-                content = dict({
-                    'z': image_data,
-                    'title': hud,
-                })
-
-                filename = 'image_heatmap_%s.json' % hud
-                self.write_in_megacube_path(
-                    image.megacube.split('.fits.fz')[0], filename, content)
-
-            # End time of Image Heatmap
-            t1 = datetime.now()
-
-            self.stdout.write('Finished Image Heatmap By ID [%s]: [%s]' % (
-                image.id, t0.strftime("%Y-%m-%d %H:%M:%S")))
-
-            self.stdout.write('Progress: [%s/%s]' % (i + 1, len(images)))
-
-            tdelta = t1 - t0
-
-            self.stdout.write('Execution Time By ID [%s]: [%s]' % (image.id, humanize.naturaldelta(
-                tdelta, minimum_unit="seconds")))
-            self.stdout.write("".ljust(100, '-'))
-
-        self.stdout.write('Finished Image Heatmap Extraction!')
-
-    def extract_megacube_header(self):
-        """
-            It extracts the Megacube Header from 'PoPBins' HUD
-            for each image and save them in a very small JSON file in the path
-            /images/megacube_parts/megacube_{JOB_ID}/cube_header.json.
-        """
-
-        self.stdout.write("".ljust(100, '-'))
-        self.stdout.write('Started Megacube Header Extraction')
-
-        images = Image.objects.all()
-
-        for image in images:
+            # Open a local file with wb ( write binary ) permission.
+            with open(filepath, 'wb') as f:
+                shutil.copyfileobj(r.raw, f)  
+            self.stdout.write('Finished Download SDSS Images!')                
+        else:
             self.stdout.write(
-                'Extracting Megacube Header [%s]' % str(image.id))
+                'SDSS Image [%s] could not be retrieved' % str(obj.megacube))
 
-            megacube = self.get_megacube_path(image.megacube)
 
-            content = repr(mclass().get_headers(
-                megacube, 'PoPBins')).split('\n')
 
-            filename = 'cube_header.json'
-
-            self.write_in_megacube_path(
-                image.megacube.split('.fits.fz')[0], filename, content)
-
-        self.stdout.write('Finished Megacube Header Extraction!')

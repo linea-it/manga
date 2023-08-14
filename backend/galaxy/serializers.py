@@ -5,22 +5,10 @@ from galaxy.models import Image
 
 class ImageSerializer(serializers.ModelSerializer):
 
-    # ticket = serializers.SerializerMethodField()
+    had_bcomp = serializers.SerializerMethodField()
     class Meta:
         model = Image
-        fields = (
-            'id',
-            'megacube',
-            'mangaid',
-            'plateifu',
-            'objra',
-            'objdec',
-            'nsa_iauname',
-            'mjdmed',
-            'exptime',
-            'airmsmed',
-            'seemed',
-            'nsa_z',
-            # 'nsa_sersic_absmag',
-            # 'nsa_elpetro_absmag',
-        )
+        fields = "__all__"
+
+    def get_had_bcomp(self, obj):
+        return str(obj.had_bcomp)

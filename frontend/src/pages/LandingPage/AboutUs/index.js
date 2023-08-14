@@ -80,7 +80,7 @@ function AboutUs() {
                   </a>
                   <span> (</span>
                   <a
-                    href="https://www.linea.gov.br/3-inct-do-e-universo-2/"
+                    href="https://www.linea.org.br/3-inct-do-e-universo-2/"
                     target="_blank"
                   >
                     <span>INCT do e-Universo</span>

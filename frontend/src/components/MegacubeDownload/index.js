@@ -2,65 +2,100 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {
   Dialog,
+  Button,
+  Typography,
   DialogTitle,
   DialogContent,
-  DialogActions,
-  Typography,
-  IconButton,
-  Button,
-} from '@material-ui/core';
-import CloseIcon from '@material-ui/icons/Close';
-import useStyles from './styles';
+  DialogActions
+} from '@material-ui/core'
 import filesize from 'filesize';
+import Skeleton from '@material-ui/lab/Skeleton';
+import { useQuery } from 'react-query'
+import { getMegacubeDownloadInfo } from '../../services/api';
+import GenericError from '../Alerts/GenericError';
 
-function MegacubeDownload({ data, setOpen }) {
+function MegacubeDownload({galaxyId, open, onClose  }) {
+  
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ['megacubeDownloadById', { id: galaxyId }],
+    queryFn: getMegacubeDownloadInfo,
+    enabled: open,
+    keepPreviousData: true,
+    staleTime: 1 * 60 * 60 * 1000,    
+  })
 
-  const classes = useStyles();
+  function generate_skeleton(element) {
+    return [0, 1, 2, 3, 4].map((value) =>
+      React.cloneElement(element, {
+        key: value,
+      }),
+    );
+  }
+
+  if (isError) return (
+    <GenericError open={open} onClose={onClose}/>
+  )
 
   return (
     <Dialog
-      disableBackdropClick
-      disableEscapeKeyDown
+      open={open}
+      onClose={onClose}
+      aria-labelledby="megacube-download"
       fullWidth={true}
       maxWidth="sm"
-      aria-labelledby="download-megacube"
-      open={data.open}
     >
-      <DialogTitle>
-        <Typography variant="h6">Download Megacube</Typography>
-        <IconButton aria-label="close" className={classes.closeButton} onClick={setOpen}>
-          <CloseIcon />
-        </IconButton>
-      </DialogTitle>
+      <DialogTitle>Download Megacube</DialogTitle>
       <DialogContent dividers>
-        <Typography>MaNGA ID: {data.mangaid}</Typography>
-        <Typography>Name: {data.name}</Typography>
-        <Typography>File: {data.megacube}</Typography>
-        <Typography>Size: {filesize(data.size)}</Typography>
+        {isLoading && (
+          generate_skeleton(<Skeleton animation="wave" height={40}/>)
+        )}
+        {data && (
+          <>
+            <Typography><strong>MaNGA ID:</strong>{' '}{data.mangaid}</Typography>
+            <Typography><strong>Name:</strong>{' '} {data.name}</Typography>
+            <Typography><strong>File:</strong>{' '}{data.megacube}</Typography>
+            <Typography><strong>Size:</strong>{' '}{filesize(data.size)}</Typography>
+            {data?.bcomp_name && (
+                <Typography><strong>Broad component:</strong>{' '}{data.bcomp_name}</Typography>
+            )}
+          </>
+        )}
       </DialogContent>
       <DialogActions>
-        <Button variant="contained" color="secondary" onClick={setOpen}>
+        <Button variant="contained" color="secondary" onClick={onClose}>
           Cancel
         </Button>
-        <Button variant="contained" color="primary" href={data.link} onClick={setOpen}>
-          Ok
+        {data?.link_bcomp && (
+          <Button 
+            variant="contained" 
+            color="primary" 
+            href={data?.link_bcomp} 
+            onClick={onClose}>
+            Download Broad component
+          </Button>
+        )}
+        <Button 
+          variant="contained" 
+          color="primary" 
+          href={data?.link} 
+          onClick={onClose}
+          disabled={!data}
+          >
+          Download
         </Button>
-      </DialogActions>
+      </DialogActions>  
     </Dialog>
-    );
+  )
+}
+MegacubeDownload.defaultProps = {
+  galaxyId: undefined,
+  open: false,
 }
 
-
 MegacubeDownload.propTypes = {
-  data: PropTypes.shape({
-    open: PropTypes.bool,
-    mangaid: PropTypes.string,
-    name: PropTypes.string,
-    megacube: PropTypes.string,
-    link: PropTypes.string,
-    size: PropTypes.number,
-  }).isRequired,
-  setOpen: PropTypes.func.isRequired,
+  open: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  galaxyId: PropTypes.number,
 };
 
 

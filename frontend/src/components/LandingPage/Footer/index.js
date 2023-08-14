@@ -11,13 +11,13 @@ function Footer() {
       <Grid
         container
         direction="row"
-        justify="space-between"
+        justifyContent="space-between"
         alignItems="center"
         className={classes.container}
       >
         <Grid item>
           <Typography color="inherit" className={classes.marginItem}>
-            <span className={classes.poweredBy}>Testing</span>{' '}
+            {/* <span className={classes.poweredBy}>Testing</span>{' '} */}
             <span className={classes.versionLink}>1.0.0</span>
           </Typography>
         </Grid>
@@ -25,7 +25,7 @@ function Footer() {
           <Typography color="inherit" className={classes.marginItem}>
             <span className={classes.poweredBy}>Powered by</span>
             <a
-              href="http://www.linea.gov.br/"
+              href="http://www.linea.org.br/"
               target="blank"
               className={classes.logoLink}
             >

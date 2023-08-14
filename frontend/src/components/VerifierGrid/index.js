@@ -56,7 +56,7 @@ function VerifierGrid({ heatmaps, hudList }) {
                     z: heatmap.error ? [] : heatmap.z,
                     type: 'heatmap',
                     colorscale: 'Viridis',
-                    showscale: false,
+                    showscale: true,
                   },
                 ]}
                 layout={{

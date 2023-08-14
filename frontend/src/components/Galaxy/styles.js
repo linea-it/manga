@@ -28,6 +28,7 @@ const styles = makeStyles((theme) => ({
     [theme.breakpoints.down('lg')]: {
       overflow: 'auto',
     },
+    minHeight: '450px'
   },
   animateEnter: {
     animation: 'fadein 1s',

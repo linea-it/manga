@@ -8,22 +8,21 @@ import {
 } from '@material-ui/core';
 import useStyles from './styles';
 
-function Switch({ isGrid, setIsGrid }) {
+function Switch({ isGrid, onChange }) {
   const classes = useStyles();
 
   const handleSwitchChange = () => {
-    setIsGrid((prev) => !prev);
+    onChange((prev) => !prev);
   };
 
   return (
     <Grid
       container
-      spacing={2}
-      justify="flex-end"
-      alignItems="center"
-      className={classes.switchContainer}
+      // spacing={2}
+      // justifyContent="flex-end"
+      // alignItems="center"
+      // className={classes.switchContainer}
     >
-
       <Grid>
         <Typography variant="button" display="block" gutterBottom>Image</Typography>
       </Grid>
@@ -48,7 +47,7 @@ function Switch({ isGrid, setIsGrid }) {
 
 Switch.propTypes = {
   isGrid: PropTypes.bool.isRequired,
-  setIsGrid: PropTypes.func.isRequired,
+  onChange: PropTypes.func.isRequired,
 };
 
 export default Switch;

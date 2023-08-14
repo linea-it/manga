@@ -1,15 +1,17 @@
-import { createMuiTheme } from '@material-ui/core/styles';
 import pink from '@material-ui/core/colors/pink';
+import blue from '@material-ui/core/colors/blue';
 
-const light = createMuiTheme({
+import { createTheme } from '@material-ui/core/styles';
+
+const light = createTheme({
   palette: {
-    primary: {
-      light: '#4f5964',
-      main: '#24292e',
-      dark: '#161a1d',
-      contrastText: '#fff',
-    },
-    secondary: pink,
+    // primary: {
+    //   light: '#4f5964',
+    //   main: '#24292e',
+    //   dark: '#161a1d',
+    //   contrastText: '#fff',
+    // },
+    // secondary: blue,
   },
   typography: {
     useNextVariants: true,
