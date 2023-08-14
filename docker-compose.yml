@@ -1,54 +1,125 @@
 version: '3.6'
 services:
-  # Database
-  database:
-    image: postgres:12.3-alpine
-    env_file:
-      - .env.dev
-    expose:
-      # Deixar a porta exposta para desenvolvimento
-      # isto permite acessar o banco de dados a partir de outros apps como o DBeaver
-      - 5432
-    volumes:
-      - ./pg_data:/var/lib/postgresql/data
-
   # Backend Django
   backend:
+    user: 1000:1000
     build: ./backend
+    command: /start.sh    
+    volumes:
+      - ./backend:/usr/src/app
+      - ./images:/tmp/images
+      - ./images:/tmp/cache      
+      - ./log:/usr/src/app/log
+      - /tmp/.X11-unix:/tmp/.X11-unix
+    env_file:
+      - .env.dev      
+    depends_on:
+      - rabbit
+      - database
+  
+  # Handling Periodic Tasks in Django with Celery and Docker
+  # https://testdriven.io/blog/django-celery-periodic-tasks/
+  # https://testdriven.io/courses/django-celery/docker/
+  celery_worker:
+    user: 1000:1000
+    build: ./backend
+    command: /start-celery-worker.sh
+    volumes:
+      - ./backend:/usr/src/app
+      - ./images:/tmp/images
+      - ./images:/tmp/cache
+      - ./log:/usr/src/app/log
     env_file:
       - .env.dev
-    volumes:
-      - ./backend:/app
-      - ./images:/images
     depends_on:
       - rabbit
       - database
 
+  # Handling Periodic Tasks in Django with Celery and Docker
+  # https://testdriven.io/blog/django-celery-periodic-tasks/    
+  # https://testdriven.io/courses/django-celery/docker/
+  celery_beat: 
+    user: 1000:1000
+    build: ./backend
+    command: /start-celery-beat.sh
+    volumes:
+      - ./backend:/usr/src/app
+      - ./images:/tmp/images
+      - ./images:/tmp/cache      
+      - ./log:/usr/src/app/log
+    env_file:
+      - .env.dev
+    depends_on:
+      - rabbit
+      - database
+
+  # Handling Periodic Tasks in Django with Celery and Docker
+  # https://testdriven.io/blog/django-celery-periodic-tasks/    
+  # https://testdriven.io/courses/django-celery/docker/
+  flower:
+    user: 1000:1000
+    build: ./backend
+    command: /start-celery-flower.sh
+    volumes:
+      - ./backend:/usr/src/app
+      - ./images:/tmp/images
+      - ./images:/tmp/cache
+      - ./log:/usr/src/app/log
+    ports:
+      - 5555:5555
+    env_file:
+      - .env.dev
+    depends_on:
+      - rabbit
+      - database
+
+
   # Frontend React
   frontend:
-    # image: node:8.10
-    image: node:12.16.2
+    image: node:16.0.0
     working_dir: /app
     volumes:
       - ./frontend:/app
     command: yarn start
 
+  # Database
+  database:
+    image: postgres:13.6-alpine
+    env_file:
+      - .env.dev
+    # expose:
+    #   # Deixar a porta exposta para desenvolvimento
+    #   # isto permite acessar o banco de dados a partir de outros apps como o DBeaver
+    #   - 5432
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
   # Servidor Web NGINX
   nginx:
-    image: nginx:latest
-    # build: ./frontend
+    image: nginx:stable-alpine
     ports:
       - 80:8080
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
-      - ./images:/images
+      - ./frontend/nginx/development.conf:/etc/nginx/conf.d/default.conf
+      - ./frontend/data:/var/www/table/
+      - ./images:/var/www/data/      
     depends_on:
       - backend
       - frontend
 
   # Message-Broker Software RabbitMQ
   rabbit:
-    image: rabbitmq:3-management
-    hostname: rabbit_manga
+    image: rabbitmq:3-management-alpine
+    # hostname: rabbit_manga
     env_file:
       - .env.dev
+
+  memcached:
+    image: bitnami/memcached
+    environment:
+      - MEMCACHED_CACHE_SIZE=256
+      - MEMCACHED_THREADS=4
+      - MEMCACHED_MAX_ITEM_SIZE=8388608
+
+volumes:
+  postgres-data:

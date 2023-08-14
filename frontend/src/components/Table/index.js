@@ -99,7 +99,7 @@ function Table({
   loading,
   defaultSelection,
   selectedRow,
-  setSelectedRow,
+  onChangeSelectedRow,
   isVirtualTable,
   height,
   defaultSearchValue,
@@ -221,6 +221,89 @@ function Table({
     setCustomLoading(false);
   }, [data, totalCount, defaultExpandedGroups]);
 
+  const onClickAction = (column, row) => {
+    if (modalContent !== null) {
+      setCustomModalContent('');
+      setVisible(true);
+    }
+    column.action(row);
+  };
+
+  const rows = customData.map((row) => {
+    const line = {};
+    Object.keys(row).forEach((key) => {
+      const column = columns.filter((el) => el.name === key)[0];
+      if (key in row) {
+        if (
+          (column && column.icon && typeof row[key] !== 'object') ||
+          /*
+          If the current row is an array or object, then verify if its length is higher than 1.
+          This was created for the "Release" column,
+          that sometimes has multiple releases for a single dataset.
+          */
+          (column &&
+            column.icon &&
+            typeof row[key] === 'object' &&
+            row[key].length > 1 &&
+            !column.customElement)
+        ) {
+          if (column.action) {
+            line[key] = (
+              <>
+                <Button onClick={() => onClickAction(column, row)}>
+                  {column.icon}
+                </Button>
+              </>
+            );
+          } else {
+            line[key] = <>{column.icon}</>;
+          }
+          /*
+            If the current row has a custom element, than render it, instead of the default.
+          */
+        } else if (column && column.customElement) {
+          line[key] = column.customElement(row);
+        } else {
+          line[key] = row[key];
+        }
+      } else if (column && column.customElement) {
+        line[key] = column.customElement(row);
+      } else {
+        line[key] = '-';
+      }
+    });
+    return line;
+  });
+
+  const changeSelection = (value) => {
+    let select = value;
+
+    // So permite uma seleção por vez
+    // Compara a seleção anterior com a atual e guarda a diferença
+    // A selecao na tabela utiliza o idx do array.
+    if (value.length > 0) {
+      const diff = value.filter((x) => !selection.includes(x));
+      select = diff;  
+    } else {
+      select = [];
+    }
+
+    // Funcao recebida por props que e 
+    // executada toda vez que a seleao e alterada
+    // Tem a funcao de avisar ao componente pai que houve uma selecao
+    // Componente pai utiliza o id do registro. 
+    if (select.length > 0) {
+      onChangeSelectedRow(rows[select].id)
+    } 
+    // else {
+    //   onChangeSelectedRow(null)
+    // }
+
+    // Funcao interna da table que altera a linha selecionada pelo idx.
+    setSelection(select);
+  };
+
+
   useEffect(() => {
     if (selectedRow) {
       const megacubeOnTable =
@@ -290,23 +373,7 @@ function Table({
     }
   };
 
-  const changeSelection = (value) => {
-    let select = value;
 
-    if (value.length > 0) {
-      const diff = value.filter((x) => !selection.includes(x));
-      select = diff;
-    } else {
-      select = [];
-    }
-
-    setSelectedRow(null);
-    if (setSelectedRow && select.length > 0) {
-      setSelectedRow(rows[select].id);
-    }
-
-    setSelection(select);
-  };
 
   const onHideModal = () => setVisible(false);
 
@@ -329,13 +396,7 @@ function Table({
     />
   );
 
-  const onClickAction = (column, row) => {
-    if (modalContent !== null) {
-      setCustomModalContent('');
-      setVisible(true);
-    }
-    column.action(row);
-  };
+
 
   const renderTableOrVirtualTable = () => {
     if (loading !== null) {
@@ -370,6 +431,13 @@ function Table({
     return <DxMuiTable columnExtensions={customColumnExtensions} />;
   };
 
+  const onDownload = () => {
+    const link = document.createElement("a");
+    link.download = `megacube_mean_properties_table_Riffel_2023.fits.tar.gz`;
+    link.href = "/table/megacube_mean_properties_table_Riffel_2023.fits.tar.gz";
+    link.click();
+  };
+
   const customToolbar = ({ children }) => (
     <MuiToolbar className={classes.toolbar}>
       <IconButton
@@ -378,7 +446,12 @@ function Table({
       >
         <FilterListIcon />
       </IconButton>
-      {children}
+      <div>
+        <Button variant="contained" color="primary" onClick={onDownload} >
+          Download mean properties file
+        </Button>       
+      </div>
+      {children}         
     </MuiToolbar>
   );
 
@@ -727,51 +800,6 @@ function Table({
     );
   };
 
-  const rows = customData.map((row) => {
-    const line = {};
-    Object.keys(row).forEach((key) => {
-      const column = columns.filter((el) => el.name === key)[0];
-      if (key in row) {
-        if (
-          (column && column.icon && typeof row[key] !== 'object') ||
-          /*
-          If the current row is an array or object, then verify if its length is higher than 1.
-          This was created for the "Release" column,
-          that sometimes has multiple releases for a single dataset.
-          */
-          (column &&
-            column.icon &&
-            typeof row[key] === 'object' &&
-            row[key].length > 1 &&
-            !column.customElement)
-        ) {
-          if (column.action) {
-            line[key] = (
-              <>
-                <Button onClick={() => onClickAction(column, row)}>
-                  {column.icon}
-                </Button>
-              </>
-            );
-          } else {
-            line[key] = <>{column.icon}</>;
-          }
-          /*
-            If the current row has a custom element, than render it, instead of the default.
-          */
-        } else if (column && column.customElement) {
-          line[key] = column.customElement(row);
-        } else {
-          line[key] = row[key];
-        }
-      } else if (column && column.customElement) {
-        line[key] = column.customElement(row);
-      } else {
-        line[key] = '-';
-      }
-    });
-    return line;
-  });
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -826,7 +854,6 @@ Table.defaultProps = {
   grouping: [{}],
   loading: null,
   selectedRow: null,
-  setSelectedRow: null,
   isVirtualTable: false,
   height: 'auto',
   defaultSearchValue: '',
@@ -862,7 +889,7 @@ Table.propTypes = {
   grouping: PropTypes.arrayOf(PropTypes.object),
   loading: PropTypes.bool,
   selectedRow: PropTypes.number,
-  setSelectedRow: PropTypes.func,
+  onChangeSelectedRow: PropTypes.func,
   isVirtualTable: PropTypes.bool,
   height: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   defaultSearchValue: PropTypes.string,

@@ -31,15 +31,20 @@ from scipy.constants import pi
 from shapely.geometry import Point
 from shapely.geometry.polygon import Polygon
 import copy
-
+from django.core.cache import cache
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
 
 
 class mclass:
-    def flux_by_position(self, megacube, x, y, hud='FLXNORM'):
-        flux = pf.getdata(megacube, hud)
+    def flux_by_position(self, megacube, x, y, hud='FLXOBS'):
+
+        cache_key = f"{megacube.name}_{hud}"
+        flux = cache.get(cache_key)
+        if not flux:
+            flux = pf.getdata(megacube, hud)
+            cache.set(cache_key, flux)
 
         lamb = self.get_lamb(megacube, flux, hud)
 
@@ -52,7 +57,7 @@ class mclass:
 
         return (synt[:, int(y), int(x)], lamb)
 
-    def get_lamb(self, megacube, flux, hud='FLXNORM'):
+    def get_lamb(self, megacube, flux, hud='FLXOBS'):
         l0 = pf.getheader(megacube, hud)['CRVAL3']
         dl = pf.getheader(megacube, hud)['CD3_3']
 
@@ -180,6 +185,7 @@ class mclass:
 
     def get_original_cube_data(self, megacube):
         cube_data = pf.getdata(megacube, 'FLUX')
+        mask = pf.getdata(megacube,'SN_MASKS_1') 
 
         (z, y, x) = np.shape(cube_data)
         imag = np.sum(cube_data[:, :, :], axis=0)
@@ -195,11 +201,14 @@ class mclass:
         for i in range(x):
             for j in range(y):
                 if polygon.contains(Point(j, i)) == False:
-                    imagb[i, j] = 'nan'
+                    # imagb[i, j] = 'nan'
+                    imagb[i, j] = 0
+
+        imagb[np.where(mask == 1)] = np.nan
 
         flux_image = ax.imshow(imagb, origin='lower').get_array()
 
-        return flux_image.tolist()
+        return flux_image.tolist(fill_value=None)
 
     # def get_original_cube_data(self, megacube):
     #     cube_data = pf.getdata(megacube, 'FLUX')
@@ -218,6 +227,8 @@ class mclass:
 
         idxHud = lHud.index(hud)
 
+        mask = pf.getdata(megacube,'SN_MASKS_1') 
+
         (z, y, x) = np.shape(cube_data)
 
         imag = cube_data[idxHud, :, :]
@@ -233,46 +244,19 @@ class mclass:
         for i in range(x):
             for j in range(y):
                 if polygon.contains(Point(j, i)) == False:
-                    imagb[i, j] = 'nan'
+                    # imagb[i, j] = 'nan'
+                    imagb[i, j] = 0
+
+        imagb[np.where(mask == 1)] = np.nan
 
         flux_image = ax.imshow(imagb, origin='lower').get_array()
 
-        return flux_image.tolist()
+        result = flux_image.tolist(fill_value=None)
 
-        # image_data = cube_data[idxHud, :, :]
+        # Close images resolve the Warning "figure.max_open_warning"
+        pyplot.close('all')
+        return result
 
-        # # # Transforming "masked" values to zero:
-        # # image_data[np.isnan(image_data)] = 0
-
-        # return image_data
-
-    # def image_data_to_array(self, image_data):
-    #     """
-    #         Converte os dados da imagem para um array utilizando pcolormesh.
-    #         neste casa a matriz 52x52 vire um array 2704 elementos.
-    #         este array é dividido em pedaços de 52 elementos.
-    #         o retorno da função é um array com 52 elementos onde cada elemento tem tamanho 52.
-    #         o primeiro elemento corresponde a x=0, y=0, o segundo x=0, y=1 assim sucessivamente.
-    #         o segundo elemento é a posição x=1.
-    #     """
-    #     # Converte o ndarray para um mesh (matplotlib.collections.QuadMesh)
-    #     # https://matplotlib.org/3.1.1/api/collections_api.html#matplotlib.collections.QuadMesh)
-
-    #     mesh = pyplot.pcolormesh(image_data)
-
-    #     # O mesh tem a funcao get_array que transforma
-    #     # m = Array com todos os 2704 = 52x52.
-    #     m = list(mesh.get_array())
-
-    #     # Tamanho total da imagem 52
-    #     n = len(image_data)
-
-    #     # Divide o array em pedacos de tamanho igual
-    #     z = list()
-    #     for i in range(0, len(m), n):
-    #         z.append(m[i:i + n])
-
-    #     return z
 
     def spaxel_fit_by_position(self, megacube, x, y, ):
         """

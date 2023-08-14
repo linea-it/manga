@@ -7,50 +7,112 @@ from galaxy.models import Image
 from galaxy.serializers import ImageSerializer
 
 import os
+from pathlib import Path
 from django.conf import settings
 import json
 
 from manga.verifyer import mclass
 from astropy.io import fits as pf
+import tarfile
+from manga.megacubo_utils import get_megacube_parts_root_path, extract_bz2
+from urllib.parse import urljoin
+import posixpath
+from manga.emission_lines import EmissionLines
+from manga.megacube import MangaMegacube
+import numpy as np
+
+from django.core.cache import cache
 
 
-class ImageViewSet(viewsets.ModelViewSet):
-    queryset = Image.objects.all()
+class ImageViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Image.objects.filter(had_parts_extracted=True)
     serializer_class = ImageSerializer
-    filter_fields = ('id', 'megacube', 'mangaid', 'plateifu', 'objra', 'objdec',
-                     'nsa_iauname', 'mjdmed', 'exptime', 'airmsmed', 'seemed',
-                     'nsa_z',)
-    search_fields = ('id', 'megacube', 'mangaid', 'plateifu', 'objra', 'objdec',
-                     'nsa_iauname', 'mjdmed', 'exptime', 'airmsmed', 'seemed',
-                     'nsa_z',)
-    ordering_fields = ('id', 'megacube', 'mangaid', 'plateifu', 'objra', 'objdec',
-                       'nsa_iauname', 'mjdmed', 'exptime', 'airmsmed', 'seemed',
-                       'nsa_z',)
-    ordering = ('mangaid',)
+    filter_fields = ('id', 'mangaid', 'plateifu', 'objra', 'objdec',
+                     'fcfc1_50', 'xyy_light', 'xyo_light', 'xiy_light', 'xii_light', 'xio_light',
+                     'xo_light', 'xyy_mass', 'xyo_mass', 'xiy_mass', 'xii_mass', 'xio_mass',
+                     'xo_mass', 'sfr_1', 'sfr_5', 'sfr_10', 'sfr_14', 'sfr_20', 'sfr_30', 'sfr_56',
+                     'sfr_100', 'sfr_200', 'av_star', 'mage_l', 'mage_m', 'mz_l', 'mz_m',
+                     'mstar', 'sigma_star', 'vrot_star', 'f_hb', 'f_o3_4959', 'f_o3_5007',
+                     'f_he1_5876', 'f_o1_6300', 'f_n2_6548', 'f_ha', 'f_n2_6583', 'f_s2_6716',
+                     'f_s2_6731', 'eqw_hb', 'eqw_o3_4959', 'eqw_o3_5007', 'eqw_he1_5876', 'eqw_o1_6300',
+                     'eqw_n2_6548', 'eqw_ha', 'eqw_n2_6583', 'eqw_s2_6716', 'eqw_s2_6731', 'v_hb',
+                     'v_o3_4959', 'v_o3_5007', 'v_he1_5876', 'v_o1_6300', 'v_n2_6548', 'v_ha', 'v_n2_6583',
+                     'v_s2_6716', 'v_s2_6731', 'sigma_hb', 'sigma_o3_4959', 'sigma_o3_5007', 'sigma_he1_5876',
+                     'sigma_o1_6300', 'sigma_n2_6548', 'sigma_ha', 'sigma_n2_6583', 'sigma_s2_6716',
+                     'sigma_s2_6731', 'had_bcomp')
 
-    def get_megacube_path(self, filename):
-        return os.path.join(os.getenv('IMAGE_PATH', '/images/'), filename)
+    search_fields = ('megacube',)
+    ordering_fields = ('id', 'mangaid', 'plateifu', 'objra', 'objdec',
+        'fcfc1_50', 'xyy_light', 'xyo_light', 'xiy_light', 'xii_light', 'xio_light',
+        'xo_light', 'xyy_mass', 'xyo_mass', 'xiy_mass', 'xii_mass', 'xio_mass',
+        'xo_mass', 'sfr_1', 'sfr_5', 'sfr_10', 'sfr_14', 'sfr_20', 'sfr_30', 'sfr_56',
+        'sfr_100', 'sfr_200', 'av_star', 'mage_l', 'mage_m', 'mz_l', 'mz_m',
+        'mstar', 'sigma_star', 'vrot_star', 'f_hb', 'f_o3_4959', 'f_o3_5007',
+        'f_he1_5876', 'f_o1_6300', 'f_n2_6548', 'f_ha', 'f_n2_6583', 'f_s2_6716',
+        'f_s2_6731', 'eqw_hb', 'eqw_o3_4959','eqw_o3_5007','eqw_he1_5876','eqw_o1_6300',
+        'eqw_n2_6548','eqw_ha','eqw_n2_6583','eqw_s2_6716','eqw_s2_6731','v_hb',
+        'v_o3_4959','v_o3_5007','v_he1_5876','v_o1_6300','v_n2_6548','v_ha','v_n2_6583',
+        'v_s2_6716','v_s2_6731','sigma_hb','sigma_o3_4959','sigma_o3_5007','sigma_he1_5876',
+        'sigma_o1_6300','sigma_n2_6548','sigma_ha','sigma_n2_6583','sigma_s2_6716',
+        'sigma_s2_6731', 'had_bcomp')
+    
 
-    def get_megacube_size(self, filename):
-        return os.stat(self.get_megacube_path(filename)).st_size
+    def get_original_megacube_path(self, obj):
+        return Path(obj.path)
 
-    def get_image_part_path(self, megacube_name, filename):
+    def get_original_megacube_url(self, obj):
+        return posixpath.join(settings.DATA_BASE_URL, f'{obj.megacube}{obj.compression}')
+
+    def get_bcomp_megacube_url(self, obj):
+        bcomp_filename = self.get_bcomp_filename(obj)
+        if bcomp_filename is not None:
+            return posixpath.join(settings.DATA_BASE_URL, bcomp_filename)
+        else:
+            return None
+
+    def get_bcomp_filename(self, obj):
+        if obj.had_bcomp == True:
+            bcomp_filename = Path(obj.bcomp_path).name
+            return bcomp_filename
+        else:
+            return None
+
+    def get_megacube_from_cache(self, obj):
+        # Verificar se existe o arquivo megacubo descompactado no diretório de cache.
+        megacube_path = self.get_original_megacube_path(obj)
+        cache_dir = Path(settings.MEGACUBE_CACHE)
+        cache_filepath = cache_dir.joinpath(obj.megacube)
+
+        if cache_filepath.exists():
+            return cache_filepath
+        else:
+            cube = MangaMegacube(megacube_path)
+            cube.extract_bz2(cache_dir)
+            # Extrai o megacubo no diretório de cache.
+            # extract_bz2(compressed_file=megacube_path, local_dir=cache_filepath)
+            return cache_filepath
+
+    def get_obj_path(self, obj):
+        return get_megacube_parts_root_path().joinpath(obj.folder_name)
+
+    def get_image_part_path(self, obj, filename):
         # Join and make the path for the extracted files:
-        filepath = os.path.join(
-            settings.MEGACUBE_PARTS,
-            str(megacube_name) + '/' + filename
-        )
+        return self.get_obj_path(obj).joinpath(filename)
 
-        return filepath
+    def get_sdss_image_url(self, obj, filename='sdss_image.jpg'):
+        # Join and make the url for the sdss image:
+        file_url = posixpath.join(
+            settings.MEGACUBE_PARTS_URL, obj.folder_name, filename)
 
-    def get_sdss_image_path(self, megacube_name, filename, root_folder="data"):
-        # Join and make the path for the sdss image:
-        filepath = os.path.join(
-            '/' + root_folder + '/megacube_parts/',
-            str(megacube_name) + '/' + filename
-        )
+        base_url = "{0}://{1}".format(self.request.scheme,
+                                      self.request.get_host())
 
-        return filepath
+        return file_url
+
+
+    def get_sdss_image_path(self, obj, filename='sdss_image.jpg'):
+        objpath = self.get_obj_path(obj)
+        return objpath.joinpath(filename)
 
     @action(detail=True, methods=['get'])
     def original_image(self, request, pk=None):
@@ -74,49 +136,80 @@ class ImageViewSet(viewsets.ModelViewSet):
         galaxy = self.get_object()
 
         original_image_filepath = self.get_image_part_path(
-            galaxy.megacube.split('.fits.fz')[0], 'original_image.json')
-
-        sdss_image_filepath = self.get_sdss_image_path(
-            galaxy.megacube.split('.fits.fz')[0], 'sdss_image.jpg')
+            galaxy, 'original_image.json')
 
         with open(original_image_filepath) as f:
             data = json.load(f)
 
-        megacube = self.get_megacube_path(galaxy.megacube)
-
         # Only send the path if the file exists:
-        if os.path.exists(
-            self.get_sdss_image_path(
-                galaxy.megacube.split('.fits.fz')[0], 'sdss_image.jpg',
-                'images')):
-            data['sdss_image'] = sdss_image_filepath
+        if os.path.exists(self.get_sdss_image_path(galaxy)):
+            data['sdss_image'] = self.get_sdss_image_url(galaxy)
         else:
             data['sdss_image'] = None
 
         return Response(data)
 
+    def get_huds(self, galaxy):
+
+        cache_key = f"galaxy_hdus_{galaxy.pk}"
+
+        data = cache.get(cache_key)
+        if data:
+            print("Retornou do CACHE")
+            return data
+
+        list_hdu_filepath = self.get_image_part_path(
+            galaxy, 'list_hud.json')
+
+        list_gas_filepath = self.get_image_part_path(
+            galaxy, 'list_gas_map.json')
+
+        data = dict({
+            'stellar_maps': list(),
+            'gas_maps': list()
+        })
+
+        with open(list_hdu_filepath) as f:
+            hdus = json.load(f)
+            for hdu in hdus['hud']:
+                hdu.update({
+                    'comment': hdu['comment'].split('(')[0],
+                    'internal_name': hdu['name'].lower().replace(' ', '_').replace('.', '_')                    
+                })
+                data['stellar_maps'].append(hdu)
+
+        with open(list_gas_filepath) as f:
+            hdus = json.load(f)
+            for hdu in hdus['gas_maps']:
+                hdu.update({
+                    'comment': hdu['comment'].split('(')[0],
+                    'internal_name': hdu['name'].lower().replace(' ', '_').replace('.', '_')                    
+                })
+                data['gas_maps'].append(hdu)
+
+        cache.set(cache_key, data)
+        print("Criou o  CACHE")
+
+        return data
+
     @action(detail=True, methods=['get'])
-    def list_hud(self, request, pk=None):
+    def hdus(self, request, pk=None):
         """
-        Returns a list of all HUDs titles.
+        Returns a list of all HDUs titles.
 
         It's being read by the file in:
-        `/images/megacube_parts/megacube_{JOB_ID}/list_hud.json`
+        `/images/megacube_parts/megacube_{JOB_ID}/list_hud.json` 
+        and 
+        `/images/megacube_parts/megacube_{JOB_ID}/list_gas_map.json` 
         that has been extracted from `.fits.fz` file.
 
         Returns: <br>
             ([list[string]]): a list of HUDs titles.
         """
-
         galaxy = self.get_object()
+        hdus = self.get_huds(galaxy)
 
-        list_hud_filepath = self.get_image_part_path(
-            galaxy.megacube.split('.fits.fz')[0], 'list_hud.json')
-
-        with open(list_hud_filepath) as f:
-            data = json.load(f)
-
-        return Response(data)
+        return Response(hdus)
 
     @action(detail=True, methods=['get'])
     def download_info(self, request, pk=None):
@@ -132,15 +225,15 @@ class ImageViewSet(viewsets.ModelViewSet):
                 - link ([string]): the url of the megacube. <br>
                 - size ([number]): the size of the file.
         """
-
         galaxy = self.get_object()
-
         result = ({
             'mangaid': galaxy.mangaid,
-            'name': galaxy.nsa_iauname,
+            'name': galaxy.megacube,
+            'bcomp_name': self.get_bcomp_filename(galaxy),
             'megacube': galaxy.megacube,
-            'link': '/data/' + galaxy.megacube,
-            'size': self.get_megacube_size(galaxy.megacube)
+            'link': self.get_original_megacube_url(galaxy),
+            'link_bcomp': self.get_bcomp_megacube_url(galaxy),
+            'size': galaxy.compressed_size
         })
 
         return Response(result)
@@ -174,7 +267,7 @@ class ImageViewSet(viewsets.ModelViewSet):
         filename = 'image_heatmap_%s.json' % params['hud']
 
         image_heatmap_filepath = self.get_image_part_path(
-            galaxy.megacube.split('.fits.fz')[0], filename)
+            galaxy, filename)
 
         with open(image_heatmap_filepath) as f:
             data = json.load(f)
@@ -184,11 +277,69 @@ class ImageViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['get'])
     def all_images_heatmap(self, request, pk=None):
         """
-        Returns a list of image data by all HUDs to create heatmaps.
+        Returns a Object with all images data by all HUDs to create heatmaps.
 
         It's being read by the files in:
         `/images/megacube_parts/megacube_{JOB_ID}/image_heatmap_{HUD}.json`
         that has been extracted from `.fits.fz` file.
+
+        Returns: <br>
+            (dict): dictionaries
+            and 'title'. <br>
+                - z ([list[list[number]]]): image data (Matrix 52x52:
+                20704 elements) converted utilizing pcolormesh. <br>
+                - title ([string]): the title of the HUD.
+        """
+        galaxy = self.get_object()
+
+        cache_key = f"galaxy_all_Images_{galaxy.pk}"
+        data = cache.get(cache_key)
+        if data:
+            return Response(data)
+        
+        hdus = self.get_huds(galaxy)
+
+        all_hdus = hdus['stellar_maps'] + hdus['gas_maps']
+
+        data = dict()
+
+        for idx, hdu in enumerate(all_hdus):
+            filename = 'image_heatmap_%s.json' % hdu['name']
+
+            image_heatmap_filepath = self.get_image_part_path(
+                galaxy, filename)
+
+            with open(image_heatmap_filepath) as f:
+                image = json.load(f)
+
+            z = np.array(image['z'], dtype=np.float64)
+            min = np.nanmin(z)
+            max = np.nanmax(z)
+
+            image.update({
+                'internal_name': hdu['internal_name'],                
+                'name': hdu['name'],
+                'comment': hdu['comment'],
+                'min': float(min),
+                'max': float(max)
+            })
+            data[hdu['internal_name']] = image
+
+        cache.set(cache_key, data)
+        return Response(data)
+
+    @action(detail=True, methods=['get'])
+    def images_heatmap(self, request, pk=None):
+        """
+        Returns a Paginated list of image data by all HUDs to create heatmaps.
+
+        It's being read by the files in:
+        `/images/megacube_parts/megacube_{JOB_ID}/image_heatmap_{HUD}.json`
+        that has been extracted from `.fits.fz` file.
+
+        Args: <br>
+            cursor ([int]): Current page requested.
+            pageSize ([int]): Page Size.
 
         Returns: <br>
             ([list[dict]]): a list of dictionaries containing the 'z'
@@ -200,26 +351,66 @@ class ImageViewSet(viewsets.ModelViewSet):
 
         galaxy = self.get_object()
 
-        list_hud_filepath = self.get_image_part_path(
-            galaxy.megacube.split('.fits.fz')[0], 'list_hud.json')
+        params = request.query_params
+        cursor = int(params.get('cursor', 0))
+        page_size = int(params.get('pageSize', 12))
 
-        with open(list_hud_filepath) as f:
-            list_hud = json.load(f)
+        cache_key = f"galaxy_images_{galaxy.pk}_{cursor}"
+        data = cache.get(cache_key)
+        if data:
+            return Response(data)
+
+        hdus = self.get_huds(galaxy)
+
+
+        all_hdus = hdus['stellar_maps'] + hdus['gas_maps']
+
+        total_count = len(all_hdus)
+
+        # Split array in pages with page_size elements
+        pages = [all_hdus[i:i + page_size]
+                 for i in range(0, total_count, page_size)]
+
+        count_pages = len(pages)
+
+        current_page = pages[cursor]
+        list_hdus = current_page
 
         data = []
-
-        for hud in list_hud['hud']:
-            filename = 'image_heatmap_%s.json' % hud['name']
+        for idx, hdu in enumerate(list_hdus):
+            filename = 'image_heatmap_%s.json' % hdu['name']
 
             image_heatmap_filepath = self.get_image_part_path(
-                galaxy.megacube.split('.fits.fz')[0], filename)
+                galaxy, filename)
 
             with open(image_heatmap_filepath) as f:
                 image = json.load(f)
 
+            image.update({
+                'id': idx + (cursor * page_size + 1),
+                'internal_name': hdu['internal_name'],                
+                'name': hdu['name'],
+                'comment': hdu['comment'],
+            })
             data.append(image)
 
-        return Response(data)
+        next_id = cursor + 1
+        if next_id > (count_pages - 1):
+            next_id = None
+
+        previous_id = cursor - 1
+        if cursor < 0:
+            previous_id = None
+
+        result = dict({
+            'data': data,
+            'nextId': next_id,
+            'previousId': previous_id,
+            'count': total_count,
+            'pageParam': cursor,
+        })
+        cache.set(cache_key, result)
+        return Response(result)
 
     @action(detail=True, methods=['get'])
     def flux_by_position(self, request, pk=None):
@@ -247,14 +438,13 @@ class ImageViewSet(viewsets.ModelViewSet):
 
         galaxy = self.get_object()
 
-        megacube = self.get_megacube_path(galaxy.megacube)
+        megacube = self.get_megacube_from_cache(galaxy)
 
         flux, lamb = mclass().flux_by_position(
             megacube, int(params['x']), int(params['y']))
 
         synt, lamb2 = mclass().synt_by_position(
             megacube, int(params['x']), int(params['y']))
-
         result = dict({
             'flux': flux.tolist(),
             'lamb': lamb.tolist(),
@@ -262,6 +452,19 @@ class ImageViewSet(viewsets.ModelViewSet):
         })
 
         return Response(result)
+
+        # my_cube = EmissionLines(megacube)
+        # df = my_cube.to_dataframe(int(params['x']),  int(params['y'])
+
+        # for prop in df.columns:
+
+        # result = dict({
+        #     'flux': flux.tolist(),
+        #     'lamb': lamb.tolist(),
+        #     'synt': synt.tolist(),
+        # })
+
+        # return Response(result)
 
     @action(detail=True, methods=['get'])
     def log_age_by_position(self, request, pk=None):
@@ -289,7 +492,7 @@ class ImageViewSet(viewsets.ModelViewSet):
 
         galaxy = self.get_object()
 
-        megacube = self.get_megacube_path(galaxy.megacube)
+        megacube = self.get_megacube_from_cache(galaxy)
 
         log_age = mclass().log_age_by_position(
             megacube, int(params['x']), int(params['y']))
@@ -323,7 +526,7 @@ class ImageViewSet(viewsets.ModelViewSet):
 
         galaxy = self.get_object()
 
-        megacube = self.get_megacube_path(galaxy.megacube)
+        megacube = self.get_megacube_from_cache(galaxy)
 
         vecs = mclass().vecs_by_position(
             megacube, int(params['x']), int(params['y']))
@@ -347,7 +550,7 @@ class ImageViewSet(viewsets.ModelViewSet):
         galaxy = self.get_object()
 
         cube_header_filepath = self.get_image_part_path(
-            galaxy.megacube.split('.fits.fz')[0], 'cube_header.json')
+            galaxy, 'cube_header.json')
 
         with open(cube_header_filepath) as f:
             data = json.load(f)
@@ -359,7 +562,7 @@ class ImageViewSet(viewsets.ModelViewSet):
 
         galaxy = self.get_object()
 
-        megacube = self.get_megacube_path(galaxy.megacube)
+        megacube = self.get_megacube_from_cache(galaxy.megacube)
 
         data = mclass().image_by_hud(
             megacube, 'Adev')
@@ -368,3 +571,79 @@ class ImageViewSet(viewsets.ModelViewSet):
             data,)
 
         return Response(z)
+
+    @action(detail=True, methods=['get'])
+    def spectrum_lines_by_position(self, request, pk=None):
+        params = request.query_params
+
+        if 'x' not in params:
+            raise Exception("Parameter x is required")
+
+        if 'y' not in params:
+            raise Exception("Parameter y is required")
+
+        x = int(params['x'])
+        y = int(params['y'])
+
+        galaxy = self.get_object()
+
+        megacube = self.get_megacube_from_cache(galaxy)
+
+        my_cube = EmissionLines(megacube)
+        df = my_cube.to_dataframe(x, y)
+
+        data = dict({
+            "wavelength": list(),
+            "obs_spec": list(),
+            "synt_spec": list(),
+        })
+
+        for label in df.columns:
+            data[label] = df[label].tolist()
+        return Response(data)
+
+    @action(detail=True, methods=['get'])
+    def plot_emission_lines(self, request, pk=None):
+        """
+        Args: <br>
+            x ([number]): position X on Image. <br>
+            y ([number]): position Y on Image.
+
+        Returns: <br>
+            [dict]: a dictionary with the 'flux', 'lamb' and 'synt'. <br>
+                - flux ([list[number]]) <br>
+                - lamb ([list[number]]) <br>
+                - synt ([list[number]])
+        """
+
+        params = request.query_params
+
+        if 'x' not in params:
+            raise Exception("Parameter x is required")
+
+        if 'y' not in params:
+            raise Exception("Parameter y is required")
+
+        x = int(params['x'])
+        y = int(params['y'])
+
+        galaxy = self.get_object()
+
+        megacube = self.get_megacube_from_cache(galaxy)
+
+        plot_filename = f"{megacube.name.split('.')[0]}_spec_plot_{x}_{y}.html"
+
+        dir = Path(settings.MEGACUBE_PARTS)
+        filepath = dir.joinpath(plot_filename)
+
+        cache_url = posixpath.join(settings.DATA_BASE_URL, plot_filename)
+        file_url = posixpath.join(
+            settings.MEGACUBE_PARTS_URL, galaxy.folder_name, plot_filename)
+
+        my_cube = EmissionLines(megacube)
+        my_cube.plot(x, y, filepath, "html")
+
+        return Response(dict({
+            "filepath": str(filepath),
+            "url": file_url
+        }))

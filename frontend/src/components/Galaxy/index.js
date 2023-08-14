@@ -91,9 +91,9 @@ function Galaxy({
   return (
     <Card>
       <CardHeader title="Galaxy" />
-      <CardContent>
+      <CardContent style={{minHeight: '40vw'}}>
         {selectedImage.id === 0 ? (
-          <Skeleton height={400} />
+          <Skeleton height={500} />
         ) : (
           <Grid container spacing={2} className={classes.animateEnter}>
             <Grid item xs={12}>

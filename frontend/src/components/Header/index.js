@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import {
-  AppBar,
-  Toolbar,
   IconButton,
   Typography,
   MenuItem,
   Menu,
   Divider,
 } from '@material-ui/core';
-
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import Button from '@material-ui/core/Button';
+import Popover from '@material-ui/core/Popover';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import {
   Home as HomeIcon,
   Menu as MenuIcon,
@@ -19,14 +23,16 @@ import {
 
 import useStyles from './styles';
 import logo from '../../assets/img/logo.png';
-import { loggedUser, logout } from '../../services/auth';
+import { loggedUser, logout, urlLogin, urlLogout } from '../../services/auth';
 import TutorialDialog from './TutorialDialog';
 
 function Header() {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
   const [tutorialOpen, setTutorialOpen] = useState(false);
-  const [username, setUsername] = useState('');
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  // const [user, setUser] = useState(undefined);
+  // const [usernameAnchorEl, setUsernameAnchorEl] = useState(null);
 
   const tutorials = [
     {
@@ -39,8 +45,13 @@ function Header() {
 
   useEffect(() => {
     loggedUser().then((res) => {
+      if (res === null) {
+        setIsAuthenticated(false)
+        // setUser(undefined)
+      }
       if (res) {
-        setUsername(res.username);
+        // setUser(res)
+        setIsAuthenticated(true)
       }
     });
   }, []);
@@ -55,7 +66,7 @@ function Header() {
 
   const handleAbout = () => {
     handleClose();
-    window.open('http://www.linea.gov.br');
+    window.open('http://www.linea.org.br');
   };
 
   const handleLogout = () => {
@@ -85,9 +96,62 @@ function Header() {
     window.open(location);
   };
 
+  // const handleUsernameClick = (event) => {
+  //   setUsernameAnchorEl(event.currentTarget);
+  // };
+
+  // const handleUsernameClose = () => {
+  //   setUsernameAnchorEl(null);
+  // };
+
+  // const usernameOpen = Boolean(usernameAnchorEl);
+
+  // function UserLogged() {
+  //   return (
+  //     <>
+  //       <Button color="inherit" onClick={handleUsernameClick}>
+  //         {user.username || ''}
+  //       </Button>
+  //       <Popover
+  //         id="simple-popover"
+  //         anchorEl={usernameAnchorEl}
+  //         open={usernameOpen}
+  //         onClose={handleUsernameClose}
+  //         PaperProps={{
+  //           style: {
+  //             transform: 'translateX(calc(100vw - 185px)) translateY(45px)',
+  //           },
+  //         }}
+  //       >
+  //         <List className={classes.list}>
+  //           <ListItem button>
+  //             <Button
+  //               href={urlLogout}
+  //               color="inherit"
+  //               startIcon={<ExitToAppIcon />}
+  //             >
+  //               Logout
+  //             </Button>
+  //           </ListItem>
+  //         </List>
+  //       </Popover>
+  //     </>
+  //   );
+  // }
+  // function UserUnLogged() {
+  //   return (
+  //     <>
+  //       <Button href={urlLogin} color="inherit">
+  //         Sign in
+  //       </Button>
+  //     </>
+  //   );
+  // }
+
+
   return (
     <>
-      <AppBar position="static">
+      <AppBar position="static" className={classes.appbar}>
         <Toolbar>
           <IconButton color="inherit" onClick={handleHome}>
             <img alt="LIneA Dark Logo" src={logo} />
@@ -96,13 +160,8 @@ function Header() {
             MaNGA
           </Typography>
 
-          <Typography
-            variant="subtitle1"
-            color="inherit"
-            className={classes.username}
-          >
-            {username}
-          </Typography>
+          {/* {user && user.username ? <UserLogged /> : <UserUnLogged />} */}
+
           <IconButton
             color="inherit"
             // className={classes.menuButton}
@@ -139,10 +198,12 @@ function Header() {
             </MenuItem>
 
             <Divider />
-            <MenuItem onClick={handleLogout}>
-              <LogoutIcon className={classes.menuIcon} fontSize="small" />
-              <Typography>Logout</Typography>
-            </MenuItem>
+            {isAuthenticated === true && (
+                <MenuItem onClick={handleLogout}>
+                  <LogoutIcon className={classes.menuIcon} fontSize="small" />
+                  <Typography>Logout</Typography>
+                </MenuItem>
+            )}
           </Menu>
         </Toolbar>
       </AppBar>
