@@ -19,6 +19,11 @@ const styles = makeStyles(() => ({
       background: '#efefef',
     },
   },
+  codeBlock: {
+    padding: 15,
+    borderRadius: '2px',
+    background: '#efefef',
+  },
 }));
 
 export default styles;
