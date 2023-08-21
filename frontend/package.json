@@ -6,10 +6,16 @@
     "@devexpress/dx-react-core": "^2.7.4",
     "@devexpress/dx-react-grid": "^2.7.4",
     "@devexpress/dx-react-grid-material-ui": "^2.7.4",
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
     "@fortawesome/fontawesome-free": "^5.11.2",
-    "@material-ui/core": "^4.4.3",
+    "@material-ui/core": "^4.11.2",
     "@material-ui/icons": "^4.4.3",
     "@material-ui/lab": "^4.0.0-alpha.28",
+    "@mui/icons-material": "^5.14.3",
+    "@mui/lab": "^5.0.0-alpha.140",
+    "@mui/material": "^5.14.5",
+    "@mui/styles": "^5.14.5",
     "axios": "^0.19.0",
     "clsx": "^1.0.4",
     "filesize": "^6.1.0",
@@ -17,8 +23,8 @@
     "moment": "^2.24.0",
     "plotly.js": "^1.56.0",
     "prop-types": "^15.7.2",
-    "react": "^16.10.1",
-    "react-dom": "^16.10.1",
+    "react": "^17.0.0",
+    "react-dom": "17.0.0",
     "react-ga": "^3.3.0",
     "react-google-recaptcha": "^2.1.0",
     "react-image-magnifiers": "^1.4.0",
@@ -26,7 +32,7 @@
     "react-plotly.js": "^2.3.0",
     "react-query": "^3.39.3",
     "react-router-dom": "^5.1.2",
-    "react-scripts": "3.1.2",
+    "react-scripts": "^5.0.1",
     "react-simple-resizer": "^2.1.0",
     "react-sizeme": "^2.6.7",
     "react-youtube": "^7.9.0"
@@ -55,6 +61,7 @@
   },
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
-    "eslint": "^6.1.0"
+    "eslint": "^8.47.0",
+    "eslint-plugin-react": "^7.33.2"
   }
 }

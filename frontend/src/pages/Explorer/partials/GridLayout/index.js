@@ -1,6 +1,6 @@
 import React, { } from 'react';
 import { useInfiniteQuery } from 'react-query'
-import { Grid, Box, Typography } from '@material-ui/core';
+import { Grid, Box, Typography } from '@mui/material';
 import PropTypes from 'prop-types';
 import { getImagesHeatmap } from '../../../../services/api';
 import Plot from 'react-plotly.js';
@@ -38,7 +38,7 @@ export default function ExplorerGridLayout({
     if (inView) {
       fetchNextPage()
     }
-  }, [inView])
+  }, [inView, fetchNextPage])
 
   function generate_skeleton(element) {
     return [0, 1, 2].map((value) =>

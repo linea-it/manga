@@ -1,12 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@mui/styles';
 import { useQuery } from 'react-query'
 import { getHdus } from '../../services/api';
-import Box from '@material-ui/core/Box';
-import IconButton from '@material-ui/core/IconButton';
-import PlayArrowIcon from '@material-ui/icons/PlayArrow';
-import PauseIcon from '@material-ui/icons/Pause';
+import Box from '@mui/material/Box';
+import IconButton from '@mui/material/IconButton';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import PauseIcon from '@mui/icons-material/Pause';
 import useInterval from '../../hooks/useInterval';
 import { IOSSlider } from '../Slider';
 
@@ -90,15 +90,13 @@ function HduSlider(props) {
 }
 HduSlider.defaultProps = {
   galaxyId: undefined,
-  selected: '',
-  disabled: false
+  selected: ''
 }
 
 HduSlider.propTypes = {
   galaxyId: PropTypes.number.isRequired,
   onChange: PropTypes.func.isRequired,
-  selected: PropTypes.string,
-  disabled: PropTypes.bool,
+  selected: PropTypes.string
 };
 
 export default HduSlider;

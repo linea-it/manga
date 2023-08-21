@@ -12,7 +12,6 @@ ENV PYTHONUNBUFFERED=1
 
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
   && apt-get -y install --no-install-recommends \
-#   python-dev \
   python3-tk \
   libaio-dev \
   build-essential \
@@ -30,32 +29,15 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
   && apt-get autoremove --purge  -y \
   && rm -rf /var/lib/apt/lists/* 
 
-# # Add venv
-# RUN python -m venv /opt/venv
-# ENV PATH="/opt/venv/bin:$PATH"
-
-# Install python packages
-# COPY ./requirements.txt /tmp/pip-tmp/
-# RUN pip install --upgrade pip wheel numpy==1.24.2 \
-#     && pip --disable-pip-version-check --no-cache-dir install -r /tmp/pip-tmp/requirements.txt \
-#     && pip install --upgrade git+https://github.com/danielrd6/ifscube.git \
-#     && rm -rf /tmp/pip-tmp
-
 COPY ./requirements.txt /tmp/pip-tmp/
 RUN pip install --upgrade pip wheel setuptools \
     && pip --disable-pip-version-check --no-cache-dir install -r /tmp/pip-tmp/requirements.txt \
-    && pip install --upgrade git+https://github.com/danielrd6/ifscube.git@split_plot \
     && rm -rf /tmp/pip-tmp
-
-#  Runtime Stage
-# FROM python:3.8-slim
 
 ARG USERNAME=manga
 ARG USER_UID=1000
 ARG USER_GID=$USER_UID
 
-# Copy Dependencies for Python LDAP, Psql, etc.
-# COPY --from=builder /usr/lib/x86_64-linux-gnu /usr/lib/x86_64-linux-gnu
 
 # add user so we can run things as non-root
 # https://code.visualstudio.com/remote/advancedcontainers/add-nonroot-user
@@ -64,22 +46,7 @@ RUN groupadd --gid $USER_GID $USERNAME \
     && mkdir /usr/src/app \
     && chown ${USER_UID}:${USER_GID} /usr/src/app
 
-# RUN mkdir /images /log \
-#     && groupadd --gid $USER_GID $USERNAME \
-#     && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME \
-#     && chown -R $USER_UID:$USER_GID /images /log
-    # [Optional] Add sudo support. Omit if you don't need to install software after connecting.
-    # && apt-get update \
-    # && apt-get install -y sudo \
-    # && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
-    # && chmod 0440 /etc/sudoers.d/$USERNAME
-
-# Copy from builder and set ENV for venv
-# COPY --from=builder /opt/venv /opt/venv
-# ENV PATH="/opt/venv/bin:$PATH"
-
 # Set Python ENV
-# ENV PYTHONUNBUFFERED=1 
 ENV PYTHONPATH="/usr/src/app:$PYTHONPATH"
 
 # Matplotlib Config 
@@ -100,9 +67,5 @@ COPY --chmod=0775 ./start-celery-flower.sh /start-celery-flower.sh
 # Switch to non-priviliged user and run app
 USER manga
 
-
 ENTRYPOINT ["/entrypoint.sh"]
 
-
-# RUN mkdir /images /log /usr/src/app
-# WORKDIR /usr/src/app

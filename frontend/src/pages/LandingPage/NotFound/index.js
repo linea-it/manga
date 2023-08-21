@@ -7,8 +7,8 @@ import {
   Breadcrumbs,
   Link,
   IconButton,
-} from '@material-ui/core';
-import { YouTube, Twitter, GitHub } from '@material-ui/icons';
+} from '@mui/material';
+import { YouTube, Twitter, GitHub } from '@mui/icons-material';
 import styles from './styles';
 
 function AboutUs() {

@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import Grid from '@material-ui/core/Grid';
-import Card from '@material-ui/core/Card';
-import Container from '@material-ui/core/Container';
-import CardActionArea from '@material-ui/core/CardActionArea';
-import CardMedia from '@material-ui/core/CardMedia';
-import Typography from '@material-ui/core/Typography';
+import Grid from '@mui/material/Grid';
+import Card from '@mui/material/Card';
+import Container from '@mui/material/Container';
+import CardActionArea from '@mui/material/CardActionArea';
+import CardMedia from '@mui/material/CardMedia';
+import Typography from '@mui/material/Typography';
 import styles from './styles';
 
 function Interfaces() {

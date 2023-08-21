@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React, { useEffect } from 'react';
 import {
   Grid,
@@ -12,9 +13,9 @@ import {
   Card,
   CardHeader,
   CardContent,
-} from '@material-ui/core';
-import InfoIcon from '@material-ui/icons/Info';
-import Skeleton from '@material-ui/lab/Skeleton';
+} from '@mui/material';
+import InfoIcon from '@mui/icons-material/Info';
+import Skeleton from '@mui/lab/Skeleton';
 import Plot from 'react-plotly.js';
 import clsx from 'clsx';
 import styles from './styles';

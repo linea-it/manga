@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
-  Dialog} from '@material-ui/core'
-import { Alert, AlertTitle } from '@material-ui/lab';
+  Dialog} from '@mui/material'
+import { Alert, AlertTitle } from '@mui/lab';
 
 function GenericError({open, onClose}) {
     return (
