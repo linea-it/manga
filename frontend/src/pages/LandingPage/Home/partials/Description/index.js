@@ -1,8 +1,8 @@
 import React from 'react';
-import Typography from '@material-ui/core/Typography';
-import Link from '@material-ui/core/Link';
-import Card from '@material-ui/core/Card'
-import CardContent from '@material-ui/core/CardContent'
+import Typography from '@mui/material/Typography';
+import Link from '@mui/material/Link';
+import Card from '@mui/material/Card'
+import CardContent from '@mui/material/CardContent'
 
 function Description() {
 

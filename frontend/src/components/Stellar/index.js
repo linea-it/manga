@@ -1,6 +1,6 @@
 import React, { useLayoutEffect, useRef, useState } from 'react';
 import Plot from 'react-plotly.js';
-import { Card, CardHeader, CardMedia, CardContent, Grid, CircularProgress, Typography, Box } from '@material-ui/core';
+import { Card, CardHeader, CardMedia, CardContent, Grid, CircularProgress, Typography, Box } from '@mui/material';
 // import styles from './styles';
 import { useQuery } from 'react-query'
 import { logAgeByPosition } from '../../services/api';

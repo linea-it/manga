@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Container, Section, Bar } from 'react-simple-resizer';
-import { Grid, Button } from '@material-ui/core';
+import { Grid, Button } from '@mui/material';
 import Table from '../../components/Table';
 import { getMegacubesList, getOriginalImageHeatmap } from '../../services/api';
 import OriginalImage from '../../components/OriginalImage';

@@ -5,21 +5,21 @@ import {
   MenuItem,
   Menu,
   Divider,
-} from '@material-ui/core';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import Button from '@material-ui/core/Button';
-import Popover from '@material-ui/core/Popover';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+} from '@mui/material';
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import Button from '@mui/material/Button';
+import Popover from '@mui/material/Popover';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import {
   Home as HomeIcon,
   Menu as MenuIcon,
   Help as HelpIcon,
   HelpOutline as HelpOutlineIcon,
   ExitToApp as LogoutIcon,
-} from '@material-ui/icons';
+} from '@mui/icons-material';
 
 import useStyles from './styles';
 import logo from '../../assets/img/logo.png';

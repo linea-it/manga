@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import Plot from 'react-plotly.js';
-import { CircularProgress, Typography, Box } from '@material-ui/core';
+import { CircularProgress, Typography, Box } from '@mui/material';
 import { useQuery } from 'react-query'
 import { vecsByPosition } from '../../services/api';
 import styles from './styles';

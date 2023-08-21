@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@mui/styles';
 import { useQuery } from 'react-query'
-import { FormControl, InputLabel, Select, MenuItem } from '@material-ui/core';
-import InfoIcon from '@material-ui/icons/Info';
+import { FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import InfoIcon from '@mui/icons-material/Info';
 import { getHdus } from '../../services/api';
 
 const useStyles = makeStyles((theme) => ({

@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { TableHeaderRow } from '@devexpress/dx-react-grid-material-ui';
-import Tooltip from '@material-ui/core/Tooltip';
-import ArrowDownward from '@material-ui/icons/ArrowDownward';
-import ArrowUpward from '@material-ui/icons/ArrowUpward';
-import { makeStyles } from '@material-ui/core/styles';
+import Tooltip from '@mui/material/Tooltip';
+import ArrowDownward from '@mui/icons-material/ArrowDownward';
+import ArrowUpward from '@mui/icons-material/ArrowUpward';
+import { makeStyles } from '@mui/styles';
 
 const useStyles = makeStyles({
   invisibleButton: {

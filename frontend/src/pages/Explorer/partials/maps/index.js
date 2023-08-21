@@ -1,10 +1,10 @@
 import React from 'react';
 import { useQuery } from 'react-query'
 import PropTypes from 'prop-types';
-import Card from '@material-ui/core/Card';
-import Box from '@material-ui/core/Box';
-import CardHeader from '@material-ui/core/CardHeader';
-import CardContent from '@material-ui/core/CardContent';
+import Card from '@mui/material/Card';
+import Box from '@mui/material/Box';
+import CardHeader from '@mui/material/CardHeader';
+import CardContent from '@mui/material/CardContent';
 import GenericError from '../../../../components/Alerts/GenericError';
 import HduSelect from '../../../../components/HduSelect/Select';
 import HduSlider from '../../../../components/HduSelect/Slider';

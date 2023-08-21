@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Card, CardHeader, CardContent } from '@material-ui/core';
+import { Card, CardHeader, CardContent } from '@mui/material';
 import Table from '../Table';
 
 function Spaxel({ spaxelTableData }) {

@@ -7,9 +7,9 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions
-} from '@material-ui/core'
+} from '@mui/material'
 import filesize from 'filesize';
-import Skeleton from '@material-ui/lab/Skeleton';
+import Skeleton from '@mui/lab/Skeleton';
 import { useQuery } from 'react-query'
 import { getMegacubeDownloadInfo } from '../../services/api';
 import GenericError from '../Alerts/GenericError';

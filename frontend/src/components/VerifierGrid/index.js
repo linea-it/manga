@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@mui/styles';
 import '@fortawesome/fontawesome-free/css/all.min.css';
-import { Grid, Typography } from '@material-ui/core';
+import { Grid, Typography } from '@mui/material';
 import Plot from 'react-plotly.js';
 
 const useStyles = makeStyles((theme) => ({
