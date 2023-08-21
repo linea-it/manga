@@ -1,10 +1,10 @@
 import React from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 import { useQuery } from 'react-query'
-import Box from '@material-ui/core/Box';
-import Backdrop from '@material-ui/core/Backdrop';
+import Box from '@mui/material/Box';
+import Backdrop from '@mui/material/Backdrop';
 import ExplorerToolbar from './partials/Toolbar';
-import LinearProgress from '@material-ui/core/LinearProgress';
+import LinearProgress from '@mui/material/LinearProgress';
 import MegacubeHeader from '../../components/MegacubeHeader';
 import MegacubeDownload from '../../components/MegacubeDownload'
 import GenericError from '../../components/Alerts/GenericError';

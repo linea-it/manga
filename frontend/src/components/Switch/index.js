@@ -5,7 +5,7 @@ import {
   FormControlLabel,
   Switch as MuiSwitch,
   Typography,
-} from '@material-ui/core';
+} from '@mui/material';
 import useStyles from './styles';
 
 function Switch({ isGrid, onChange }) {

@@ -7,7 +7,7 @@ import {
   CardContent,
   Breadcrumbs,
   Link,
-} from '@material-ui/core';
+} from '@mui/material';
 import styles from './styles';
 
 function Contact() {

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import MuiSnackbar from '@material-ui/core/Snackbar';
-import Alert from '@material-ui/lab/Alert';
+import MuiSnackbar from '@mui/material/Snackbar';
+import Alert from '@mui/lab/Alert';
 
 function Snackbar({ open, handleClose }) {
   return (

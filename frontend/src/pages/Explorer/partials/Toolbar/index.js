@@ -1,18 +1,15 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import Toolbar from '@material-ui/core/Toolbar';
-import Button from '@material-ui/core/Button';
-import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
-import GetAppIcon from '@material-ui/icons/GetApp';
-import ListAltIcon from '@material-ui/icons/ListAlt';
+import { makeStyles } from '@mui/styles';
+import Toolbar from '@mui/material/Toolbar';
+import Button from '@mui/material/Button';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import GetAppIcon from '@mui/icons-material/GetApp';
+import ListAltIcon from '@mui/icons-material/ListAlt';
 import PropTypes from 'prop-types';
-import Typography from '@material-ui/core/Typography';
-import Switch from '@material-ui/core/Switch';
+import Typography from '@mui/material/Typography';
+import Switch from '@mui/material/Switch';
 
 const useStyles = makeStyles((theme) => ({
-  margin: {
-    marginRight: theme.spacing(1),
-  },
   right: {
     flexGrow: 1,
   }
@@ -28,18 +25,18 @@ export default function ExplorerToolbar({ disabled, handleBackNavigation, handle
         color="primary"
         title="Back"
         onClick={handleBackNavigation}
-        className={classes.margin}
         disabled={disabled}
         startIcon={<ArrowBackIosIcon />}
+        sx={{ mr: 1 }}
       >Back</Button>
       <Button
         variant="contained"
         color="primary"
         title="Download"
         onClick={handleDownload}
-        className={classes.margin}
         disabled={disabled}
         startIcon={<GetAppIcon />}
+        sx={{ mr: 1 }}
       >Download</Button>
       <Button
         variant="contained"
@@ -49,6 +46,7 @@ export default function ExplorerToolbar({ disabled, handleBackNavigation, handle
         className={classes.margin}
         disabled={disabled}
         startIcon={<ListAltIcon />}
+        sx={{ mr: 1 }}
       >Header
       </Button>
 

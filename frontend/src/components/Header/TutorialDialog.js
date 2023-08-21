@@ -8,8 +8,8 @@ import {
   Typography,
   IconButton,
   Divider,
-} from '@material-ui/core';
-import CloseIcon from '@material-ui/icons/Close';
+} from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 import YouTube from 'react-youtube';
 import useStyles from './styles';
 

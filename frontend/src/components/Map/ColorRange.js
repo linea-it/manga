@@ -9,6 +9,7 @@ export default function ColorRange(props) {
 
   return (
     <BaseSlider
+        size="small"
         orientation="vertical"
         valueLabelDisplay="off"
         min={min}

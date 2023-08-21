@@ -7,8 +7,8 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions
-} from '@material-ui/core'
-import Skeleton from '@material-ui/lab/Skeleton';
+} from '@mui/material'
+import Skeleton from '@mui/lab/Skeleton';
 import { useQuery } from 'react-query'
 import { getMegacubeHeadersById } from '../../services/api';
 import GenericError from '../Alerts/GenericError';

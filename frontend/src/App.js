@@ -1,6 +1,6 @@
 import React from 'react';
 import { Router } from 'react-router-dom';
-import { MuiThemeProvider } from '@material-ui/core/styles';
+import { ThemeProvider } from '@mui/material/styles';
 import ReactGA from 'react-ga';
 import Routes from './routes';
 import history from './services/history';
@@ -16,11 +16,11 @@ history.listen((location) => {
 
 function App() {
   return (
-    <MuiThemeProvider theme={light}>
+    <ThemeProvider theme={light}>
       <Router history={history}>
         <Routes />
       </Router>
-    </MuiThemeProvider>
+    </ThemeProvider>
   );
 }
 
