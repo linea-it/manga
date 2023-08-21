@@ -10,6 +10,7 @@ import HduSelect from '../../../../components/HduSelect/Select';
 import HduSlider from '../../../../components/HduSelect/Slider';
 import Heatmap from '../../../../components/Map/Heatmap';
 import { getHdus } from '../../../../services/api';
+import Stack from '@mui/material/Stack';
 
 export default function GalaxyMapCard({
   galaxy,
@@ -21,18 +22,6 @@ export default function GalaxyMapCard({
     mapHdu: 'f_norm',
     contourHdu: '',
   })
-
-  // const [errorIsOpen, setErrorIsOpen] = React.useState(false)
-
-  // const { data: hdus, isLoading } = useQuery({
-  //   queryKey: ['HdusByGalaxyId', { id: galaxy.id }],
-  //   queryFn: getHdus,
-  //   keepPreviousData: true,
-  //   refetchInterval: false,
-  //   retry: 1,
-  //   staleTime: 1 * 60 * 60 * 1000,
-  //   onError: () => { setErrorIsOpen(true) }
-  // })
 
   const onChangeMapHdu = value => {
     setState({ ...state, mapHdu: value });
@@ -55,12 +44,16 @@ export default function GalaxyMapCard({
             flex={1}
             width="100%"
           >
-            <Box display="flex" justifyContent="space-between" mb={2}>
+            <Stack  
+              direction={{ xs: 'column', sm: 'row' }}
+              spacing={{ sm: 2}}
+              mb={4}>
               <HduSelect
                 galaxyId={galaxy.id}
                 inputLabel={'Type'}
                 selected={state.mapHdu}
                 onChange={onChangeMapHdu}
+                sx={{ mr: 1 }}
               />
               <HduSelect
                 galaxyId={galaxy.id}
@@ -69,7 +62,7 @@ export default function GalaxyMapCard({
                 onChange={onChangeContour}
                 allowEmpty={true}
               />
-            </Box>
+            </Stack>
               <Heatmap 
                 galaxyId={galaxy.id}
                 mapHdu={state.mapHdu}
