@@ -10,9 +10,6 @@ import Typography from '@mui/material/Typography';
 import Switch from '@mui/material/Switch';
 
 const useStyles = makeStyles((theme) => ({
-  margin: {
-    marginRight: theme.spacing(1),
-  },
   right: {
     flexGrow: 1,
   }
@@ -28,18 +25,18 @@ export default function ExplorerToolbar({ disabled, handleBackNavigation, handle
         color="primary"
         title="Back"
         onClick={handleBackNavigation}
-        className={classes.margin}
         disabled={disabled}
         startIcon={<ArrowBackIosIcon />}
+        sx={{ mr: 1 }}
       >Back</Button>
       <Button
         variant="contained"
         color="primary"
         title="Download"
         onClick={handleDownload}
-        className={classes.margin}
         disabled={disabled}
         startIcon={<GetAppIcon />}
+        sx={{ mr: 1 }}
       >Download</Button>
       <Button
         variant="contained"
@@ -49,6 +46,7 @@ export default function ExplorerToolbar({ disabled, handleBackNavigation, handle
         className={classes.margin}
         disabled={disabled}
         startIcon={<ListAltIcon />}
+        sx={{ mr: 1 }}
       >Header
       </Button>
 

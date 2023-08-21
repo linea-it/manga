@@ -151,7 +151,7 @@ function Header() {
 
   return (
     <>
-      <AppBar position="static" className={classes.appbar}>
+      <AppBar position="static" sx={{ bgcolor: "#24292e" }}>
         <Toolbar>
           <IconButton color="inherit" onClick={handleHome}>
             <img alt="LIneA Dark Logo" src={logo} />
