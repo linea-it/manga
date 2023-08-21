@@ -1,16 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import useScrollTrigger from '@mui/material/useScrollTrigger';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Button from '@mui/material/Button';
-import Link from '@mui/material/Link';
-import Popover from '@mui/material/Popover';
+// import Popover from '@mui/material/Popover';
 import { useLocation } from 'react-router-dom';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ExitToAppIcon from '@mui/icons-material/ExitToApp';
-import Avatar from '@mui/material/Avatar';
-import { loggedUser, urlLogin, urlLogout } from '../../../services/auth';
+// import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+// import Avatar from '@mui/material/Avatar';
+// import { loggedUser, urlLogin, urlLogout } from '../../../services/auth';
 import styles from './styles';
 
 
@@ -121,20 +118,13 @@ function Header() {
           alt="LIneA"
           className={classes.logoLIneA}
         />
-        {/* <List className={classes.menuList}> */}
           {menus.map((menu) => (
             <Button 
               color="inherit"
               href={menu.href}
               >{menu.description}
             </Button>
-            // <ListItem key={menu.href} className={classes.menuListItem}>
-            //   <Link href={menu.href} className={classes.menuLink}>
-            //     {menu.description}
-            //   </Link>
-            // </ListItem>
           ))}
-        {/* </List> */}
         <div className={classes.separator} />
         {/* {user && user.username ? <UserLogged /> : <UserUnLogged />} */}
       </Toolbar>
