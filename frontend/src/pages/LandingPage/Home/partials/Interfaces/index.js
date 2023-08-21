@@ -7,6 +7,7 @@ import CardActionArea from '@mui/material/CardActionArea';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import styles from './styles';
+import CardContent from '@mui/material/CardContent';
 
 function Interfaces() {
   const classes = styles();
@@ -53,6 +54,9 @@ function Interfaces() {
                     {item.app_display_name}
                   </Typography>
                 </CardMedia>
+                <CardContent>
+                  Click the figure above to enter the portal.
+                </CardContent>
               </CardActionArea>
             </Card>
           </Grid>

@@ -34,7 +34,7 @@ function Description() {
             </p>
             <p>
                 <span>
-                    To enter the portal click on the figure.
+                    To enter the portal click on the figure above.
                 </span>
             </p>
         </Typography>

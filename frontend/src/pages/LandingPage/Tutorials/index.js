@@ -18,7 +18,6 @@ import {
 import MovieIcon from '@mui/icons-material/Movie';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-
 import styles from './styles';
 
 function Tutorials() {

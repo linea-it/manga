@@ -26,9 +26,9 @@ function AboutUs() {
           </Breadcrumbs>
           <Typography
             gutterBottom
-            className={classes.textFormat}
-            variant="overline"
-            component="h2"
+            // className={classes.textFormat}
+            // variant="overline"
+            // component="h2"
           >
             <Grid item md={7} sm={10} className={classes.grid}>
               <div>
