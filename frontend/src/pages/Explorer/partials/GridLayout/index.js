@@ -38,7 +38,7 @@ export default function ExplorerGridLayout({
     if (inView) {
       fetchNextPage()
     }
-  }, [inView])
+  }, [inView, fetchNextPage])
 
   function generate_skeleton(element) {
     return [0, 1, 2].map((value) =>

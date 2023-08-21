@@ -4,6 +4,7 @@ import { CircularProgress, Typography, Box } from '@mui/material';
 import { useQuery } from 'react-query'
 import { vecsByPosition } from '../../services/api';
 import styles from './styles';
+import PropTypes from 'prop-types';
 
 function BinedPopulationPlot(props) {
   const ref = useRef(null);
@@ -128,5 +129,13 @@ function BinedPopulationPlot(props) {
     </Box>
   )
 }
+
+BinedPopulationPlot.propTypes = {
+  id: PropTypes.number.isRequired,
+  x: PropTypes.number,
+  y: PropTypes.number,
+  height: PropTypes.number
+};
+
 
 export default BinedPopulationPlot;

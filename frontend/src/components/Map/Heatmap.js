@@ -44,7 +44,7 @@ function Heatmap(props) {
     onError: () => { setErrorIsOpen(true) }
   })
 
-  function makePlotData() {
+  const makePlotData = React.useCallback(() => {
     // console.log(`makePlotData: HDU: ${mapHdu} Range: ${mapRange}`)
     // console.log(`Contour: ${contourHdu} Range: ${contourRange} `)
     if (map === undefined) return
@@ -166,10 +166,9 @@ function Heatmap(props) {
       showlegend: false,
     })
     setPlotData(data)
-  }
+  }, [map, mapRange, contour, contourRange, points ])
 
-
-  const changeMap = () => {
+  const changeMap = React.useCallback(() => {
     if (maps === undefined) return
 
     if (mapHdu in maps) {
@@ -191,16 +190,16 @@ function Heatmap(props) {
       setCountour(undefined)
       setContourRange(100)
     }
-  }
+  }, [maps, map, mapHdu, contour, contourHdu])
 
   React.useEffect(() => {
     changeMap()
-  }, [maps, mapHdu, contourHdu])
+  }, [maps, mapHdu, contourHdu, changeMap])
 
 
   React.useEffect(() => {
     makePlotData()
-  }, [map, mapRange, contour, contourRange, points])
+  }, [map, mapRange, contour, contourRange, points, makePlotData])
 
   const onChangeMapRange = (e, value) => {
     setMapRange(value)
