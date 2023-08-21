@@ -62,7 +62,7 @@ function MegacubeDownload({galaxyId, open, onClose  }) {
         )}
       </DialogContent>
       <DialogActions>
-        <Button variant="contained" color="secondary" onClick={onClose}>
+        <Button variant="contained" color="secondary" onClick={onClose}  sx={{ mr: 1 }}>
           Cancel
         </Button>
         {data?.link_bcomp && (

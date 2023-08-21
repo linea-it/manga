@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo  } from 'react';
 import YouTube from 'react-youtube';
 import {
   Container,
@@ -28,18 +28,19 @@ function Tutorials() {
     tutorial: '',
     video: '',
   });
-  const treeTutorial = [
-    {
-      id: 1,
-      title: 'Overview',
-      videos: [
-        {
-          title: 'Overview',
-          idVideo: 'nuPe8Ouo2oA',
-        },
-      ],
-    },
-  ];
+const treeTutorial = useMemo(() => [
+  {
+    id: 1,
+    title: 'Overview',
+    videos: [
+      {
+        title: 'Overview',
+        idVideo: 'nuPe8Ouo2oA',
+      },
+    ],
+  },
+], []);
+  // const treeTutorial = 
 
   const [expanded, setExpanded] = React.useState('');
   const handleChange = (panel) => (event, newExpanded) => {
@@ -53,7 +54,7 @@ function Tutorials() {
 
   useEffect(() => {
     handleSelected(treeTutorial[0], treeTutorial[0].videos[0]);
-  }, []);
+  }, [treeTutorial]);
 
   return (
     <div className={classes.initContainer}>

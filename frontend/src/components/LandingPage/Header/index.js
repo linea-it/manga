@@ -13,6 +13,7 @@ import Avatar from '@mui/material/Avatar';
 import { loggedUser, urlLogin, urlLogout } from '../../../services/auth';
 import styles from './styles';
 
+
 function Header() {
   const location = useLocation();
   const trigger = useScrollTrigger({
@@ -113,22 +114,27 @@ function Header() {
   ];
 
   return (
-    <AppBar position="static" className={classes.appbar}>
+    <AppBar position="static" className={classes.appbar}  sx={{ bgcolor: "#24292e" }}>
       <Toolbar className={classes.toolbar}>
         <img
           src={`${process.env.PUBLIC_URL}/img/linea-dark-invert.png`}
           alt="LIneA"
           className={classes.logoLIneA}
         />
-        <List className={classes.menuList}>
+        {/* <List className={classes.menuList}> */}
           {menus.map((menu) => (
-            <ListItem key={menu.href} className={classes.menuListItem}>
-              <Link href={menu.href} className={classes.menuLink}>
-                {menu.description}
-              </Link>
-            </ListItem>
+            <Button 
+              color="inherit"
+              href={menu.href}
+              >{menu.description}
+            </Button>
+            // <ListItem key={menu.href} className={classes.menuListItem}>
+            //   <Link href={menu.href} className={classes.menuLink}>
+            //     {menu.description}
+            //   </Link>
+            // </ListItem>
           ))}
-        </List>
+        {/* </List> */}
         <div className={classes.separator} />
         {/* {user && user.username ? <UserLogged /> : <UserUnLogged />} */}
       </Toolbar>

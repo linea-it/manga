@@ -5,6 +5,7 @@ import { Card, CardHeader, CardMedia, CardContent, Grid, CircularProgress, Typog
 import { useQuery } from 'react-query'
 import { logAgeByPosition } from '../../services/api';
 import styles from './styles';
+import PropTypes from 'prop-types';
 
 function StellarPopulationPlot(props) {
   const ref = useRef(null);
@@ -143,5 +144,13 @@ function StellarPopulationPlot(props) {
     </Box>
   )
 }
+
+StellarPopulationPlot.propTypes = {
+  id: PropTypes.number.isRequired,
+  x: PropTypes.number,
+  y: PropTypes.number,
+  height: PropTypes.number
+};
+
 
 export default StellarPopulationPlot;

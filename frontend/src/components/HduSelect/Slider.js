@@ -90,15 +90,13 @@ function HduSlider(props) {
 }
 HduSlider.defaultProps = {
   galaxyId: undefined,
-  selected: '',
-  disabled: false
+  selected: ''
 }
 
 HduSlider.propTypes = {
   galaxyId: PropTypes.number.isRequired,
   onChange: PropTypes.func.isRequired,
-  selected: PropTypes.string,
-  disabled: PropTypes.bool,
+  selected: PropTypes.string
 };
 
 export default HduSlider;
