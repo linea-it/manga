@@ -1,6 +1,6 @@
 import {
   makeStyles,
-} from '@material-ui/core/styles';
+} from '@mui/material/styles';
 
 const useStyles = makeStyles((theme) => ({
   // switchContainer: {

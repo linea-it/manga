@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import useScrollTrigger from '@material-ui/core/useScrollTrigger';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import Button from '@material-ui/core/Button';
-import Link from '@material-ui/core/Link';
-import Popover from '@material-ui/core/Popover';
+import useScrollTrigger from '@mui/material/useScrollTrigger';
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import Button from '@mui/material/Button';
+import Link from '@mui/material/Link';
+import Popover from '@mui/material/Popover';
 import { useLocation } from 'react-router-dom';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
-import Avatar from '@material-ui/core/Avatar';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import Avatar from '@mui/material/Avatar';
 import { loggedUser, urlLogin, urlLogout } from '../../../services/auth';
 import styles from './styles';
 

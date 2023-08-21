@@ -4,8 +4,8 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Route, Redirect } from 'react-router-dom';
-// import Backdrop from '@material-ui/core/Backdrop';
-// import CircularProgress from '@material-ui/core/CircularProgress';
+// import Backdrop from '@mui/material/Backdrop';
+// import CircularProgress from '@mui/material/CircularProgress';
 // import useStyles from './styles';
 import { isAuthenticated, url } from '../services/auth';
 import Header from '../components/Header';

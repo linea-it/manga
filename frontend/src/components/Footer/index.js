@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import AppBar from '@material-ui/core/AppBar';
-import { Typography, Toolbar } from '@material-ui/core';
+import AppBar from '@mui/material/AppBar';
+import { Typography, Toolbar } from '@mui/material';
 import clsx from 'clsx';
 import logo from '../../assets/img/linea-logo-mini.png';
 import gitVersion from '../../assets/json/version.json';

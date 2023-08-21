@@ -12,10 +12,10 @@ import {
   ListItemText,
   Breadcrumbs,
   Link,
-} from '@material-ui/core';
-import MovieIcon from '@material-ui/icons/Movie';
-import ArrowRightIcon from '@material-ui/icons/ArrowRight';
-import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
+} from '@mui/material';
+import MovieIcon from '@mui/icons-material/Movie';
+import ArrowRightIcon from '@mui/icons-material/ArrowRight';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import styles from './styles';
 
 function Tutorials() {

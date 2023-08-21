@@ -1,7 +1,7 @@
-import pink from '@material-ui/core/colors/pink';
-import blue from '@material-ui/core/colors/blue';
+import pink from '@mui/material/colors/pink';
+import blue from '@mui/material/colors/blue';
 
-import { createTheme } from '@material-ui/core/styles';
+import { createTheme } from '@mui/material/styles';
 
 const light = createTheme({
   palette: {

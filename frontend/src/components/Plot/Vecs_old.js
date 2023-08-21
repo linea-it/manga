@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Plot from 'react-plotly.js';
-import InfoIcon from '@material-ui/icons/Info';
-import { Tooltip } from '@material-ui/core';
+import InfoIcon from '@mui/icons-material/Info';
+import { Tooltip } from '@mui/material';
 import useStyles from './styles';
 
 function Vecs({ data, height }) {

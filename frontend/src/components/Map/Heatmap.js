@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@mui/styles';
 import { useQuery } from 'react-query'
-import { CircularProgress } from '@material-ui/core';
+import { CircularProgress } from '@mui/material';
 import ColorRange from './ColorRange';
-import Box from '@material-ui/core/Box';
+import Box from '@mui/material/Box';
 import Plot from 'react-plotly.js';
 import GenericError from '../Alerts/GenericError';
 import { getAllHeatmaps } from '../../services/api';

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import '@fortawesome/fontawesome-free/css/all.min.css';
-import Grid from '@material-ui/core/Grid';
+import Grid from '@mui/material/Grid';
 import useInterval from '../../hooks/useInterval';
 import {
   getFluxByPosition,

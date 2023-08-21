@@ -41,12 +41,12 @@ import {
   TableRow as MuiTableRow,
   TableCell as MuiTableCell,
   TableBody as MuiTableBody,
-} from '@material-ui/core';
+} from '@mui/material';
 import {
   FilterList as FilterListIcon,
   AddBox as AddBoxIcon,
   RemoveCircle as RemoveCircleIcon,
-} from '@material-ui/icons';
+} from '@mui/icons-material';
 import ColumnChooser from './ColumnChooser';
 import HeaderRowCell from './HeaderRowCell';
 import RowIndexer from './plugins/RowIndexer';
