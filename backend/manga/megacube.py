@@ -143,6 +143,9 @@ class MangaMegacube:
         else:
             raise Exception(f"After compress bz2 file not found. {self.bz2_filepath}")
 
+    def fits_exist(self):
+        return self.fits_filepath.exists()
+
     def write_parts_json(self, filename, content):
         # Create directories, if they don't exist already:
         path = self.parts_folder

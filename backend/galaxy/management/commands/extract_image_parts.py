@@ -106,8 +106,10 @@ class Command(BaseCommand):
         cube = MangaMegacube(orinal_filepath)
 
         #  Extrair o megacubo bz2 -> fits
-        cube.extract_bz2()
-        cube.extract_megacube_parts(parts_path)
+        # TODO: Verificar se o fits existe previamente.
+        if not cube.fits_exist():
+            cube.extract_bz2()
+        # cube.extract_megacube_parts(parts_path)
         # cube.compress_bz2()
 
         obj.had_parts_extracted = True
@@ -161,3 +163,4 @@ class Command(BaseCommand):
 
 
 
+# manga-8449-12705
