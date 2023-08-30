@@ -15,7 +15,7 @@ services:
       # Update this to wherever you want VS Code to mount the folder of your project
       - ..:/workspaces:cached
       - ../backend:/usr/src/app/:cached
-      - ../images:/tmp/images:cached
+      - ../images:/tmp/images:rw 
       - ../log:/usr/src/app/log:cached
       - /tmp/.X11-unix:/tmp/.X11-unix:rw 
 

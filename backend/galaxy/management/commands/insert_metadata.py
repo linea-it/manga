@@ -63,11 +63,12 @@ class Command(BaseCommand):
         # print(rows[0])
 
         # raise Exception()
+    
         df = pd.read_csv(
             filename, 
             skiprows=1,
             names=[ 
-                'megacube', 'mangaid', 'plateifu', 'objra', 'objdec', 
+                'megacube', 'mangaid', 'plateifu', 'ned_name', 'objra', 'objdec', 
                 'fcfc1_50', 'xyy_light', 'xyo_light', 'xiy_light', 'xii_light', 
                 'xio_light', 'xo_light', 'xyy_mass', 'xyo_mass', 'xiy_mass', 
                 'xii_mass', 'xio_mass', 'xo_mass', 'sfr_1', 'sfr_5', 'sfr_10', 
@@ -86,6 +87,7 @@ class Command(BaseCommand):
         
         df = df.sort_values(by=['plateifu'], ascending=True)
         # df = df.fillna(0)
+        df['had_bcomp'] = df['had_bcomp'].fillna(np.nan).replace([np.nan], [False])
         df = df.fillna(np.nan).replace([np.nan], [None])
 
         rows = list(df.to_dict("records"))
@@ -95,8 +97,7 @@ class Command(BaseCommand):
         count_registered = 0
         count_original_file_exists = 0
         count_bcomp_exist = 0        
-        count_parts_exist = 0
-        
+        count_parts_exist = 0      
 
         for galaxy in rows:
             original_filename = f"{galaxy['megacube']}.tar.bz2"

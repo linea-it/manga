@@ -15,6 +15,11 @@ class Image(models.Model):
         max_length=100,
         unique=True
     )
+    ned_name= models.CharField(
+        verbose_name='Common Name',
+        max_length=100,
+        default=None
+    )
     mangaid = models.CharField(
         verbose_name='MaNGA ID',
         help_text='MaNGA ID for this object (e.g. 1-114145)',

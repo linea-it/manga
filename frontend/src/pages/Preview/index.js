@@ -54,12 +54,19 @@ function Preview() {
       name: 'id',
       title: 'ID',
       headerTooltip: 'Internal ID for this object',
+      width: 100,
     },    
     {
       name: 'plateifu',
       title: 'PlateIFU',
       headerTooltip: '	Plate+ifudesign name for this object',
     },
+    {
+      name: 'ned_name',
+      title: 'Common Name',
+      headerTooltip: '	Common name for this object',
+      width: 200
+    },    
     {
       name: 'objra',
       title: 'RA',
