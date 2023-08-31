@@ -13,7 +13,7 @@ class Image(models.Model):
         verbose_name='Plate IFU Design ID',
         help_text='Plate+ifudesign name for this object (e.g. 7443-12701)',
         max_length=100,
-        unique=True
+        unique=False
     )
     ned_name= models.CharField(
         verbose_name='Common Name',
@@ -24,7 +24,7 @@ class Image(models.Model):
         verbose_name='MaNGA ID',
         help_text='MaNGA ID for this object (e.g. 1-114145)',
         max_length=100,
-        unique=True
+        unique=False
     )
     objra = models.FloatField(
         verbose_name='RA',
