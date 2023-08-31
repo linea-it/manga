@@ -8,6 +8,7 @@ import ListAltIcon from '@mui/icons-material/ListAlt';
 import PropTypes from 'prop-types';
 import Typography from '@mui/material/Typography';
 import Switch from '@mui/material/Switch';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 const useStyles = makeStyles((theme) => ({
   right: {
@@ -17,6 +18,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function ExplorerToolbar({ disabled, handleBackNavigation, handleDownload, handleHeader, isGrid, handleLayout }) {
   const classes = useStyles();
+  const matches = useMediaQuery((theme) => theme.breakpoints.up('md'));
 
   return (
     <Toolbar>
@@ -28,7 +30,7 @@ export default function ExplorerToolbar({ disabled, handleBackNavigation, handle
         disabled={disabled}
         startIcon={<ArrowBackIosIcon />}
         sx={{ mr: 1 }}
-      >Back</Button>
+      >{matches ? 'Back' : null }</Button>
       <Button
         variant="contained"
         color="primary"
@@ -37,7 +39,7 @@ export default function ExplorerToolbar({ disabled, handleBackNavigation, handle
         disabled={disabled}
         startIcon={<GetAppIcon />}
         sx={{ mr: 1 }}
-      >Download</Button>
+      >{matches ? 'Download' : null }</Button>
       <Button
         variant="contained"
         color="primary"
@@ -47,7 +49,7 @@ export default function ExplorerToolbar({ disabled, handleBackNavigation, handle
         disabled={disabled}
         startIcon={<ListAltIcon />}
         sx={{ mr: 1 }}
-      >Header
+      >{matches ? 'Header' : null }
       </Button>
 
       <div className={classes.right} />

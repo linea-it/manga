@@ -4,7 +4,6 @@ import json
 import os
 import shutil
 import subprocess
-import sys
 import traceback
 from datetime import datetime
 from pathlib import Path
@@ -15,7 +14,9 @@ from astropy.io import fits as pf
 from matplotlib import pyplot
 from shapely.geometry import Point
 from shapely.geometry.polygon import Polygon
-
+import json
+import requests
+import shutil
 
 class MangaMegacube:
     megacube: Path
@@ -72,7 +73,7 @@ class MangaMegacube:
         "Sigma_s2_6731": "[S II]λ6731 Velocity dispersion",
     }
 
-    def __init__(self, megacube: Path):
+    def __init__(self, megacube: Path, parts_root: Path = None):
         self.megacube = Path(megacube)
         if not self.megacube.exists():
             raise Exception(f"File not found: {self.megacube}")
@@ -101,6 +102,13 @@ class MangaMegacube:
         self.bz2_filepath = self.megacube.parent.joinpath(self.bz2_filename)
         print(f"Bz2 filepath: {self.bz2_filepath}")
 
+        if parts_root:
+            self.parts_folder = parts_root.joinpath(self.name)
+        else:
+            self.parts_folder = self.megacube.parent.joinpath(self.name)
+        self.parts_folder.mkdir(parents=True, exist_ok=True)
+        print(f"Parts Folder: {self.parts_folder}")
+
     def extract_bz2(self, dest_dir=None):
         if not dest_dir:
             dest_dir = self.megacube.parent
@@ -121,7 +129,7 @@ class MangaMegacube:
         else:
             raise Exception(f"After unpacking fits file not found. {fits_filepath}")
 
-    def compress_bz2(self):
+    def compress_bz2(self, keep_original: bool = False):
         print(f"Compressing Bz2 {self.fits_filepath} -> {self.bz2_filepath}")
         try:
             # Paths de execução
@@ -138,7 +146,8 @@ class MangaMegacube:
             print(f"Failed to compress. {traceback.format_exc()}")
 
         if self.bz2_filepath.exists():
-            self.fits_filepath.unlink()
+            if keep_original == False:
+                self.fits_filepath.unlink()
             return self.bz2_filepath
         else:
             raise Exception(f"After compress bz2 file not found. {self.bz2_filepath}")
@@ -387,7 +396,7 @@ class MangaMegacube:
         flux_image = ax.imshow(imagb, origin="lower").get_array()
 
         return flux_image.tolist(fill_value=None)
-
+   
     def extract_megacube_header(self):
         """
         It extracts the Megacube Header from 'PoPBins' HUD
@@ -399,7 +408,7 @@ class MangaMegacube:
         filename = "cube_header.json"
 
         return self.write_parts_json(filename, content)
-
+   
     def exctract_original_image(self):
         """
         It extracts the Origimal Image (zero) data from 'FLUX' HUD
@@ -442,7 +451,13 @@ class MangaMegacube:
 
         return self.write_parts_json(filename, content)
 
-    def extract_image_heatmap(self):
+    def cube_part_exist(self, filename):
+        exists = self.parts_folder.joinpath(filename).exists()
+        if not exists:
+            print(f"File not Found: {filename}")
+        return exists
+
+    def extract_image_heatmap(self, overwrite: bool=False ):
         """
         It extracts all the Image Heatmaps from 'PoPBins' HUD
         for each image and for each HUD saved in the file
@@ -454,22 +469,26 @@ class MangaMegacube:
         files = list()
 
         for hud in lHud:
-            image_data = self.image_by_hud(hud)
-
-            content = dict(
-                {
-                    "z": image_data,
-                    "title": hud,
-                }
-            )
-
             filename = "image_heatmap_%s.json" % hud
-            filepath = self.write_parts_json(filename, content)
-            files.append(filepath)
+
+            if self.cube_part_exist(filename) == True and overwrite == False:
+                # print(f"Heatmap: {hud} SKIPED")
+                pass
+            else:
+                image_data = self.image_by_hud(hud)
+                content = dict(
+                    {
+                        "z": image_data,
+                        "title": hud,
+                    }
+                )
+                filepath = self.write_parts_json(filename, content)
+                files.append(filepath)
+                # print(f"Heatmap: {str(filepath).ljust(80, ' ')}")
 
         return files
 
-    def extract_gas_maps_heatmap(self):
+    def extract_gas_maps_heatmap(self, overwrite: bool = False):
         parameters = pf.getdata(self.fits_filepath, "PARNAMES")
         solution = pf.getdata(self.fits_filepath, "SOLUTION")
         flux = pf.getdata(self.fits_filepath, "FLUX_M")
@@ -486,101 +505,126 @@ class MangaMegacube:
 
         map_names = []
         maps = []
+
         for p in parameters:
             p = np.asarray(p)
             if p[1] == "A":
                 # nome para salvar o mapa de fluxo (usei no label do plot)
                 save_name_flux = "Flux_" + p[0]
-                # array (44,44) com os valores do mapa de flux a serem salvos
-                save_flux = flux[j]
-                save_flux[np.where(mask == 1)] = np.nan
-                plt.subplot(plots, 4, k)
-                k = k + 1
-                # data = plt.imshow(save_flux,origin='lower')
-                # plt.gca().set_title(save_name_flux)   # titulo do plot
-                # plt.colorbar()   # barra de cores
-                map_names.append(save_name_flux)
-                # plot para tu poder conferir (note o origim do matplotlib que precisa ser lower para o 0,0 ser no canto inferior esquerdo)
-                data = plt.imshow(save_flux, origin="lower").get_array()
-                maps.append(
-                    dict(
-                        {
-                            "z": data.tolist(fill_value=None),
-                            "title": save_name_flux,
-                        }
+                map_names.append(save_name_flux)                
+                
+                filename = f"image_heatmap_{save_name_flux}.json"               
+                if self.cube_part_exist(filename) == True and overwrite == False:
+                    # print(f"GAS MAP: {save_name_flux} SKIPED")
+                    pass
+                else:
+                    # array (44,44) com os valores do mapa de flux a serem salvos
+                    save_flux = flux[j]
+                    save_flux[np.where(mask == 1)] = np.nan
+                    plt.subplot(plots, 4, k)
+                    k = k + 1
+                    # data = plt.imshow(save_flux,origin='lower')
+                    # plt.gca().set_title(save_name_flux)   # titulo do plot
+                    # plt.colorbar()   # barra de cores
+                    # plot para tu poder conferir (note o origim do matplotlib que precisa ser lower para o 0,0 ser no canto inferior esquerdo)
+                    data = plt.imshow(save_flux, origin="lower").get_array()
+                    maps.append(
+                        dict(
+                            {
+                                "z": data.tolist(fill_value=None),
+                                "title": save_name_flux,
+                            }
+                        )
                     )
-                )
 
                 # nome para salvar o mapa de eqw (usei no label do plot)
                 save_name_ew = "Ew_" + p[0]
-                # array (44,44) com os valores do mapa de ew a serem salvos
-                save_ew = -1 * eqw[j]
-                save_ew[np.where(mask == 1)] = np.nan
-                # NOTA: O EW precisa ser multiplicado por -1 para inverter o sinal (nao pode usar abs)
-                plt.subplot(plots, 4, k)
-                k = k + 1
-                # plt.imshow(save_ew,origin='lower') # plot para tu poder conferir (note o origim do matplotlib que precisa ser lower para o 0,0 ser no canto inferior esquerdo)
-                # plt.gca().set_title(save_name_ew)  # titulo do plot
-                # plt.colorbar()   # barra de cores
                 map_names.append(save_name_ew)
-                # plot para tu poder conferir (note o origim do matplotlib que precisa ser lower para o 0,0 ser no canto inferior esquerdo)
-                data = plt.imshow(save_ew, origin="lower").get_array()
-                maps.append(
-                    dict(
-                        {
-                            "z": data.tolist(fill_value=None),
-                            "title": save_name_ew,
-                        }
+                
+                filename = f"image_heatmap_{save_name_ew}.json"
+                if self.cube_part_exist(filename) == True and overwrite == False:
+                    # print(f"GAS MAP: {save_name_ew} SKIPED")
+                    pass
+                else:
+                    # array (44,44) com os valores do mapa de ew a serem salvos
+                    save_ew = -1 * eqw[j]
+                    save_ew[np.where(mask == 1)] = np.nan
+                    # NOTA: O EW precisa ser multiplicado por -1 para inverter o sinal (nao pode usar abs)
+                    plt.subplot(plots, 4, k)
+                    k = k + 1
+                    # plt.imshow(save_ew,origin='lower') # plot para tu poder conferir (note o origim do matplotlib que precisa ser lower para o 0,0 ser no canto inferior esquerdo)
+                    # plt.gca().set_title(save_name_ew)  # titulo do plot
+                    # plt.colorbar()   # barra de cores
+                    # plot para tu poder conferir (note o origim do matplotlib que precisa ser lower para o 0,0 ser no canto inferior esquerdo)
+                    data = plt.imshow(save_ew, origin="lower").get_array()
+                    maps.append(
+                        dict(
+                            {
+                                "z": data.tolist(fill_value=None),
+                                "title": save_name_ew,
+                            }
+                        )
                     )
-                )
 
-                j = j + 1  # contador de indice de flux e eqw
+                    j = j + 1  # contador de indice de flux e eqw
 
             elif p[1] == "v":
                 # nome para salvar o mapa de velocidades (usei no label do plot)
                 save_name_vel = "Vel_" + p[0]
-                # array (44,44) com os valores do mapa de velocidade a serem salvos
-                save_vel = solution[i]
-                save_vel[np.where(mask == 1)] = np.nan
-                plt.subplot(plots, 4, k)
-                k = k + 1
-                # plt.imshow(save_vel,origin='lower') # plot para tu poder conferir (note o origim do matplotlib que precisa ser lower para o 0,0 ser no canto inferior esquerdo)
-                # plt.gca().set_title(save_name_vel) # titulo do plot
-                # plt.colorbar()   # barra de cores
                 map_names.append(save_name_vel)
-                # plot para tu poder conferir (note o origim do matplotlib que precisa ser lower para o 0,0 ser no canto inferior esquerdo)
-                data = plt.imshow(save_vel, origin="lower").get_array()
-                maps.append(
-                    dict(
-                        {
-                            "z": data.tolist(fill_value=None),
-                            "title": save_name_vel,
-                        }
+
+                filename = f"image_heatmap_{save_name_vel}.json"
+                if self.cube_part_exist(filename) == True and overwrite == False:
+                    # print(f"GAS MAP: {save_name_vel} SKIPED")
+                    pass
+                else:                
+                    # array (44,44) com os valores do mapa de velocidade a serem salvos
+                    save_vel = solution[i]
+                    save_vel[np.where(mask == 1)] = np.nan
+                    plt.subplot(plots, 4, k)
+                    k = k + 1
+                    # plt.imshow(save_vel,origin='lower') # plot para tu poder conferir (note o origim do matplotlib que precisa ser lower para o 0,0 ser no canto inferior esquerdo)
+                    # plt.gca().set_title(save_name_vel) # titulo do plot
+                    # plt.colorbar()   # barra de cores
+                    # plot para tu poder conferir (note o origim do matplotlib que precisa ser lower para o 0,0 ser no canto inferior esquerdo)
+                    data = plt.imshow(save_vel, origin="lower").get_array()
+                    maps.append(
+                        dict(
+                            {
+                                "z": data.tolist(fill_value=None),
+                                "title": save_name_vel,
+                            }
+                        )
                     )
-                )
 
             elif p[1] == "s":
                 # nome para salvar o mapa de sigma (usei no label do plot)
                 save_name_sig = "Sigma_" + p[0]
-                # array (44,44) com os valores do mapa de sigma a serem salvos
-                save_sig = solution[i]
-                save_sig[np.where(mask == 1)] = np.nan
-                plt.subplot(plots, 4, k)
-                k = k + 1
-                # plt.imshow(save_sig,origin='lower')  # plot para tu poder conferir (note o origim do matplotlib que precisa ser lower para o 0,0 ser no canto inferior esquerdo)
-                # plt.gca().set_title(save_name_sig)  # titulo do plot
-                # plt.colorbar()   # barra de cores
-                map_names.append(save_name_sig)
-                # plot para tu poder conferir (note o origim do matplotlib que precisa ser lower para o 0,0 ser no canto inferior esquerdo)
-                plt.imshow(save_sig, origin="lower").get_array()
-                maps.append(
-                    dict(
-                        {
-                            "z": data.tolist(fill_value=None),
-                            "title": save_name_sig,
-                        }
+                map_names.append(save_name_sig)                
+
+                filename = f"image_heatmap_{save_name_sig}.json"
+                if self.cube_part_exist(filename) == True and overwrite == False:
+                    # print(f"GAS MAP: {save_name_sig} SKIPED")
+                    pass
+                else:                
+                    # array (44,44) com os valores do mapa de sigma a serem salvos
+                    save_sig = solution[i]
+                    save_sig[np.where(mask == 1)] = np.nan
+                    plt.subplot(plots, 4, k)
+                    k = k + 1
+                    # plt.imshow(save_sig,origin='lower')  # plot para tu poder conferir (note o origim do matplotlib que precisa ser lower para o 0,0 ser no canto inferior esquerdo)
+                    # plt.gca().set_title(save_name_sig)  # titulo do plot
+                    # plt.colorbar()   # barra de cores
+                    # plot para tu poder conferir (note o origim do matplotlib que precisa ser lower para o 0,0 ser no canto inferior esquerdo)
+                    data = plt.imshow(save_sig, origin="lower").get_array()
+                    maps.append(
+                        dict(
+                            {
+                                "z": data.tolist(fill_value=None),
+                                "title": save_name_sig,
+                            }
+                        )
                     )
-                )
 
             # contador para o solution (note que eu pulo o A ao salvar por que salvo o Flux e EW no lugar)
             i = i + 1
@@ -589,45 +633,92 @@ class MangaMegacube:
         for map in maps:
             filepath = self.write_parts_json(f"image_heatmap_{map['title']}.json", map)
             result.append({"name": map["title"], "filepath": str(filepath)})
+            # print(f"GAS MAP: {str(filepath).ljust(80, ' ')}")
 
         self.write_list_map_json(map_names)
 
         return result
 
-    def extract_megacube_parts(self, parts_folder: Path = None):
-        print("Extracting Megacube Parts")
-        self.parts_folder = parts_folder
-        if self.parts_folder is None:
-            self.parts_folder = self.megacube.parent.joinpath(self.name)
+    def extract_megacube_parts(self, overwrite: bool = False):
+        print("Extracting Megacube Parts")       
 
-        if self.parts_folder.exists():
-            shutil.rmtree(self.parts_folder)            
-
-        self.parts_folder.mkdir(parents=True, exist_ok=False)
-        print(f"Parts Folder: {self.parts_folder}")
-
-        headers_json = self.extract_megacube_header()
+        headers_json = "SKIPED"       
+        if self.cube_part_exist("cube_header.json") == False or overwrite == True: 
+            headers_json = self.extract_megacube_header()
         print(f"Headers Json: {headers_json}")
 
         # Flux image
-        original_image = self.exctract_original_image()
+        original_image = "SKIPED"
+        if self.cube_part_exist("original_image.json") == False or overwrite == True: 
+            original_image = self.exctract_original_image()
         print(f"Original Image: {original_image}")
 
         # HDU List
-        hdu_list = self.extract_list_hud()
-        print(f"HUD List: {hdu_list}")
+        hdu_list = "SKIPED"
+        if self.cube_part_exist("list_hud.json") == False or overwrite == True: 
+            hdu_list = self.extract_list_hud()
+        print(f"HDU List: {hdu_list}")
 
         # Images Heatmap by HUD
-        heatmaps = self.extract_image_heatmap()
-        for fp in heatmaps:
-            print(f"Heatmap: {str(fp).ljust(80, ' ')}")
+        heatmaps = self.extract_image_heatmap(overwrite)
         print(f"Images Heatmap Created: {len(heatmaps)}")
 
-        maps_names = self.extract_gas_maps_heatmap()
-        for map in maps_names:
-            print(f"GAS MAP: {str(map['filepath']).ljust(80, ' ')}")
+        maps_names = self.extract_gas_maps_heatmap(overwrite)
         print(f"Gas Map Created: {len(maps_names)}")
 
+    def check_extracted_parts(self, bz2:bool=True, fits:bool=True):
+        # Headers
+        if not self.cube_part_exist("cube_header.json"):
+            return False
+        # Original Image
+        if not self.cube_part_exist("original_image.json"):
+            return False
+        # HDU List
+        if not self.cube_part_exist("list_hud.json"):
+            return False
+        # GAS Maps HDUs
+        if not self.cube_part_exist("list_gas_map.json"):
+            return False
+        # SDSS Image
+        if not self.cube_part_exist("sdss_image.jpg"):
+            return False        
+        # Check if all HDUs have a json file
+        if not self.check_heatmaps():
+            return False
+        # Check if all GAS HDUs have a json file
+        if not self.check_gas_heatmaps():
+            return False
+        # Check if the bz2 file is still in the directory
+        if not self.bz2_filepath.exists():
+            print("Bz2 file not found.")
+            return False
+        # Check if fits file is still in the directory
+        if not self.fits_filepath.exists():
+            print("Fits file not found.")
+            return False
+
+        return True
+
+    def check_heatmaps(self):
+        with open(self.parts_folder.joinpath("list_hud.json")) as json_file:
+            data = json.load(json_file)
+            hdus = data["hud"]
+            for hdu in hdus:
+                filename = f"image_heatmap_{hdu['name']}.json"
+                if not Path(self.parts_folder.joinpath(filename)).exists():
+                    return False
+        return True
+    
+    def check_gas_heatmaps(self):
+        with open(self.parts_folder.joinpath("list_gas_map.json")) as json_file:
+            data = json.load(json_file)
+            hdus = data["gas_maps"]
+            for hdu in hdus:
+                filename = f"image_heatmap_{hdu['name']}.json"
+                if not Path(self.parts_folder.joinpath(filename)).exists():
+                    return False
+        return True
+        
     def update_megacube_header(self):
         print("Updating fits headers.")
         PAPER = "Riffel et. al. 2023, MNRAS, XXXX, YYYY"
@@ -832,6 +923,45 @@ class MangaMegacube:
             msg = f"Failed to update headers. {e}"
             print(msg)
             raise Exception(msg)
+
+
+    def download_sdss_image(self, ra, dec, overwrite:bool = False):
+        """
+            It downloads the SDSS Image by its RA and Dec
+            for each image and save them in the path
+            /images/megacube_parts/megacube_{JOB_ID}/sdss_image.jpg
+        """
+        # Object directory in Images Megacube Parts.
+        parts_path = self.parts_folder
+        filename = 'sdss_image.jpg'
+
+        if self.cube_part_exist(filename) == True and overwrite == False:
+            print('Downloading SDSS Image [SKIPED]')
+        else:
+            print('Downloading SDSS Image [%s]' % str(self.megacube))
+
+            # Set up the image URL and filename
+            image_url = "http://skyserver.sdss.org/dr16/SkyServerWS/ImgCutout/getjpeg?TaskName=Skyserver.Chart.Image&ra=%s&dec=%s&scale=0.099515875&width=512&height=512&opt=G&query=" % (ra, dec)
+            
+            # Open the url image, set stream to True, this will return the stream content.
+            r = requests.get(image_url, stream=True)
+
+            # Check if the image was retrieved successfully
+            if r.status_code == 200:
+                # Set decode_content value to True, otherwise the downloaded image file's size will be zero.
+                r.raw.decode_content = True
+
+                filepath = Path(parts_path).joinpath(filename)
+                if filepath.exists():
+                    filepath.unlink()
+
+                # Open a local file with wb ( write binary ) permission.
+                with open(filepath, 'wb') as f:
+                    shutil.copyfileobj(r.raw, f)  
+                print('Finished Download SDSS Images!')                
+            else:
+                print(
+                    'SDSS Image [%s] could not be retrieved' % str(self.megacube))
 
 
 if __name__ == "__main__":

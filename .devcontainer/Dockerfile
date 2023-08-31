@@ -34,5 +34,7 @@ COPY --chmod=0755 ./backend/entrypoint.sh /entrypoint.sh
 
 COPY --chmod=0775 ./backend/start.sh /start.sh
 
+RUN mkdir /tmp/images
+
 ENTRYPOINT ["/entrypoint.sh"]
 

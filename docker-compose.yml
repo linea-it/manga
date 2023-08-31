@@ -1,14 +1,14 @@
 version: '3.6'
 services:
   # Backend Django
-  backend:
+  backend: &backend
     user: 1000:1000
     build: ./backend
     command: /start.sh    
     volumes:
       - ./backend:/usr/src/app
       - ./images:/tmp/images
-      - ./images:/tmp/cache      
+        #- ./images:/tmp/cache      
       - ./log:/usr/src/app/log
       - /tmp/.X11-unix:/tmp/.X11-unix
     env_file:
@@ -20,58 +20,31 @@ services:
   # Handling Periodic Tasks in Django with Celery and Docker
   # https://testdriven.io/blog/django-celery-periodic-tasks/
   # https://testdriven.io/courses/django-celery/docker/
-  celery_worker:
-    user: 1000:1000
-    build: ./backend
+  celery_worker: &celery_worker
+    <<: *backend
     command: /start-celery-worker.sh
-    volumes:
-      - ./backend:/usr/src/app
-      - ./images:/tmp/images
-      - ./images:/tmp/cache
-      - ./log:/usr/src/app/log
-    env_file:
-      - .env.dev
     depends_on:
-      - rabbit
-      - database
+      - backend
 
   # Handling Periodic Tasks in Django with Celery and Docker
   # https://testdriven.io/blog/django-celery-periodic-tasks/    
   # https://testdriven.io/courses/django-celery/docker/
-  celery_beat: 
-    user: 1000:1000
-    build: ./backend
+  celery_beat: &celery_beat
+    <<: *backend 
     command: /start-celery-beat.sh
-    volumes:
-      - ./backend:/usr/src/app
-      - ./images:/tmp/images
-      - ./images:/tmp/cache      
-      - ./log:/usr/src/app/log
-    env_file:
-      - .env.dev
     depends_on:
-      - rabbit
-      - database
+      - backend
 
   # Handling Periodic Tasks in Django with Celery and Docker
   # https://testdriven.io/blog/django-celery-periodic-tasks/    
   # https://testdriven.io/courses/django-celery/docker/
-  flower:
-    user: 1000:1000
-    build: ./backend
+  flower: &celery_flower
+    <<: *backend
     command: /start-celery-flower.sh
-    volumes:
-      - ./backend:/usr/src/app
-      - ./images:/tmp/images
-      - ./images:/tmp/cache
-      - ./log:/usr/src/app/log
     ports:
       - 5555:5555
-    env_file:
-      - .env.dev
     depends_on:
-      - rabbit
-      - database
+      - backend
 
 
   # Frontend React
@@ -80,6 +53,7 @@ services:
     working_dir: /app
     volumes:
       - ./frontend:/app
+    stdin_open: true
     command: yarn start
 
   # Database
