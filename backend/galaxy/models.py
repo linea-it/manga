@@ -18,6 +18,8 @@ class Image(models.Model):
     ned_name= models.CharField(
         verbose_name='Common Name',
         max_length=100,
+        null=True, 
+        blank=True,
         default=None
     )
     mangaid = models.CharField(
