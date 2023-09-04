@@ -11,6 +11,7 @@ import { isAuthenticated, url } from '../services/auth';
 import Header from '../components/Header';
 import HeaderHome from '../components/LandingPage/Header';
 import Footer from '../components/LandingPage/Footer';
+import Box from '@mui/material/Box';
 
 export default function RouteWrapper({
   component: Component,
@@ -71,7 +72,19 @@ export default function RouteWrapper({
         render={(props) => (
           <>
             <Header />
-            <Component {...props} />
+            <Box 
+              direction="row"
+              justifyContent="flex-start"
+              alignItems="stretch"
+              sx={{
+                backgroundColor: 'green',
+                height: 'calc(100vh - 64px)',
+                overflow: 'hidden',
+                minHeight: '400px'
+              }}
+              >
+              <Component {...props} />
+            </Box>
           </>
           )}
         />
