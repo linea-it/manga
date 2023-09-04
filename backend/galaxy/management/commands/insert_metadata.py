@@ -61,13 +61,15 @@ class Command(BaseCommand):
         # rows = list(df.to_dict("records"))
 
         # print(rows[0])
+        # print(len(rows))
 
         # raise Exception()
+    
         df = pd.read_csv(
             filename, 
             skiprows=1,
             names=[ 
-                'megacube', 'mangaid', 'plateifu', 'objra', 'objdec', 
+                'megacube', 'mangaid', 'plateifu', 'ned_name', 'objra', 'objdec', 
                 'fcfc1_50', 'xyy_light', 'xyo_light', 'xiy_light', 'xii_light', 
                 'xio_light', 'xo_light', 'xyy_mass', 'xyo_mass', 'xiy_mass', 
                 'xii_mass', 'xio_mass', 'xo_mass', 'sfr_1', 'sfr_5', 'sfr_10', 
@@ -85,10 +87,14 @@ class Command(BaseCommand):
             ])
         
         df = df.sort_values(by=['plateifu'], ascending=True)
-        # df = df.fillna(0)
+
+        df['had_bcomp'] = df['had_bcomp'].fillna(np.nan).replace([np.nan], [False])
         df = df.fillna(np.nan).replace([np.nan], [None])
 
         rows = list(df.to_dict("records"))
+        # print(rows[0])
+        # print(len(rows))
+        # raise Exception()
 
         parts_folder = get_megacube_parts_root_path()
 
@@ -96,7 +102,8 @@ class Command(BaseCommand):
         count_original_file_exists = 0
         count_bcomp_exist = 0        
         count_parts_exist = 0
-        
+        count_created=0
+        count_updated=0      
 
         for galaxy in rows:
             original_filename = f"{galaxy['megacube']}.tar.bz2"
@@ -107,9 +114,14 @@ class Command(BaseCommand):
             megacube_parts = parts_folder.joinpath(folder_name)
 
             obj, created = Image.objects.update_or_create(
-                mangaid=galaxy['mangaid'],
+                megacube=galaxy['megacube'],
                 defaults=galaxy,
             )
+            if created:
+                count_created += 1
+            else:
+                count_updated += 1
+
             count_registered += 1
 
             if original_megacube_path.exists() and original_megacube_path.is_file():
@@ -146,10 +158,14 @@ class Command(BaseCommand):
                         raise Exception(f"{galaxy['plateifu']} object is marked with bcomp=True flag but bz2 file {bcomp_path} was not found.")
                 obj.save()
 
+
         self.stdout.write(f'{len(rows)} Objects in {filename}.')
+        self.stdout.write(f'Records Created: {count_created}')
+        self.stdout.write(f'Records Updated: {count_updated}')
         self.stdout.write(f'Original bz2 file Exists: {count_original_file_exists}')
         self.stdout.write(f'Megacubo Parts Exists: {count_parts_exist}')
         self.stdout.write(f'BComp bz2 file Exists: {count_bcomp_exist}')
+
 
     def update_metadata(self, filename):
         self.stdout.write(

@@ -27,7 +27,7 @@ from django.core.cache import cache
 class ImageViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Image.objects.filter(had_parts_extracted=True)
     serializer_class = ImageSerializer
-    filter_fields = ('id', 'mangaid', 'plateifu', 'objra', 'objdec',
+    filter_fields = ('id', 'mangaid', 'plateifu', 'ned_name', 'objra', 'objdec',
                      'fcfc1_50', 'xyy_light', 'xyo_light', 'xiy_light', 'xii_light', 'xio_light',
                      'xo_light', 'xyy_mass', 'xyo_mass', 'xiy_mass', 'xii_mass', 'xio_mass',
                      'xo_mass', 'sfr_1', 'sfr_5', 'sfr_10', 'sfr_14', 'sfr_20', 'sfr_30', 'sfr_56',
@@ -41,8 +41,8 @@ class ImageViewSet(viewsets.ReadOnlyModelViewSet):
                      'sigma_o1_6300', 'sigma_n2_6548', 'sigma_ha', 'sigma_n2_6583', 'sigma_s2_6716',
                      'sigma_s2_6731', 'had_bcomp')
 
-    search_fields = ('megacube',)
-    ordering_fields = ('id', 'mangaid', 'plateifu', 'objra', 'objdec',
+    search_fields = ('megacube', 'ned_name')
+    ordering_fields = ('id', 'mangaid', 'plateifu', 'ned_name', 'objra', 'objdec',
         'fcfc1_50', 'xyy_light', 'xyo_light', 'xiy_light', 'xii_light', 'xio_light',
         'xo_light', 'xyy_mass', 'xyo_mass', 'xiy_mass', 'xii_mass', 'xio_mass',
         'xo_mass', 'sfr_1', 'sfr_5', 'sfr_10', 'sfr_14', 'sfr_20', 'sfr_30', 'sfr_56',
