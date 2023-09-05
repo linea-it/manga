@@ -1,11 +1,11 @@
 import React from 'react';
 import { Router } from 'react-router-dom';
-import { ThemeProvider } from '@mui/material/styles';
+import { ThemeProvider } from '@mui/styles';
 import ReactGA from 'react-ga';
 import Routes from './routes';
 import history from './services/history';
-import light from './themes/light';
-
+// import light from './themes/light';
+import { createTheme } from '@mui/material';
 
 ReactGA.initialize(process.env.REACT_APP_GA_TRACKING_ID);
 
@@ -15,8 +15,10 @@ history.listen((location) => {
 });
 
 function App() {
+  const theme = createTheme({})
+
   return (
-    <ThemeProvider theme={light}>
+    <ThemeProvider theme={theme}>
       <Router history={history}>
         <Routes />
       </Router>

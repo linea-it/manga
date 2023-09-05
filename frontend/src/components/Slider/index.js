@@ -1,8 +1,7 @@
-import { withStyles } from '@mui/styles';
 import Slider from '@mui/material/Slider';
-import { styled } from '@mui/material/styles';
+import { styled } from '@mui/styles';
 
-export const BaseSlider = withStyles()(Slider);
+export const BaseSlider = styled(Slider)(({ }) => ({}))
 
 const iOSBoxShadow =
   '0 3px 1px rgba(0,0,0,0.1),0 4px 8px rgba(0,0,0,0.13),0 0 0 1px rgba(0,0,0,0.02)';
@@ -12,9 +11,9 @@ export const IOSSlider = styled(Slider)(({ theme }) => ({
   height: 2,
   padding: '15px 0',
   '& .MuiSlider-thumb': {
-    height: 16,
-    width: 16,
-    // backgroundColor: '#fff',
+    height: 28,
+    width: 28,
+    backgroundColor: '#fff',
     boxShadow: iOSBoxShadow,
     '&:focus, &:hover, &.Mui-active': {
       boxShadow:
@@ -54,5 +53,5 @@ export const IOSSlider = styled(Slider)(({ theme }) => ({
       opacity: 1,
       backgroundColor: 'currentColor',
     },
-  }
+  },
 }));

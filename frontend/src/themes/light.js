@@ -1,7 +1,7 @@
 import pink from '@mui/material/colors/pink';
 import blue from '@mui/material/colors/blue';
 
-import { createTheme } from '@mui/material/styles';
+import { createTheme } from '@mui/styles';
 
 const light = createTheme({
   palette: {

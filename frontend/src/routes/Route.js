@@ -72,7 +72,7 @@ export default function RouteWrapper({
         render={(props) => (
           <>
             <Header />
-            <Box 
+            {/* <Box 
               direction="row"
               justifyContent="flex-start"
               alignItems="stretch"
@@ -82,9 +82,9 @@ export default function RouteWrapper({
                 overflow: 'hidden',
                 minHeight: '400px'
               }}
-              >
+              > */}
               <Component {...props} />
-            </Box>
+            {/* </Box> */}
           </>
           )}
         />
