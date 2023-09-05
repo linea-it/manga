@@ -53,7 +53,7 @@ export const getAllHeatmaps = ({ queryKey }) => {
 }
 
 export const getImagesHeatmap = ({ id, pageParam }) => {
-  return axios.get(`/images/${id}/images_heatmap`, { params: { cursor:pageParam } }).then(res => res.data)
+  return axios.get(`/images/${id}/images_heatmap`, { params: { cursor: pageParam } }).then(res => res.data)
 }
 
 export const getFluxByPosition = ({ id, x, y }) => {
@@ -62,7 +62,7 @@ export const getFluxByPosition = ({ id, x, y }) => {
     return
   }
   return axios
-    .get(`/images/${id}/flux_by_position`, { params }, {timeout: 300000})
+    .get(`/images/${id}/flux_by_position`, { params }, { timeout: 300000 })
     .then((res) => res.data);
 };
 
@@ -102,17 +102,29 @@ export const getAllImagesHeatmap = (id) => {
 
 // export const getHudList = (id) =>
 //   axios.get(`/images/${id}/list_hud/`).then((res) => res.data);
-export const listAllGalaxies = ({ queryKey}) => {
+export const listAllGalaxies = ({ queryKey }) => {
   const [_, params] = queryKey
   console.log("Params: ", params)
+  const { pageSize, sortModel } = params
 
+  // Fix Current page
   let page = params.page + 1
-  const { pageSize } = params
 
+  // Parse Sort options
+  let sortFields = []
+  if (sortModel !== undefined && sortModel.length > 0) {
+    sortModel.forEach((e) => {
+      if (e.sort === 'asc') {
+        sortFields.push(e.field);
+      } else {
+        sortFields.push(`-${e.field}`);
+      }
+    });
+  }
+  let ordering = sortFields.length !== 0 ? sortFields.join(',') : null
 
-  
   return axios
-    .get(`/images/`, { params: {page, pageSize} })
+    .get(`/images/`, { params: { page, pageSize, ordering } })
     .then((res) => res.data);
 };
 

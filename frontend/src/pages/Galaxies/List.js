@@ -14,16 +14,25 @@ export default function GalaxyList() {
     page: 0,
     pageSize: 2,
   });
+  const [queryOptions, setQueryOptions] = React.useState({
+    sortModel: [{ field: 'id', sort: 'asc' }],
+  });
+
+  const handleSortModelChange = React.useCallback((sortModel) => {
+    // Here you save the data you need from the sort model
+    setQueryOptions({ sortModel: [...sortModel] });
+  }, []);
 
   const { data, isLoading } = useQuery({
     queryKey: ['galaxies', { 
       page: paginationModel.page, 
-      pageSize:paginationModel.pageSize
+      pageSize:paginationModel.pageSize,
+      ...queryOptions
     }],
     queryFn: listAllGalaxies,
     keepPreviousData: true,
     refetchInterval: false,
-    refetchOnWindowFocus: true,
+    refetchOnWindowFocus: false,
     // refetchOnmount: false,
     // refetchOnReconnect: false,
     // retry: 1,
@@ -96,7 +105,7 @@ export default function GalaxyList() {
 
   return (
     <DataGrid
-        rows={data?.results}
+        rows={data?.results !== undefined ? data.results : []}
         columns={columns}
         rowCount={rowCountState}
         loading={isLoading}
@@ -104,6 +113,13 @@ export default function GalaxyList() {
         paginationModel={paginationModel}
         paginationMode="server"
         onPaginationModelChange={setPaginationModel}
+        sortingMode="server"
+        onSortModelChange={handleSortModelChange}
+        initialState={{
+          sorting: {
+            sortModel: queryOptions.sortModel,
+          },
+        }}        
         // onRowSelectionModelChange={(newRowSelectionModel) => {
         //   console.log(newRowSelectionModel)
         //   setGalaxyId(newRowSelectionModel);
