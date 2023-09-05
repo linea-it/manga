@@ -4,12 +4,10 @@ import { Card, CardHeader, CardMedia, CardContent, Grid, CircularProgress, Typog
 // import styles from './styles';
 import { useQuery } from 'react-query'
 import { logAgeByPosition } from '../../services/api';
-import styles from './styles';
 import PropTypes from 'prop-types';
 
 function StellarPopulationPlot(props) {
   const ref = useRef(null);
-  const classes = styles();
 
   const { id, x, y } = props
 
@@ -112,7 +110,6 @@ function StellarPopulationPlot(props) {
       minHeight={550}>
       <Plot
         data={data}
-        className={classes.plotWrapper}
         layout={{
           hovermode: 'closest',
           autosize: true,

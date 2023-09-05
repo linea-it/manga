@@ -4,7 +4,7 @@ const styles = makeStyles((theme) => ({
   root: {
     display: 'flex',
     flexDirection: 'column',
-    marginTop: theme.spacing(2),
+    // marginTop: theme.spacing(2),
     alignItems: 'center',
   },
   imgContainer: (props) => ({

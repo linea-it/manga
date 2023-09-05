@@ -6,6 +6,16 @@ import * as serviceWorker from './services/serviceWorker';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
 import { QueryClient, QueryClientProvider } from "react-query";
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { red } from "@mui/material/colors";
+const customTheme = createTheme({
+    palette: {
+      red: {
+        main: red[500],
+        dark: red[800]
+      }
+    }
+  });
 
 const queryClient = new QueryClient({
     keepPreviousData: true,
@@ -18,7 +28,9 @@ const queryClient = new QueryClient({
 });
 ReactDOM.render(
     <QueryClientProvider client={queryClient}>
-        <App />
+        <ThemeProvider theme={customTheme}>
+            <App />
+        </ThemeProvider>
     </QueryClientProvider>, 
     document.getElementById('root')
 );

@@ -6,7 +6,7 @@ const useStyles = makeStyles((theme) => ({
     cursor: 'col-resize',
   },
   imageSection: {
-    padding: theme.spacing(1),
+    // padding: theme.spacing(1),
     maxHeight: 'calc(100vh - 79.5px)',
     overflowY: 'auto !important',
   },

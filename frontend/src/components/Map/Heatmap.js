@@ -10,7 +10,6 @@ import GenericError from '../Alerts/GenericError';
 import { getAllHeatmaps } from '../../services/api';
 
 const useStyles = makeStyles((theme) => ({
-  margin: theme.spacing(1),
   plotWrapper: {
     width: '100%',
     height: '100%',

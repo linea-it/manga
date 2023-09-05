@@ -47,7 +47,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   filterButton: {
-    margin: `0 ${theme.spacing(1)}px`,
+    // margin: `0 ${theme.spacing(1)}px`,
   },
   addFilter: {
     padding: 0,

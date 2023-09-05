@@ -10,7 +10,7 @@ const useStyles = makeStyles((theme) => ({
     position: 'absolute',
 
     right: -35,
-    top: theme.spacing(2),
+    // top: theme.spacing(2),
     maxHeight: height - 18,
   }),
   vecWrapper: {
