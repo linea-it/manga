@@ -5,22 +5,12 @@ import LinearProgress from '@mui/material/LinearProgress';
 import Grid from '@mui/material/Unstable_Grid2';
 import GalaxyList from './List';
 import { Card, CardContent } from '@mui/material';
+import GalaxyPreview from './Preview';
+
 
 function Galaxies() {
   const history = useHistory();
-  const [isLoading, setisLoading] = React.useState(true)
-//   const { data: galaxy, isLoading } = useQuery({
-//     queryKey: ['galaxyById', { id }],
-//     queryFn: getGalaxyById,
-//     keepPreviousData: true,
-//     refetchInterval: false,
-//     // refetchOnWindowFocus: false,
-//     // refetchOnmount: false,
-//     // refetchOnReconnect: false,
-//     retry: 1,
-//     staleTime: 1 * 60 * 60 * 1000,
-//     onError: () => { setErrorIsOpen(true) }
-//   })
+  const [isLoading, setisLoading] = React.useState(false)
 
   return (
     <Box 
@@ -69,6 +59,11 @@ function Galaxies() {
           display={"flex"} 
           flexDirection={"column"} 
           sx={{minWidth: '400px'}}>
+            <Card sx={{height: '100%'}}>
+              <CardContent>
+                <GalaxyPreview></GalaxyPreview>
+              </CardContent>
+            </Card>            
          </Grid>
       </Grid>
     </Box>

@@ -102,6 +102,19 @@ export const getAllImagesHeatmap = (id) => {
 
 // export const getHudList = (id) =>
 //   axios.get(`/images/${id}/list_hud/`).then((res) => res.data);
+export const listAllGalaxies = ({ queryKey}) => {
+  const [_, params] = queryKey
+  console.log("Params: ", params)
+
+  let page = params.page + 1
+  const { pageSize } = params
+
+
+  
+  return axios
+    .get(`/images/`, { params: {page, pageSize} })
+    .then((res) => res.data);
+};
 
 export const getMegacubesList = ({
   ordering,

@@ -1,8 +1,9 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { Router } from 'react-router-dom';
 import ReactGA from 'react-ga';
 import Routes from './routes';
 import history from './services/history';
+import { GalaxyContext } from './contexts/GalaxyContext';
 // import light from './themes/light';
 
 
@@ -15,12 +16,15 @@ import history from './services/history';
 
 
 function App() {
-  return (
 
+  const [galaxyId, setGalaxyId ] = useState([])
+
+  return (
+    <GalaxyContext.Provider value={{galaxyId, setGalaxyId}}>
       <Router history={history}>
         <Routes />
       </Router>
-    
+    </GalaxyContext.Provider>   
   );
 }
 

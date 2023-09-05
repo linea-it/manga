@@ -1,13 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import './assets/css/index.css';
-import App from './App';
 import * as serviceWorker from './services/serviceWorker';
+import App from './App';
 import '@fortawesome/fontawesome-free/css/all.min.css';
-
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { red } from "@mui/material/colors";
+
 const customTheme = createTheme({
     palette: {
       red: {
@@ -26,9 +26,11 @@ const queryClient = new QueryClient({
     retry: 1,
     staleTime: 1 * 60 * 60 * 1000,
 });
+
+
 ReactDOM.render(
     <QueryClientProvider client={queryClient}>
-        <ThemeProvider theme={customTheme}>
+        <ThemeProvider theme={customTheme}>         
             <App />
         </ThemeProvider>
     </QueryClientProvider>, 

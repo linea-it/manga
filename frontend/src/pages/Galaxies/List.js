@@ -1,70 +1,119 @@
-import React from 'react';
-// import { DataGrid } from '@mui/x-data-grid';
+import React, { useContext } from 'react';
+import { DataGrid } from '@mui/x-data-grid';
+import { GalaxyContext } from '../../contexts/GalaxyContext';
+import { useQuery } from 'react-query';
+import { listAllGalaxies } from '../../services/api';
 
 
 export default function GalaxyList() {
 
-  // const columns = [
-  //   { field: 'id', headerName: 'ID', width: 90 },
-  //   {
-  //     field: 'firstName',
-  //     headerName: 'First name',
-  //     width: 150,
-  //     editable: true,
-  //   },
-  //   {
-  //     field: 'lastName',
-  //     headerName: 'Last name',
-  //     width: 150,
-  //     editable: true,
-  //   },
-  //   {
-  //     field: 'age',
-  //     headerName: 'Age',
-  //     type: 'number',
-  //     width: 110,
-  //     editable: true,
-  //   },
-  //   {
-  //     field: 'fullName',
-  //     headerName: 'Full name',
-  //     description: 'This column has a value getter and is not sortable.',
-  //     sortable: false,
-  //     width: 160,
-  //     valueGetter: (params) =>
-  //       `${params.row.firstName || ''} ${params.row.lastName || ''}`,
-  //   },
-  // ];
+  // galaxyId represent Current Selected Galaxy, used in list, preview and explorer.
+  const {galaxyId, setGalaxyId} = useContext(GalaxyContext)
 
-  // const rows = [
-  //   { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35 },
-  //   { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 42 },
-  //   { id: 3, lastName: 'Lannister', firstName: 'Jaime', age: 45 },
-  //   { id: 4, lastName: 'Stark', firstName: 'Arya', age: 16 },
-  //   { id: 5, lastName: 'Targaryen', firstName: 'Daenerys', age: null },
-  //   { id: 6, lastName: 'Melisandre', firstName: null, age: 150 },
-  //   { id: 7, lastName: 'Clifford', firstName: 'Ferrara', age: 44 },
-  //   { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36 },
-  //   { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
-  // ];
+  const [paginationModel, setPaginationModel] = React.useState({
+    page: 0,
+    pageSize: 2,
+  });
 
-  // return (
-  //   <DataGrid
-  //       rows={rows}
-  //       columns={columns}
-  //       initialState={{
-  //         pagination: {
-  //           paginationModel: {
-  //             pageSize: 5,
-  //           },
-  //         },
-  //       }}
-  //       pageSizeOptions={[5]}
-  //       checkboxSelection
-  //       disableRowSelectionOnClick
-  //     />
-  // );
-  return (<>Test</>)
+  const { data, isLoading } = useQuery({
+    queryKey: ['galaxies', { 
+      page: paginationModel.page, 
+      pageSize:paginationModel.pageSize
+    }],
+    queryFn: listAllGalaxies,
+    keepPreviousData: true,
+    refetchInterval: false,
+    refetchOnWindowFocus: true,
+    // refetchOnmount: false,
+    // refetchOnReconnect: false,
+    // retry: 1,
+    // staleTime: 1 * 60 * 60 * 1000,
+  })
+
+
+  // Some API clients return undefined while loading
+  // Following lines are here to prevent `rowCountState` from being undefined during the loading
+  const [rowCountState, setRowCountState] = React.useState(
+    data?.count || 0,
+  );
+
+  React.useEffect(() => {
+    setRowCountState((prevRowCountState) =>
+      data?.count !== undefined
+        ? data?.count
+        : prevRowCountState,
+    );
+  }, [data?.count, setRowCountState]);
+
+  // const [queryOptions, setQueryOptions] = React.useState({});
+
+  // const onFilterChange = React.useCallback((filterModel) => {
+  //   // Here you save the data you need from the filter model
+  //   setQueryOptions({ filterModel: { ...filterModel } });
+  // }, []);
+
+
+  const columns = [
+    { 
+      field: 'id', 
+      headerName: 'ID', 
+      description: 'Internal ID for this object',
+      width: 100 
+    },
+    {
+      field: 'ned_name',
+      headerName: 'Common Name',
+      width: 200,
+    },
+    {
+      field: 'objra',
+      headerName: 'RA',
+      description: 'Right ascension of the science object in J2000 (degrees)',
+      type: 'number',
+      width: 110,
+    },
+    {
+      field: 'objdec',
+      headerName: 'Dec',
+      description: 'Declination of the science object in J2000 (degrees)',
+      type: 'number',
+      width: 110,
+    },    
+    {
+      field: 'plateifu',
+      headerName: 'PlateIFU',
+      description: 'Plate+ifudesign name for this object',
+    },
+    {
+      field: 'mangaid',
+      headerName: 'MaNGA-ID',
+      // sortable: false,
+      // width: 160,
+      // valueGetter: (params) =>
+      //   `${params.row.firstName || ''} ${params.row.lastName || ''}`,
+    },
+  ];
+
+  return (
+    <DataGrid
+        rows={data?.results}
+        columns={columns}
+        rowCount={rowCountState}
+        loading={isLoading}
+        pageSizeOptions={[5, 20, 50, 100]}
+        paginationModel={paginationModel}
+        paginationMode="server"
+        onPaginationModelChange={setPaginationModel}
+        // onRowSelectionModelChange={(newRowSelectionModel) => {
+        //   console.log(newRowSelectionModel)
+        //   setGalaxyId(newRowSelectionModel);
+        // }}
+        // rowSelectionModel={galaxyId}
+        // filterMode="server"
+        // onFilterModelChange={onFilterChange} 
+      />
+  );
+
 }
 GalaxyList.defaultProps = {
 }
