@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { DataGrid } from '@mui/x-data-grid';
+import { DataGrid, GridToolbar  } from '@mui/x-data-grid';
 import { GalaxyContext } from '../../contexts/GalaxyContext';
 import { useQuery } from 'react-query';
 import { listAllGalaxies } from '../../services/api';
@@ -19,8 +19,11 @@ export default function GalaxyList() {
   });
 
   const handleSortModelChange = React.useCallback((sortModel) => {
-    // Here you save the data you need from the sort model
     setQueryOptions({ sortModel: [...sortModel] });
+  }, []);
+
+  const onFilterChange = React.useCallback((filterModel) => {
+    setQueryOptions({ filterModel: { ...filterModel } });
   }, []);
 
   const { data, isLoading } = useQuery({
@@ -67,6 +70,7 @@ export default function GalaxyList() {
       field: 'id', 
       headerName: 'ID', 
       description: 'Internal ID for this object',
+      type: 'number',
       width: 100 
     },
     {
@@ -96,11 +100,15 @@ export default function GalaxyList() {
     {
       field: 'mangaid',
       headerName: 'MaNGA-ID',
-      // sortable: false,
-      // width: 160,
-      // valueGetter: (params) =>
-      //   `${params.row.firstName || ''} ${params.row.lastName || ''}`,
+      description: 'MaNGA ID for this object (e.g. 1-114145)'
     },
+    
+    {
+      field: 'had_bcomp',
+      headerName: 'B. Comp',
+      description: 'Indicates whether the object has Broad component attribute.',
+      type: 'boolean',
+    },    
   ];
 
   return (
@@ -113,20 +121,23 @@ export default function GalaxyList() {
         paginationModel={paginationModel}
         paginationMode="server"
         onPaginationModelChange={setPaginationModel}
+        filterMode="server"
+        onFilterModelChange={onFilterChange}        
         sortingMode="server"
         onSortModelChange={handleSortModelChange}
         initialState={{
           sorting: {
             sortModel: queryOptions.sortModel,
           },
-        }}        
+        }}  
+        slots={{
+          toolbar: GridToolbar,
+        }}
         // onRowSelectionModelChange={(newRowSelectionModel) => {
         //   console.log(newRowSelectionModel)
         //   setGalaxyId(newRowSelectionModel);
         // }}
         // rowSelectionModel={galaxyId}
-        // filterMode="server"
-        // onFilterModelChange={onFilterChange} 
       />
   );
 

@@ -100,12 +100,77 @@ export const getAllImagesHeatmap = (id) => {
   return axios.get(`/images/${id}/all_images_heatmap/`).then((res) => res.data);
 };
 
+const parseFilters = (filterModel) => {
+  console.log("parseFilter")
+  const params = {}
+  if (filterModel !== undefined && filterModel.items.length > 0){
+    filterModel.items.forEach((filter) => {
+      const {field, operator, value} = filter
+      console.log("Operator: ", operator)
+      console.log("Value: ", value)
+      // if (!filterItem.field || !filterItem.value || !filterItem.operator) {
+      //   return null;
+      // }      
+      if (value !== undefined) {
+        if (["=", "equals"].indexOf(operator) > -1){
+          params[field]=value
+        }
+        if (operator === '!='){
+          params[`${field}!`]=value
+        }
+        if (operator === '>'){
+          params[`${field}__gt`]=value
+        }
+        if (operator === '>='){
+          params[`${field}__gte`]=value
+        }
+        if (operator === '<'){
+          params[`${field}__lt`]=value
+        }
+        if (operator === '<='){
+          params[`${field}__lte`]=value
+        } 
+        if (operator === 'contains'){
+          params[`${field}__icontains`]=value
+        }
+        if (operator === 'startsWith'){
+          params[`${field}__istartswith`]=value
+        }
+        if (operator === 'endsWith'){
+          params[`${field}__iendswith`]=value
+        }        
+        if (operator === 'isAnyOf'){
+          params[`${field}__in`]=value.join(',')
+        }
+        if (operator === 'is'){
+          if (value.toLowerCase() === "true") {
+            params[`${field}`]=true
+          } 
+          else if (value.toLowerCase() === "false") {
+            params[`${field}`]=false
+          }
+        }        
+      } else {
+        if (operator === 'isEmpty'){
+          params[`${field}__isnull`]=true
+        }
+        if (operator === 'isNotEmpty'){
+          params[`${field}__isnull`]=false
+        }
+      }
+    })
+  }
+
+  console.log("Filter Params: ", params)
+  return params
+}
+
 // export const getHudList = (id) =>
 //   axios.get(`/images/${id}/list_hud/`).then((res) => res.data);
 export const listAllGalaxies = ({ queryKey }) => {
   const [_, params] = queryKey
-  console.log("Params: ", params)
-  const { pageSize, sortModel } = params
+  // console.log("Params: ", params)
+  const { pageSize, filterModel, sortModel } = params
 
   // Fix Current page
   let page = params.page + 1
@@ -123,8 +188,10 @@ export const listAllGalaxies = ({ queryKey }) => {
   }
   let ordering = sortFields.length !== 0 ? sortFields.join(',') : null
 
+  let filters = parseFilters(filterModel)
+
   return axios
-    .get(`/images/`, { params: { page, pageSize, ordering } })
+    .get(`/images/`, { params: { page, pageSize, ordering, ...filters } })
     .then((res) => res.data);
 };
 
