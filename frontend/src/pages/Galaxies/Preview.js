@@ -30,11 +30,14 @@ export default function GalaxyPreview() {
           ></CardHeader>
           <CardContent>
             <Box height={200}>
-            <Heatmap 
+              { galaxy.id !== undefined && 
+              (
+                <Heatmap 
                 galaxyId={galaxy?.id}
-                mapHdu={{DEFAULT_HDU}}
+                mapHdu={DEFAULT_HDU}
 
               />
+              )}
             </Box>
           </CardContent>
           {/* <CardMedia
