@@ -1,5 +1,4 @@
 import React from 'react';
-import { useHistory } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import LinearProgress from '@mui/material/LinearProgress';
 import Grid from '@mui/material/Unstable_Grid2';
@@ -9,7 +8,6 @@ import GalaxyPreview from './Preview';
 
 
 function Galaxies() {
-  const history = useHistory();
   const [isLoading, setisLoading] = React.useState(false)
 
   return (

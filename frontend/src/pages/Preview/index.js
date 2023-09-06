@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Container, Section, Bar } from 'react-simple-resizer';
 import { Grid, Button } from '@mui/material';
 import Table from '../../components/Table';
@@ -9,7 +9,7 @@ import useWindowSize from '../../hooks/useWindowSize';
 import useStyles from './styles';
 
 function Preview() {
-  const history = useHistory();
+  const navigate = useNavigate();
   const classes = useStyles();
   const windowSize = useWindowSize();
   const [megacubes, setMegacubes] = useState({
@@ -502,7 +502,7 @@ function Preview() {
   const handleSectionWidthChange = (size) => setSectionWidth(size);
 
   const handleExplorerClick = () => {
-    history.push(`/explorer/${selectedMegacube}`);
+    navigate(`/explorer/${selectedMegacube}`);
   };
 
   const onChangeSelectedRow = (selected) => {

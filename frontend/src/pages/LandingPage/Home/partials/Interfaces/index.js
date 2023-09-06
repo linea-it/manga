@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate  } from 'react-router-dom';
 import Grid from '@mui/material/Grid';
 import Card from '@mui/material/Card';
 import Container from '@mui/material/Container';
@@ -11,7 +11,7 @@ import CardContent from '@mui/material/CardContent';
 
 function Interfaces() {
   const classes = styles();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const [interfaces] = useState([
     {
@@ -21,7 +21,7 @@ function Interfaces() {
     },
   ]);
 
-  const handleCardClick = (pathname) => history.push(pathname);
+  const handleCardClick = (pathname) => navigate(pathname);
 
   return (
     <Container className={classes.minHeight}>

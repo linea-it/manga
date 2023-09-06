@@ -1,5 +1,5 @@
 import React from 'react';
-import { Switch } from 'react-router-dom';
+import { Routes } from 'react-router-dom';
 import Route from './Route';
 import Preview from '../pages/Preview';
 import Explorer from '../pages/Explorer';
@@ -11,9 +11,9 @@ import Tutorials from '../pages/LandingPage/Tutorials';
 import Contact from '../pages/LandingPage/Contact';
 // import Notfound from '../pages/LandingPage/NotFound';
 
-export default function Routes() {
+export default function AppRoutes() {
   return (
-    <Switch>
+    <Routes>
       <Route exact path="/preview" component={Preview} />
       <Route exact path="/explorer/:id/" component={Explorer} />     
       <Route exact path="/galaxies/" component={Galaxies} />     
@@ -23,6 +23,6 @@ export default function Routes() {
       <Route isHomePage exact path="/help" component={Help} />
       <Route isHomePage exact path="/tutorials" component={Tutorials} />
       <Route isHomePage exact path="/contact-us" component={Contact} />
-    </Switch>
+    </Routes>
   );
 }
