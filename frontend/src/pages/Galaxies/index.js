@@ -59,11 +59,7 @@ function Galaxies() {
           display={"flex"} 
           flexDirection={"column"} 
           sx={{minWidth: '400px'}}>
-            <Card sx={{height: '100%'}}>
-              <CardContent>
-                <GalaxyPreview></GalaxyPreview>
-              </CardContent>
-            </Card>            
+            <GalaxyPreview></GalaxyPreview>  
          </Grid>
       </Grid>
     </Box>

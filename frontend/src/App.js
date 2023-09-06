@@ -17,10 +17,21 @@ import { GalaxyContext } from './contexts/GalaxyContext';
 
 function App() {
 
-  const [galaxyId, setGalaxyId ] = useState([])
+  const [galaxy, setGalaxy] = useState({})
+  const [queryOptions, setQueryOptions ] = useState({
+    paginationModel: { page: 0, pageSize: 1 },
+    selectionModel: [],
+    sortModel: [{ field: 'id', sort: 'asc' }],
+    filterModel: {items: []}
+  })
 
   return (
-    <GalaxyContext.Provider value={{galaxyId, setGalaxyId}}>
+    <GalaxyContext.Provider value={{
+      galaxy, 
+      setGalaxy,
+      queryOptions, 
+      setQueryOptions
+      }}>
       <Router history={history}>
         <Routes />
       </Router>

@@ -76,7 +76,6 @@ export const spectrumLinesByPosition = ({ queryKey }) => {
   return axios.get(`/images/${id}/spectrum_lines_by_position`, { params: { x, y } }).then(res => res.data)
 }
 
-
 export const getSpaxelFitByPosition = ({ id, x, y }) => {
   const params = { x, y };
 
@@ -108,9 +107,6 @@ const parseFilters = (filterModel) => {
       const {field, operator, value} = filter
       console.log("Operator: ", operator)
       console.log("Value: ", value)
-      // if (!filterItem.field || !filterItem.value || !filterItem.operator) {
-      //   return null;
-      // }      
       if (value !== undefined) {
         if (["=", "equals"].indexOf(operator) > -1){
           params[field]=value
@@ -160,20 +156,16 @@ const parseFilters = (filterModel) => {
       }
     })
   }
-
-  console.log("Filter Params: ", params)
   return params
 }
 
-// export const getHudList = (id) =>
-//   axios.get(`/images/${id}/list_hud/`).then((res) => res.data);
 export const listAllGalaxies = ({ queryKey }) => {
   const [_, params] = queryKey
-  // console.log("Params: ", params)
-  const { pageSize, filterModel, sortModel } = params
-
+  console.log("Params: ", params)
+  const { paginationModel, filterModel, sortModel } = params
+  const {pageSize} = paginationModel
   // Fix Current page
-  let page = params.page + 1
+  let page = paginationModel.page + 1
 
   // Parse Sort options
   let sortFields = []
@@ -242,12 +234,6 @@ export const vecsByPosition = ({ queryKey }) => {
 
   return axios.get(`/images/${id}/vecs_by_position`, { params: { x, y } }).then(res => res.data)
 }
-
-// export const getHeader = (id) =>
-//   axios.get(`/images/${id}/megacube_header`).then((res) => res.data);
-
-// export const getDownloadInfo = (id) =>
-//   axios.get(`/images/${id}/download_info`).then((res) => res.data);
 
 export const sendEmail = (formData) =>
   axios
