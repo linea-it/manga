@@ -118,7 +118,7 @@ export default function GalaxyList() {
     link.download = `megacube_mean_properties_table_Riffel_2023.fits.tar.gz`;
     link.href = "/table/megacube_mean_properties_table_Riffel_2023.fits.tar.gz";
     link.click();
-  });
+  }, []);
 
   function CustomToolbar() {
     return (
