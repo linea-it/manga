@@ -1,10 +1,18 @@
 import React, { useContext } from 'react';
-import { DataGrid, GridToolbar } from '@mui/x-data-grid';
+import { 
+  DataGrid, 
+  GridToolbar,
+  GridToolbarContainer,
+  GridToolbarColumnsButton,
+  GridToolbarFilterButton,
+  GridToolbarExport,
+  GridToolbarDensitySelector
+} from '@mui/x-data-grid';
 import { GalaxyContext } from '../../contexts/GalaxyContext';
 import { useQuery } from 'react-query';
 import { listAllGalaxies } from '../../services/api';
-import { Box } from '@mui/material';
-
+import { Box, Button } from '@mui/material';
+import DownloadIcon from '@mui/icons-material/Download';
 
 export default function GalaxyList() {
 
@@ -105,6 +113,33 @@ export default function GalaxyList() {
     },
   ];
 
+  const handleDownload = React.useCallback(() => {
+    const link = document.createElement("a");
+    link.download = `megacube_mean_properties_table_Riffel_2023.fits.tar.gz`;
+    link.href = "/table/megacube_mean_properties_table_Riffel_2023.fits.tar.gz";
+    link.click();
+  });
+
+  function CustomToolbar() {
+    return (
+      <GridToolbarContainer>
+        <GridToolbarColumnsButton />
+        <GridToolbarFilterButton />
+        <GridToolbarDensitySelector />
+        <GridToolbarExport />
+        <Button 
+          onClick={handleDownload}
+          startIcon={<DownloadIcon />}>Download mean properties file</Button>
+      </GridToolbarContainer>
+    );
+  }
+
+
+
+  // <Button variant="contained" color="primary" onClick={onDownload} >
+  // Download mean properties file
+  // </Button> 
+
   return (
     <Box style={{ minHeight: 400, height:'100%', width: '100%' }}>
     <DataGrid
@@ -158,8 +193,11 @@ export default function GalaxyList() {
           sortModel: queryOptions.sortModel,
         },
       }}
+      // slots={{
+      //   toolbar: GridToolbar,
+      // }}
       slots={{
-        toolbar: GridToolbar,
+        toolbar: CustomToolbar,
       }}
     />
     </Box>    
