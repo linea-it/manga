@@ -122,9 +122,9 @@ export default function ExplorerGridLayout({
         spacing={2}
       >
         {data?.pages.map((page, idx) => (
-          <React.Fragment key={{idx}}>
+          <React.Fragment key={`${idx}-page`}>
             {page.data.map((hdu, idx) => (
-              <Grid key={{idx}} item
+              <Grid key={`${idx}-${hdu.internal_name}`} item
                 xs={12}
                 sm={6}
                 md={4}

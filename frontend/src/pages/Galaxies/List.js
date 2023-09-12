@@ -10,17 +10,17 @@ export default function GalaxyList() {
 
   // galaxy represent Current Selected Galaxy, used in list, preview and explorer.
   const { queryOptions, setQueryOptions, setGalaxy } = useContext(GalaxyContext)
-
+  const {paginationModel, sortModel, filterModel} = queryOptions
   const { data, isLoading } = useQuery({
-    queryKey: ['galaxies', queryOptions],    
+    queryKey: ['galaxies', {paginationModel, sortModel, filterModel } ],    
     queryFn: listAllGalaxies,
     keepPreviousData: true,
     refetchInterval: false,
     refetchOnWindowFocus: false,
-    // refetchOnmount: false,
-    // refetchOnReconnect: false,
+    refetchOnmount: false,
+    refetchOnReconnect: false,
     // retry: 1,
-    // staleTime: 1 * 60 * 60 * 1000,
+    staleTime: 1 * 60 * 60 * 1000,
   })
 
 
@@ -37,6 +37,27 @@ export default function GalaxyList() {
         : prevRowCountState,
     );
   }, [data?.count, setRowCountState]);
+
+  const selectRow = React.useCallback((row) => {
+    // Only one galaxy can be consider as active/select object.
+    // But datagrid still can  handle multiple selections. 
+
+    setQueryOptions(prev => {
+      return {
+        ...prev, 
+        selectionModel: [row.id]  
+      }
+    })
+    setGalaxy(row)
+  }, [setGalaxy, setQueryOptions])
+
+  React.useEffect(() => {
+    if (queryOptions.selectionModel.length === 0) {
+      if (data?.results !== undefined && data.results.length > 0) {
+        selectRow(data.results[0])
+      }
+    }
+  }, [data, queryOptions, selectRow]);
 
   const columns = [
     {
@@ -85,13 +106,14 @@ export default function GalaxyList() {
   ];
 
   return (
-    <Box style={{ height: 400, width: '100%' }}>
+    <Box style={{ minHeight: 400, height:'100%', width: '100%' }}>
     <DataGrid
       rows={data?.results !== undefined ? data.results : []}
       columns={columns}
       rowCount={rowCountState}
       loading={isLoading}
-      pageSizeOptions={[5, 20, 50, 100]}
+      pageSizeOptions={[20, 50, 100]}
+      autoHeight
       paginationModel={queryOptions.paginationModel}
       paginationMode="server"
       onPaginationModelChange={(paginationModel) => {
@@ -125,17 +147,9 @@ export default function GalaxyList() {
         })
       }}
       onRowSelectionModelChange={(selectionModel) => {
-        setQueryOptions(prev => {
-          return {
-            ...prev,
-            selectionModel: [...selectionModel]
-          }
-        })
         // Get Selected Row:
         const selectedRowsData = selectionModel.map((id) => data.results.find((row) => row.id === id));
-        // Only one galaxy can be consider as active/select object.
-        // But datagrid still can  handle multiple selections. 
-        setGalaxy(selectedRowsData[0])
+        selectRow(selectedRowsData[0])
       }}
       rowSelectionModel={queryOptions.selectionModel}
       keepNonExistentRowsSelected

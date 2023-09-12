@@ -1,8 +1,7 @@
-import React, {useState} from 'react';
-import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom';
-import { GalaxyContext } from '../contexts/GalaxyContext';
+import React from 'react';
+import { createBrowserRouter, Outlet } from 'react-router-dom';
 import Galaxies from '../pages/Galaxies';
-import Preview from '../pages/Preview';
+// import Preview from '../pages/Preview';
 import Explorer from '../pages/Explorer';
 import Header from '../components/Header';
 import HeaderHome from '../components/LandingPage/Header';
@@ -67,16 +66,16 @@ const routesConfig = [
   {
     element: <AppLayout />,
     children: [
-      {
-        path: "/preview",
-        element: <Preview />,
-      },
+      // {
+      //   path: "/preview",
+      //   element: <Preview />,
+      // },
       {
         path: "/explorer/:id/",
         element: <Explorer />,
       },            
       {
-        path: "/galaxies",
+        path: "/preview",
         element: <Galaxies />,
       },
     ],

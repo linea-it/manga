@@ -236,6 +236,10 @@ function Heatmap(props) {
         display="block"
         flexGrow={1}
         position="relative"
+        sx={{
+          minWidth: 250,
+          minHeight: 250
+        }}
       >
         {isLoading && (
         <div className={classes.plotWrapper}><CircularProgress color="secondary" /></div>)}

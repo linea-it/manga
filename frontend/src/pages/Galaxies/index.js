@@ -5,6 +5,7 @@ import Grid from '@mui/material/Unstable_Grid2';
 import GalaxyList from './List';
 import { Card, CardContent } from '@mui/material';
 import GalaxyPreview from './Preview';
+import SingleHeatmap from '../../components/Map/SingleHeatmap';
 
 
 function Galaxies() {
@@ -16,10 +17,11 @@ function Galaxies() {
       justifyContent="flex-start"
       alignItems="stretch"
       sx={{
-        backgroundColor: 'green',
+        // backgroundColor: 'green',
         height: 'calc(100vh - 64px)',
         overflow: 'hidden',
-        minHeight: '400px'
+        minHeight: '400px',
+        flexWrap: "nowrap"
       }}
       >
       <Box>
@@ -34,10 +36,7 @@ function Galaxies() {
         justifyContent="flex-start"
         alignItems="stretch"
         wrap="nowrap" 
-        // ml={2}
-        // mr={2}
         sx={{
-          // overflow: "auto", 
           overflow:"auto",          
           height: '100%',
         }}>
@@ -45,8 +44,12 @@ function Galaxies() {
           xs={8} 
           display={"flex"} 
           flexDirection={"column"} 
-          sx={{minWidth: '560px'}}>
-            <Card sx={{height: '100%'}}>
+          sx={{
+            minWidth: '560px',
+            flex: 1
+          }}
+            >
+            <Card  sx={{height: '100%'}}>
               <CardContent>
                 <GalaxyList></GalaxyList>
               </CardContent>
@@ -56,8 +59,9 @@ function Galaxies() {
           xs={4} 
           display={"flex"} 
           flexDirection={"column"} 
-          sx={{minWidth: '400px'}}>
-            <GalaxyPreview></GalaxyPreview>  
+          sx={{minWidth: '400px'}}
+          >
+            <GalaxyPreview />
          </Grid>
       </Grid>
     </Box>

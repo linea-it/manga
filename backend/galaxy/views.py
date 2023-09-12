@@ -155,7 +155,6 @@ class ImageViewSet(viewsets.ReadOnlyModelViewSet):
 
         data = cache.get(cache_key)
         if data:
-            print("Retornou do CACHE")
             return data
 
         list_hdu_filepath = self.get_image_part_path(
@@ -188,8 +187,6 @@ class ImageViewSet(viewsets.ReadOnlyModelViewSet):
                 data['gas_maps'].append(hdu)
 
         cache.set(cache_key, data)
-        print("Criou o  CACHE")
-
         return data
 
     @action(detail=True, methods=['get'])
@@ -238,8 +235,38 @@ class ImageViewSet(viewsets.ReadOnlyModelViewSet):
 
         return Response(result)
 
+    def hdu_by_internal_name(self, galaxy, internal_name):
+        hdus = self.get_huds(galaxy)
+        all_hdus = hdus['stellar_maps'] + hdus['gas_maps']
+        lhdu = list(filter(lambda d: d['internal_name'] == internal_name, all_hdus))
+        if len(lhdu) == 0:
+            raise Exception(f"Hdu {internal_name} Not Found." ) 
+        return lhdu[0]
+
+
+    def read_heatmap_by_hdu(self, galaxy, hdu):
+        filename = 'image_heatmap_%s.json' % hdu['name']
+
+        image_heatmap_filepath = self.get_image_part_path(
+                galaxy, filename)
+
+        with open(image_heatmap_filepath) as f:
+            map = json.load(f)
+            z = np.array(map['z'], dtype=np.float64)
+            min = np.nanmin(z)
+            max = np.nanmax(z)            
+            map.update({
+                'internal_name': hdu['internal_name'],                
+                'name': hdu['name'],
+                'comment': hdu['comment'],
+                'min': float(min),
+                'max': float(max)                
+            })
+
+        return map
+
     @action(detail=True, methods=['get'])
-    def image_heatmap(self, request, pk=None):
+    def heatmap_by_hdu(self, request, pk=None):
         """
         Returns the image data by HUD to create a heatmap.
 
@@ -259,18 +286,12 @@ class ImageViewSet(viewsets.ReadOnlyModelViewSet):
 
         params = request.query_params
 
-        if 'hud' not in params:
-            raise Exception("Parameter hud is required")
+        if 'hdu' not in params:
+            raise Exception("Parameter hdu is required")
 
         galaxy = self.get_object()
-
-        filename = 'image_heatmap_%s.json' % params['hud']
-
-        image_heatmap_filepath = self.get_image_part_path(
-            galaxy, filename)
-
-        with open(image_heatmap_filepath) as f:
-            data = json.load(f)
+        hdu = self.hdu_by_internal_name(galaxy, params['hdu'])
+        data = self.read_heatmap_by_hdu(galaxy, hdu)
 
         return Response(data)
 
@@ -304,26 +325,8 @@ class ImageViewSet(viewsets.ReadOnlyModelViewSet):
         data = dict()
 
         for idx, hdu in enumerate(all_hdus):
-            filename = 'image_heatmap_%s.json' % hdu['name']
-
-            image_heatmap_filepath = self.get_image_part_path(
-                galaxy, filename)
-
-            with open(image_heatmap_filepath) as f:
-                image = json.load(f)
-
-            z = np.array(image['z'], dtype=np.float64)
-            min = np.nanmin(z)
-            max = np.nanmax(z)
-
-            image.update({
-                'internal_name': hdu['internal_name'],                
-                'name': hdu['name'],
-                'comment': hdu['comment'],
-                'min': float(min),
-                'max': float(max)
-            })
-            data[hdu['internal_name']] = image
+            map = self.read_heatmap_by_hdu(galaxy, hdu)
+            data[hdu['internal_name']] = map
 
         cache.set(cache_key, data)
         return Response(data)

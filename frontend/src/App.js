@@ -8,7 +8,7 @@ function App() {
 
   const [galaxy, setGalaxy] = useState({})
   const [queryOptions, setQueryOptions ] = useState({
-    paginationModel: { page: 0, pageSize: 1 },
+    paginationModel: { page: 0, pageSize: 20 },
     selectionModel: [],
     sortModel: [{ field: 'id', sort: 'asc' }],
     filterModel: {items: []}

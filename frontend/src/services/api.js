@@ -52,6 +52,18 @@ export const getAllHeatmaps = ({ queryKey }) => {
   return axios.get(`/images/${id}/all_images_heatmap`).then(res => res.data)
 }
 
+export const getHeatmapByHdu = ({ queryKey }) => {
+  const [_, params] = queryKey
+  const { id, hdu } = params
+  if (!id || !hdu) {
+    return
+  }
+
+  return axios.get(`/images/${id}/heatmap_by_hdu`, {params:{hdu:hdu}}).then(res => res.data)
+}
+
+
+
 export const getImagesHeatmap = ({ id, pageParam }) => {
   return axios.get(`/images/${id}/images_heatmap`, { params: { cursor: pageParam } }).then(res => res.data)
 }
@@ -100,13 +112,11 @@ export const getAllImagesHeatmap = (id) => {
 };
 
 const parseFilters = (filterModel) => {
-  console.log("parseFilter")
+
   const params = {}
   if (filterModel !== undefined && filterModel.items.length > 0){
     filterModel.items.forEach((filter) => {
       const {field, operator, value} = filter
-      console.log("Operator: ", operator)
-      console.log("Value: ", value)
       if (value !== undefined) {
         if (["=", "equals"].indexOf(operator) > -1){
           params[field]=value
@@ -161,7 +171,7 @@ const parseFilters = (filterModel) => {
 
 export const listAllGalaxies = ({ queryKey }) => {
   const [_, params] = queryKey
-  console.log("Params: ", params)
+  
   const { paginationModel, filterModel, sortModel } = params
   const {pageSize} = paginationModel
   // Fix Current page
