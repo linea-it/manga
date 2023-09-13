@@ -114,7 +114,15 @@ export const getAllImagesHeatmap = (id) => {
 const parseFilters = (filterModel) => {
 
   const params = {}
-  if (filterModel !== undefined && filterModel.items.length > 0){
+
+  if (filterModel === undefined) {
+    return params
+  }
+  // Handle Search
+  if (filterModel.quickFilterValues !== undefined && filterModel.quickFilterValues?.length > 0){
+    params["search"] = filterModel.quickFilterValues.join(" ")
+  }
+  if (filterModel.items !== undefined && filterModel.items.length > 0){
     filterModel.items.forEach((filter) => {
       const {field, operator, value} = filter
       if (value !== undefined) {
@@ -174,6 +182,8 @@ export const listAllGalaxies = ({ queryKey }) => {
   
   const { paginationModel, filterModel, sortModel } = params
   const {pageSize} = paginationModel
+
+  console.log("FilterModel: ", filterModel)
   // Fix Current page
   let page = paginationModel.page + 1
 

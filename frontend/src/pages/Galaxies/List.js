@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import {
   DataGrid,
   GridToolbarContainer,
+  GridToolbarQuickFilter,
   GridToolbarColumnsButton,
   GridToolbarFilterButton,
   GridToolbarExport,
@@ -17,9 +18,9 @@ export default function GalaxyList() {
 
   // galaxy represent Current Selected Galaxy, used in list, preview and explorer.
   const { queryOptions, setQueryOptions, setGalaxy } = useContext(GalaxyContext)
-  const { paginationModel, sortModel, filterModel } = queryOptions
+  const { paginationModel, sortModel, filterModel} = queryOptions
   const { data, isLoading } = useQuery({
-    queryKey: ['galaxies', { paginationModel, sortModel, filterModel }],
+    queryKey: ['galaxies', { paginationModel, sortModel, filterModel}],
     queryFn: listAllGalaxies,
     keepPreviousData: true,
     refetchInterval: false,
@@ -75,9 +76,10 @@ export default function GalaxyList() {
   function CustomToolbar() {
     return (
       <GridToolbarContainer>
+        <GridToolbarQuickFilter debounceMs={600}/>
         <GridToolbarColumnsButton />
         <GridToolbarFilterButton />
-        <GridToolbarDensitySelector />
+        {/* <GridToolbarDensitySelector /> */}
         <GridToolbarExport />
         <Button
           onClick={handleDownload}
