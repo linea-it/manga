@@ -225,12 +225,13 @@ class ImageViewSet(viewsets.ReadOnlyModelViewSet):
         galaxy = self.get_object()
         result = ({
             'mangaid': galaxy.mangaid,
-            'name': galaxy.megacube,
+            'name': galaxy.ned_name,
             'bcomp_name': self.get_bcomp_filename(galaxy),
-            'megacube': galaxy.megacube,
+            'megacube': f"{galaxy.megacube}{galaxy.compression}",
             'link': self.get_original_megacube_url(galaxy),
             'link_bcomp': self.get_bcomp_megacube_url(galaxy),
-            'size': galaxy.compressed_size
+            'size': galaxy.size,
+            'compressed_size': galaxy.compressed_size
         })
 
         return Response(result)
