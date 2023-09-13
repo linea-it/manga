@@ -78,7 +78,7 @@ class Command(BaseCommand):
             df = self.tar_gz_to_pandas(obj_list_filepath)            
         else:
             self.stdout.write(
-                f'File format {obj_list_filepath.suffix} is not valid use .fits or .csv')
+                f'File format {obj_list_filepath.suffix} is not valid. Use .fits.tar.gz or .csv')
 
         if df.empty:
             return
