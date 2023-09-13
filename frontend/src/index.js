@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom';
 import './assets/css/index.css';
 import * as serviceWorker from './services/serviceWorker';
 import App from './App';
-import '@fortawesome/fontawesome-free/css/all.min.css';
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { red } from "@mui/material/colors";
