@@ -11,7 +11,10 @@ class ImageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Image
-        fields = "__all__"
+        # fields = "__all__"
+        exclude = (
+            "had_parts_extracted", 
+            "path", "bcomp_path", "folder_name")
 
     def get_sdss_image(self, obj):
         # Join and make the url for the sdss image:
