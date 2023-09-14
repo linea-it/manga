@@ -7,14 +7,14 @@ import InfoIcon from '@mui/icons-material/Info';
 import { getHdus } from '../../services/api';
 
 const useStyles = makeStyles((theme) => ({
-  formControl: {
-    margin: theme.spacing(1),
-    minWidth: 120,
-  },
-  infoIcon: {
-    marginLeft: theme.spacing(1),
-    color: 'rgba(0, 0, 0, .5)',
-  },
+  // formControl: {
+  //   // margin: theme.spacing(1),
+  //   minWidth: 120,
+  // },
+  // infoIcon: {
+  //   // marginLeft: theme.spacing(1),
+  //   color: 'rgba(0, 0, 0, .5)',
+  // },
   select: {
     '& svg': {
       display: 'none',
@@ -46,7 +46,10 @@ function HduSelect(props) {
         {hdu.display_name}
         <InfoIcon
           fontSize="small"
-          className={classes.infoIcon}
+          m={1}
+          sx={{
+            color: 'rgba(0, 0, 0, .5)'
+          }}
         />
       </MenuItem>
     )
@@ -60,9 +63,13 @@ function HduSelect(props) {
   return (
     <FormControl
       variant="outlined"
-      className={classes.formControl}
       fullWidth
-      size="small">
+      size="small"
+      m={1}
+      sx={{
+        minWidth: 120
+      }}
+      >
       <InputLabel htmlFor={`select-image-${inputLabel}`}>{inputLabel}</InputLabel>
       <Select
         value={selected}

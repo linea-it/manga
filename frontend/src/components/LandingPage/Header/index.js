@@ -8,7 +8,7 @@ import { useLocation } from 'react-router-dom';
 // import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 // import Avatar from '@mui/material/Avatar';
 // import { loggedUser, urlLogin, urlLogout } from '../../../services/auth';
-import styles from './styles';
+// import styles from './styles';
 
 
 function Header() {
@@ -17,10 +17,10 @@ function Header() {
     threshold: 10,
     disableHysteresis: true,
   });
-  const classes = styles({
-    scrollActive: trigger,
-    pathname: location.pathname,
-  });
+  // const classes = styles({
+  //   scrollActive: trigger,
+  //   pathname: location.pathname,
+  // });
 
   // const [user, setUser] = useState(undefined);
 
@@ -111,21 +111,22 @@ function Header() {
   ];
 
   return (
-    <AppBar position="static" className={classes.appbar}  sx={{ bgcolor: "#24292e" }}>
-      <Toolbar className={classes.toolbar}>
+    <AppBar position="static" sx={{ bgcolor: "#24292e" }}>
+      <Toolbar>
         <img
           src={`${process.env.PUBLIC_URL}/img/linea-dark-invert.png`}
           alt="LIneA"
-          className={classes.logoLIneA}
+          width={75}
         />
           {menus.map((menu) => (
             <Button 
+              key={`menu_item_${menu.description}`}
               color="inherit"
               href={menu.href}
               >{menu.description}
             </Button>
           ))}
-        <div className={classes.separator} />
+        {/* <div className={classes.separator} /> */}
         {/* {user && user.username ? <UserLogged /> : <UserUnLogged />} */}
       </Toolbar>
     </AppBar>

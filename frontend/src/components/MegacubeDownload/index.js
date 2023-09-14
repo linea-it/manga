@@ -51,10 +51,10 @@ function MegacubeDownload({galaxyId, open, onClose  }) {
         )}
         {data && (
           <>
+            <Typography><strong>Common Name:</strong>{' '} {data.name}</Typography>          
             <Typography><strong>MaNGA ID:</strong>{' '}{data.mangaid}</Typography>
-            <Typography><strong>Name:</strong>{' '} {data.name}</Typography>
             <Typography><strong>File:</strong>{' '}{data.megacube}</Typography>
-            <Typography><strong>Size:</strong>{' '}{filesize(data.size)}</Typography>
+            <Typography><strong>Download Size:</strong>{' '}{filesize(data.compressed_size)}</Typography>
             {data?.bcomp_name && (
                 <Typography><strong>Broad component:</strong>{' '}{data.bcomp_name}</Typography>
             )}

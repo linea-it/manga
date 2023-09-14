@@ -34,7 +34,11 @@ export default function GalaxyMapCard({
   return (
     <>
       <Card elevation={3}>
-        <CardHeader title={`Galaxy: ${galaxy.plateifu}`} />
+        <CardHeader 
+          title={galaxy.ned_name} 
+          subheader={`PlateIFU: ${galaxy.plateifu}`}
+          titleTypographyProps={{ variant: 'h6', fontSize: '1rem', }}
+          subheaderTypographyProps={{ variant: 'subtitle1', fontSize: '0.8rem', }}/>
         <CardContent style={{ minHeight: minHeight, display: "flex"}}>
           <Box
             display="flex"

@@ -12,21 +12,21 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
   },
   username: {
-    marginLeft: theme.spacing(2),
-    marginRight: theme.spacing(2),
+    // marginLeft: theme.spacing(2),
+    // marginRight: theme.spacing(2),
   },
   menuButton: {
-    marginRight: theme.spacing(1),
+    // marginRight: theme.spacing(1),
   },
   menuIcon: {
-    marginRight: theme.spacing(1),
+    // marginRight: theme.spacing(1),
   },
 
   closeButton: {
     position: 'absolute',
-    right: theme.spacing(1),
-    top: theme.spacing(1),
-    color: theme.palette.grey[500],
+    // right: theme.spacing(1),
+    // top: theme.spacing(1),
+    // color: theme.palette.grey[500],
   },
   closeIcon: {
     fontSize: '1rem',
@@ -35,10 +35,10 @@ const useStyles = makeStyles((theme) => ({
     position: 'relative',
   },
   blockWrapper: {
-    marginBottom: theme.spacing(4),
+    // marginBottom: theme.spacing(4),
   },
   contentWrapper: {
-    marginTop: theme.spacing(2),
+    // marginTop: theme.spacing(2),
   },
 }));
 

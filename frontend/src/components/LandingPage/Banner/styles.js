@@ -10,7 +10,7 @@ const styles = makeStyles((theme) => ({
     backgroundRepeat: 'no-repeat',
     backgroundSize: 'cover',
     height: 220,
-    marginBottom: theme.spacing(4),
+    // marginBottom: theme.spacing(4),
   },
   container: {
     background: 'transparent',
@@ -25,26 +25,26 @@ const styles = makeStyles((theme) => ({
     fontWeight: 100,
     fontSize: 50,
     margin: 0,
-    [theme.breakpoints.down('sm')]: {
-      fontSize: 48,
-      margin: `0 ${theme.spacing(2)}px`,
-    },
+    // [theme.breakpoints.down('sm')]: {
+    //   fontSize: 48,
+    //   margin: `0 ${theme.spacing(2)}px`,
+    // },
     textShadow: 'black 0.1em 0.1em 0.2em',
   },
   logo: {
     position: 'relative',
-    [theme.breakpoints.up('sm')]: {
-      maxWidth: 130,
-    },
+    // [theme.breakpoints.up('sm')]: {
+    //   maxWidth: 130,
+    // },
     maxWidth: 130,
     marginRight: 20,
   },
   titleWrapper: {
-    [theme.breakpoints.up('sm')]: {
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
+    // [theme.breakpoints.up('sm')]: {
+    //   display: 'flex',
+    //   justifyContent: 'center',
+    //   alignItems: 'center',
+    // },
   },
   socialWrapper: {
     color: '#fff',

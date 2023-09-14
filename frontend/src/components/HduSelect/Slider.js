@@ -10,14 +10,9 @@ import PauseIcon from '@mui/icons-material/Pause';
 import useInterval from '../../hooks/useInterval';
 import { IOSSlider } from '../Slider';
 
-const useStyles = makeStyles((theme) => ({
-  marginLeft: {
-    marginLeft: theme.spacing(1),
-  },
-}));
 
 function HduSlider(props) {
-  const classes = useStyles();
+
   const { galaxyId, selected, onChange } = props
   const [isPlaying, setIsPlaying] = React.useState(false);
 
@@ -79,9 +74,9 @@ function HduSlider(props) {
       />
       <IconButton
         aria-label="play/pause"
-        className={classes.marginLeft}
         onClick={handlePlayStop}
         disabled={isLoading}
+        ml={1}
       >
         {isPlaying ? <PauseIcon /> : <PlayArrowIcon />}
       </IconButton>

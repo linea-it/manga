@@ -3,6 +3,7 @@ import Grid from '@mui/material/Grid';
 import IconButton from '@mui/material/IconButton';
 import { YouTube, Twitter, GitHub } from '@mui/icons-material';
 import styles from './styles';
+import { Box } from '@mui/material';
 
 function Banner() {
   const classes = styles();
@@ -26,7 +27,7 @@ function Banner() {
   };
 
   return (
-    <div className={classes.root}>
+    <Box className={classes.root} mb={4}>
       <Grid
         container
         direction="row"
@@ -78,7 +79,7 @@ function Banner() {
           <GitHub />
         </IconButton>
       </div>
-    </div>
+    </Box>
   );
 }
 
