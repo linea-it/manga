@@ -3,7 +3,7 @@ import filesize from 'filesize';
 export const exponentialCol = {
     type: 'number',
     valueFormatter: (params) => {
-      if (params.value !== undefined) {
+      if (params.value !== undefined && params.value !== null) {
         return `${params.value.toExponential(2)}`;
       }
       return ''
@@ -14,8 +14,8 @@ export const coordinateCol = {
     type: 'number',
     width: 110,
     valueFormatter: (params) => {
-      if (params.value !== undefined) {
-      return `${params.value.toFixed(4)}`;
+      if (params.value !== undefined && params.value !== null) {
+        return `${params.value.toFixed(4)}`;
       }
       return ''
     },
@@ -69,14 +69,20 @@ export const galaxyListColumns = [
       field: 'size',
       headerName: 'Fits Size',
       valueFormatter: (params) => {
-        return `${filesize(params.value)}`;
+        if (params.value !== null) {
+          return `${filesize(params.value)}`;
+        }
+        return ''
       },
     },
     {
       field: 'compressed_size',
       headerName: 'Compressed Size',
       valueFormatter: (params) => {
-        return `${filesize(params.value)}`;
+        if (params.value !== null) {
+          return `${filesize(params.value)}`;
+        }
+        return ''
       },
     },
     {
