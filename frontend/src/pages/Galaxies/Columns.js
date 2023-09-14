@@ -3,7 +3,21 @@ import filesize from 'filesize';
 export const exponentialCol = {
     type: 'number',
     valueFormatter: (params) => {
-      return `${params.value.toExponential(2)}`;
+      if (params.value !== undefined) {
+        return `${params.value.toExponential(2)}`;
+      }
+      return ''
+    },
+  };
+
+export const coordinateCol = {
+    type: 'number',
+    width: 110,
+    valueFormatter: (params) => {
+      if (params.value !== undefined) {
+      return `${params.value.toFixed(4)}`;
+      }
+      return ''
     },
   };
 
@@ -26,20 +40,14 @@ export const galaxyListColumns = [
       headerName: 'RA',
       description: 'Right ascension of the science object in J2000 (degrees)',
       type: 'number',
-      width: 110,
-      valueFormatter: (params) => {
-        return `${params.value.toFixed(4)}`;
-      },
+      ...coordinateCol
     },
     {
       field: 'objdec',
       headerName: 'Dec',
       description: 'Declination of the science object in J2000 (degrees)',
       type: 'number',
-      width: 110,
-      valueFormatter: (params) => {
-        return `${params.value.toFixed(4)}`;
-      },
+      ...coordinateCol
     },
     {
       field: 'plateifu',
@@ -55,6 +63,7 @@ export const galaxyListColumns = [
       field: 'megacube',
       headerName: 'Megacube',
       description: 'Megacube File Name.',
+      minWidth: 200,
     },
     {
       field: 'size',
