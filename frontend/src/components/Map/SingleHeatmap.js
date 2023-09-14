@@ -91,8 +91,8 @@ function SingleHeatmap(props) {
       alignContent="stretch"
       sx={{ 
         height: '100%',
-        minHeight: 250,
-        minWidth: 250
+        minHeight: 200,
+        minWidth: 200
       }}
     >
       {/* Map Color Range */}
@@ -111,7 +111,7 @@ function SingleHeatmap(props) {
         position="relative"
       >
         {isLoading && (
-        <div className={classes.plotWrapper}><CircularProgress color="secondary" /></div>)}
+          <div className={classes.plotWrapper}><CircularProgress color="secondary" /></div>)}
         {!isLoading && (
           <Plot
             className={classes.plotWrapper}

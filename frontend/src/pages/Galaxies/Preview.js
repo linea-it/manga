@@ -15,10 +15,7 @@ export default function GalaxyPreview() {
   };
 
   return (
-    <Card sx={{
-      // height: '100%' 
-      // flex: 1
-      }}>
+    <Card sx={{height: "100%"}}>
       <CardHeader
         title={galaxy?.ned_name}
         // subheader={galaxy?.plateifu}
@@ -28,27 +25,26 @@ export default function GalaxyPreview() {
           <Button
             variant="contained"
             color="primary"
-            disabled={!galaxy?.had_parts_extracted}
+            disabled={!galaxy?.id}
             onClick={handleExplorerClick}
           >Explorer</Button>
         }
       >
       </CardHeader>
-      <CardContent sx={{height: '100%', overflowY: 'auto'}} >
+      <CardContent sx={{height: 'calc(100% - 95px)'}} >
         <Box
+          height={"100%"}
           display="flex"
           flexDirection="column"
           sx={{
             // backgroundColor: 'gray',
-            // height: '100%',
             justifyContent: "flex-start",
             alignItems: "stretch",
             flexWrap: "nowrap"
           }}
         >
           <Box
-            flex={1}         
-            minHeight={190}
+            height={220}
             mb={2}
             // sx={{ backgroundColor: "blue" }}
             >
@@ -62,9 +58,6 @@ export default function GalaxyPreview() {
               )}
           </Box>
           <Box 
-            flex={1} 
-            height={200}
-            mb={2}
             sx={{
             // backgroundColor: "cyan",
             position: "relative",

@@ -58,8 +58,8 @@ function Galaxies() {
          </Grid>
          <Grid 
           xs={4} 
-          display={"flex"} 
-          flexDirection={"column"} 
+          // display={"flex"} 
+          // flexDirection={"column"} 
           sx={{
             alignItems: 'stretch',
             minWidth: '400px',
