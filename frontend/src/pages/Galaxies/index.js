@@ -43,23 +43,31 @@ function Galaxies() {
         <Grid 
           xs={8} 
           display={"flex"} 
-          flexDirection={"column"} 
+          flexDirection={"column"}
           sx={{
+            alignItems: 'stretch',
             minWidth: '560px',
-            flex: 1
+            flex: 1,
+            mt: 2,
+            mr: 1,
+            mb: 1,
+            ml: 2
           }}
             >
-            <Card  sx={{height: '100%'}}>
-              <CardContent>
-                <GalaxyList></GalaxyList>
-              </CardContent>
-            </Card>
+          <GalaxyList />
          </Grid>
          <Grid 
           xs={4} 
           display={"flex"} 
           flexDirection={"column"} 
-          sx={{minWidth: '400px'}}
+          sx={{
+            alignItems: 'stretch',
+            minWidth: '400px',
+            mt: 2,
+            mr: 2,
+            mb: 1,
+            ml: 0
+          }}
           >
             <GalaxyPreview />
          </Grid>

@@ -6,12 +6,12 @@ import {
   GridToolbarColumnsButton,
   GridToolbarFilterButton,
   GridToolbarExport,
-  GridToolbarDensitySelector
+  // GridToolbarDensitySelector
 } from '@mui/x-data-grid';
 import { GalaxyContext } from '../../contexts/GalaxyContext';
 import { useQuery } from 'react-query';
 import { listAllGalaxies } from '../../services/api';
-import { Box, Button } from '@mui/material';
+import { Button } from '@mui/material';
 import DownloadIcon from '@mui/icons-material/Download';
 import { galaxyListColumns, columnVisibilityModel } from './Columns'
 export default function GalaxyList() {
@@ -89,14 +89,13 @@ export default function GalaxyList() {
   }
 
   return (
-    <Box style={{ minHeight: 400, height: '100%', width: '100%' }}>
       <DataGrid
+        // sx={{ m: 2 }}
         rows={data?.results !== undefined ? data.results : []}
         columns={galaxyListColumns}
         rowCount={rowCountState}
         loading={isLoading}
         pageSizeOptions={[20, 50, 100]}
-        autoHeight
         paginationModel={queryOptions.paginationModel}
         paginationMode="server"
         onPaginationModelChange={(paginationModel) => {
@@ -148,8 +147,7 @@ export default function GalaxyList() {
           toolbar: CustomToolbar,
         }}
       />
-    </Box>
-  );
+    );
 
 }
 GalaxyList.defaultProps = {

@@ -17,8 +17,11 @@ class ImageSerializer(serializers.ModelSerializer):
             "path", "bcomp_path", "folder_name")
 
     def get_sdss_image(self, obj):
-        # Join and make the url for the sdss image:
-        file_url = posixpath.join(
-            settings.MEGACUBE_PARTS_URL, obj.folder_name, "sdss_image.jpg")
+        try:
+            # Join and make the url for the sdss image:
+            file_url = posixpath.join(
+                settings.MEGACUBE_PARTS_URL, obj.folder_name, "sdss_image.jpg")
 
-        return file_url
+            return file_url
+        except:
+            return None
