@@ -32,7 +32,7 @@ function HduSlider(props) {
     if (data && data.length > 0) {
       return data.findIndex(o => o.internal_name === name)
     }
-    return    
+    return
   }
 
   const selectedIdx = getIdxByName(selected)

@@ -14,8 +14,8 @@ class ActivityReports:
         pass
 
     def unique_visits_by_date(self, year, month, day):
-        users = list()
-        uniqueVisits = list()
+        users = []
+        uniqueVisits = []
 
         activities = Activity.objects.filter(
             date__year=year,
@@ -64,8 +64,8 @@ class ActivityReports:
             Retorna todas uma lista com todos os usuarios e o total de suas visitas.
         :return:
         """
-        users = list()
-        result = list()
+        users = []
+        result = []
 
         # Recuperar os usuarios que visitaram neste dia + o total de visitas dele no mes
         all_visits = Visit.objects.filter().order_by('-date')
@@ -117,7 +117,7 @@ class ActivityReports:
         :return: [{'date': '2017-09', 'visits': 31}, {'date': '2017-10', 'visits': 14}]
         """
 
-        consolidates = list()
+        consolidates = []
 
         # All Distinct
         months = Visit.objects.filter().order_by('-date').datetimes('date', 'month')

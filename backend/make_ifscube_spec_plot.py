@@ -3,16 +3,16 @@ import matplotlib.pylab as plt
 from astropy.io import fits as pf
 from astropy.constants import c
 
-c = c.to('km/s').value  # Velocidade da Luz nas unidades adequadas. 
+c = c.to('km/s').value  # Velocidade da Luz nas unidades adequadas.
 
 def getrestwl(fitconfig):
     ''' To get the rest wavelengths from the configurarion file'''
     rest_wl =np.array([])
     for i in fitconfig:
-         if '.rest_wavelength' in i[0]: 
+         if '.rest_wavelength' in i[0]:
             rest_wl = np.append(rest_wl, float(i[1]))
     return rest_wl
-                 
+
 
 
 def gauss(x, rest_wl, p):
@@ -25,7 +25,7 @@ def gauss(x, rest_wl, p):
     s = p[2]
 
     w = (vel - v0) / s
-    
+
     y = a * np.exp(-w**2 / 2.0) / (1.0 + (vel / c))
 
     return y
@@ -34,8 +34,8 @@ def gauss(x, rest_wl, p):
 
 def plot_ifscube_fits(wavelength,obs_flux,pseudo_continuum,stellar_flux):
      ''' Plotting the continuum    '''
-     
-     
+
+
      plt.plot(wavelength, obs_flux, label='flux',color='black')
      plt.plot(wavelength, stellar_flux,label='Synt',color='red')
      plt.plot(wavelength, pseudo_continuum+stellar_flux,'r:', label='Emission lines +  continuum (stellar & pseudo)') # Adicionei apenas para a legend
@@ -43,25 +43,25 @@ def plot_ifscube_fits(wavelength,obs_flux,pseudo_continuum,stellar_flux):
      plt.ylabel('Flux')
      plt.legend(frameon=False,loc=0)
 
-    
+
 def plot_lines(wavelength,  stellar_flux, pseudo_continuum, parnames, rest_wl_lines, solution,label_lines=True,label_abs_lines=True):
-    ''' Plotting the emission-lines profiles, it has to be in a for loop otherwise the 
+    ''' Plotting the emission-lines profiles, it has to be in a for loop otherwise the
         individual emission-line profiles will not apear individually.'''
-    
+
     for i in range(0, len(parnames), 3):   # esse 3 eh por que tem que ir de 3 em 3
         rest_wl = rest_wl_lines[int(i / 3)] # aqui o 3 eh para pegar o correspondente rest_wl (que eh um array simples)
         parameters = solution[i:i + 3]   # cortando o solution para pegar os parametros para plotar a gaussiana
         line = gauss(wavelength, rest_wl, parameters) # calculando a linha com a funcao gaussiana
         plt.plot(wavelength, pseudo_continuum + stellar_flux + line, 'r:', label=parnames[i][0]) # plotando (da mesma cor e tipo de linha da legenda, se plotar no for vai tem uma lista enorme)
-        
-        if label_lines:  # para marcar a posicao das linhas em emissao. Isso poderia ser um liga e desliga no plot. 
+
+        if label_lines:  # para marcar a posicao das linhas em emissao. Isso poderia ser um liga e desliga no plot.
             plt.axvline(rest_wl,ls='--',color='cyan')
             ypos=1.1*plt.gca().get_ylim()[0]
             plt.text(rest_wl+5,ypos,parnames[i][0],rotation='vertical',color='cyan')
-            
+
     plt.legend(frameon=False)
 
-    if label_abs_lines: # para marcar a posicao das linhas em absorcao. Isso poderia ser um liga e desliga no plot. 
+    if label_abs_lines: # para marcar a posicao das linhas em absorcao. Isso poderia ser um liga e desliga no plot.
        abs_lines=np.array([4536,4677,5101,5176,5265,5332,5401,5708,5786,5893,5965,6132,6230,6354,6430,6507])
        abs_linesname=['Fe I','Fe I','Mg','Mg b', 'Fe I','Fe I','Fe I','Fe I','Fe I','Na D','TiO','Fe I','TiO', 'Fe I','Fe I','Fe I']
        for i in range(0, len(abs_lines), 1):
@@ -90,7 +90,7 @@ fitconfig = pf.getdata(cube,'FITCONFIG')
 
 # Calculando o que precios (o wavelength eh unico para cada cubo os demais eh por para x e y)
 wavelength = np.arange(h['crval3'],h['crval3']+h['naxis3']*h['cd3_3'], h['cd3_3'])
-obs_flux = fitspec_cube[:,y,x]  
+obs_flux = fitspec_cube[:,y,x]
 pseudo_continuum = pseudo_continuum_cube[:,y,x]
 stellar_flux = stelar_cube[:,y,x]
 solution = solution_cube[:,y,x]
@@ -107,7 +107,3 @@ plot_lines(wavelength,  stellar_flux, pseudo_continuum, parnames, rest_wl, solut
 
 
 plt.show()
-
-
-
-

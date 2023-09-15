@@ -8,14 +8,14 @@ ENV PYTHONDONTWRITEBYTECODE=1
 
 # Force the stdout and stderr streams to be unbuffered.
 # This option has no effect on the stdin stream.
-ENV PYTHONUNBUFFERED=1  
+ENV PYTHONUNBUFFERED=1
 
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
   && apt-get -y install --no-install-recommends \
   python3-tk \
   libaio-dev \
   build-essential \
-  libcfitsio-bin \ 
+  libcfitsio-bin \
   libsasl2-dev \
   libldap2-dev \
   libssl-dev \
@@ -27,7 +27,7 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
   && apt-get clean \
   && apt-get autoclean \
   && apt-get autoremove --purge  -y \
-  && rm -rf /var/lib/apt/lists/* 
+  && rm -rf /var/lib/apt/lists/*
 
 COPY ./requirements.txt /tmp/pip-tmp/
 RUN pip install --upgrade pip wheel setuptools \
@@ -49,7 +49,7 @@ RUN groupadd --gid $USER_GID $USERNAME \
 # Set Python ENV
 ENV PYTHONPATH="/usr/src/app:$PYTHONPATH"
 
-# Matplotlib Config 
+# Matplotlib Config
 ENV MPLCONFIGDIR="/tmp"
 
 ENV SHELL /bin/bash
@@ -68,4 +68,3 @@ COPY --chmod=0775 ./start-celery-flower.sh /start-celery-flower.sh
 USER manga
 
 ENTRYPOINT ["/entrypoint.sh"]
-

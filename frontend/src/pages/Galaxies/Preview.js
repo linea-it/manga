@@ -57,7 +57,7 @@ export default function GalaxyPreview() {
                 />
               )}
           </Box>
-          <Box 
+          <Box
             sx={{
             // backgroundColor: "cyan",
             position: "relative",
@@ -93,9 +93,9 @@ GalaxyPreview.propTypes = {
 {/* <CardContent>
 <Stack spacing={2}>
   <Box height={200}>
-    { galaxy.id !== undefined && 
+    { galaxy.id !== undefined &&
     (
-      <SingleHeatmap 
+      <SingleHeatmap
       galaxyId={galaxy?.id}
       mapHdu={DEFAULT_HDU}
     />
@@ -104,9 +104,9 @@ GalaxyPreview.propTypes = {
   <Divider variant="middle" />
 <Box height={220} mt={2} mb={2}>
   {galaxy !== undefined && (
-    <img 
-      src={galaxy?.sdss_image} 
-      loading="lazy" 
+    <img
+      src={galaxy?.sdss_image}
+      loading="lazy"
       style={{
         width:"220px",
         // maxWidth: "100%",
@@ -120,7 +120,7 @@ GalaxyPreview.propTypes = {
 
 
 {/* <Card sx={{maxHeight: '100%'}}>
-<CardHeader 
+<CardHeader
   title={galaxy?.ned_name}
   titleTypographyProps={{variant:'h6', fontSize: '1rem', }}
   action={
@@ -131,7 +131,7 @@ GalaxyPreview.propTypes = {
       onClick={handleExplorerClick}
     >Explorer</Button>
   }
-  >        
+  >
   </CardHeader>
   {/* <CardContent sx={{height: '100%'}}> */}
 {/* <CardContent sx={{ height: '100%', padding: "unset" }} >

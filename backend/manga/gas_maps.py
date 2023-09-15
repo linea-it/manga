@@ -71,7 +71,7 @@ class GasMaps():
         self.flux = pf.getdata(self.megacube, 'FLUX_M')
 
         self.eqw = pf.getdata(self.megacube, 'EQW_M')
-        
+
         self.mask=pf.getdata(self.megacube,'SN_MASKS_1')  # MUDEI adicionie a máscara
 
     def write_map_json(self, name, data, output):
@@ -98,11 +98,11 @@ class GasMaps():
         if filepath.exists():
             filepath.unlink()
 
-        data = list()
+        data = []
         for name in map_names:
             data.append({
-                "name": name, 
-                "display_name": name, 
+                "name": name,
+                "display_name": name,
                 "comment": GAS_DESC.get(name, "")
             })
         with open(filepath, "w") as f:
@@ -113,13 +113,13 @@ class GasMaps():
 
     def extract_all_maps(self, output):
         i=0  # indice do solution
-        j=0  #indice do flux e do eqw 
-        
-        plots=int(len(self.parameters)/3) # para controlar os plots 
-        k=1 # contador dos plots 
+        j=0  #indice do flux e do eqw
+
+        plots=int(len(self.parameters)/3) # para controlar os plots
+        k=1 # contador dos plots
         plt.figure(figsize=(50,50)) # Fazendo uma figura bem grande (pode dar zoom)
 
-        map_names = []       
+        map_names = []
         maps = []
         for p in self.parameters:
             p=np.asarray(p)
@@ -130,8 +130,8 @@ class GasMaps():
                 plt.subplot(plots,4,k)
                 k=k+1
                 # data = plt.imshow(save_flux,origin='lower')
-                # plt.gca().set_title(save_name_flux)   # titulo do plot 
-                # plt.colorbar()   # barra de cores                 
+                # plt.gca().set_title(save_name_flux)   # titulo do plot
+                # plt.colorbar()   # barra de cores
                 map_names.append(save_name_flux)
                 data = plt.imshow(save_flux,origin='lower').get_array()  # plot para tu poder conferir (note o origim do matplotlib que precisa ser lower para o 0,0 ser no canto inferior esquerdo)
                 maps.append(dict({
@@ -146,14 +146,14 @@ class GasMaps():
                 k=k+1
                 # plt.imshow(save_ew,origin='lower') # plot para tu poder conferir (note o origim do matplotlib que precisa ser lower para o 0,0 ser no canto inferior esquerdo)
                 # plt.gca().set_title(save_name_ew)  # titulo do plot
-                # plt.colorbar()   # barra de cores 
+                # plt.colorbar()   # barra de cores
                 map_names.append(save_name_ew)
                 data = plt.imshow(save_ew, origin='lower').get_array() # plot para tu poder conferir (note o origim do matplotlib que precisa ser lower para o 0,0 ser no canto inferior esquerdo)
                 maps.append(dict({
                     'z': data.tolist(fill_value=None),
                     'title': save_name_ew,
                 }))
-                              
+
                 j=j+1                              # contador de indice de flux e eqw
 
             elif p[1] == 'v':
@@ -164,7 +164,7 @@ class GasMaps():
                 k=k+1
                 # plt.imshow(save_vel,origin='lower') # plot para tu poder conferir (note o origim do matplotlib que precisa ser lower para o 0,0 ser no canto inferior esquerdo)
                 # plt.gca().set_title(save_name_vel) # titulo do plot
-                # plt.colorbar()   # barra de cores 
+                # plt.colorbar()   # barra de cores
                 map_names.append(save_name_vel)
                 data = plt.imshow(save_vel,origin='lower').get_array() # plot para tu poder conferir (note o origim do matplotlib que precisa ser lower para o 0,0 ser no canto inferior esquerdo)
                 maps.append(dict({
@@ -179,8 +179,8 @@ class GasMaps():
                 plt.subplot(plots,4,k)
                 k=k+1
                 # plt.imshow(save_sig,origin='lower')  # plot para tu poder conferir (note o origim do matplotlib que precisa ser lower para o 0,0 ser no canto inferior esquerdo)
-                # plt.gca().set_title(save_name_sig)  # titulo do plot 
-                # plt.colorbar()   # barra de cores 
+                # plt.gca().set_title(save_name_sig)  # titulo do plot
+                # plt.colorbar()   # barra de cores
                 map_names.append(save_name_sig)
                 plt.imshow(save_sig,origin='lower').get_array()  # plot para tu poder conferir (note o origim do matplotlib que precisa ser lower para o 0,0 ser no canto inferior esquerdo)
                 maps.append(dict({

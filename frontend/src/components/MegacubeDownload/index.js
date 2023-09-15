@@ -15,13 +15,13 @@ import { getMegacubeDownloadInfo } from '../../services/api';
 import GenericError from '../Alerts/GenericError';
 
 function MegacubeDownload({galaxyId, open, onClose  }) {
-  
+
   const { data, isLoading, isError } = useQuery({
     queryKey: ['megacubeDownloadById', { id: galaxyId }],
     queryFn: getMegacubeDownloadInfo,
     enabled: open,
     keepPreviousData: true,
-    staleTime: 1 * 60 * 60 * 1000,    
+    staleTime: 1 * 60 * 60 * 1000,
   })
 
   function generate_skeleton(element) {
@@ -51,7 +51,7 @@ function MegacubeDownload({galaxyId, open, onClose  }) {
         )}
         {data && (
           <>
-            <Typography><strong>Common Name:</strong>{' '} {data.name}</Typography>          
+            <Typography><strong>Common Name:</strong>{' '} {data.name}</Typography>
             <Typography><strong>MaNGA ID:</strong>{' '}{data.mangaid}</Typography>
             <Typography><strong>File:</strong>{' '}{data.megacube}</Typography>
             <Typography><strong>Download Size:</strong>{' '}{filesize(data.compressed_size)}</Typography>
@@ -66,24 +66,24 @@ function MegacubeDownload({galaxyId, open, onClose  }) {
           Cancel
         </Button>
         {data?.link_bcomp && (
-          <Button 
-            variant="contained" 
-            color="primary" 
-            href={data?.link_bcomp} 
+          <Button
+            variant="contained"
+            color="primary"
+            href={data?.link_bcomp}
             onClick={onClose}>
             Download Broad component
           </Button>
         )}
-        <Button 
-          variant="contained" 
-          color="primary" 
-          href={data?.link} 
+        <Button
+          variant="contained"
+          color="primary"
+          href={data?.link}
           onClick={onClose}
           disabled={!data}
           >
           Download
         </Button>
-      </DialogActions>  
+      </DialogActions>
     </Dialog>
   )
 }

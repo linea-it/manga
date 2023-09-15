@@ -63,7 +63,7 @@ class Command(BaseCommand):
         for obj in objs:
             title = "[%s/%s] " % (current, len(objs))
             self.stdout.write(title.ljust(80, '-'))
-            
+
             if obj.path != None:
                 exec_time = self.process_single_object(obj, overwrite=kwargs['force_overwrite'])
                 exec_times.append(exec_time)
@@ -84,14 +84,14 @@ class Command(BaseCommand):
         total = Image.objects.all().count()
         self.stdout.write(f'Count Objects: {total} ')
         ok = Image.objects.filter(had_parts_extracted=True).count()
-        self.stdout.write(f'Had Parts OK: {ok}')        
+        self.stdout.write(f'Had Parts OK: {ok}')
         not_ok = Image.objects.filter(had_parts_extracted=False).count()
         self.stdout.write(f'Missing extract parts: {not_ok}')
 
         t1 = datetime.now()
         tdelta = t1 - t0
         self.stdout.write('Started [%s]' %
-                          t0.strftime("%Y-%m-%d %H:%M:%S"))        
+                          t0.strftime("%Y-%m-%d %H:%M:%S"))
         self.stdout.write('Finished [%s]' %
                           t1.strftime("%Y-%m-%d %H:%M:%S"))
         self.stdout.write('Execution Time: [%s]' % humanize.naturaldelta(
@@ -119,7 +119,7 @@ class Command(BaseCommand):
             if not cube.fits_exist():
                 cube.extract_bz2()
                 compress = True
-            
+
             # A partir daqui utiliza o arquivo Fits.
             cube.extract_megacube_parts(overwrite)
             cube.download_sdss_image(obj.objra, obj.objdec, overwrite)
@@ -129,7 +129,7 @@ class Command(BaseCommand):
 
             isok = cube.check_extracted_parts()
             print(f"Had Extracted part?: [{isok}]")
-            obj.had_parts_extracted = isok           
+            obj.had_parts_extracted = isok
             obj.save()
 
         t1 = datetime.now()

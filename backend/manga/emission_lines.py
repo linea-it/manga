@@ -28,7 +28,7 @@ class EmissionLines():
 
     def __init__(self, megacube: Path):
         self.megacube = Path(megacube)
-      
+
         self.parameters = pf.getdata(self.megacube, 'PARNAMES')
 
         self.solution = pf.getdata(self.megacube, 'SOLUTION')
@@ -78,7 +78,7 @@ class EmissionLines():
         s = p[2]
 
         w = (vel - v0) / s
-        
+
         y = a * np.exp(-w**2 / 2.0) / (1.0 + (vel / self.c))
 
         return y
@@ -107,10 +107,10 @@ class EmissionLines():
 
             data.append({
                 'value': rest_wl,
-                'label': self.parameters[i][0] 
+                'label': self.parameters[i][0]
             })
         return data
-    
+
     def absortion_lines(self) -> List[Dict[str, Union[str, int]]]:
         # para marcar a posicao das linhas em absorcao.
         data = []
@@ -124,7 +124,7 @@ class EmissionLines():
         return data
 
     def obs_spec(self, x: int, y: int) -> list:
-        obs_flux = self.fitspec[:,y,x]  
+        obs_flux = self.fitspec[:,y,x]
         return obs_flux.tolist()
 
     def synt_spec(self, x: int, y: int) -> list:
@@ -262,7 +262,7 @@ class EmissionLines():
 
     #     v_em_lines = self.emission_lines(x, y)
     #     print(type(v_em_lines))
-    #     # para marcar a posicao das linhas em emissao. Isso poderia ser um liga e desliga no plot. 
+    #     # para marcar a posicao das linhas em emissao. Isso poderia ser um liga e desliga no plot.
     #     for line in v_em_lines:
     #         plt.axvline(line['value'], ls='--', color='cyan')
     #         ypos=1.1*plt.gca().get_ylim()[0]

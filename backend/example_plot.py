@@ -9,7 +9,7 @@ def main3():
     fit = load_fit("images/manga-9894-3701-MEGACUBE.fits")
     fit_results = fit.plot(figure=fig, spectrum_ax=ax[0], residuals_ax=ax[1], x_0=x0, y_0=y0, return_results=True)
     # pd = fit.plot_data(True)
-    # print(type(pd))    
+    # print(type(pd))
     plt.show()
     # print(pd)
     # plt.show()
@@ -31,7 +31,7 @@ def main2():
     print(wavelength_y)
     # Ou usando get_data()
     # wavelength = allaxes[0].get_lines()[0].get_data()
-    
+
     line1_x = allaxes[0].get_lines()[1].get_xdata()
     line1_y = allaxes[0].get_lines()[1].get_ydata()
 

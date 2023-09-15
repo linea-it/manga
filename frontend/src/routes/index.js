@@ -18,7 +18,7 @@ const AppLayout = () => (
     {/* TODO: Adicionar Classe a essa div main */}
     <main>
       <div>
-        <Outlet /> 
+        <Outlet />
       </div>
     </main>
   </>
@@ -29,7 +29,7 @@ const LandingPageLayout = () => (
     <HeaderHome />
     <main>
       <div>
-        <Outlet /> 
+        <Outlet />
       </div>
     </main>
     <Footer />
@@ -60,9 +60,9 @@ const routesConfig = [
       {
         path: "/contact-us",
         element: <Contact />,
-      },                           
+      },
     ],
-  },  
+  },
   {
     element: <AppLayout />,
     children: [
@@ -73,7 +73,7 @@ const routesConfig = [
       {
         path: "/explorer/:id/",
         element: <Explorer />,
-      },            
+      },
       {
         path: "/preview",
         element: <Galaxies />,

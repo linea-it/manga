@@ -77,7 +77,7 @@ class mclass:
 
         z = np.shape(cube_data)[0]
 
-        cube_comments = dict()
+        cube_comments = {}
 
         for i in range(0, z, 1):
             try:
@@ -101,7 +101,7 @@ class mclass:
     def get_all_hud(self, cube_header, cube_data):
         z = np.shape(cube_data)[0]
 
-        lHud = list()
+        lHud = []
         for i in range(0, z, 1):
             lHud.append(cube_header['DATA' + str(i)])
 
@@ -185,7 +185,7 @@ class mclass:
 
     def get_original_cube_data(self, megacube):
         cube_data = pf.getdata(megacube, 'FLUX')
-        mask = pf.getdata(megacube,'SN_MASKS_1') 
+        mask = pf.getdata(megacube,'SN_MASKS_1')
 
         (z, y, x) = np.shape(cube_data)
         imag = np.sum(cube_data[:, :, :], axis=0)
@@ -227,7 +227,7 @@ class mclass:
 
         idxHud = lHud.index(hud)
 
-        mask = pf.getdata(megacube,'SN_MASKS_1') 
+        mask = pf.getdata(megacube,'SN_MASKS_1')
 
         (z, y, x) = np.shape(cube_data)
 

@@ -89,7 +89,7 @@ function SingleHeatmap(props) {
       justifyContent="space-between"
       alignItems="stretch"
       alignContent="stretch"
-      sx={{ 
+      sx={{
         height: '100%',
         minHeight: 200,
         minWidth: 200

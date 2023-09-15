@@ -29,10 +29,10 @@ const queryClient = new QueryClient({
 
 ReactDOM.render(
     <QueryClientProvider client={queryClient}>
-        <ThemeProvider theme={customTheme}>         
+        <ThemeProvider theme={customTheme}>
             <App />
         </ThemeProvider>
-    </QueryClientProvider>, 
+    </QueryClientProvider>,
     document.getElementById('root')
 );
 

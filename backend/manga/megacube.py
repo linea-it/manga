@@ -179,7 +179,7 @@ class MangaMegacube:
         if filepath.exists():
             filepath.unlink()
 
-        data = list()
+        data = []
         for name in map_names:
             data.append(
                 {
@@ -312,7 +312,7 @@ class MangaMegacube:
 
         z = np.shape(cube_data)[0]
 
-        cube_comments = dict()
+        cube_comments = {}
 
         for i in range(0, z, 1):
             try:
@@ -332,7 +332,7 @@ class MangaMegacube:
 
         z = np.shape(cube_data)[0]
 
-        lHud = list()
+        lHud = []
         for i in range(0, z, 1):
             lHud.append(cube_header["DATA" + str(i)])
 
@@ -396,7 +396,7 @@ class MangaMegacube:
         flux_image = ax.imshow(imagb, origin="lower").get_array()
 
         return flux_image.tolist(fill_value=None)
-   
+
     def extract_megacube_header(self):
         """
         It extracts the Megacube Header from 'PoPBins' HUD
@@ -408,7 +408,7 @@ class MangaMegacube:
         filename = "cube_header.json"
 
         return self.write_parts_json(filename, content)
-   
+
     def exctract_original_image(self):
         """
         It extracts the Origimal Image (zero) data from 'FLUX' HUD
@@ -436,7 +436,7 @@ class MangaMegacube:
 
         lHud = self.get_all_hud("PoPBins")
 
-        dHud = list()
+        dHud = []
 
         for hud in lHud:
             dHud.append(
@@ -466,7 +466,7 @@ class MangaMegacube:
         /{parts_folder}/image_heatmap_{HUD}.json
         """
         lHud = self.get_all_hud("PoPBins")
-        files = list()
+        files = []
 
         for hud in lHud:
             filename = "image_heatmap_%s.json" % hud
@@ -511,9 +511,9 @@ class MangaMegacube:
             if p[1] == "A":
                 # nome para salvar o mapa de fluxo (usei no label do plot)
                 save_name_flux = "Flux_" + p[0]
-                map_names.append(save_name_flux)                
-                
-                filename = f"image_heatmap_{save_name_flux}.json"               
+                map_names.append(save_name_flux)
+
+                filename = f"image_heatmap_{save_name_flux}.json"
                 if self.cube_part_exist(filename) == True and overwrite == False:
                     # print(f"GAS MAP: {save_name_flux} SKIPED")
                     pass
@@ -540,7 +540,7 @@ class MangaMegacube:
                 # nome para salvar o mapa de eqw (usei no label do plot)
                 save_name_ew = "Ew_" + p[0]
                 map_names.append(save_name_ew)
-                
+
                 filename = f"image_heatmap_{save_name_ew}.json"
                 if self.cube_part_exist(filename) == True and overwrite == False:
                     # print(f"GAS MAP: {save_name_ew} SKIPED")
@@ -577,7 +577,7 @@ class MangaMegacube:
                 if self.cube_part_exist(filename) == True and overwrite == False:
                     # print(f"GAS MAP: {save_name_vel} SKIPED")
                     pass
-                else:                
+                else:
                     # array (44,44) com os valores do mapa de velocidade a serem salvos
                     save_vel = solution[i]
                     save_vel[np.where(mask == 1)] = np.nan
@@ -600,13 +600,13 @@ class MangaMegacube:
             elif p[1] == "s":
                 # nome para salvar o mapa de sigma (usei no label do plot)
                 save_name_sig = "Sigma_" + p[0]
-                map_names.append(save_name_sig)                
+                map_names.append(save_name_sig)
 
                 filename = f"image_heatmap_{save_name_sig}.json"
                 if self.cube_part_exist(filename) == True and overwrite == False:
                     # print(f"GAS MAP: {save_name_sig} SKIPED")
                     pass
-                else:                
+                else:
                     # array (44,44) com os valores do mapa de sigma a serem salvos
                     save_sig = solution[i]
                     save_sig[np.where(mask == 1)] = np.nan
@@ -640,22 +640,22 @@ class MangaMegacube:
         return result
 
     def extract_megacube_parts(self, overwrite: bool = False):
-        print("Extracting Megacube Parts")       
+        print("Extracting Megacube Parts")
 
-        headers_json = "SKIPED"       
-        if self.cube_part_exist("cube_header.json") == False or overwrite == True: 
+        headers_json = "SKIPED"
+        if self.cube_part_exist("cube_header.json") == False or overwrite == True:
             headers_json = self.extract_megacube_header()
         print(f"Headers Json: {headers_json}")
 
         # Flux image
         original_image = "SKIPED"
-        if self.cube_part_exist("original_image.json") == False or overwrite == True: 
+        if self.cube_part_exist("original_image.json") == False or overwrite == True:
             original_image = self.exctract_original_image()
         print(f"Original Image: {original_image}")
 
         # HDU List
         hdu_list = "SKIPED"
-        if self.cube_part_exist("list_hud.json") == False or overwrite == True: 
+        if self.cube_part_exist("list_hud.json") == False or overwrite == True:
             hdu_list = self.extract_list_hud()
         print(f"HDU List: {hdu_list}")
 
@@ -681,7 +681,7 @@ class MangaMegacube:
             return False
         # SDSS Image
         if not self.cube_part_exist("sdss_image.jpg"):
-            return False        
+            return False
         # Check if all HDUs have a json file
         if not self.check_heatmaps():
             return False
@@ -708,7 +708,7 @@ class MangaMegacube:
                 if not Path(self.parts_folder.joinpath(filename)).exists():
                     return False
         return True
-    
+
     def check_gas_heatmaps(self):
         with open(self.parts_folder.joinpath("list_gas_map.json")) as json_file:
             data = json.load(json_file)
@@ -718,7 +718,7 @@ class MangaMegacube:
                 if not Path(self.parts_folder.joinpath(filename)).exists():
                     return False
         return True
-        
+
     def update_megacube_header(self):
         print("Updating fits headers.")
         PAPER = "Riffel et. al. 2023, MNRAS, XXXX, YYYY"
@@ -942,7 +942,7 @@ class MangaMegacube:
 
             # Set up the image URL and filename
             image_url = "http://skyserver.sdss.org/dr16/SkyServerWS/ImgCutout/getjpeg?TaskName=Skyserver.Chart.Image&ra=%s&dec=%s&scale=0.099515875&width=512&height=512&opt=G&query=" % (ra, dec)
-            
+
             # Open the url image, set stream to True, this will return the stream content.
             r = requests.get(image_url, stream=True)
 
@@ -957,8 +957,8 @@ class MangaMegacube:
 
                 # Open a local file with wb ( write binary ) permission.
                 with open(filepath, 'wb') as f:
-                    shutil.copyfileobj(r.raw, f)  
-                print('Finished Download SDSS Images!')                
+                    shutil.copyfileobj(r.raw, f)
+                print('Finished Download SDSS Images!')
             else:
                 print(
                     'SDSS Image [%s] could not be retrieved' % str(self.megacube))

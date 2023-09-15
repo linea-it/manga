@@ -7,7 +7,7 @@ import CardContent from '@mui/material/CardContent';
 import BinedPopulationPlot from '../../../../components/StellarVecs';
 const useStyles = makeStyles(() => ({}));
 
-export default function GalaxyBinedCard({ 
+export default function GalaxyBinedCard({
   galaxyId,
   position,
   minHeight
@@ -19,14 +19,14 @@ export default function GalaxyBinedCard({
       <CardHeader title="Bined Population Vectors" />
       <CardContent style={{ minHeight: minHeight }}>
         {
-        galaxyId !== null 
-        && position[0] !== null 
-        && position[1] !== null 
+        galaxyId !== null
+        && position[0] !== null
+        && position[1] !== null
         && (
-          <BinedPopulationPlot 
-            id={galaxyId} 
-            x={position[0]} 
-            y={position[1]} 
+          <BinedPopulationPlot
+            id={galaxyId}
+            x={position[0]}
+            y={position[1]}
             />
         )}
       </CardContent>

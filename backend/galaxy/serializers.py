@@ -13,7 +13,7 @@ class ImageSerializer(serializers.ModelSerializer):
         model = Image
         # fields = "__all__"
         exclude = (
-            "had_parts_extracted", 
+            "had_parts_extracted",
             "path", "bcomp_path", "folder_name")
 
     def get_sdss_image(self, obj):

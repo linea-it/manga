@@ -13,21 +13,21 @@ class Command(BaseCommand):
     help = 'Integrating metadata files into the database'
     verbosity = 1
 
-    columns = [ 
-                'megacube', 'mangaid', 'plateifu', 'ned_name', 'objra', 'objdec', 
-                'fcfc1_50', 'xyy_light', 'xyo_light', 'xiy_light', 'xii_light', 
-                'xio_light', 'xo_light', 'xyy_mass', 'xyo_mass', 'xiy_mass', 
-                'xii_mass', 'xio_mass', 'xo_mass', 'sfr_1', 'sfr_5', 'sfr_10', 
-                'sfr_14', 'sfr_20', 'sfr_30', 'sfr_56', 'sfr_100', 'sfr_200', 
-                'av_star', 'mage_l', 'mage_m', 'mz_l', 'mz_m', 'mstar', 
-                'sigma_star', 'vrot_star', 'f_hb', 'f_o3_4959', 'f_o3_5007', 
-                'f_he1_5876', 'f_o1_6300', 'f_n2_6548', 'f_ha', 'f_n2_6583', 
-                'f_s2_6716', 'f_s2_6731', 'eqw_hb', 'eqw_o3_4959', 'eqw_o3_5007', 
-                'eqw_he1_5876', 'eqw_o1_6300', 'eqw_n2_6548', 'eqw_ha', 'eqw_n2_6583', 
-                'eqw_s2_6716', 'eqw_s2_6731', 'v_hb', 'v_o3_4959', 'v_o3_5007', 'v_he1_5876', 
-                'v_o1_6300', 'v_n2_6548', 'v_ha', 'v_n2_6583', 'v_s2_6716', 
-                'v_s2_6731', 'sigma_hb', 'sigma_o3_4959', 'sigma_o3_5007', 'sigma_he1_5876', 
-                'sigma_o1_6300', 'sigma_n2_6548', 'sigma_ha', 'sigma_n2_6583', 
+    columns = [
+                'megacube', 'mangaid', 'plateifu', 'ned_name', 'objra', 'objdec',
+                'fcfc1_50', 'xyy_light', 'xyo_light', 'xiy_light', 'xii_light',
+                'xio_light', 'xo_light', 'xyy_mass', 'xyo_mass', 'xiy_mass',
+                'xii_mass', 'xio_mass', 'xo_mass', 'sfr_1', 'sfr_5', 'sfr_10',
+                'sfr_14', 'sfr_20', 'sfr_30', 'sfr_56', 'sfr_100', 'sfr_200',
+                'av_star', 'mage_l', 'mage_m', 'mz_l', 'mz_m', 'mstar',
+                'sigma_star', 'vrot_star', 'f_hb', 'f_o3_4959', 'f_o3_5007',
+                'f_he1_5876', 'f_o1_6300', 'f_n2_6548', 'f_ha', 'f_n2_6583',
+                'f_s2_6716', 'f_s2_6731', 'eqw_hb', 'eqw_o3_4959', 'eqw_o3_5007',
+                'eqw_he1_5876', 'eqw_o1_6300', 'eqw_n2_6548', 'eqw_ha', 'eqw_n2_6583',
+                'eqw_s2_6716', 'eqw_s2_6731', 'v_hb', 'v_o3_4959', 'v_o3_5007', 'v_he1_5876',
+                'v_o1_6300', 'v_n2_6548', 'v_ha', 'v_n2_6583', 'v_s2_6716',
+                'v_s2_6731', 'sigma_hb', 'sigma_o3_4959', 'sigma_o3_5007', 'sigma_he1_5876',
+                'sigma_o1_6300', 'sigma_n2_6548', 'sigma_ha', 'sigma_n2_6583',
                 'sigma_s2_6716', 'sigma_s2_6731'
             ]
 
@@ -60,7 +60,7 @@ class Command(BaseCommand):
     def reset_sequence(self):
         with connection.cursor() as cursor:
             cursor.execute("ALTER SEQUENCE galaxy_image_id_seq RESTART WITH 1")
-        self.stdout.write('Restarted sequence to 1')            
+        self.stdout.write('Restarted sequence to 1')
 
     def update_metadata(self, filename, clear_table=False):
         self.stdout.write(
@@ -75,16 +75,16 @@ class Command(BaseCommand):
         if obj_list_filepath.suffix == '.csv':
             df = self.csv_to_pandas(obj_list_filepath)
         if obj_list_filepath.suffix == '.gz':
-            df = self.tar_gz_to_pandas(obj_list_filepath)            
+            df = self.tar_gz_to_pandas(obj_list_filepath)
         else:
             self.stdout.write(
                 f'File format {obj_list_filepath.suffix} is not valid. Use .fits.tar.gz or .csv')
 
         if df.empty:
             return
-        
+
         if clear_table == True:
-            self.stdout.write('Removing all existing entries from the table')            
+            self.stdout.write('Removing all existing entries from the table')
             self.delete_table(Image)
 
         count = len(df)
@@ -100,10 +100,10 @@ class Command(BaseCommand):
 
         count_registered = 0
         count_original_file_exists = 0
-        count_bcomp_exist = 0        
+        count_bcomp_exist = 0
         count_parts_exist = 0
         count_created=0
-        count_updated=0      
+        count_updated=0
 
         for galaxy in tqdm(rows):
             original_filename = f"{galaxy['megacube']}.tar.bz2"
@@ -129,9 +129,9 @@ class Command(BaseCommand):
 
                 if self.verbosity > 1:
                     self.stdout.write(f"original_megacube_path: {original_megacube_path}")
-                
+
                 count_original_file_exists += 1
-                # Adding compression            
+                # Adding compression
                 obj.compression = '.tar.bz2'
                 # Complete path to original file
                 obj.path = original_megacube_path
@@ -143,7 +143,7 @@ class Command(BaseCommand):
                 if self.verbosity > 1:
                     self.stdout.write(f"Have parts folder: {megacube_parts.exists()}")
 
-                obj.had_parts_extracted = megacube_parts.exists()            
+                obj.had_parts_extracted = megacube_parts.exists()
                 if megacube_parts.exists():
                     count_parts_exist += 1
 
@@ -172,28 +172,28 @@ class Command(BaseCommand):
         self.stdout.write(f'BComp bz2 file Exists: {count_bcomp_exist}')
 
 
-    def csv_to_pandas(self, filename):   
+    def csv_to_pandas(self, filename):
         df = pd.read_csv(
-            filename, 
+            filename,
             skiprows=1,
-            names=[ 
-                'megacube', 'mangaid', 'plateifu', 'ned_name', 'objra', 'objdec', 
-                'fcfc1_50', 'xyy_light', 'xyo_light', 'xiy_light', 'xii_light', 
-                'xio_light', 'xo_light', 'xyy_mass', 'xyo_mass', 'xiy_mass', 
-                'xii_mass', 'xio_mass', 'xo_mass', 'sfr_1', 'sfr_5', 'sfr_10', 
-                'sfr_14', 'sfr_20', 'sfr_30', 'sfr_56', 'sfr_100', 'sfr_200', 
-                'av_star', 'mage_l', 'mage_m', 'mz_l', 'mz_m', 'mstar', 
-                'sigma_star', 'vrot_star', 'f_hb', 'f_o3_4959', 'f_o3_5007', 
-                'f_he1_5876', 'f_o1_6300', 'f_n2_6548', 'f_ha', 'f_n2_6583', 
-                'f_s2_6716', 'f_s2_6731', 'eqw_hb', 'eqw_o3_4959', 'eqw_o3_5007', 
-                'eqw_he1_5876', 'eqw_o1_6300', 'eqw_n2_6548', 'eqw_ha', 'eqw_n2_6583', 
-                'eqw_s2_6716', 'eqw_s2_6731', 'v_hb', 'v_o3_4959', 'v_o3_5007', 'v_he1_5876', 
-                'v_o1_6300', 'v_n2_6548', 'v_ha', 'v_n2_6583', 'v_s2_6716', 
-                'v_s2_6731', 'sigma_hb', 'sigma_o3_4959', 'sigma_o3_5007', 'sigma_he1_5876', 
-                'sigma_o1_6300', 'sigma_n2_6548', 'sigma_ha', 'sigma_n2_6583', 
+            names=[
+                'megacube', 'mangaid', 'plateifu', 'ned_name', 'objra', 'objdec',
+                'fcfc1_50', 'xyy_light', 'xyo_light', 'xiy_light', 'xii_light',
+                'xio_light', 'xo_light', 'xyy_mass', 'xyo_mass', 'xiy_mass',
+                'xii_mass', 'xio_mass', 'xo_mass', 'sfr_1', 'sfr_5', 'sfr_10',
+                'sfr_14', 'sfr_20', 'sfr_30', 'sfr_56', 'sfr_100', 'sfr_200',
+                'av_star', 'mage_l', 'mage_m', 'mz_l', 'mz_m', 'mstar',
+                'sigma_star', 'vrot_star', 'f_hb', 'f_o3_4959', 'f_o3_5007',
+                'f_he1_5876', 'f_o1_6300', 'f_n2_6548', 'f_ha', 'f_n2_6583',
+                'f_s2_6716', 'f_s2_6731', 'eqw_hb', 'eqw_o3_4959', 'eqw_o3_5007',
+                'eqw_he1_5876', 'eqw_o1_6300', 'eqw_n2_6548', 'eqw_ha', 'eqw_n2_6583',
+                'eqw_s2_6716', 'eqw_s2_6731', 'v_hb', 'v_o3_4959', 'v_o3_5007', 'v_he1_5876',
+                'v_o1_6300', 'v_n2_6548', 'v_ha', 'v_n2_6583', 'v_s2_6716',
+                'v_s2_6731', 'sigma_hb', 'sigma_o3_4959', 'sigma_o3_5007', 'sigma_he1_5876',
+                'sigma_o1_6300', 'sigma_n2_6548', 'sigma_ha', 'sigma_n2_6583',
                 'sigma_s2_6716', 'sigma_s2_6731', 'had_bcomp'
             ])
-        
+
         df = df.sort_values(by=['plateifu'], ascending=True)
 
         df['had_bcomp'] = df['had_bcomp'].fillna(np.nan).replace([np.nan], [False])

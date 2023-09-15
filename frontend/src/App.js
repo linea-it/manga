@@ -16,13 +16,13 @@ function App() {
 
   return (
     <GalaxyContext.Provider value={{
-      galaxy, 
+      galaxy,
       setGalaxy,
-      queryOptions, 
+      queryOptions,
       setQueryOptions
       }}>
       <RouterProvider router={router} />
-    </GalaxyContext.Provider>   
+    </GalaxyContext.Provider>
   );
 }
 

@@ -7,7 +7,7 @@ import CardContent from '@mui/material/CardContent';
 import StellarPopulationPlot from '../../../../components/Stellar';
 const useStyles = makeStyles(() => ({}));
 
-export default function GalaxyStellarCard({ 
+export default function GalaxyStellarCard({
   galaxyId,
   position,
   minHeight
@@ -19,14 +19,14 @@ export default function GalaxyStellarCard({
       <CardHeader title="Stellar Population Vectors" />
       <CardContent style={{ minHeight: minHeight }}>
         {
-        galaxyId !== null 
-        && position[0] !== null 
-        && position[1] !== null 
+        galaxyId !== null
+        && position[0] !== null
+        && position[1] !== null
         && (
-          <StellarPopulationPlot 
-            id={galaxyId} 
-            x={position[0]} 
-            y={position[1]} 
+          <StellarPopulationPlot
+            id={galaxyId}
+            x={position[0]}
+            y={position[1]}
             />
         )}
       </CardContent>

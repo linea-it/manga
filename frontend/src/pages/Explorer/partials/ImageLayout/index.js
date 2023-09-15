@@ -56,7 +56,7 @@ export default function ExplorerImageLayout({
           position={position}
           minHeight='20vw'
         >
-        </GalaxyBinedCard> 
+        </GalaxyBinedCard>
       </Grid>
     </Grid>
   );
@@ -67,4 +67,3 @@ ExplorerImageLayout.defaultProps = {
 ExplorerImageLayout.propTypes = {
   galaxy: PropTypes.object
 };
-

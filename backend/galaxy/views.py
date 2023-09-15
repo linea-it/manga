@@ -55,7 +55,7 @@ class ImageViewSet(viewsets.ReadOnlyModelViewSet):
         'v_s2_6716','v_s2_6731','sigma_hb','sigma_o3_4959','sigma_o3_5007','sigma_he1_5876',
         'sigma_o1_6300','sigma_n2_6548','sigma_ha','sigma_n2_6583','sigma_s2_6716',
         'sigma_s2_6731', 'had_bcomp')
-    
+
 
     def get_original_megacube_path(self, obj):
         return Path(obj.path)
@@ -173,7 +173,7 @@ class ImageViewSet(viewsets.ReadOnlyModelViewSet):
             for hdu in hdus['hud']:
                 hdu.update({
                     'comment': hdu['comment'].split('(')[0],
-                    'internal_name': hdu['name'].lower().replace(' ', '_').replace('.', '_')                    
+                    'internal_name': hdu['name'].lower().replace(' ', '_').replace('.', '_')
                 })
                 data['stellar_maps'].append(hdu)
 
@@ -182,7 +182,7 @@ class ImageViewSet(viewsets.ReadOnlyModelViewSet):
             for hdu in hdus['gas_maps']:
                 hdu.update({
                     'comment': hdu['comment'].split('(')[0],
-                    'internal_name': hdu['name'].lower().replace(' ', '_').replace('.', '_')                    
+                    'internal_name': hdu['name'].lower().replace(' ', '_').replace('.', '_')
                 })
                 data['gas_maps'].append(hdu)
 
@@ -195,9 +195,9 @@ class ImageViewSet(viewsets.ReadOnlyModelViewSet):
         Returns a list of all HDUs titles.
 
         It's being read by the file in:
-        `/images/megacube_parts/megacube_{JOB_ID}/list_hud.json` 
-        and 
-        `/images/megacube_parts/megacube_{JOB_ID}/list_gas_map.json` 
+        `/images/megacube_parts/megacube_{JOB_ID}/list_hud.json`
+        and
+        `/images/megacube_parts/megacube_{JOB_ID}/list_gas_map.json`
         that has been extracted from `.fits.fz` file.
 
         Returns: <br>
@@ -241,7 +241,7 @@ class ImageViewSet(viewsets.ReadOnlyModelViewSet):
         all_hdus = hdus['stellar_maps'] + hdus['gas_maps']
         lhdu = list(filter(lambda d: d['internal_name'] == internal_name, all_hdus))
         if len(lhdu) == 0:
-            raise Exception(f"Hdu {internal_name} Not Found." ) 
+            raise Exception(f"Hdu {internal_name} Not Found." )
         return lhdu[0]
 
 
@@ -255,13 +255,13 @@ class ImageViewSet(viewsets.ReadOnlyModelViewSet):
             map = json.load(f)
             z = np.array(map['z'], dtype=np.float64)
             min = np.nanmin(z)
-            max = np.nanmax(z)            
+            max = np.nanmax(z)
             map.update({
-                'internal_name': hdu['internal_name'],                
+                'internal_name': hdu['internal_name'],
                 'name': hdu['name'],
                 'comment': hdu['comment'],
                 'min': float(min),
-                'max': float(max)                
+                'max': float(max)
             })
 
         return map
@@ -318,12 +318,12 @@ class ImageViewSet(viewsets.ReadOnlyModelViewSet):
         data = cache.get(cache_key)
         if data:
             return Response(data)
-        
+
         hdus = self.get_huds(galaxy)
 
         all_hdus = hdus['stellar_maps'] + hdus['gas_maps']
 
-        data = dict()
+        data = {}
 
         for idx, hdu in enumerate(all_hdus):
             map = self.read_heatmap_by_hdu(galaxy, hdu)
@@ -392,7 +392,7 @@ class ImageViewSet(viewsets.ReadOnlyModelViewSet):
 
             image.update({
                 'id': idx + (cursor * page_size + 1),
-                'internal_name': hdu['internal_name'],                
+                'internal_name': hdu['internal_name'],
                 'name': hdu['name'],
                 'comment': hdu['comment'],
             })
