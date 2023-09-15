@@ -4,634 +4,773 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('galaxy', '0007_auto_20230707_1351'),
+        ("galaxy", "0007_auto_20230707_1351"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='image',
-            name='airmsmax',
+            model_name="image",
+            name="airmsmax",
         ),
         migrations.RemoveField(
-            model_name='image',
-            name='airmsmed',
+            model_name="image",
+            name="airmsmed",
         ),
         migrations.RemoveField(
-            model_name='image',
-            name='airmsmin',
+            model_name="image",
+            name="airmsmin",
         ),
         migrations.RemoveField(
-            model_name='image',
-            name='bluesn2',
+            model_name="image",
+            name="bluesn2",
         ),
         migrations.RemoveField(
-            model_name='image',
-            name='cartid',
+            model_name="image",
+            name="cartid",
         ),
         migrations.RemoveField(
-            model_name='image',
-            name='catidnum',
+            model_name="image",
+            name="catidnum",
         ),
         migrations.RemoveField(
-            model_name='image',
-            name='cendec',
+            model_name="image",
+            name="cendec",
         ),
         migrations.RemoveField(
-            model_name='image',
-            name='cenra',
+            model_name="image",
+            name="cenra",
         ),
         migrations.RemoveField(
-            model_name='image',
-            name='designid',
+            model_name="image",
+            name="designid",
         ),
         migrations.RemoveField(
-            model_name='image',
-            name='drp3qual',
+            model_name="image",
+            name="drp3qual",
         ),
         migrations.RemoveField(
-            model_name='image',
-            name='ebvgal',
+            model_name="image",
+            name="ebvgal",
         ),
         migrations.RemoveField(
-            model_name='image',
-            name='exptime',
+            model_name="image",
+            name="exptime",
         ),
         migrations.RemoveField(
-            model_name='image',
-            name='frlplug',
+            model_name="image",
+            name="frlplug",
         ),
         migrations.RemoveField(
-            model_name='image',
-            name='gfwhm',
+            model_name="image",
+            name="gfwhm",
         ),
         migrations.RemoveField(
-            model_name='image',
-            name='harname',
+            model_name="image",
+            name="harname",
         ),
         migrations.RemoveField(
-            model_name='image',
-            name='ifudec',
+            model_name="image",
+            name="ifudec",
         ),
         migrations.RemoveField(
-            model_name='image',
-            name='ifudesignsize',
+            model_name="image",
+            name="ifudesignsize",
         ),
         migrations.RemoveField(
-            model_name='image',
-            name='ifudesignwrongsize',
+            model_name="image",
+            name="ifudesignwrongsize",
         ),
         migrations.RemoveField(
-            model_name='image',
-            name='ifudsgn',
+            model_name="image",
+            name="ifudsgn",
         ),
         migrations.RemoveField(
-            model_name='image',
-            name='ifuglat',
+            model_name="image",
+            name="ifuglat",
         ),
         migrations.RemoveField(
-            model_name='image',
-            name='ifuglon',
+            model_name="image",
+            name="ifuglon",
         ),
         migrations.RemoveField(
-            model_name='image',
-            name='ifura',
+            model_name="image",
+            name="ifura",
         ),
         migrations.RemoveField(
-            model_name='image',
-            name='ifutargetsize',
+            model_name="image",
+            name="ifutargetsize",
         ),
         migrations.RemoveField(
-            model_name='image',
-            name='ifwhm',
+            model_name="image",
+            name="ifwhm",
         ),
         migrations.RemoveField(
-            model_name='image',
-            name='manga_tileid',
+            model_name="image",
+            name="manga_tileid",
         ),
         migrations.RemoveField(
-            model_name='image',
-            name='mjdmax',
+            model_name="image",
+            name="mjdmax",
         ),
         migrations.RemoveField(
-            model_name='image',
-            name='mjdmed',
+            model_name="image",
+            name="mjdmed",
         ),
         migrations.RemoveField(
-            model_name='image',
-            name='mjdmin',
+            model_name="image",
+            name="mjdmin",
         ),
         migrations.RemoveField(
-            model_name='image',
-            name='mngtarg1',
+            model_name="image",
+            name="mngtarg1",
         ),
         migrations.RemoveField(
-            model_name='image',
-            name='mngtarg2',
+            model_name="image",
+            name="mngtarg2",
         ),
         migrations.RemoveField(
-            model_name='image',
-            name='mngtarg3',
+            model_name="image",
+            name="mngtarg3",
         ),
         migrations.RemoveField(
-            model_name='image',
-            name='nexp',
+            model_name="image",
+            name="nexp",
         ),
         migrations.RemoveField(
-            model_name='image',
-            name='nsa_elpetro_ba',
+            model_name="image",
+            name="nsa_elpetro_ba",
         ),
         migrations.RemoveField(
-            model_name='image',
-            name='nsa_elpetro_mass',
+            model_name="image",
+            name="nsa_elpetro_mass",
         ),
         migrations.RemoveField(
-            model_name='image',
-            name='nsa_elpetro_phi',
+            model_name="image",
+            name="nsa_elpetro_phi",
         ),
         migrations.RemoveField(
-            model_name='image',
-            name='nsa_field',
+            model_name="image",
+            name="nsa_field",
         ),
         migrations.RemoveField(
-            model_name='image',
-            name='nsa_iauname',
+            model_name="image",
+            name="nsa_iauname",
         ),
         migrations.RemoveField(
-            model_name='image',
-            name='nsa_nsaid',
+            model_name="image",
+            name="nsa_nsaid",
         ),
         migrations.RemoveField(
-            model_name='image',
-            name='nsa_petro_th50',
+            model_name="image",
+            name="nsa_petro_th50",
         ),
         migrations.RemoveField(
-            model_name='image',
-            name='nsa_run',
+            model_name="image",
+            name="nsa_run",
         ),
         migrations.RemoveField(
-            model_name='image',
-            name='nsa_sersic_ba',
+            model_name="image",
+            name="nsa_sersic_ba",
         ),
         migrations.RemoveField(
-            model_name='image',
-            name='nsa_sersic_mass',
+            model_name="image",
+            name="nsa_sersic_mass",
         ),
         migrations.RemoveField(
-            model_name='image',
-            name='nsa_sersic_n',
+            model_name="image",
+            name="nsa_sersic_n",
         ),
         migrations.RemoveField(
-            model_name='image',
-            name='nsa_sersic_phi',
+            model_name="image",
+            name="nsa_sersic_phi",
         ),
         migrations.RemoveField(
-            model_name='image',
-            name='nsa_sersic_th50',
+            model_name="image",
+            name="nsa_sersic_th50",
         ),
         migrations.RemoveField(
-            model_name='image',
-            name='nsa_version',
+            model_name="image",
+            name="nsa_version",
         ),
         migrations.RemoveField(
-            model_name='image',
-            name='nsa_z',
+            model_name="image",
+            name="nsa_z",
         ),
         migrations.RemoveField(
-            model_name='image',
-            name='nsa_zdist',
+            model_name="image",
+            name="nsa_zdist",
         ),
         migrations.RemoveField(
-            model_name='image',
-            name='plate',
+            model_name="image",
+            name="plate",
         ),
         migrations.RemoveField(
-            model_name='image',
-            name='platetyp',
+            model_name="image",
+            name="platetyp",
         ),
         migrations.RemoveField(
-            model_name='image',
-            name='plttarg',
+            model_name="image",
+            name="plttarg",
         ),
         migrations.RemoveField(
-            model_name='image',
-            name='redsn2',
+            model_name="image",
+            name="redsn2",
         ),
         migrations.RemoveField(
-            model_name='image',
-            name='rfwhm',
+            model_name="image",
+            name="rfwhm",
         ),
         migrations.RemoveField(
-            model_name='image',
-            name='seemax',
+            model_name="image",
+            name="seemax",
         ),
         migrations.RemoveField(
-            model_name='image',
-            name='seemed',
+            model_name="image",
+            name="seemed",
         ),
         migrations.RemoveField(
-            model_name='image',
-            name='seemin',
+            model_name="image",
+            name="seemin",
         ),
         migrations.RemoveField(
-            model_name='image',
-            name='srvymode',
+            model_name="image",
+            name="srvymode",
         ),
         migrations.RemoveField(
-            model_name='image',
-            name='transmax',
+            model_name="image",
+            name="transmax",
         ),
         migrations.RemoveField(
-            model_name='image',
-            name='transmed',
+            model_name="image",
+            name="transmed",
         ),
         migrations.RemoveField(
-            model_name='image',
-            name='transmin',
+            model_name="image",
+            name="transmin",
         ),
         migrations.RemoveField(
-            model_name='image',
-            name='verscore',
+            model_name="image",
+            name="verscore",
         ),
         migrations.RemoveField(
-            model_name='image',
-            name='versdrp2',
+            model_name="image",
+            name="versdrp2",
         ),
         migrations.RemoveField(
-            model_name='image',
-            name='versdrp3',
+            model_name="image",
+            name="versdrp3",
         ),
         migrations.RemoveField(
-            model_name='image',
-            name='versprim',
+            model_name="image",
+            name="versprim",
         ),
         migrations.RemoveField(
-            model_name='image',
-            name='versutil',
+            model_name="image",
+            name="versutil",
         ),
         migrations.RemoveField(
-            model_name='image',
-            name='zfwhm',
+            model_name="image",
+            name="zfwhm",
         ),
         migrations.AddField(
-            model_name='image',
-            name='av_star',
-            field=models.FloatField(blank=True, default=None, null=True, verbose_name='Av_star'),
+            model_name="image",
+            name="av_star",
+            field=models.FloatField(
+                blank=True, default=None, null=True, verbose_name="Av_star"
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='eqw_ha',
-            field=models.FloatField(blank=True, default=None, null=True, verbose_name='eqw(ha)'),
+            model_name="image",
+            name="eqw_ha",
+            field=models.FloatField(
+                blank=True, default=None, null=True, verbose_name="eqw(ha)"
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='eqw_hb',
-            field=models.FloatField(blank=True, default=None, null=True, verbose_name='eqw(hb)'),
+            model_name="image",
+            name="eqw_hb",
+            field=models.FloatField(
+                blank=True, default=None, null=True, verbose_name="eqw(hb)"
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='eqw_he1_5876',
-            field=models.FloatField(blank=True, default=None, null=True, verbose_name='eqw(He1_5876)'),
+            model_name="image",
+            name="eqw_he1_5876",
+            field=models.FloatField(
+                blank=True, default=None, null=True, verbose_name="eqw(He1_5876)"
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='eqw_n2_6548',
-            field=models.FloatField(blank=True, default=None, null=True, verbose_name='eqw(n2_6548)'),
+            model_name="image",
+            name="eqw_n2_6548",
+            field=models.FloatField(
+                blank=True, default=None, null=True, verbose_name="eqw(n2_6548)"
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='eqw_n2_6583',
-            field=models.FloatField(blank=True, default=None, null=True, verbose_name='eqw(n2_6583)'),
+            model_name="image",
+            name="eqw_n2_6583",
+            field=models.FloatField(
+                blank=True, default=None, null=True, verbose_name="eqw(n2_6583)"
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='eqw_o1_6300',
-            field=models.FloatField(blank=True, default=None, null=True, verbose_name='eqw(o1_6300)'),
+            model_name="image",
+            name="eqw_o1_6300",
+            field=models.FloatField(
+                blank=True, default=None, null=True, verbose_name="eqw(o1_6300)"
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='eqw_o3_4959',
-            field=models.FloatField(blank=True, default=None, null=True, verbose_name='eqw(o3_4959)'),
+            model_name="image",
+            name="eqw_o3_4959",
+            field=models.FloatField(
+                blank=True, default=None, null=True, verbose_name="eqw(o3_4959)"
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='eqw_o3_5007',
-            field=models.FloatField(blank=True, default=None, null=True, verbose_name='eqw(o3_5007)'),
+            model_name="image",
+            name="eqw_o3_5007",
+            field=models.FloatField(
+                blank=True, default=None, null=True, verbose_name="eqw(o3_5007)"
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='eqw_s2_6716',
-            field=models.FloatField(blank=True, default=None, null=True, verbose_name='eqw(s2_6716)'),
+            model_name="image",
+            name="eqw_s2_6716",
+            field=models.FloatField(
+                blank=True, default=None, null=True, verbose_name="eqw(s2_6716)"
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='eqw_s2_6731',
-            field=models.FloatField(blank=True, default=None, null=True, verbose_name='eqw(s2_6731)'),
+            model_name="image",
+            name="eqw_s2_6731",
+            field=models.FloatField(
+                blank=True, default=None, null=True, verbose_name="eqw(s2_6731)"
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='f_He1_5876',
-            field=models.FloatField(blank=True, default=None, null=True, verbose_name='f(He1_5876)'),
+            model_name="image",
+            name="f_He1_5876",
+            field=models.FloatField(
+                blank=True, default=None, null=True, verbose_name="f(He1_5876)"
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='f_ha',
-            field=models.FloatField(blank=True, default=None, null=True, verbose_name='f(ha)'),
+            model_name="image",
+            name="f_ha",
+            field=models.FloatField(
+                blank=True, default=None, null=True, verbose_name="f(ha)"
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='f_hb',
-            field=models.FloatField(blank=True, default=None, null=True, verbose_name='f(hb)'),
+            model_name="image",
+            name="f_hb",
+            field=models.FloatField(
+                blank=True, default=None, null=True, verbose_name="f(hb)"
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='f_n2_6548',
-            field=models.FloatField(blank=True, default=None, null=True, verbose_name='f(n2_6548)'),
+            model_name="image",
+            name="f_n2_6548",
+            field=models.FloatField(
+                blank=True, default=None, null=True, verbose_name="f(n2_6548)"
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='f_n2_6583',
-            field=models.FloatField(blank=True, default=None, null=True, verbose_name='f(n2_6583)'),
+            model_name="image",
+            name="f_n2_6583",
+            field=models.FloatField(
+                blank=True, default=None, null=True, verbose_name="f(n2_6583)"
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='f_o1_6300',
-            field=models.FloatField(blank=True, default=None, null=True, verbose_name='f(o1_6300)'),
+            model_name="image",
+            name="f_o1_6300",
+            field=models.FloatField(
+                blank=True, default=None, null=True, verbose_name="f(o1_6300)"
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='f_o3_4959',
-            field=models.FloatField(blank=True, default=None, null=True, verbose_name='f(o3_4959)'),
+            model_name="image",
+            name="f_o3_4959",
+            field=models.FloatField(
+                blank=True, default=None, null=True, verbose_name="f(o3_4959)"
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='f_o3_5007',
-            field=models.FloatField(blank=True, default=None, null=True, verbose_name='f(o3_5007)'),
+            model_name="image",
+            name="f_o3_5007",
+            field=models.FloatField(
+                blank=True, default=None, null=True, verbose_name="f(o3_5007)"
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='f_s2_6716',
-            field=models.FloatField(blank=True, default=None, null=True, verbose_name='f(s2_6716)'),
+            model_name="image",
+            name="f_s2_6716",
+            field=models.FloatField(
+                blank=True, default=None, null=True, verbose_name="f(s2_6716)"
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='f_s2_6731',
-            field=models.FloatField(blank=True, default=None, null=True, verbose_name='f(s2_6731)'),
+            model_name="image",
+            name="f_s2_6731",
+            field=models.FloatField(
+                blank=True, default=None, null=True, verbose_name="f(s2_6731)"
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='fcfc_1_50',
-            field=models.FloatField(blank=True, default=None, null=True, verbose_name='FCFC1.50'),
+            model_name="image",
+            name="fcfc_1_50",
+            field=models.FloatField(
+                blank=True, default=None, null=True, verbose_name="FCFC1.50"
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='mage_l',
-            field=models.FloatField(blank=True, default=None, null=True, verbose_name='Mage_L'),
+            model_name="image",
+            name="mage_l",
+            field=models.FloatField(
+                blank=True, default=None, null=True, verbose_name="Mage_L"
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='mage_m',
-            field=models.FloatField(blank=True, default=None, null=True, verbose_name='Mage_M'),
+            model_name="image",
+            name="mage_m",
+            field=models.FloatField(
+                blank=True, default=None, null=True, verbose_name="Mage_M"
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='mstar',
-            field=models.FloatField(blank=True, default=None, null=True, verbose_name='Mstar'),
+            model_name="image",
+            name="mstar",
+            field=models.FloatField(
+                blank=True, default=None, null=True, verbose_name="Mstar"
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='mz_l',
-            field=models.FloatField(blank=True, default=None, null=True, verbose_name='MZ_L'),
+            model_name="image",
+            name="mz_l",
+            field=models.FloatField(
+                blank=True, default=None, null=True, verbose_name="MZ_L"
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='mz_m',
-            field=models.FloatField(blank=True, default=None, null=True, verbose_name='MZ_M'),
+            model_name="image",
+            name="mz_m",
+            field=models.FloatField(
+                blank=True, default=None, null=True, verbose_name="MZ_M"
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='sfr_1',
-            field=models.FloatField(blank=True, default=None, null=True, verbose_name='SFR_1'),
+            model_name="image",
+            name="sfr_1",
+            field=models.FloatField(
+                blank=True, default=None, null=True, verbose_name="SFR_1"
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='sfr_10',
-            field=models.FloatField(blank=True, default=None, null=True, verbose_name='SFR_10'),
+            model_name="image",
+            name="sfr_10",
+            field=models.FloatField(
+                blank=True, default=None, null=True, verbose_name="SFR_10"
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='sfr_100',
-            field=models.FloatField(blank=True, default=None, null=True, verbose_name='SFR_100'),
+            model_name="image",
+            name="sfr_100",
+            field=models.FloatField(
+                blank=True, default=None, null=True, verbose_name="SFR_100"
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='sfr_14',
-            field=models.FloatField(blank=True, default=None, null=True, verbose_name='SFR_14'),
+            model_name="image",
+            name="sfr_14",
+            field=models.FloatField(
+                blank=True, default=None, null=True, verbose_name="SFR_14"
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='sfr_20',
-            field=models.FloatField(blank=True, default=None, null=True, verbose_name='SFR_20'),
+            model_name="image",
+            name="sfr_20",
+            field=models.FloatField(
+                blank=True, default=None, null=True, verbose_name="SFR_20"
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='sfr_200',
-            field=models.FloatField(blank=True, default=None, null=True, verbose_name='SFR_200'),
+            model_name="image",
+            name="sfr_200",
+            field=models.FloatField(
+                blank=True, default=None, null=True, verbose_name="SFR_200"
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='sfr_30',
-            field=models.FloatField(blank=True, default=None, null=True, verbose_name='SFR_30'),
+            model_name="image",
+            name="sfr_30",
+            field=models.FloatField(
+                blank=True, default=None, null=True, verbose_name="SFR_30"
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='sfr_5',
-            field=models.FloatField(blank=True, default=None, null=True, verbose_name='SFR_5'),
+            model_name="image",
+            name="sfr_5",
+            field=models.FloatField(
+                blank=True, default=None, null=True, verbose_name="SFR_5"
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='sfr_56',
-            field=models.FloatField(blank=True, default=None, null=True, verbose_name='SFR_56'),
+            model_name="image",
+            name="sfr_56",
+            field=models.FloatField(
+                blank=True, default=None, null=True, verbose_name="SFR_56"
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='sigma_ha',
-            field=models.FloatField(blank=True, default=None, null=True, verbose_name='sigma(ha)'),
+            model_name="image",
+            name="sigma_ha",
+            field=models.FloatField(
+                blank=True, default=None, null=True, verbose_name="sigma(ha)"
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='sigma_hb',
-            field=models.FloatField(blank=True, default=None, null=True, verbose_name='sigma(hb)'),
+            model_name="image",
+            name="sigma_hb",
+            field=models.FloatField(
+                blank=True, default=None, null=True, verbose_name="sigma(hb)"
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='sigma_he1_5876',
-            field=models.FloatField(blank=True, default=None, null=True, verbose_name='sigma(He1_5876)'),
+            model_name="image",
+            name="sigma_he1_5876",
+            field=models.FloatField(
+                blank=True, default=None, null=True, verbose_name="sigma(He1_5876)"
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='sigma_n2_6548',
-            field=models.FloatField(blank=True, default=None, null=True, verbose_name='sigma(n2_6548)'),
+            model_name="image",
+            name="sigma_n2_6548",
+            field=models.FloatField(
+                blank=True, default=None, null=True, verbose_name="sigma(n2_6548)"
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='sigma_n2_6583',
-            field=models.FloatField(blank=True, default=None, null=True, verbose_name='sigma(n2_6583)'),
+            model_name="image",
+            name="sigma_n2_6583",
+            field=models.FloatField(
+                blank=True, default=None, null=True, verbose_name="sigma(n2_6583)"
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='sigma_o1_6300',
-            field=models.FloatField(blank=True, default=None, null=True, verbose_name='sigma(o1_6300)'),
+            model_name="image",
+            name="sigma_o1_6300",
+            field=models.FloatField(
+                blank=True, default=None, null=True, verbose_name="sigma(o1_6300)"
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='sigma_o3_4959',
-            field=models.FloatField(blank=True, default=None, null=True, verbose_name='sigma(o3_4959)'),
+            model_name="image",
+            name="sigma_o3_4959",
+            field=models.FloatField(
+                blank=True, default=None, null=True, verbose_name="sigma(o3_4959)"
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='sigma_o3_5007',
-            field=models.FloatField(blank=True, default=None, null=True, verbose_name='sigma(o3_5007)'),
+            model_name="image",
+            name="sigma_o3_5007",
+            field=models.FloatField(
+                blank=True, default=None, null=True, verbose_name="sigma(o3_5007)"
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='sigma_s2_6716',
-            field=models.FloatField(blank=True, default=None, null=True, verbose_name='sigma(s2_6716)'),
+            model_name="image",
+            name="sigma_s2_6716",
+            field=models.FloatField(
+                blank=True, default=None, null=True, verbose_name="sigma(s2_6716)"
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='sigma_s2_6731',
-            field=models.FloatField(blank=True, default=None, null=True, verbose_name='sigma(s2_6731)'),
+            model_name="image",
+            name="sigma_s2_6731",
+            field=models.FloatField(
+                blank=True, default=None, null=True, verbose_name="sigma(s2_6731)"
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='sigma_star',
-            field=models.FloatField(blank=True, default=None, null=True, verbose_name='Sigma_star'),
+            model_name="image",
+            name="sigma_star",
+            field=models.FloatField(
+                blank=True, default=None, null=True, verbose_name="Sigma_star"
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='v_ha',
-            field=models.FloatField(blank=True, default=None, null=True, verbose_name='v(ha)'),
+            model_name="image",
+            name="v_ha",
+            field=models.FloatField(
+                blank=True, default=None, null=True, verbose_name="v(ha)"
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='v_hb',
-            field=models.FloatField(blank=True, default=None, null=True, verbose_name='v(hb)'),
+            model_name="image",
+            name="v_hb",
+            field=models.FloatField(
+                blank=True, default=None, null=True, verbose_name="v(hb)"
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='v_he1_5876',
-            field=models.FloatField(blank=True, default=None, null=True, verbose_name='v(He1_5876)'),
+            model_name="image",
+            name="v_he1_5876",
+            field=models.FloatField(
+                blank=True, default=None, null=True, verbose_name="v(He1_5876)"
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='v_n2_6548',
-            field=models.FloatField(blank=True, default=None, null=True, verbose_name='v(n2_6548)'),
+            model_name="image",
+            name="v_n2_6548",
+            field=models.FloatField(
+                blank=True, default=None, null=True, verbose_name="v(n2_6548)"
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='v_n2_6583',
-            field=models.FloatField(blank=True, default=None, null=True, verbose_name='v(n2_6583)'),
+            model_name="image",
+            name="v_n2_6583",
+            field=models.FloatField(
+                blank=True, default=None, null=True, verbose_name="v(n2_6583)"
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='v_o1_6300',
-            field=models.FloatField(blank=True, default=None, null=True, verbose_name='v(o1_6300)'),
+            model_name="image",
+            name="v_o1_6300",
+            field=models.FloatField(
+                blank=True, default=None, null=True, verbose_name="v(o1_6300)"
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='v_o3_4959',
-            field=models.FloatField(blank=True, default=None, null=True, verbose_name='v(o3_4959)'),
+            model_name="image",
+            name="v_o3_4959",
+            field=models.FloatField(
+                blank=True, default=None, null=True, verbose_name="v(o3_4959)"
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='v_o3_5007',
-            field=models.FloatField(blank=True, default=None, null=True, verbose_name='v(o3_5007)'),
+            model_name="image",
+            name="v_o3_5007",
+            field=models.FloatField(
+                blank=True, default=None, null=True, verbose_name="v(o3_5007)"
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='v_s2_6716',
-            field=models.FloatField(blank=True, default=None, null=True, verbose_name='v(s2_6716)'),
+            model_name="image",
+            name="v_s2_6716",
+            field=models.FloatField(
+                blank=True, default=None, null=True, verbose_name="v(s2_6716)"
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='v_s2_6731',
-            field=models.FloatField(blank=True, default=None, null=True, verbose_name='v(s2_6731)'),
+            model_name="image",
+            name="v_s2_6731",
+            field=models.FloatField(
+                blank=True, default=None, null=True, verbose_name="v(s2_6731)"
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='vrot_star',
-            field=models.FloatField(blank=True, default=None, null=True, verbose_name='vrot_star'),
+            model_name="image",
+            name="vrot_star",
+            field=models.FloatField(
+                blank=True, default=None, null=True, verbose_name="vrot_star"
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='xii_light',
-            field=models.FloatField(blank=True, default=None, null=True, verbose_name='xii_light'),
+            model_name="image",
+            name="xii_light",
+            field=models.FloatField(
+                blank=True, default=None, null=True, verbose_name="xii_light"
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='xii_mass',
-            field=models.FloatField(blank=True, default=None, null=True, verbose_name='xii_mass'),
+            model_name="image",
+            name="xii_mass",
+            field=models.FloatField(
+                blank=True, default=None, null=True, verbose_name="xii_mass"
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='xio_light',
-            field=models.FloatField(blank=True, default=None, null=True, verbose_name='xio_light'),
+            model_name="image",
+            name="xio_light",
+            field=models.FloatField(
+                blank=True, default=None, null=True, verbose_name="xio_light"
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='xio_mass',
-            field=models.FloatField(blank=True, default=None, null=True, verbose_name='xio_mass'),
+            model_name="image",
+            name="xio_mass",
+            field=models.FloatField(
+                blank=True, default=None, null=True, verbose_name="xio_mass"
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='xiy_light',
-            field=models.FloatField(blank=True, default=None, null=True, verbose_name='xiy_light'),
+            model_name="image",
+            name="xiy_light",
+            field=models.FloatField(
+                blank=True, default=None, null=True, verbose_name="xiy_light"
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='xiy_mass',
-            field=models.FloatField(blank=True, default=None, null=True, verbose_name='xiy_mass'),
+            model_name="image",
+            name="xiy_mass",
+            field=models.FloatField(
+                blank=True, default=None, null=True, verbose_name="xiy_mass"
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='xo_light',
-            field=models.FloatField(blank=True, default=None, null=True, verbose_name='xo_light'),
+            model_name="image",
+            name="xo_light",
+            field=models.FloatField(
+                blank=True, default=None, null=True, verbose_name="xo_light"
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='xo_mass',
-            field=models.FloatField(blank=True, default=None, null=True, verbose_name='xo_mass'),
+            model_name="image",
+            name="xo_mass",
+            field=models.FloatField(
+                blank=True, default=None, null=True, verbose_name="xo_mass"
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='xyo_light',
-            field=models.FloatField(blank=True, default=None, null=True, verbose_name='xyo_light'),
+            model_name="image",
+            name="xyo_light",
+            field=models.FloatField(
+                blank=True, default=None, null=True, verbose_name="xyo_light"
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='xyo_mass',
-            field=models.FloatField(blank=True, default=None, null=True, verbose_name='xyo_mass'),
+            model_name="image",
+            name="xyo_mass",
+            field=models.FloatField(
+                blank=True, default=None, null=True, verbose_name="xyo_mass"
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='xyy_light',
-            field=models.FloatField(blank=True, default=None, null=True, verbose_name='xyy_light'),
+            model_name="image",
+            name="xyy_light",
+            field=models.FloatField(
+                blank=True, default=None, null=True, verbose_name="xyy_light"
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='xyy_mass',
-            field=models.FloatField(blank=True, default=None, null=True, verbose_name='xyy_mass'),
+            model_name="image",
+            name="xyy_mass",
+            field=models.FloatField(
+                blank=True, default=None, null=True, verbose_name="xyy_mass"
+            ),
         ),
         migrations.AlterField(
-            model_name='image',
-            name='objdec',
-            field=models.FloatField(default=0, verbose_name='Dec'),
+            model_name="image",
+            name="objdec",
+            field=models.FloatField(default=0, verbose_name="Dec"),
         ),
         migrations.AlterField(
-            model_name='image',
-            name='objra',
-            field=models.FloatField(default=0, verbose_name='RA'),
+            model_name="image",
+            name="objra",
+            field=models.FloatField(default=0, verbose_name="RA"),
         ),
     ]

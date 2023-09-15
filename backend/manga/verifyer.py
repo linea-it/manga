@@ -11,8 +11,10 @@
 
 import argparse
 import re
+
 # local
 import sys
+
 # import tkinter as tk
 
 # third party
@@ -38,8 +40,7 @@ logger = logging.getLogger(__name__)
 
 
 class mclass:
-    def flux_by_position(self, megacube, x, y, hud='FLXOBS'):
-
+    def flux_by_position(self, megacube, x, y, hud="FLXOBS"):
         cache_key = f"{megacube.name}_{hud}"
         flux = cache.get(cache_key)
         if not flux:
@@ -50,16 +51,16 @@ class mclass:
 
         return (flux[:, y, x], lamb)
 
-    def synt_by_position(self, megacube, x, y, hud='FLXSYN'):
+    def synt_by_position(self, megacube, x, y, hud="FLXSYN"):
         synt = pf.getdata(megacube, hud)
 
         lamb = self.get_lamb(megacube, synt, hud)
 
         return (synt[:, int(y), int(x)], lamb)
 
-    def get_lamb(self, megacube, flux, hud='FLXOBS'):
-        l0 = pf.getheader(megacube, hud)['CRVAL3']
-        dl = pf.getheader(megacube, hud)['CD3_3']
+    def get_lamb(self, megacube, flux, hud="FLXOBS"):
+        l0 = pf.getheader(megacube, hud)["CRVAL3"]
+        dl = pf.getheader(megacube, hud)["CD3_3"]
 
         (size, ypix, xpix) = np.shape(flux)
         lamb = np.arange(l0, (dl * size + l0), dl)
@@ -71,9 +72,9 @@ class mclass:
         return cube_header
 
     def get_comments(self, megacube, extension):
-        cube_header = self.get_headers(megacube, 'PoPBins')
+        cube_header = self.get_headers(megacube, "PoPBins")
 
-        cube_data = self.get_cube_data(megacube, 'PoPBins')
+        cube_data = self.get_cube_data(megacube, "PoPBins")
 
         z = np.shape(cube_data)[0]
 
@@ -81,12 +82,12 @@ class mclass:
 
         for i in range(0, z, 1):
             try:
-                cube_comments[cube_header['DATA' +
-                                          str(i)]] = cube_header.comments['DATA' + str(i)]
+                cube_comments[cube_header["DATA" + str(i)]] = cube_header.comments[
+                    "DATA" + str(i)
+                ]
 
             except:
-                cube_comments[cube_header['DATA' +
-                                          str(i)]] = ''
+                cube_comments[cube_header["DATA" + str(i)]] = ""
 
         return cube_comments
 
@@ -103,40 +104,50 @@ class mclass:
 
         lHud = []
         for i in range(0, z, 1):
-            lHud.append(cube_header['DATA' + str(i)])
+            lHud.append(cube_header["DATA" + str(i)])
 
         return lHud
 
     def rad_flat(self, size):
-        '''
+        """
         Finds smallest hexagon diameter (flat-to-flat)
-        '''
-        hexasizes_flat = [6, 10.4, 14.7, 19, 23.3,
-                          27.7]  # nominal flat diameters of all MaNGA bundles
-        hexasizes_flat_expanded = np.add(
-            hexasizes_flat, 4)  # border compensation
+        """
+        hexasizes_flat = [
+            6,
+            10.4,
+            14.7,
+            19,
+            23.3,
+            27.7,
+        ]  # nominal flat diameters of all MaNGA bundles
+        hexasizes_flat_expanded = np.add(hexasizes_flat, 4)  # border compensation
         # 20 pix is the typical dimensional excess in the vertical direction
-        dist = [abs(item-(size-20)/2) for item in hexasizes_flat]
+        dist = [abs(item - (size - 20) / 2) for item in hexasizes_flat]
         # find the hexagon y size corresponding compatible with the image shape
         return hexasizes_flat_expanded[dist.index(np.min(dist))]
 
     def rad_corner(self, size):
-        '''
+        """
         Finds largest hexagon diameter (corner-to-corner)
-        '''
-        hexasizes_corner = [7, 12, 17, 22, 27,
-                            32]  # nominal corner diameters of all MaNGA bundles
-        hexasizes_corner_expanded = np.add(
-            hexasizes_corner, 4)  # border compensation
+        """
+        hexasizes_corner = [
+            7,
+            12,
+            17,
+            22,
+            27,
+            32,
+        ]  # nominal corner diameters of all MaNGA bundles
+        hexasizes_corner_expanded = np.add(hexasizes_corner, 4)  # border compensation
         # 10 pix is the typical dimensional excess in the horizontal direction
-        dist = [abs(item-(size-10)/2) for item in hexasizes_corner]
+        dist = [abs(item - (size - 10) / 2) for item in hexasizes_corner]
         # find the hexagon x size corresponding compatible with the image shape
         return hexasizes_corner_expanded[dist.index(np.min(dist))]
 
     def center_hexa(self, data_cube, x, y):
-        '''
+        """
         Estimates the center of the hexagonal bundle
-        '''
+        """
         xl = []
         yl = []
         for i in range(y):
@@ -144,58 +155,73 @@ class mclass:
                 if np.sum(data_cube[:, i, j], axis=0) != 0:
                     xl.append(j)
                     yl.append(i)
-        xran, yran = [np.max(xl)-np.min(xl), np.max(yl)-np.min(yl)]
+        xran, yran = [np.max(xl) - np.min(xl), np.max(yl) - np.min(yl)]
         minx, miny = [np.min(xl), np.min(yl)]
-        while yran < 2*self.rad_flat(y):
+        while yran < 2 * self.rad_flat(y):
             yran += 0.5
-            if np.average(yl) < (np.max(yl)-np.min(yl))/2.+np.min(yl):
+            if np.average(yl) < (np.max(yl) - np.min(yl)) / 2.0 + np.min(yl):
                 miny -= 0.25
-        while xran < 2*self.rad_corner(y):
+        while xran < 2 * self.rad_corner(y):
             xran += 0.5
-            if np.average(xl) < (np.max(xl)-np.min(xl))/2.+np.min(xl):
+            if np.average(xl) < (np.max(xl) - np.min(xl)) / 2.0 + np.min(xl):
                 minx -= 0.25
-        return (xran/2.+minx, yran/2.+miny)
+        return (xran / 2.0 + minx, yran / 2.0 + miny)
 
     def find_corners(self, center, radius):
         xy_array = [[], []]
         xy_tuple = []
-        xy_array[0].append(center[0]+radius-0.5)
-        xy_array[1].append(center[1]-0.5)
-        xy_tuple.append((center[0]+radius-0.5, center[1]-0.5))
-        xy_array[0].append(center[0]+radius/2.-0.5)
-        xy_array[1].append(center[1]+radius*np.sqrt(3)/2.-0.5)
+        xy_array[0].append(center[0] + radius - 0.5)
+        xy_array[1].append(center[1] - 0.5)
+        xy_tuple.append((center[0] + radius - 0.5, center[1] - 0.5))
+        xy_array[0].append(center[0] + radius / 2.0 - 0.5)
+        xy_array[1].append(center[1] + radius * np.sqrt(3) / 2.0 - 0.5)
         xy_tuple.append(
-            (center[0]+radius/2.-0.5, center[1]+radius*np.sqrt(3)/2.-0.5))
-        xy_array[0].append(center[0]-radius/2.-0.5)
-        xy_array[1].append(center[1]+radius*np.sqrt(3)/2.-0.5)
+            (
+                center[0] + radius / 2.0 - 0.5,
+                center[1] + radius * np.sqrt(3) / 2.0 - 0.5,
+            )
+        )
+        xy_array[0].append(center[0] - radius / 2.0 - 0.5)
+        xy_array[1].append(center[1] + radius * np.sqrt(3) / 2.0 - 0.5)
         xy_tuple.append(
-            (center[0]-radius/2.-0.5, center[1]+radius*np.sqrt(3)/2.-0.5))
-        xy_array[0].append(center[0]-radius-0.5)
-        xy_array[1].append(center[1]-0.5)
-        xy_tuple.append((center[0]-radius-0.5, center[1]-0.5))
-        xy_array[0].append(center[0]-radius/2.-0.5)
-        xy_array[1].append(center[1]-radius*np.sqrt(3)/2.-0.5)
+            (
+                center[0] - radius / 2.0 - 0.5,
+                center[1] + radius * np.sqrt(3) / 2.0 - 0.5,
+            )
+        )
+        xy_array[0].append(center[0] - radius - 0.5)
+        xy_array[1].append(center[1] - 0.5)
+        xy_tuple.append((center[0] - radius - 0.5, center[1] - 0.5))
+        xy_array[0].append(center[0] - radius / 2.0 - 0.5)
+        xy_array[1].append(center[1] - radius * np.sqrt(3) / 2.0 - 0.5)
         xy_tuple.append(
-            (center[0]-radius/2.-0.5, center[1]-radius*np.sqrt(3)/2.-0.5))
-        xy_array[0].append(center[0]+radius/2.-0.5)
-        xy_array[1].append(center[1]-radius*np.sqrt(3)/2.-0.5)
+            (
+                center[0] - radius / 2.0 - 0.5,
+                center[1] - radius * np.sqrt(3) / 2.0 - 0.5,
+            )
+        )
+        xy_array[0].append(center[0] + radius / 2.0 - 0.5)
+        xy_array[1].append(center[1] - radius * np.sqrt(3) / 2.0 - 0.5)
         xy_tuple.append(
-            (center[0]+radius/2.-0.5, center[1]-radius*np.sqrt(3)/2.-0.5))
+            (
+                center[0] + radius / 2.0 - 0.5,
+                center[1] - radius * np.sqrt(3) / 2.0 - 0.5,
+            )
+        )
         return (xy_array, xy_tuple)
 
     def get_original_cube_data(self, megacube):
-        cube_data = pf.getdata(megacube, 'FLUX')
-        mask = pf.getdata(megacube,'SN_MASKS_1')
+        cube_data = pf.getdata(megacube, "FLUX")
+        mask = pf.getdata(megacube, "SN_MASKS_1")
 
         (z, y, x) = np.shape(cube_data)
         imag = np.sum(cube_data[:, :, :], axis=0)
         center = self.center_hexa(cube_data, x, y)
-        corners_array, corners_tuple = self.find_corners(
-            center, self.rad_corner(y))
+        corners_array, corners_tuple = self.find_corners(center, self.rad_corner(y))
         polygon = Polygon(corners_tuple)
 
         fig, ax = pyplot.subplots()
-        ax.set_aspect('equal')
+        ax.set_aspect("equal")
         imagb = copy.deepcopy(imag)
 
         for i in range(x):
@@ -206,7 +232,7 @@ class mclass:
 
         imagb[np.where(mask == 1)] = np.nan
 
-        flux_image = ax.imshow(imagb, origin='lower').get_array()
+        flux_image = ax.imshow(imagb, origin="lower").get_array()
 
         return flux_image.tolist(fill_value=None)
 
@@ -218,27 +244,25 @@ class mclass:
     #     return z
 
     def image_by_hud(self, megacube, hud):
+        cube_header = self.get_headers(megacube, "PoPBins")
 
-        cube_header = self.get_headers(megacube, 'PoPBins')
-
-        cube_data = self.get_cube_data(megacube, 'PoPBins')
+        cube_data = self.get_cube_data(megacube, "PoPBins")
 
         lHud = self.get_all_hud(cube_header, cube_data)
 
         idxHud = lHud.index(hud)
 
-        mask = pf.getdata(megacube,'SN_MASKS_1')
+        mask = pf.getdata(megacube, "SN_MASKS_1")
 
         (z, y, x) = np.shape(cube_data)
 
         imag = cube_data[idxHud, :, :]
         center = self.center_hexa(cube_data, x, y)
-        corners_array, corners_tuple = self.find_corners(
-            center, self.rad_corner(y))
+        corners_array, corners_tuple = self.find_corners(center, self.rad_corner(y))
         polygon = Polygon(corners_tuple)
 
         fig, ax = pyplot.subplots()
-        ax.set_aspect('equal')
+        ax.set_aspect("equal")
         imagb = copy.deepcopy(imag)
 
         for i in range(x):
@@ -249,24 +273,28 @@ class mclass:
 
         imagb[np.where(mask == 1)] = np.nan
 
-        flux_image = ax.imshow(imagb, origin='lower').get_array()
+        flux_image = ax.imshow(imagb, origin="lower").get_array()
 
         result = flux_image.tolist(fill_value=None)
 
         # Close images resolve the Warning "figure.max_open_warning"
-        pyplot.close('all')
+        pyplot.close("all")
         return result
 
-
-    def spaxel_fit_by_position(self, megacube, x, y, ):
+    def spaxel_fit_by_position(
+        self,
+        megacube,
+        x,
+        y,
+    ):
         """
-            Central Spaxel Best Fit
-            Return [(Age, Z, Lfrac, Mfrac)]
+        Central Spaxel Best Fit
+        Return [(Age, Z, Lfrac, Mfrac)]
         """
-        cube_header = self.get_headers(megacube, 'PoPBins')
-        cube_data = self.get_cube_data(megacube, 'PoPBins')
-        data_cube_lfrac = self.get_cube_data(megacube, 'PoPVecsL', x, y)
-        data_cube_mfrac = self.get_cube_data(megacube, 'PoPVecsM', x, y)
+        cube_header = self.get_headers(megacube, "PoPBins")
+        cube_data = self.get_cube_data(megacube, "PoPBins")
+        data_cube_lfrac = self.get_cube_data(megacube, "PoPVecsL", x, y)
+        data_cube_mfrac = self.get_cube_data(megacube, "PoPVecsM", x, y)
 
         z = np.shape(cube_data)[0]
 
@@ -276,8 +304,7 @@ class mclass:
             try:
                 # t = Age
                 # met = Z
-                ssp, t, met = re.split(
-                    ',', cube_header['DATA' + str(idx)])
+                ssp, t, met = re.split(",", cube_header["DATA" + str(idx)])
 
                 temp_rows.append((t.strip(), met.strip()))
             except Exception:
@@ -303,7 +330,6 @@ class mclass:
         return rows
 
     def log_age_by_position(self, megacube, x, y):
-
         summedpopx = []
         summedpopxTemp = []
         summedpopxTemp2 = []
@@ -311,18 +337,21 @@ class mclass:
         summedpopmTemp = []
         summedpopmTemp2 = []
 
-        popx = self.get_cube_data(megacube, 'PoPVecsL', x, y)
-        popm = self.get_cube_data(megacube, 'PoPVecsM', x, y)
+        popx = self.get_cube_data(megacube, "PoPVecsL", x, y)
+        popm = self.get_cube_data(megacube, "PoPVecsM", x, y)
 
-        aux = pf.getdata(megacube, 'BaseAgeMetal')
+        aux = pf.getdata(megacube, "BaseAgeMetal")
         popage = aux[:, 0]
         popZ = aux[:, 1]
         zs = np.unique(popZ)[np.unique(popZ) != 0]
 
         for z in zs:
-            if(len(popZ[popZ == z]) == 0):
-                print('Metallicity', z,
-                      ' is not in the base, I hope you know wath you are doing!')
+            if len(popZ[popZ == z]) == 0:
+                print(
+                    "Metallicity",
+                    z,
+                    " is not in the base, I hope you know wath you are doing!",
+                )
 
             summedpopxTemp.append(popx[popZ == z])
             summedpopxTemp2 = np.column_stack(summedpopxTemp)
@@ -335,11 +364,13 @@ class mclass:
 
         summedpopages = popage[popZ == zs[0]]
 
-        result = dict({
-            "x": list(np.log10(summedpopages)),
-            "y": list(summedpopx),
-            "m": list(summedpopm),
-        })
+        result = dict(
+            {
+                "x": list(np.log10(summedpopages)),
+                "y": list(summedpopx),
+                "m": list(summedpopm),
+            }
+        )
 
         return result
 
@@ -355,34 +386,36 @@ class mclass:
         maxis = np.array([])
         mlegend = np.array([])
 
-        cube_header = self.get_headers(megacube, 'PopBins')
-        cube_data = self.get_cube_data(megacube, 'PopBins')
+        cube_header = self.get_headers(megacube, "PopBins")
+        cube_data = self.get_cube_data(megacube, "PopBins")
 
         vecs = 0
         for i in range(0, np.shape(cube_data)[0], 1):
-            if 'light' in cube_header['DATA' + str(i)]:
+            if "light" in cube_header["DATA" + str(i)]:
                 vecs = vecs + 1
 
-        cube_header_list = repr(cube_header).split('\n')
+        cube_header_list = repr(cube_header).split("\n")
 
         for k in np.arange(vecs + 1):
             xaxis = np.append(xaxis, k)
             yaxis = np.append(yaxis, cube_data[k, int(y), int(x)])
-            maxis = np.append(maxis, cube_header['DATA' + str(k)])
+            maxis = np.append(maxis, cube_header["DATA" + str(k)])
             for j in range(0, len(cube_header_list)):
-                if self.index_of('DATA' + str(k) + ' ', str(cube_header_list[j])) > -1:
-                    mlegend = np.append(mlegend, str(
-                        cube_header_list[j]).split('/')[1].strip())
+                if self.index_of("DATA" + str(k) + " ", str(cube_header_list[j])) > -1:
+                    mlegend = np.append(
+                        mlegend, str(cube_header_list[j]).split("/")[1].strip()
+                    )
 
-        return dict({
-            "x": list(xaxis),
-            "y": list(yaxis),
-            "m": list(maxis),
-            "mlegend": list(mlegend)
-        })
+        return dict(
+            {
+                "x": list(xaxis),
+                "y": list(yaxis),
+                "m": list(maxis),
+                "mlegend": list(mlegend),
+            }
+        )
 
     def get_metadata(self, megacube):
-
         result = dict({})
 
         # The drpall-v2_7_1.fits file has two HDUs, different from the drpall-v1_5_1.fits. So, because of this, a range of bigger than 1 and smaller than 3 was set, joined with a try/except to ignore the unexisting HDU index in drpall-v1_5_1.fits.
@@ -397,90 +430,87 @@ class mclass:
                 # Same attributes, in both files, with different names
                 same_attribute_columns = [
                     {
-                        'mpl4': 'iauname',
-                        'mpl9': 'nsa_iauname',
+                        "mpl4": "iauname",
+                        "mpl9": "nsa_iauname",
                     },
                     {
-                        'mpl4': 'field',
-                        'mpl9': 'nsa_field',
+                        "mpl4": "field",
+                        "mpl9": "nsa_field",
                     },
                     {
-                        'mpl4': 'run',
-                        'mpl9': 'nsa_run',
+                        "mpl4": "run",
+                        "mpl9": "nsa_run",
                     },
                     {
-                        'mpl4': 'nsa_id',
-                        'mpl9': 'nsa_nsaid',
+                        "mpl4": "nsa_id",
+                        "mpl9": "nsa_nsaid",
                     },
                     {
-                        'mpl4': 'nsa_redshift',
-                        'mpl9': 'nsa_z',
+                        "mpl4": "nsa_redshift",
+                        "mpl9": "nsa_z",
                     },
                     {
-                        'mpl4': 'nsa_absmag',
-                        'mpl9': 'nsa_sersic_absmag',
+                        "mpl4": "nsa_absmag",
+                        "mpl9": "nsa_sersic_absmag",
                     },
                     {
-                        'mpl4': 'nsa_absmag_el',
-                        'mpl9': 'nsa_elpetro_absmag',
+                        "mpl4": "nsa_absmag_el",
+                        "mpl9": "nsa_elpetro_absmag",
                     },
                     {
-                        'mpl4': 'nsa_amivar_el',
-                        'mpl9': 'nsa_elpetro_amivar',
+                        "mpl4": "nsa_amivar_el",
+                        "mpl9": "nsa_elpetro_amivar",
                     },
                     {
-                        'mpl4': 'nsa_mstar',
-                        'mpl9': 'nsa_sersic_mass',
+                        "mpl4": "nsa_mstar",
+                        "mpl9": "nsa_sersic_mass",
                     },
                     {
-                        'mpl4': 'nsa_mstar_el',
-                        'mpl9': 'nsa_elpetro_mass',
+                        "mpl4": "nsa_mstar_el",
+                        "mpl9": "nsa_elpetro_mass",
                     },
                     {
-                        'mpl4': 'nsa_ba',
-                        'mpl9': 'nsa_elpetro_ba',
+                        "mpl4": "nsa_ba",
+                        "mpl9": "nsa_elpetro_ba",
                     },
                     {
-                        'mpl4': 'nsa_phi',
-                        'mpl9': 'nsa_elpetro_phi',
+                        "mpl4": "nsa_phi",
+                        "mpl9": "nsa_elpetro_phi",
                     },
                     {
-                        'mpl4': 'nsa_petroflux',
-                        'mpl9': 'nsa_petro_flux',
+                        "mpl4": "nsa_petroflux",
+                        "mpl9": "nsa_petro_flux",
                     },
                     {
-                        'mpl4': 'nsa_petroflux_ivar',
-                        'mpl9': 'nsa_petro_flux_ivar',
+                        "mpl4": "nsa_petroflux_ivar",
+                        "mpl9": "nsa_petro_flux_ivar",
                     },
                     {
-                        'mpl4': 'nsa_petroflux_el',
-                        'mpl9': 'nsa_elpetro_flux',
+                        "mpl4": "nsa_petroflux_el",
+                        "mpl9": "nsa_elpetro_flux",
                     },
                     {
-                        'mpl4': 'nsa_petroflux_el_ivar',
-                        'mpl9': 'nsa_elpetro_flux_ivar',
+                        "mpl4": "nsa_petroflux_el_ivar",
+                        "mpl9": "nsa_elpetro_flux_ivar",
                     },
                     {
-                        'mpl4': 'nsa_sersicflux',
-                        'mpl9': 'nsa_sersic_flux',
+                        "mpl4": "nsa_sersicflux",
+                        "mpl9": "nsa_sersic_flux",
                     },
-                    {
-                        'mpl4': 'nsa_sersicflux_ivar',
-                        'mpl9': 'nsa_sersic_flux_ivar'
-                    },
+                    {"mpl4": "nsa_sersicflux_ivar", "mpl9": "nsa_sersic_flux_ivar"},
                 ]
 
                 # Some attributes exist in both mpl4 and mpl9 metadata file with different names.
                 # Here we loop through the these columns and change their name according to the latest version, which is the mpl9 file.
                 for column in same_attribute_columns:
-                    if column['mpl4'] in columns.names:
+                    if column["mpl4"] in columns.names:
                         columns.change_name(
-                            col_name=column['mpl4'], new_name=column['mpl9'])
+                            col_name=column["mpl4"], new_name=column["mpl9"]
+                        )
 
                 for column in columns.names:
                     # In case of having the column in the file, insert its data to the result dictionary
                     try:
-
                         # The index 3218, in the drpall-v1_5_1.fits file, had a numpy float64 nan.
                         # Because of this, I've set this nan_to_num, where the nan will be converted to 0.
                         field_data = np.nan_to_num(data.field(column))
@@ -501,5 +531,5 @@ class mclass:
         return result
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     filename = sys.argv[1]

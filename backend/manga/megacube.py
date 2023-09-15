@@ -18,6 +18,7 @@ import json
 import requests
 import shutil
 
+
 class MangaMegacube:
     megacube: Path
     name: str
@@ -457,7 +458,7 @@ class MangaMegacube:
             print(f"File not Found: {filename}")
         return exists
 
-    def extract_image_heatmap(self, overwrite: bool=False ):
+    def extract_image_heatmap(self, overwrite: bool = False):
         """
         It extracts all the Image Heatmaps from 'PoPBins' HUD
         for each image and for each HUD saved in the file
@@ -666,7 +667,7 @@ class MangaMegacube:
         maps_names = self.extract_gas_maps_heatmap(overwrite)
         print(f"Gas Map Created: {len(maps_names)}")
 
-    def check_extracted_parts(self, bz2:bool=True, fits:bool=True):
+    def check_extracted_parts(self, bz2: bool = True, fits: bool = True):
         # Headers
         if not self.cube_part_exist("cube_header.json"):
             return False
@@ -924,24 +925,26 @@ class MangaMegacube:
             print(msg)
             raise Exception(msg)
 
-
-    def download_sdss_image(self, ra, dec, overwrite:bool = False):
+    def download_sdss_image(self, ra, dec, overwrite: bool = False):
         """
-            It downloads the SDSS Image by its RA and Dec
-            for each image and save them in the path
-            /images/megacube_parts/megacube_{JOB_ID}/sdss_image.jpg
+        It downloads the SDSS Image by its RA and Dec
+        for each image and save them in the path
+        /images/megacube_parts/megacube_{JOB_ID}/sdss_image.jpg
         """
         # Object directory in Images Megacube Parts.
         parts_path = self.parts_folder
-        filename = 'sdss_image.jpg'
+        filename = "sdss_image.jpg"
 
         if self.cube_part_exist(filename) == True and overwrite == False:
-            print('Downloading SDSS Image [SKIPED]')
+            print("Downloading SDSS Image [SKIPED]")
         else:
-            print('Downloading SDSS Image [%s]' % str(self.megacube))
+            print("Downloading SDSS Image [%s]" % str(self.megacube))
 
             # Set up the image URL and filename
-            image_url = "http://skyserver.sdss.org/dr16/SkyServerWS/ImgCutout/getjpeg?TaskName=Skyserver.Chart.Image&ra=%s&dec=%s&scale=0.099515875&width=512&height=512&opt=G&query=" % (ra, dec)
+            image_url = (
+                "http://skyserver.sdss.org/dr16/SkyServerWS/ImgCutout/getjpeg?TaskName=Skyserver.Chart.Image&ra=%s&dec=%s&scale=0.099515875&width=512&height=512&opt=G&query="
+                % (ra, dec)
+            )
 
             # Open the url image, set stream to True, this will return the stream content.
             r = requests.get(image_url, stream=True)
@@ -956,12 +959,11 @@ class MangaMegacube:
                     filepath.unlink()
 
                 # Open a local file with wb ( write binary ) permission.
-                with open(filepath, 'wb') as f:
+                with open(filepath, "wb") as f:
                     shutil.copyfileobj(r.raw, f)
-                print('Finished Download SDSS Images!')
+                print("Finished Download SDSS Images!")
             else:
-                print(
-                    'SDSS Image [%s] could not be retrieved' % str(self.megacube))
+                print("SDSS Image [%s] could not be retrieved" % str(self.megacube))
 
 
 if __name__ == "__main__":

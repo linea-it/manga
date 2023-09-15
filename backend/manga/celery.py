@@ -9,7 +9,7 @@ from django.conf import settings
 # set the default Django settings module for the 'celery' program.
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "manga.settings")
 
-app = Celery('manga')
+app = Celery("manga")
 
 # Using a string here means the worker don't have to serialize
 # the configuration object to child processes.

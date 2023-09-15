@@ -9,7 +9,8 @@ import plotly as pl
 import plotly.express as px
 import plotly.graph_objects as go
 
-class EmissionLines():
+
+class EmissionLines:
     megacube: Path
     parameters: pf.fitsrec.FITS_rec
     fitconfig: pf.fitsrec.FITS_rec
@@ -29,20 +30,20 @@ class EmissionLines():
     def __init__(self, megacube: Path):
         self.megacube = Path(megacube)
 
-        self.parameters = pf.getdata(self.megacube, 'PARNAMES')
+        self.parameters = pf.getdata(self.megacube, "PARNAMES")
 
-        self.solution = pf.getdata(self.megacube, 'SOLUTION')
+        self.solution = pf.getdata(self.megacube, "SOLUTION")
 
         # Headers do fitspec
-        self.h = pf.getheader(self.megacube, 'fitspec')
+        self.h = pf.getheader(self.megacube, "fitspec")
         # fitspec Data
-        self.fitspec = pf.getdata(self.megacube, 'fitspec')
+        self.fitspec = pf.getdata(self.megacube, "fitspec")
 
-        self.pseudo_continuum = pf.getdata(self.megacube, 'FITCONT')
+        self.pseudo_continuum = pf.getdata(self.megacube, "FITCONT")
 
-        self.stelar = pf.getdata(self.megacube, 'STELLAR')
+        self.stelar = pf.getdata(self.megacube, "STELLAR")
 
-        self.fitconfig = pf.getdata(self.megacube, 'FITCONFIG')
+        self.fitconfig = pf.getdata(self.megacube, "FITCONFIG")
 
         self.wavelength = self.calc_wavelength()
 
@@ -50,26 +51,27 @@ class EmissionLines():
         self.rest_wl = self.get_restwl(self.fitconfig)
 
         # Velocidade da Luz em km/s.
-        self.c = c.to('km/s').value
+        self.c = c.to("km/s").value
 
     def calc_wavelength(self) -> np.ndarray:
         wavelength = np.arange(
-            self.h['crval3'],
-            self.h['crval3'] + self.h['naxis3'] * self.h['cd3_3'],
-            self.h['cd3_3'])
+            self.h["crval3"],
+            self.h["crval3"] + self.h["naxis3"] * self.h["cd3_3"],
+            self.h["cd3_3"],
+        )
 
         return wavelength
 
     def get_restwl(self, fitconfig):
-        ''' To get the rest wavelengths from the configurarion file'''
+        """To get the rest wavelengths from the configurarion file"""
         rest_wl = np.array([])
         for i in fitconfig:
-            if '.rest_wavelength' in i[0]:
+            if ".rest_wavelength" in i[0]:
                 rest_wl = np.append(rest_wl, float(i[1]))
         return rest_wl
 
     def gauss(self, x: np.ndarray, rest_wl: np.ndarray, p: np.ndarray) -> np.ndarray:
-        ''' Compute the gaussian emission line profiles.  '''
+        """Compute the gaussian emission line profiles."""
         lam_ratio = (x / rest_wl) ** 2
         vel = self.c * (lam_ratio - 1.0) / (lam_ratio + 1.0)
 
@@ -79,21 +81,29 @@ class EmissionLines():
 
         w = (vel - v0) / s
 
-        y = a * np.exp(-w**2 / 2.0) / (1.0 + (vel / self.c))
+        y = a * np.exp(-(w**2) / 2.0) / (1.0 + (vel / self.c))
 
         return y
 
     def emission_lines_profile(self, x: int, y: int) -> pd.DataFrame:
-        pseudo_continuum = self.pseudo_continuum[:,y,x]
-        stellar_flux = self.stelar[:,y,x]
-        solution = self.solution[:,y,x]
+        pseudo_continuum = self.pseudo_continuum[:, y, x]
+        stellar_flux = self.stelar[:, y, x]
+        solution = self.solution[:, y, x]
 
         df = pd.DataFrame()
 
-        for i in range(0, len(self.parameters), 3): # esse 3 eh por que tem que ir de 3 em 3
-            rest_wl = self.rest_wl[int(i / 3)] # aqui o 3 eh para pegar o correspondente rest_wl (que eh um array simples)
-            parameters = solution[i:i + 3]   # cortando o solution para pegar os parametros para plotar a gaussiana
-            line = self.gauss(self.wavelength, rest_wl, parameters) # calculando a linha com a funcao gaussiana
+        for i in range(
+            0, len(self.parameters), 3
+        ):  # esse 3 eh por que tem que ir de 3 em 3
+            rest_wl = self.rest_wl[
+                int(i / 3)
+            ]  # aqui o 3 eh para pegar o correspondente rest_wl (que eh um array simples)
+            parameters = solution[
+                i : i + 3
+            ]  # cortando o solution para pegar os parametros para plotar a gaussiana
+            line = self.gauss(
+                self.wavelength, rest_wl, parameters
+            )  # calculando a linha com a funcao gaussiana
             label = self.parameters[i][0]
             data = pseudo_continuum + stellar_flux + line
             df[label] = data
@@ -102,33 +112,67 @@ class EmissionLines():
 
     def emission_lines(self, x: int, y: int) -> List[Dict[str, Union[np.float64, str]]]:
         data = []
-        for i in range(0, len(self.parameters), 3): # esse 3 eh por que tem que ir de 3 em 3
-            rest_wl = self.rest_wl[int(i / 3)] # aqui o 3 eh para pegar o correspondente rest_wl (que eh um array simples)
+        for i in range(
+            0, len(self.parameters), 3
+        ):  # esse 3 eh por que tem que ir de 3 em 3
+            rest_wl = self.rest_wl[
+                int(i / 3)
+            ]  # aqui o 3 eh para pegar o correspondente rest_wl (que eh um array simples)
 
-            data.append({
-                'value': rest_wl,
-                'label': self.parameters[i][0]
-            })
+            data.append({"value": rest_wl, "label": self.parameters[i][0]})
         return data
 
     def absortion_lines(self) -> List[Dict[str, Union[str, int]]]:
         # para marcar a posicao das linhas em absorcao.
         data = []
-        abs_lines = np.array([4536,4677,5101,5176,5265,5332,5401,5708,5786,5893,5965,6132,6230,6354,6430,6507])
-        abs_linesname=['Fe I','Fe I','Mg','Mg b', 'Fe I','Fe I','Fe I','Fe I','Fe I','Na D','TiO','Fe I','TiO', 'Fe I','Fe I','Fe I']
+        abs_lines = np.array(
+            [
+                4536,
+                4677,
+                5101,
+                5176,
+                5265,
+                5332,
+                5401,
+                5708,
+                5786,
+                5893,
+                5965,
+                6132,
+                6230,
+                6354,
+                6430,
+                6507,
+            ]
+        )
+        abs_linesname = [
+            "Fe I",
+            "Fe I",
+            "Mg",
+            "Mg b",
+            "Fe I",
+            "Fe I",
+            "Fe I",
+            "Fe I",
+            "Fe I",
+            "Na D",
+            "TiO",
+            "Fe I",
+            "TiO",
+            "Fe I",
+            "Fe I",
+            "Fe I",
+        ]
         for i in range(0, len(abs_lines), 1):
-            data.append({
-                'value': abs_lines[i],
-                'label': abs_linesname[i]
-            })
+            data.append({"value": abs_lines[i], "label": abs_linesname[i]})
         return data
 
     def obs_spec(self, x: int, y: int) -> list:
-        obs_flux = self.fitspec[:,y,x]
+        obs_flux = self.fitspec[:, y, x]
         return obs_flux.tolist()
 
     def synt_spec(self, x: int, y: int) -> list:
-        stellar_flux = self.stelar[:,y,x]
+        stellar_flux = self.stelar[:, y, x]
         return stellar_flux.tolist()
 
     def to_dataframe(self, x, y) -> pd.DataFrame:
@@ -144,7 +188,7 @@ class EmissionLines():
 
         return df
 
-    def plot(self, x: int, y: int, output:Path, format: str = "html"):
+    def plot(self, x: int, y: int, output: Path, format: str = "html"):
         print(f"Megacube: {self.megacube} X: [{x}] Y: [{y}]")
 
         df = self.to_dataframe(x, y)
@@ -173,75 +217,84 @@ class EmissionLines():
             # )
         )
 
-        fig.add_trace(go.Scatter(
-            x=df["wavelength"],
-            y=df["obs_spec"],
-            name="Obs. Spec",
-            mode="lines",
-            line=dict(color="blue"),
-            showlegend=True,
-        ))
+        fig.add_trace(
+            go.Scatter(
+                x=df["wavelength"],
+                y=df["obs_spec"],
+                name="Obs. Spec",
+                mode="lines",
+                line=dict(color="blue"),
+                showlegend=True,
+            )
+        )
 
-        fig.add_trace(go.Scatter(
-            x=df["wavelength"],
-            y=df["synt_spec"],
-            name="Synt. Spec",
-            mode="lines",
-            line=dict(color="orange"),
-            showlegend=True,
-        ))
+        fig.add_trace(
+            go.Scatter(
+                x=df["wavelength"],
+                y=df["synt_spec"],
+                name="Synt. Spec",
+                mode="lines",
+                line=dict(color="orange"),
+                showlegend=True,
+            )
+        )
 
         show_legend = True
         for label in df.columns:
             if label in ["wavelength", "obs_spec", "synt_spec"]:
                 continue
 
-            fig.add_trace(go.Scatter(
-                x=df["wavelength"],
-                y=df[label],
-                legendgroup="em_lines",
-                name="Emission-lines",
-                mode="lines",
-                line=dict(color="black", dash='dot'),
-                showlegend=show_legend,
-            ))
+            fig.add_trace(
+                go.Scatter(
+                    x=df["wavelength"],
+                    y=df[label],
+                    legendgroup="em_lines",
+                    name="Emission-lines",
+                    mode="lines",
+                    line=dict(color="black", dash="dot"),
+                    showlegend=show_legend,
+                )
+            )
             show_legend = False
 
         plot_y_min = fig.data[0].y.min()
         plot_y_max = fig.data[0].y.max()
         show_legend = True
         for line in em_lines:
-            fig.add_trace(go.Scatter(
-                x=[line['value'],line['value']],
-                y=[plot_y_min, plot_y_max],
-                legendgroup="v_em_lines",
-                name="Em. Lines",
-                mode="lines",
-                line=dict(color="green", dash='dash'),
-                showlegend=show_legend
-            ))
+            fig.add_trace(
+                go.Scatter(
+                    x=[line["value"], line["value"]],
+                    y=[plot_y_min, plot_y_max],
+                    legendgroup="v_em_lines",
+                    name="Em. Lines",
+                    mode="lines",
+                    line=dict(color="green", dash="dash"),
+                    showlegend=show_legend,
+                )
+            )
             show_legend = False
 
         plot_y_min = fig.data[0].y.min()
         plot_y_max = fig.data[0].y.max()
         show_legend = True
         for line in abs_lines:
-            fig.add_trace(go.Scatter(
-                x=[line['value'],line['value']],
-                y=[plot_y_min, plot_y_max],
-                legendgroup="v_abs_lines",
-                name="Abs. Lines",
-                mode="lines",
-                line=dict(color="cyan", dash='dash'),
-                showlegend=show_legend
-            ))
+            fig.add_trace(
+                go.Scatter(
+                    x=[line["value"], line["value"]],
+                    y=[plot_y_min, plot_y_max],
+                    legendgroup="v_abs_lines",
+                    name="Abs. Lines",
+                    mode="lines",
+                    line=dict(color="cyan", dash="dash"),
+                    showlegend=show_legend,
+                )
+            )
             show_legend = False
 
         # fig.show()
 
-        if format == 'html':
+        if format == "html":
             fig.write_html(output)
-
 
     # def plot_emission_lines_and_continuos(self, x: int, y: int):
     #     print(f"Megacube: {self.megacube} X: [{x}] Y: [{y}]")
@@ -277,6 +330,7 @@ class EmissionLines():
     #         plt.text(line['value']+5, ypos, line['label'], rotation='vertical', color='green')
 
     # plt.show()
+
 
 # def main(filepath, x: int, y: int):
 #     my_cube = EmissionLines(filepath)

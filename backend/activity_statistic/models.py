@@ -12,15 +12,23 @@ class Activity(models.Model):
 
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        verbose_name='Owner',
+        verbose_name="Owner",
         on_delete=models.SET_NULL,
-        null=True, blank=True, )
+        null=True,
+        blank=True,
+    )
 
     event = models.CharField(
-        max_length=100, null=False, blank=False, verbose_name='Event')
+        max_length=100, null=False, blank=False, verbose_name="Event"
+    )
 
     date = models.DateTimeField(
-        auto_now_add=True, null=True, blank=True, verbose_name='Date', help_text='Creation Date')
+        auto_now_add=True,
+        null=True,
+        blank=True,
+        verbose_name="Date",
+        help_text="Creation Date",
+    )
 
     def __str__(self):
         return str(self.event)
@@ -41,12 +49,19 @@ user_logged_out.connect(activity_log_out)
 class Visit(models.Model):
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        verbose_name='Owner',
+        verbose_name="Owner",
         on_delete=models.SET_NULL,
-        null=True, blank=True, )
+        null=True,
+        blank=True,
+    )
 
     date = models.DateTimeField(
-        auto_now_add=True, null=True, blank=True, verbose_name='Date', help_text='Creation Date')
+        auto_now_add=True,
+        null=True,
+        blank=True,
+        verbose_name="Date",
+        help_text="Creation Date",
+    )
 
     def __str__(self):
-        return str("%s - %s" % (self.owner, self.date.strftime('%Y-%m-%d %H:%M')))
+        return str("%s - %s" % (self.owner, self.date.strftime("%Y-%m-%d %H:%M")))

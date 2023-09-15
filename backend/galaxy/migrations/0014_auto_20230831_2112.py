@@ -4,25 +4,34 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('galaxy', '0013_auto_20230830_1810'),
+        ("galaxy", "0013_auto_20230830_1810"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='image',
-            name='mangaid',
-            field=models.CharField(help_text='MaNGA ID for this object (e.g. 1-114145)', max_length=100, verbose_name='MaNGA ID'),
+            model_name="image",
+            name="mangaid",
+            field=models.CharField(
+                help_text="MaNGA ID for this object (e.g. 1-114145)",
+                max_length=100,
+                verbose_name="MaNGA ID",
+            ),
         ),
         migrations.AlterField(
-            model_name='image',
-            name='ned_name',
-            field=models.CharField(default=None, max_length=100, verbose_name='Common Name'),
+            model_name="image",
+            name="ned_name",
+            field=models.CharField(
+                default=None, max_length=100, verbose_name="Common Name"
+            ),
         ),
         migrations.AlterField(
-            model_name='image',
-            name='plateifu',
-            field=models.CharField(help_text='Plate+ifudesign name for this object (e.g. 7443-12701)', max_length=100, verbose_name='Plate IFU Design ID'),
+            model_name="image",
+            name="plateifu",
+            field=models.CharField(
+                help_text="Plate+ifudesign name for this object (e.g. 7443-12701)",
+                max_length=100,
+                verbose_name="Plate IFU Design ID",
+            ),
         ),
     ]

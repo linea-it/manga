@@ -4,15 +4,20 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('galaxy', '0014_auto_20230831_2112'),
+        ("galaxy", "0014_auto_20230831_2112"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='image',
-            name='ned_name',
-            field=models.CharField(blank=True, default=None, max_length=100, null=True, verbose_name='Common Name'),
+            model_name="image",
+            name="ned_name",
+            field=models.CharField(
+                blank=True,
+                default=None,
+                max_length=100,
+                null=True,
+                verbose_name="Common Name",
+            ),
         ),
     ]

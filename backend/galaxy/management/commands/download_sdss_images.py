@@ -10,21 +10,19 @@ import shutil
 
 
 class Command(BaseCommand):
-    help = 'Downloading SDSS images of the galaxies'
+    help = "Downloading SDSS images of the galaxies"
 
     def handle(self, *args, **kwargs):
-
-        self.stdout.write('Started')
+        self.stdout.write("Started")
 
         self.download_images()
 
-        self.stdout.write('Done!')
+        self.stdout.write("Done!")
 
     def save_in_megacube_path(self, megacube_name, filename, content):
         # Join and make the path for the extracted files:
         filepath = os.path.join(
-            settings.MEGACUBE_PARTS,
-            str(megacube_name) + '/' + filename
+            settings.MEGACUBE_PARTS, str(megacube_name) + "/" + filename
         )
 
         # Create directories, if they don't exist already:
@@ -35,31 +33,33 @@ class Command(BaseCommand):
             os.remove(filepath)
 
         # Open a local file with wb ( write binary ) permission.
-        with open(filepath, 'wb') as f:
+        with open(filepath, "wb") as f:
             shutil.copyfileobj(content, f)
 
     def download_images(self):
         """
-            It downloads the SDSS Image by its RA and Dec
-            for each image and save them in the path
-            /images/megacube_parts/megacube_{JOB_ID}/sdss_image.jpg
+        It downloads the SDSS Image by its RA and Dec
+        for each image and save them in the path
+        /images/megacube_parts/megacube_{JOB_ID}/sdss_image.jpg
         """
 
-        self.stdout.write('Started Download SDSS Images')
+        self.stdout.write("Started Download SDSS Images")
 
         images = Image.objects.all()
 
         for image in images:
-            self.stdout.write('Downloading SDSS Image [%s]' % str(image.id))
+            self.stdout.write("Downloading SDSS Image [%s]" % str(image.id))
 
             ra = image.objra
             dec = image.objdec
 
             # Set up the image URL and filename
 
-            image_url = "http://skyserver.sdss.org/dr16/SkyServerWS/ImgCutout/getjpeg?TaskName=Skyserver.Chart.Image&ra=%s&dec=%s&scale=0.099515875&width=512&height=512&opt=G&query=" % (
-                ra, dec)
-            filename = 'sdss_image.jpg'
+            image_url = (
+                "http://skyserver.sdss.org/dr16/SkyServerWS/ImgCutout/getjpeg?TaskName=Skyserver.Chart.Image&ra=%s&dec=%s&scale=0.099515875&width=512&height=512&opt=G&query="
+                % (ra, dec)
+            )
+            filename = "sdss_image.jpg"
 
             # Open the url image, set stream to True, this will return the stream content.
             r = requests.get(image_url, stream=True)
@@ -71,14 +71,15 @@ class Command(BaseCommand):
 
                 # Open a local file with wb ( write binary ) permission.
                 self.save_in_megacube_path(
-                    image.megacube.split('.fits.fz')[0], filename, r.raw)
+                    image.megacube.split(".fits.fz")[0], filename, r.raw
+                )
 
-                self.stdout.write(
-                    'SDSS Image [%s] was downloaded' % str(image.id))
+                self.stdout.write("SDSS Image [%s] was downloaded" % str(image.id))
             else:
                 self.stdout.write(
-                    'SDSS Image [%s] could not be retrieved' % str(image.id))
+                    "SDSS Image [%s] could not be retrieved" % str(image.id)
+                )
 
-            self.stdout.write("".ljust(100, '-'))
+            self.stdout.write("".ljust(100, "-"))
 
-        self.stdout.write('Finished Download SDSS Images!')
+        self.stdout.write("Finished Download SDSS Images!")

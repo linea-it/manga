@@ -25,20 +25,19 @@ from activity_statistic.views import ActivityStatisticViewSet
 
 # Routers provide an easy way of automatically determining the URL conf.
 router = routers.DefaultRouter()
-router.register(r'users', UserViewSet)
+router.register(r"users", UserViewSet)
 
-router.register(r'images', ImageViewSet)
+router.register(r"images", ImageViewSet)
 
 # Statistics API
-router.register(r'statistics', ActivityStatisticViewSet)
+router.register(r"statistics", ActivityStatisticViewSet)
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    url(r'^api/', include(router.urls)),
-    url(r'^api/obtain-auth-token/$', csrf_exempt(obtain_auth_token)),
-    path('api/auth/', include('rest_framework.urls')),
-    url(r'api/contact/', contact_us),
-    url(r'^api/logout/', LogoutView),
-
-    url(r'^api/send_statistic_email/', send_statistic_email),
+    path("admin/", admin.site.urls),
+    url(r"^api/", include(router.urls)),
+    url(r"^api/obtain-auth-token/$", csrf_exempt(obtain_auth_token)),
+    path("api/auth/", include("rest_framework.urls")),
+    url(r"api/contact/", contact_us),
+    url(r"^api/logout/", LogoutView),
+    url(r"^api/send_statistic_email/", send_statistic_email),
 ]
