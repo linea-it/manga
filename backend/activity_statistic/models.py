@@ -1,7 +1,8 @@
-from current_user import get_current_user
 from django.conf import settings
 from django.contrib.auth.signals import user_logged_in, user_logged_out
 from django.db import models
+
+from current_user import get_current_user
 
 
 class Activity(models.Model):

@@ -1,8 +1,9 @@
 import posixpath
 
 from django.conf import settings
-from galaxy.models import Image
 from rest_framework import serializers
+
+from galaxy.models import Image
 
 
 class ImageSerializer(serializers.ModelSerializer):

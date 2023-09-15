@@ -13,15 +13,16 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from activity_statistic.views import ActivityStatisticViewSet
-from common.views import LogoutView, UserViewSet, contact_us, send_statistic_email
 from django.conf.urls import include, url
 from django.contrib import admin
 from django.urls import path
 from django.views.decorators.csrf import csrf_exempt
-from galaxy.views import ImageViewSet
 from rest_framework import routers
 from rest_framework.authtoken.views import obtain_auth_token
+
+from activity_statistic.views import ActivityStatisticViewSet
+from common.views import LogoutView, UserViewSet, contact_us, send_statistic_email
+from galaxy.views import ImageViewSet
 
 # Routers provide an easy way of automatically determining the URL conf.
 router = routers.DefaultRouter()

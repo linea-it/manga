@@ -4,6 +4,7 @@ from pathlib import Path
 
 import humanize
 from django.core.management.base import BaseCommand
+
 from galaxy.models import Image
 from manga.megacube import MangaMegacube
 from manga.megacubo_utils import get_megacube_parts_root_path

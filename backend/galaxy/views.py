@@ -10,15 +10,16 @@ from astropy.io import fits as pf
 from django.conf import settings
 from django.core.cache import cache
 from django.shortcuts import render
+from rest_framework import viewsets
+from rest_framework.decorators import action
+from rest_framework.response import Response
+
 from galaxy.models import Image
 from galaxy.serializers import ImageSerializer
 from manga.emission_lines import EmissionLines
 from manga.megacube import MangaMegacube
 from manga.megacubo_utils import extract_bz2, get_megacube_parts_root_path
 from manga.verifyer import mclass
-from rest_framework import viewsets
-from rest_framework.decorators import action
-from rest_framework.response import Response
 
 
 class ImageViewSet(viewsets.ReadOnlyModelViewSet):

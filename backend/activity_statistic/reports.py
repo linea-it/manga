@@ -1,11 +1,12 @@
 from datetime import date, datetime
 from smtplib import SMTPException
 
-from common.notify import Notify
 from django.conf import settings
 from django.core.mail import EmailMessage
 from django.db.models import Count
 from django.template.loader import render_to_string
+
+from common.notify import Notify
 
 from .models import Activity, Visit
 

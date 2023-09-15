@@ -3,9 +3,10 @@ import pandas as pd
 from astropy.table import Table
 from django.core.management.base import BaseCommand
 from django.db import connection
+from tqdm import tqdm
+
 from galaxy.models import Image
 from manga.megacubo_utils import get_megacube_parts_root_path, get_megacube_path
-from tqdm import tqdm
 
 
 class Command(BaseCommand):
