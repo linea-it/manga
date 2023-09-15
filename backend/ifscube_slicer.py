@@ -1,5 +1,5 @@
-import numpy as np
 import matplotlib.pylab as plt
+import numpy as np
 from astropy.io import fits as pf
 
 
@@ -23,12 +23,8 @@ def ifscube_slicer(cube):
     for p in pars:
         p = np.asarray(p)
         if p[1] == "A":
-            save_name_flux = (
-                "Flux_" + p[0]
-            )  # nome para salvar o mapa de fluxo (usei no label do plot)
-            save_flux = flux[
-                j
-            ]  # array (44,44) com os valores do mapa de flux a serem salvos
+            save_name_flux = "Flux_" + p[0]  # nome para salvar o mapa de fluxo (usei no label do plot)
+            save_flux = flux[j]  # array (44,44) com os valores do mapa de flux a serem salvos
             plt.subplot(plots, 4, k)
             k = k + 1
             plt.imshow(
@@ -39,12 +35,8 @@ def ifscube_slicer(cube):
 
             map_names.append(save_name_flux)
 
-            save_name_ew = (
-                "Ew_" + p[0]
-            )  # nome para salvar o mapa de eqw (usei no label do plot)
-            save_ew = (
-                -1 * eqw[j]
-            )  # array (44,44) com os valores do mapa de ew a serem salvos
+            save_name_ew = "Ew_" + p[0]  # nome para salvar o mapa de eqw (usei no label do plot)
+            save_ew = -1 * eqw[j]  # array (44,44) com os valores do mapa de ew a serem salvos
             plt.subplot(
                 plots, 4, k
             )  # NOTA: O EW precisa ser multiplicado por -1 para inverter o sinal (nao pode usar abs)
@@ -59,12 +51,8 @@ def ifscube_slicer(cube):
             j = j + 1  # contador de indice de flux e eqw
 
         elif p[1] == "v":
-            save_name_vel = (
-                "Vel_" + p[0]
-            )  # nome para salvar o mapa de velocidades (usei no label do plot)
-            save_vel = solution[
-                i
-            ]  # array (44,44) com os valores do mapa de velocidade a serem salvos
+            save_name_vel = "Vel_" + p[0]  # nome para salvar o mapa de velocidades (usei no label do plot)
+            save_vel = solution[i]  # array (44,44) com os valores do mapa de velocidade a serem salvos
 
             plt.subplot(plots, 4, k)
             k = k + 1
@@ -77,12 +65,8 @@ def ifscube_slicer(cube):
             map_names.append(save_name_vel)
 
         elif p[1] == "s":
-            save_name_sig = (
-                "Sigma_" + p[0]
-            )  # nome para salvar o mapa de sigma (usei no label do plot)
-            save_sig = solution[
-                i
-            ]  # array (44,44) com os valores do mapa de sigma a serem salvos
+            save_name_sig = "Sigma_" + p[0]  # nome para salvar o mapa de sigma (usei no label do plot)
+            save_sig = solution[i]  # array (44,44) com os valores do mapa de sigma a serem salvos
             plt.subplot(plots, 4, k)
             k = k + 1
             plt.imshow(
@@ -93,9 +77,7 @@ def ifscube_slicer(cube):
 
             map_names.append(save_name_sig)
 
-        i = (
-            i + 1
-        )  # contador para o solution (note que eu pulo o A ao salvar por que salvo o Flux e EW no lugar)
+        i = i + 1  # contador para o solution (note que eu pulo o A ao salvar por que salvo o Flux e EW no lugar)
     plt.tight_layout()  # deixando o plot mais elegante...
     plt.savefig("teste.png")
     print(f"Plots: {k}")

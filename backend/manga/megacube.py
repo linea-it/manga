@@ -10,13 +10,11 @@ from pathlib import Path
 
 import matplotlib.pylab as plt
 import numpy as np
+import requests
 from astropy.io import fits as pf
 from matplotlib import pyplot
 from shapely.geometry import Point
 from shapely.geometry.polygon import Polygon
-import json
-import requests
-import shutil
 
 
 class MangaMegacube:
@@ -317,9 +315,7 @@ class MangaMegacube:
 
         for i in range(0, z, 1):
             try:
-                cube_comments[cube_header["DATA" + str(i)]] = cube_header.comments[
-                    "DATA" + str(i)
-                ]
+                cube_comments[cube_header["DATA" + str(i)]] = cube_header.comments["DATA" + str(i)]
 
             except:
                 cube_comments[cube_header["DATA" + str(i)]] = ""
@@ -440,9 +436,7 @@ class MangaMegacube:
         dHud = []
 
         for hud in lHud:
-            dHud.append(
-                {"name": hud, "display_name": hud, "comment": cube_comments[hud]}
-            )
+            dHud.append({"name": hud, "display_name": hud, "comment": cube_comments[hud]})
 
         dHud = sorted(dHud, key=lambda i: i["display_name"])
 
@@ -733,48 +727,20 @@ class MangaMegacube:
                 header.insert(11, "FILENAME")
                 header.update(FILENAME=(self.filename))
                 header.rename_keyword("OBJECT", "SUMMARY")
-                header.update(
-                    SUMMARY=("Synthesis Parameters & Binned Population Vectors")
-                )
-                header.update(
-                    DATA0=("FC1.50   ", "Featureless continuum F_nu ~ nu^-1.5")
-                )
-                header.update(
-                    DATA1=("xyy_light", "Light binned pop: 9.0E+05 < age <= 1.0E+07")
-                )
-                header.update(
-                    DATA2=("xyo_light", "Light binned pop: 1.4E+07 < age <= 5.6E+07")
-                )
-                header.update(
-                    DATA3=("xiy_light", "Light binned pop: 1.0E+08 < age <= 5.0E+08")
-                )
-                header.update(
-                    DATA4=("xii_light", "Light binned pop: 6.3E+08 < age <= 8.0E+08")
-                )
-                header.update(
-                    DATA5=("xio_light", "Light binned pop: 8.9E+08 < age <= 2.0E+09")
-                )
-                header.update(
-                    DATA6=("xo_light", "Light binned pop: 5.0E+09 < age <= 1.3E+10")
-                )
-                header.update(
-                    DATA7=("xyy_mass", "Mass binned pop:  9.0E+05 < age <= 1.0E+07")
-                )
-                header.update(
-                    DATA8=("xyo_mass", "Mass binned pop:  1.4E+07 < age <= 5.6E+07")
-                )
-                header.update(
-                    DATA9=("xiy_mass", "Mass binned pop:  1.0E+08 < age <= 5.0E+08")
-                )
-                header.update(
-                    DATA10=("xii_mass", "Mass binned pop:  6.3E+08 < age <= 8.0E+08")
-                )
-                header.update(
-                    DATA11=("xio_mass", "Mass binned pop:  8.9E+08 < age <= 2.0E+09")
-                )
-                header.update(
-                    DATA12=("xo_mass ", "Mass binned pop:  5.0E+09 < age <= 1.3E+10")
-                )
+                header.update(SUMMARY=("Synthesis Parameters & Binned Population Vectors"))
+                header.update(DATA0=("FC1.50   ", "Featureless continuum F_nu ~ nu^-1.5"))
+                header.update(DATA1=("xyy_light", "Light binned pop: 9.0E+05 < age <= 1.0E+07"))
+                header.update(DATA2=("xyo_light", "Light binned pop: 1.4E+07 < age <= 5.6E+07"))
+                header.update(DATA3=("xiy_light", "Light binned pop: 1.0E+08 < age <= 5.0E+08"))
+                header.update(DATA4=("xii_light", "Light binned pop: 6.3E+08 < age <= 8.0E+08"))
+                header.update(DATA5=("xio_light", "Light binned pop: 8.9E+08 < age <= 2.0E+09"))
+                header.update(DATA6=("xo_light", "Light binned pop: 5.0E+09 < age <= 1.3E+10"))
+                header.update(DATA7=("xyy_mass", "Mass binned pop:  9.0E+05 < age <= 1.0E+07"))
+                header.update(DATA8=("xyo_mass", "Mass binned pop:  1.4E+07 < age <= 5.6E+07"))
+                header.update(DATA9=("xiy_mass", "Mass binned pop:  1.0E+08 < age <= 5.0E+08"))
+                header.update(DATA10=("xii_mass", "Mass binned pop:  6.3E+08 < age <= 8.0E+08"))
+                header.update(DATA11=("xio_mass", "Mass binned pop:  8.9E+08 < age <= 2.0E+09"))
+                header.update(DATA12=("xo_mass ", "Mass binned pop:  5.0E+09 < age <= 1.3E+10"))
                 header.update(DATA13=("SFR_1   ", "over last 1 Myrs"))
                 header.update(DATA14=("SFR_5   ", "over last 5 Myrs"))
                 header.update(DATA15=("SFR_10  ", "over last 10 Myrs"))
@@ -803,118 +769,70 @@ class MangaMegacube:
                         "Stellar dispersion vel. (see starlight manual)",
                     )
                 )
-                header.update(
-                    DATA31=("vrot_star", "Stellar rotation vel. (see starlight manual)")
-                )
-                header.update(
-                    DATA32=("Adev    ", "Precentage mean deviation (see manual)")
-                )
+                header.update(DATA31=("vrot_star", "Stellar rotation vel. (see starlight manual)"))
+                header.update(DATA32=("Adev    ", "Precentage mean deviation (see manual)"))
                 header.update(DATA33=("ChiSqrt ", "ChiSqrt/Nl_eff (see manual)"))
                 header.update(DATA34=("SNR     ", "SNR on normalization window"))
-                header.update(
-                    AUTHORS=(
-                        "N. D. Mallmann (nicolas.mallmann@ufrgs.br) & R. Riffel (riffel@ufrgs.br)"
-                    )
-                )
+                header.update(AUTHORS=("N. D. Mallmann (nicolas.mallmann@ufrgs.br) & R. Riffel (riffel@ufrgs.br)"))
                 for i in range(35, 121, 1):
                     header.pop("DATA" + str(i))
 
                 header = file["BaseAgeMetal"].header
-                header.update(
-                    AUTHORS=(
-                        "N. D. Mallmann (nicolas.mallmann@ufrgs.br) & R. Riffel (riffel@ufrgs.br)"
-                    )
-                )
+                header.update(AUTHORS=("N. D. Mallmann (nicolas.mallmann@ufrgs.br) & R. Riffel (riffel@ufrgs.br)"))
                 header.rename_keyword("OBJECT", "SUMMARY")
                 header.insert(8, "PAPER")
                 header.update(PAPER=(PAPER))
 
                 header = file["PoPVecsL"].header
-                header.update(
-                    AUTHORS=(
-                        "N. D. Mallmann (nicolas.mallmann@ufrgs.br) & R. Riffel (riffel@ufrgs.br)"
-                    )
-                )
+                header.update(AUTHORS=("N. D. Mallmann (nicolas.mallmann@ufrgs.br) & R. Riffel (riffel@ufrgs.br)"))
                 header.rename_keyword("OBJECT", "SUMMARY")
                 header.insert(9, "PAPER")
                 header.update(PAPER=(PAPER))
 
                 header = file["PoPVecsM"].header
-                header.update(
-                    AUTHORS=(
-                        "N. D. Mallmann (nicolas.mallmann@ufrgs.br) & R. Riffel (riffel@ufrgs.br)"
-                    )
-                )
+                header.update(AUTHORS=("N. D. Mallmann (nicolas.mallmann@ufrgs.br) & R. Riffel (riffel@ufrgs.br)"))
                 header.rename_keyword("OBJECT", "SUMMARY")
                 header.insert(9, "PAPER")
                 header.update(PAPER=(PAPER))
 
                 header = file["FLXOBS"].header
-                header.update(
-                    AUTHORS=(
-                        "N. D. Mallmann (nicolas.mallmann@ufrgs.br) & R. Riffel (riffel@ufrgs.br)"
-                    )
-                )
+                header.update(AUTHORS=("N. D. Mallmann (nicolas.mallmann@ufrgs.br) & R. Riffel (riffel@ufrgs.br)"))
                 header.rename_keyword("OBJECT", "SUMMARY")
                 header.insert(9, "PAPER")
                 header.update(PAPER=(PAPER))
 
                 header = file["FLXSYN"].header
-                header.update(
-                    AUTHORS=(
-                        "N. D. Mallmann (nicolas.mallmann@ufrgs.br) & R. Riffel (riffel@ufrgs.br)"
-                    )
-                )
+                header.update(AUTHORS=("N. D. Mallmann (nicolas.mallmann@ufrgs.br) & R. Riffel (riffel@ufrgs.br)"))
                 header.rename_keyword("OBJECT", "SUMMARY")
                 header.insert(9, "PAPER")
                 header.update(PAPER=(PAPER))
 
                 header = file["WEIGHT"].header
-                header.update(
-                    AUTHORS=(
-                        "N. D. Mallmann (nicolas.mallmann@ufrgs.br) & R. Riffel (riffel@ufrgs.br)"
-                    )
-                )
+                header.update(AUTHORS=("N. D. Mallmann (nicolas.mallmann@ufrgs.br) & R. Riffel (riffel@ufrgs.br)"))
                 header.rename_keyword("OBJECT", "SUMMARY")
                 header.insert(9, "PAPER")
                 header.update(PAPER=(PAPER))
 
                 header = file["SN_MASKS_1"].header
-                header.update(
-                    AUTHORS=(
-                        "N. D. Mallmann (nicolas.mallmann@ufrgs.br) & R. Riffel (riffel@ufrgs.br)"
-                    )
-                )
+                header.update(AUTHORS=("N. D. Mallmann (nicolas.mallmann@ufrgs.br) & R. Riffel (riffel@ufrgs.br)"))
                 header.rename_keyword("OBJECT", "SUMMARY")
                 header.insert(9, "PAPER")
                 header.update(PAPER=(PAPER))
 
                 header = file["SN_MASKS_5"].header
-                header.update(
-                    AUTHORS=(
-                        "N. D. Mallmann (nicolas.mallmann@ufrgs.br) & R. Riffel (riffel@ufrgs.br)"
-                    )
-                )
+                header.update(AUTHORS=("N. D. Mallmann (nicolas.mallmann@ufrgs.br) & R. Riffel (riffel@ufrgs.br)"))
                 header.rename_keyword("OBJECT", "SUMMARY")
                 header.insert(9, "PAPER")
                 header.update(PAPER=(PAPER))
 
                 header = file["SN_MASKS_10"].header
-                header.update(
-                    AUTHORS=(
-                        "N. D. Mallmann (nicolas.mallmann@ufrgs.br) & R. Riffel (riffel@ufrgs.br)"
-                    )
-                )
+                header.update(AUTHORS=("N. D. Mallmann (nicolas.mallmann@ufrgs.br) & R. Riffel (riffel@ufrgs.br)"))
                 header.rename_keyword("OBJECT", "SUMMARY")
                 header.insert(9, "PAPER")
                 header.update(PAPER=(PAPER))
 
                 header = file["SN_MASKS_20"].header
-                header.update(
-                    AUTHORS=(
-                        "N. D. Mallmann (nicolas.mallmann@ufrgs.br) & R. Riffel (riffel@ufrgs.br)"
-                    )
-                )
+                header.update(AUTHORS=("N. D. Mallmann (nicolas.mallmann@ufrgs.br) & R. Riffel (riffel@ufrgs.br)"))
                 header.rename_keyword("OBJECT", "SUMMARY")
                 header.insert(9, "PAPER")
                 header.update(PAPER=(PAPER))

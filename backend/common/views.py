@@ -1,22 +1,14 @@
-from django.contrib.auth.models import User
-from rest_framework import serializers, viewsets, mixins, response, viewsets, status
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import (
-    IsAdminUser,
-    IsAuthenticated,
-    IsAuthenticatedOrReadOnly,
-    AllowAny,
-)
-from rest_framework.response import Response
+from smtplib import SMTPException
 
 from django.conf import settings
-from django.contrib.auth import authenticate, login, logout
-from django.shortcuts import redirect
+from django.contrib.auth import logout
+from django.contrib.auth.models import User
 from django.core.mail import send_mail
-
-import requests
-
-from smtplib import SMTPException
+from django.shortcuts import redirect
+from rest_framework import response, serializers, status, viewsets
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
+from rest_framework.response import Response
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -46,9 +38,7 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
         so retorna informacao se o id passado por 'i'
         """
         if pk == "i":
-            return response.Response(
-                UserSerializer(request.user, context={"request": request}).data
-            )
+            return response.Response(UserSerializer(request.user, context={"request": request}).data)
 
         return super(UserViewSet, self).retrieve(request, pk)
 
@@ -71,12 +61,7 @@ def contact_us(request):
         subject = "[MaNGA] %s" % (request.data.get("subject", None))
         message = request.data.get("message", None)
 
-        if (
-            name is not None
-            and user_email is not None
-            and subject is not None
-            and message is not None
-        ):
+        if name is not None and user_email is not None and subject is not None and message is not None:
             try:
                 to_email = settings.EMAIL_HELPDESK
                 from_email = settings.EMAIL_HELPDESK_CONTACT
@@ -123,8 +108,9 @@ def send_statistic_email(request):
     :return:
     """
     if request.method == "GET":
-        from activity_statistic.reports import ActivityReports
         import datetime
+
+        from activity_statistic.reports import ActivityReports
 
         try:
             ActivityReports().report_email_unique_visits(datetime.date.today())

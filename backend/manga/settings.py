@@ -11,11 +11,12 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
-import ldap
-from django_auth_ldap.config import LDAPSearch, PosixGroupType
+import posixpath
 from pathlib import Path
 from urllib.parse import urljoin
-import posixpath
+
+import ldap
+from django_auth_ldap.config import LDAPSearch, PosixGroupType
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -25,18 +26,14 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get(
-    "SECRET_KEY", "development_secret_key_please_generate_a_unique_key"
-)
+SECRET_KEY = os.environ.get("SECRET_KEY", "development_secret_key_please_generate_a_unique_key")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = int(os.environ.get("DEBUG", default=0))
 
 # 'DJANGO_ALLOWED_HOSTS' should be a single string of hosts with a space between each.
 # For example: 'DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1 [::1]'
-ALLOWED_HOSTS = os.environ.get(
-    "DJANGO_ALLOWED_HOSTS", "localhost 127.0.0.1 [::1]"
-).split(" ")
+ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "localhost 127.0.0.1 [::1]").split(" ")
 
 # Application definition
 
@@ -156,9 +153,7 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.SessionAuthentication",
     ),
     "DEFAULT_PAGINATION_CLASS": "common.pagination.StandardResultsSetPagination",
-    "DEFAULT_PERMISSION_CLASSES": (
-        "rest_framework.permissions.IsAuthenticatedOrReadOnly",
-    ),
+    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticatedOrReadOnly",),
     "DEFAULT_FILTER_BACKENDS": (
         "url_filter.integrations.drf.DjangoFilterBackend",
         "rest_framework.filters.SearchFilter",
@@ -222,9 +217,7 @@ if AUTH_LDAP_ENABLED == True:
     AUTH_LDAP_REQUIRE_GROUP = os.environ.get("AUTH_LDAP_REQUIRE_GROUP")
 
     # An LDAPSearch object that will locate a user in the directory:
-    AUTH_LDAP_USER_SEARCH = LDAPSearch(
-        AUTH_LDAP_USER_SEARCH_DN, ldap.SCOPE_SUBTREE, "(uid=%(user)s)"
-    )
+    AUTH_LDAP_USER_SEARCH = LDAPSearch(AUTH_LDAP_USER_SEARCH_DN, ldap.SCOPE_SUBTREE, "(uid=%(user)s)")
 
     # Adding LDAP as an authentication method:
     AUTHENTICATION_BACKENDS += ("django_auth_ldap.backend.LDAPBackend",)

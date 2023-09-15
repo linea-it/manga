@@ -1,7 +1,7 @@
-import numpy as np
 import matplotlib.pylab as plt
-from astropy.io import fits as pf
+import numpy as np
 from astropy.constants import c
+from astropy.io import fits as pf
 
 c = c.to("km/s").value  # Velocidade da Luz nas unidades adequadas.
 
@@ -64,12 +64,8 @@ def plot_lines(
         rest_wl = rest_wl_lines[
             int(i / 3)
         ]  # aqui o 3 eh para pegar o correspondente rest_wl (que eh um array simples)
-        parameters = solution[
-            i : i + 3
-        ]  # cortando o solution para pegar os parametros para plotar a gaussiana
-        line = gauss(
-            wavelength, rest_wl, parameters
-        )  # calculando a linha com a funcao gaussiana
+        parameters = solution[i : i + 3]  # cortando o solution para pegar os parametros para plotar a gaussiana
+        line = gauss(wavelength, rest_wl, parameters)  # calculando a linha com a funcao gaussiana
         plt.plot(
             wavelength,
             pseudo_continuum + stellar_flux + line,
@@ -77,20 +73,14 @@ def plot_lines(
             label=parnames[i][0],
         )  # plotando (da mesma cor e tipo de linha da legenda, se plotar no for vai tem uma lista enorme)
 
-        if (
-            label_lines
-        ):  # para marcar a posicao das linhas em emissao. Isso poderia ser um liga e desliga no plot.
+        if label_lines:  # para marcar a posicao das linhas em emissao. Isso poderia ser um liga e desliga no plot.
             plt.axvline(rest_wl, ls="--", color="cyan")
             ypos = 1.1 * plt.gca().get_ylim()[0]
-            plt.text(
-                rest_wl + 5, ypos, parnames[i][0], rotation="vertical", color="cyan"
-            )
+            plt.text(rest_wl + 5, ypos, parnames[i][0], rotation="vertical", color="cyan")
 
     plt.legend(frameon=False)
 
-    if (
-        label_abs_lines
-    ):  # para marcar a posicao das linhas em absorcao. Isso poderia ser um liga e desliga no plot.
+    if label_abs_lines:  # para marcar a posicao das linhas em absorcao. Isso poderia ser um liga e desliga no plot.
         abs_lines = np.array(
             [
                 4536,

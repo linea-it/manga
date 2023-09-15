@@ -1,8 +1,9 @@
-from django.urls import resolve
-from django.contrib.auth.models import User
-from rest_framework.test import APITestCase
 import datetime
 import warnings
+
+from django.contrib.auth.models import User
+from django.urls import resolve
+from rest_framework.test import APITestCase
 
 warnings.filterwarnings("ignore", category=RuntimeWarning)
 

@@ -5,9 +5,8 @@ from pathlib import Path
 import humanize
 from django.core.management.base import BaseCommand
 from galaxy.models import Image
-
-from manga.megacubo_utils import get_megacube_parts_root_path
 from manga.megacube import MangaMegacube
+from manga.megacubo_utils import get_megacube_parts_root_path
 
 
 class Command(BaseCommand):
@@ -64,9 +63,7 @@ class Command(BaseCommand):
             self.stdout.write(title.ljust(80, "-"))
 
             if obj.path != None:
-                exec_time = self.process_single_object(
-                    obj, overwrite=kwargs["force_overwrite"]
-                )
+                exec_time = self.process_single_object(obj, overwrite=kwargs["force_overwrite"])
                 exec_times.append(exec_time)
 
             current += 1
@@ -76,8 +73,7 @@ class Command(BaseCommand):
                 estimated_delta = timedelta(seconds=estimated)
                 self.stdout.write("Processed %s of %s objects" % (current, len(objs)))
                 self.stdout.write(
-                    "Estimated Execution time: %s"
-                    % humanize.naturaldelta(estimated_delta, minimum_unit="seconds")
+                    "Estimated Execution time: %s" % humanize.naturaldelta(estimated_delta, minimum_unit="seconds")
                 )
 
         self.stdout.write("".ljust(80, "-"))
@@ -94,10 +90,7 @@ class Command(BaseCommand):
         tdelta = t1 - t0
         self.stdout.write("Started [%s]" % t0.strftime("%Y-%m-%d %H:%M:%S"))
         self.stdout.write("Finished [%s]" % t1.strftime("%Y-%m-%d %H:%M:%S"))
-        self.stdout.write(
-            "Execution Time: [%s]"
-            % humanize.naturaldelta(tdelta, minimum_unit="seconds")
-        )
+        self.stdout.write("Execution Time: [%s]" % humanize.naturaldelta(tdelta, minimum_unit="seconds"))
 
         self.stdout.write("Done!")
 

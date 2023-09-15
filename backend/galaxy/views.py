@@ -1,27 +1,24 @@
+import json
+import os
+import posixpath
+import tarfile
+from pathlib import Path
+from urllib.parse import urljoin
+
+import numpy as np
+from astropy.io import fits as pf
+from django.conf import settings
+from django.core.cache import cache
 from django.shortcuts import render
+from galaxy.models import Image
+from galaxy.serializers import ImageSerializer
+from manga.emission_lines import EmissionLines
+from manga.megacube import MangaMegacube
+from manga.megacubo_utils import extract_bz2, get_megacube_parts_root_path
+from manga.verifyer import mclass
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
-
-from galaxy.models import Image
-from galaxy.serializers import ImageSerializer
-
-import os
-from pathlib import Path
-from django.conf import settings
-import json
-
-from manga.verifyer import mclass
-from astropy.io import fits as pf
-import tarfile
-from manga.megacubo_utils import get_megacube_parts_root_path, extract_bz2
-from urllib.parse import urljoin
-import posixpath
-from manga.emission_lines import EmissionLines
-from manga.megacube import MangaMegacube
-import numpy as np
-
-from django.core.cache import cache
 
 
 class ImageViewSet(viewsets.ReadOnlyModelViewSet):
@@ -192,9 +189,7 @@ class ImageViewSet(viewsets.ReadOnlyModelViewSet):
         return Path(obj.path)
 
     def get_original_megacube_url(self, obj):
-        return posixpath.join(
-            settings.DATA_BASE_URL, f"{obj.megacube}{obj.compression}"
-        )
+        return posixpath.join(settings.DATA_BASE_URL, f"{obj.megacube}{obj.compression}")
 
     def get_bcomp_megacube_url(self, obj):
         bcomp_filename = self.get_bcomp_filename(obj)
@@ -234,9 +229,7 @@ class ImageViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_sdss_image_url(self, obj, filename="sdss_image.jpg"):
         # Join and make the url for the sdss image:
-        file_url = posixpath.join(
-            settings.MEGACUBE_PARTS_URL, obj.folder_name, filename
-        )
+        file_url = posixpath.join(settings.MEGACUBE_PARTS_URL, obj.folder_name, filename)
 
         base_url = "{0}://{1}".format(self.request.scheme, self.request.get_host())
 
@@ -267,9 +260,7 @@ class ImageViewSet(viewsets.ReadOnlyModelViewSet):
 
         galaxy = self.get_object()
 
-        original_image_filepath = self.get_image_part_path(
-            galaxy, "original_image.json"
-        )
+        original_image_filepath = self.get_image_part_path(galaxy, "original_image.json")
 
         with open(original_image_filepath) as f:
             data = json.load(f)
@@ -301,10 +292,7 @@ class ImageViewSet(viewsets.ReadOnlyModelViewSet):
                 hdu.update(
                     {
                         "comment": hdu["comment"].split("(")[0],
-                        "internal_name": hdu["name"]
-                        .lower()
-                        .replace(" ", "_")
-                        .replace(".", "_"),
+                        "internal_name": hdu["name"].lower().replace(" ", "_").replace(".", "_"),
                     }
                 )
                 data["stellar_maps"].append(hdu)
@@ -315,10 +303,7 @@ class ImageViewSet(viewsets.ReadOnlyModelViewSet):
                 hdu.update(
                     {
                         "comment": hdu["comment"].split("(")[0],
-                        "internal_name": hdu["name"]
-                        .lower()
-                        .replace(" ", "_")
-                        .replace(".", "_"),
+                        "internal_name": hdu["name"].lower().replace(" ", "_").replace(".", "_"),
                     }
                 )
                 data["gas_maps"].append(hdu)
@@ -582,13 +567,9 @@ class ImageViewSet(viewsets.ReadOnlyModelViewSet):
 
         megacube = self.get_megacube_from_cache(galaxy)
 
-        flux, lamb = mclass().flux_by_position(
-            megacube, int(params["x"]), int(params["y"])
-        )
+        flux, lamb = mclass().flux_by_position(megacube, int(params["x"]), int(params["y"]))
 
-        synt, lamb2 = mclass().synt_by_position(
-            megacube, int(params["x"]), int(params["y"])
-        )
+        synt, lamb2 = mclass().synt_by_position(megacube, int(params["x"]), int(params["y"]))
         result = dict(
             {
                 "flux": flux.tolist(),
@@ -640,9 +621,7 @@ class ImageViewSet(viewsets.ReadOnlyModelViewSet):
 
         megacube = self.get_megacube_from_cache(galaxy)
 
-        log_age = mclass().log_age_by_position(
-            megacube, int(params["x"]), int(params["y"])
-        )
+        log_age = mclass().log_age_by_position(megacube, int(params["x"]), int(params["y"]))
 
         return Response(log_age)
 
@@ -783,9 +762,7 @@ class ImageViewSet(viewsets.ReadOnlyModelViewSet):
         filepath = dir.joinpath(plot_filename)
 
         cache_url = posixpath.join(settings.DATA_BASE_URL, plot_filename)
-        file_url = posixpath.join(
-            settings.MEGACUBE_PARTS_URL, galaxy.folder_name, plot_filename
-        )
+        file_url = posixpath.join(settings.MEGACUBE_PARTS_URL, galaxy.folder_name, plot_filename)
 
         my_cube = EmissionLines(megacube)
         my_cube.plot(x, y, filepath, "html")

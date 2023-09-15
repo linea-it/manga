@@ -21,9 +21,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="image",
             name="ned_name",
-            field=models.CharField(
-                default=None, max_length=100, verbose_name="Common Name"
-            ),
+            field=models.CharField(default=None, max_length=100, verbose_name="Common Name"),
         ),
         migrations.AlterField(
             model_name="image",

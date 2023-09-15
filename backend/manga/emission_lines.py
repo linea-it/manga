@@ -1,13 +1,14 @@
-from astropy.io import fits as pf
 from pathlib import Path
-import numpy as np
-from astropy.constants import c
+from typing import Dict, List, Union
+
 import matplotlib.pylab as plt
-from typing import List, Dict, Union
+import numpy as np
 import pandas as pd
 import plotly as pl
 import plotly.express as px
 import plotly.graph_objects as go
+from astropy.constants import c
+from astropy.io import fits as pf
 
 
 class EmissionLines:
@@ -92,18 +93,12 @@ class EmissionLines:
 
         df = pd.DataFrame()
 
-        for i in range(
-            0, len(self.parameters), 3
-        ):  # esse 3 eh por que tem que ir de 3 em 3
+        for i in range(0, len(self.parameters), 3):  # esse 3 eh por que tem que ir de 3 em 3
             rest_wl = self.rest_wl[
                 int(i / 3)
             ]  # aqui o 3 eh para pegar o correspondente rest_wl (que eh um array simples)
-            parameters = solution[
-                i : i + 3
-            ]  # cortando o solution para pegar os parametros para plotar a gaussiana
-            line = self.gauss(
-                self.wavelength, rest_wl, parameters
-            )  # calculando a linha com a funcao gaussiana
+            parameters = solution[i : i + 3]  # cortando o solution para pegar os parametros para plotar a gaussiana
+            line = self.gauss(self.wavelength, rest_wl, parameters)  # calculando a linha com a funcao gaussiana
             label = self.parameters[i][0]
             data = pseudo_continuum + stellar_flux + line
             df[label] = data
@@ -112,9 +107,7 @@ class EmissionLines:
 
     def emission_lines(self, x: int, y: int) -> List[Dict[str, Union[np.float64, str]]]:
         data = []
-        for i in range(
-            0, len(self.parameters), 3
-        ):  # esse 3 eh por que tem que ir de 3 em 3
+        for i in range(0, len(self.parameters), 3):  # esse 3 eh por que tem que ir de 3 em 3
             rest_wl = self.rest_wl[
                 int(i / 3)
             ]  # aqui o 3 eh para pegar o correspondente rest_wl (que eh um array simples)

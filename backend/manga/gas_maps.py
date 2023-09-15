@@ -1,14 +1,15 @@
-from astropy.io import fits as pf
+import json
 from pathlib import Path
-import numpy as np
-from astropy.constants import c
+from typing import Dict, List, Union
+
 import matplotlib.pylab as plt
-from typing import List, Dict, Union
+import numpy as np
 import pandas as pd
 import plotly as pl
 import plotly.express as px
 import plotly.graph_objects as go
-import json
+from astropy.constants import c
+from astropy.io import fits as pf
 
 GAS_DESC = {
     "Flux_hb": "Hβ Flux",
@@ -99,9 +100,7 @@ class GasMaps:
 
         data = []
         for name in map_names:
-            data.append(
-                {"name": name, "display_name": name, "comment": GAS_DESC.get(name, "")}
-            )
+            data.append({"name": name, "display_name": name, "comment": GAS_DESC.get(name, "")})
         with open(filepath, "w") as f:
             json.dump(dict({"gas_maps": data}), f)
 
@@ -118,12 +117,8 @@ class GasMaps:
         for p in self.parameters:
             p = np.asarray(p)
             if p[1] == "A":
-                save_name_flux = (
-                    "Flux_" + p[0]
-                )  # nome para salvar o mapa de fluxo (usei no label do plot)
-                save_flux = self.flux[
-                    j
-                ]  # array (44,44) com os valores do mapa de flux a serem salvos
+                save_name_flux = "Flux_" + p[0]  # nome para salvar o mapa de fluxo (usei no label do plot)
+                save_flux = self.flux[j]  # array (44,44) com os valores do mapa de flux a serem salvos
                 save_flux[np.where(self.mask == 1)] = np.nan
                 plt.subplot(plots, 4, k)
                 k = k + 1
@@ -143,12 +138,8 @@ class GasMaps:
                     )
                 )
 
-                save_name_ew = (
-                    "Ew_" + p[0]
-                )  # nome para salvar o mapa de eqw (usei no label do plot)
-                save_ew = (
-                    -1 * self.eqw[j]
-                )  # array (44,44) com os valores do mapa de ew a serem salvos
+                save_name_ew = "Ew_" + p[0]  # nome para salvar o mapa de eqw (usei no label do plot)
+                save_ew = -1 * self.eqw[j]  # array (44,44) com os valores do mapa de ew a serem salvos
                 save_ew[np.where(self.mask == 1)] = np.nan
                 plt.subplot(
                     plots, 4, k
@@ -173,12 +164,8 @@ class GasMaps:
                 j = j + 1  # contador de indice de flux e eqw
 
             elif p[1] == "v":
-                save_name_vel = (
-                    "Vel_" + p[0]
-                )  # nome para salvar o mapa de velocidades (usei no label do plot)
-                save_vel = self.solution[
-                    i
-                ]  # array (44,44) com os valores do mapa de velocidade a serem salvos
+                save_name_vel = "Vel_" + p[0]  # nome para salvar o mapa de velocidades (usei no label do plot)
+                save_vel = self.solution[i]  # array (44,44) com os valores do mapa de velocidade a serem salvos
                 save_vel[np.where(self.mask == 1)] = np.nan
                 plt.subplot(plots, 4, k)
                 k = k + 1
@@ -199,12 +186,8 @@ class GasMaps:
                 )
 
             elif p[1] == "s":
-                save_name_sig = (
-                    "Sigma_" + p[0]
-                )  # nome para salvar o mapa de sigma (usei no label do plot)
-                save_sig = self.solution[
-                    i
-                ]  # array (44,44) com os valores do mapa de sigma a serem salvos
+                save_name_sig = "Sigma_" + p[0]  # nome para salvar o mapa de sigma (usei no label do plot)
+                save_sig = self.solution[i]  # array (44,44) com os valores do mapa de sigma a serem salvos
                 save_sig[np.where(self.mask == 1)] = np.nan
                 plt.subplot(plots, 4, k)
                 k = k + 1
@@ -224,9 +207,7 @@ class GasMaps:
                     )
                 )
 
-            i = (
-                i + 1
-            )  # contador para o solution (note que eu pulo o A ao salvar por que salvo o Flux e EW no lugar)
+            i = i + 1  # contador para o solution (note que eu pulo o A ao salvar por que salvo o Flux e EW no lugar)
 
         result = []
         for map in maps:

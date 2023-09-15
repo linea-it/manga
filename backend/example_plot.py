@@ -1,8 +1,5 @@
-from ifscube.io.line_fit import load_fit
 import matplotlib.pyplot as plt
-
 from ifscube.io.line_fit import load_fit
-import matplotlib.pyplot as plt
 
 
 def main3():

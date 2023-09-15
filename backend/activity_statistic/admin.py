@@ -1,7 +1,6 @@
 from django.contrib import admin
 
-from .models import Activity
-from .models import Visit
+from .models import Activity, Visit
 
 
 class ActivityAdmin(admin.ModelAdmin):

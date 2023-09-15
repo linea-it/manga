@@ -1,8 +1,8 @@
-from rest_framework import serializers
-
-from galaxy.models import Image
 import posixpath
+
 from django.conf import settings
+from galaxy.models import Image
+from rest_framework import serializers
 
 
 class ImageSerializer(serializers.ModelSerializer):
@@ -16,9 +16,7 @@ class ImageSerializer(serializers.ModelSerializer):
     def get_sdss_image(self, obj):
         try:
             # Join and make the url for the sdss image:
-            file_url = posixpath.join(
-                settings.MEGACUBE_PARTS_URL, obj.folder_name, "sdss_image.jpg"
-            )
+            file_url = posixpath.join(settings.MEGACUBE_PARTS_URL, obj.folder_name, "sdss_image.jpg")
 
             return file_url
         except:

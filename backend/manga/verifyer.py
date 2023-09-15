@@ -9,31 +9,25 @@
 ###########################################################################
 
 
-import argparse
+import copy
+
+# import the logging library
+import logging
 import re
 
 # local
 import sys
 
-# import tkinter as tk
-
 # third party
-import matplotlib
-from matplotlib import pyplot
 import numpy as np
 from astropy.io import fits as pf
-
-
-# import the logging library
-import logging
-
-
-from matplotlib.patches import RegularPolygon
-from scipy.constants import pi
+from django.core.cache import cache
+from matplotlib import pyplot
 from shapely.geometry import Point
 from shapely.geometry.polygon import Polygon
-import copy
-from django.core.cache import cache
+
+# import tkinter as tk
+
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -82,9 +76,7 @@ class mclass:
 
         for i in range(0, z, 1):
             try:
-                cube_comments[cube_header["DATA" + str(i)]] = cube_header.comments[
-                    "DATA" + str(i)
-                ]
+                cube_comments[cube_header["DATA" + str(i)]] = cube_header.comments["DATA" + str(i)]
 
             except:
                 cube_comments[cube_header["DATA" + str(i)]] = ""
@@ -402,9 +394,7 @@ class mclass:
             maxis = np.append(maxis, cube_header["DATA" + str(k)])
             for j in range(0, len(cube_header_list)):
                 if self.index_of("DATA" + str(k) + " ", str(cube_header_list[j])) > -1:
-                    mlegend = np.append(
-                        mlegend, str(cube_header_list[j]).split("/")[1].strip()
-                    )
+                    mlegend = np.append(mlegend, str(cube_header_list[j]).split("/")[1].strip())
 
         return dict(
             {
@@ -504,9 +494,7 @@ class mclass:
                 # Here we loop through the these columns and change their name according to the latest version, which is the mpl9 file.
                 for column in same_attribute_columns:
                     if column["mpl4"] in columns.names:
-                        columns.change_name(
-                            col_name=column["mpl4"], new_name=column["mpl9"]
-                        )
+                        columns.change_name(col_name=column["mpl4"], new_name=column["mpl9"])
 
                 for column in columns.names:
                     # In case of having the column in the file, insert its data to the result dictionary

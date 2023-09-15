@@ -12,9 +12,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="image",
             name="compressed_size",
-            field=models.IntegerField(
-                blank=True, default=0, null=True, verbose_name="Compressed Size"
-            ),
+            field=models.IntegerField(blank=True, default=0, null=True, verbose_name="Compressed Size"),
         ),
         migrations.AddField(
             model_name="image",

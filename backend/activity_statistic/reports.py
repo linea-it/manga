@@ -1,12 +1,13 @@
-from .models import Activity
-from .models import Visit
-from datetime import datetime, date
-from django.db.models import Count
+from datetime import date, datetime
+from smtplib import SMTPException
+
+from common.notify import Notify
 from django.conf import settings
 from django.core.mail import EmailMessage
+from django.db.models import Count
 from django.template.loader import render_to_string
-from smtplib import SMTPException
-from common.notify import Notify
+
+from .models import Activity, Visit
 
 
 class ActivityReports:
@@ -17,9 +18,7 @@ class ActivityReports:
         users = []
         uniqueVisits = []
 
-        activities = Activity.objects.filter(
-            date__year=year, date__month=month, date__day=day
-        ).order_by("-date")
+        activities = Activity.objects.filter(date__year=year, date__month=month, date__day=day).order_by("-date")
 
         for activity in activities:
             if activity.owner.pk not in users:
@@ -35,9 +34,7 @@ class ActivityReports:
 
         for a in visits_count:
             # Recupera as visitas unicas por neste mes por cada usuario.
-            visits_month = self.get_visits_in_month_by_user(
-                user=a.owner, year=year, month=month
-            )
+            visits_month = self.get_visits_in_month_by_user(user=a.owner, year=year, month=month)
 
             all_visits = self.get_all_visits_by_user(user=a.owner)
 
@@ -98,9 +95,7 @@ class ActivityReports:
         :return:
         """
 
-        return Visit.objects.filter(
-            date__year=year, date__month=month, owner=user
-        ).count()
+        return Visit.objects.filter(date__year=year, date__month=month, owner=user).count()
 
     def get_all_visits_by_user(self, user):
         """
@@ -129,9 +124,7 @@ class ActivityReports:
                 date__month=month.month,
             ).count()
 
-            consolidates.append(
-                dict({"date": month.strftime("%Y-%m"), "visits": visits})
-            )
+            consolidates.append(dict({"date": month.strftime("%Y-%m"), "visits": visits}))
 
         return consolidates
 
@@ -168,9 +161,7 @@ class ActivityReports:
         try:
             from_email = settings.EMAIL_NOTIFICATION
         except:
-            raise Exception(
-                "The EMAIL_NOTIFICATION variable is not configured in settings."
-            )
+            raise Exception("The EMAIL_NOTIFICATION variable is not configured in settings.")
 
         try:
             email_admin = settings.EMAIL_ADMIN
@@ -180,9 +171,7 @@ class ActivityReports:
         try:
             send_daily_email = settings.SEND_DAILY_STATISTICS_EMAIL
         except:
-            raise Exception(
-                "The SEND_DAILY_STATISTICS_EMAIL variable is not configured in settings."
-            )
+            raise Exception("The SEND_DAILY_STATISTICS_EMAIL variable is not configured in settings.")
 
         # Se a variavel de configuracao SEND_DAILY_STATISTICS_EMAIL for False nao envia a notificacao.
         if not send_daily_email:
@@ -196,9 +185,7 @@ class ActivityReports:
         )
 
         # Recuperar as visitas unicas do dia.
-        visits = self.unique_visits_by_date(
-            year=report_date.year, month=report_date.month, day=report_date.day
-        )
+        visits = self.unique_visits_by_date(year=report_date.year, month=report_date.month, day=report_date.day)
 
         sum_visits = 0
         all_visits = self.get_all_distinct_visits()

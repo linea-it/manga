@@ -1,11 +1,10 @@
-from django.core.management.base import BaseCommand
-from django.db import connection
-from django.db import connection
-from galaxy.models import Image
 import numpy as np
-from manga.megacubo_utils import get_megacube_path, get_megacube_parts_root_path
 import pandas as pd
 from astropy.table import Table
+from django.core.management.base import BaseCommand
+from django.db import connection
+from galaxy.models import Image
+from manga.megacubo_utils import get_megacube_parts_root_path, get_megacube_path
 from tqdm import tqdm
 
 
@@ -108,9 +107,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         self.verbosity = kwargs["verbosity"]
-        self.update_metadata(
-            filename=kwargs["filename"], clear_table=kwargs["clear_table"]
-        )
+        self.update_metadata(filename=kwargs["filename"], clear_table=kwargs["clear_table"])
 
         self.stdout.write("Done!")
 
@@ -136,9 +133,7 @@ class Command(BaseCommand):
         if obj_list_filepath.suffix == ".gz":
             df = self.tar_gz_to_pandas(obj_list_filepath)
         else:
-            self.stdout.write(
-                f"File format {obj_list_filepath.suffix} is not valid. Use .fits.tar.gz or .csv"
-            )
+            self.stdout.write(f"File format {obj_list_filepath.suffix} is not valid. Use .fits.tar.gz or .csv")
 
         if df.empty:
             return
@@ -186,9 +181,7 @@ class Command(BaseCommand):
 
             if original_megacube_path.exists() and original_megacube_path.is_file():
                 if self.verbosity > 1:
-                    self.stdout.write(
-                        f"original_megacube_path: {original_megacube_path}"
-                    )
+                    self.stdout.write(f"original_megacube_path: {original_megacube_path}")
 
                 count_original_file_exists += 1
                 # Adding compression

@@ -1,6 +1,7 @@
-from pathlib import Path
-from django.conf import settings
 import tarfile
+from pathlib import Path
+
+from django.conf import settings
 
 
 def get_megacube_path(filename):

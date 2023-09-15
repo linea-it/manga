@@ -1,12 +1,11 @@
-from django.core.management.base import BaseCommand
-
-from galaxy.models import Image
-
-import os
 import json
-from django.conf import settings
-import requests
+import os
 import shutil
+
+import requests
+from django.conf import settings
+from django.core.management.base import BaseCommand
+from galaxy.models import Image
 
 
 class Command(BaseCommand):
@@ -21,9 +20,7 @@ class Command(BaseCommand):
 
     def save_in_megacube_path(self, megacube_name, filename, content):
         # Join and make the path for the extracted files:
-        filepath = os.path.join(
-            settings.MEGACUBE_PARTS, str(megacube_name) + "/" + filename
-        )
+        filepath = os.path.join(settings.MEGACUBE_PARTS, str(megacube_name) + "/" + filename)
 
         # Create directories, if they don't exist already:
         os.makedirs(os.path.dirname(filepath), exist_ok=True)
@@ -70,15 +67,11 @@ class Command(BaseCommand):
                 r.raw.decode_content = True
 
                 # Open a local file with wb ( write binary ) permission.
-                self.save_in_megacube_path(
-                    image.megacube.split(".fits.fz")[0], filename, r.raw
-                )
+                self.save_in_megacube_path(image.megacube.split(".fits.fz")[0], filename, r.raw)
 
                 self.stdout.write("SDSS Image [%s] was downloaded" % str(image.id))
             else:
-                self.stdout.write(
-                    "SDSS Image [%s] could not be retrieved" % str(image.id)
-                )
+                self.stdout.write("SDSS Image [%s] could not be retrieved" % str(image.id))
 
             self.stdout.write("".ljust(100, "-"))
 

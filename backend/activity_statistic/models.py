@@ -1,9 +1,7 @@
-from django.db import models
-
-from django.db import models
-from django.conf import settings
 from current_user import get_current_user
+from django.conf import settings
 from django.contrib.auth.signals import user_logged_in, user_logged_out
+from django.db import models
 
 
 class Activity(models.Model):
@@ -18,9 +16,7 @@ class Activity(models.Model):
         blank=True,
     )
 
-    event = models.CharField(
-        max_length=100, null=False, blank=False, verbose_name="Event"
-    )
+    event = models.CharField(max_length=100, null=False, blank=False, verbose_name="Event")
 
     date = models.DateTimeField(
         auto_now_add=True,

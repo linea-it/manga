@@ -34,8 +34,9 @@ def activity_statistic_email_unique_hits_per_day():
     Envia o Email de Acessos unicos referente ao dia anterior
     """
 
-    from activity_statistic.reports import ActivityReports
     import datetime
+
+    from activity_statistic.reports import ActivityReports
 
     yesterday = datetime.date.today() - datetime.timedelta(days=1)
 
