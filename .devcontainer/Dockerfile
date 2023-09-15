@@ -9,7 +9,7 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     python3-tk \
     libaio-dev \
     build-essential \
-    libcfitsio-bin \ 
+    libcfitsio-bin \
     libsasl2-dev \
     libldap2-dev \
     libssl-dev \
@@ -19,7 +19,7 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && apt-get clean \
     && apt-get autoclean \
     && apt-get autoremove --purge  -y \
-    && rm -rf /var/lib/apt/lists/* 
+    && rm -rf /var/lib/apt/lists/*
 
 
 # [Optional] If your requirements rarely change, uncomment this section to add them to the image.
@@ -37,4 +37,3 @@ COPY --chmod=0775 ./backend/start.sh /start.sh
 RUN mkdir /tmp/images
 
 ENTRYPOINT ["/entrypoint.sh"]
-

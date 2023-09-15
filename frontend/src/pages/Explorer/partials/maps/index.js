@@ -34,8 +34,8 @@ export default function GalaxyMapCard({
   return (
     <>
       <Card elevation={3}>
-        <CardHeader 
-          title={galaxy.ned_name} 
+        <CardHeader
+          title={galaxy.ned_name}
           subheader={`PlateIFU: ${galaxy.plateifu}`}
           titleTypographyProps={{ variant: 'h6', fontSize: '1rem', }}
           subheaderTypographyProps={{ variant: 'subtitle1', fontSize: '0.8rem', }}/>
@@ -48,7 +48,7 @@ export default function GalaxyMapCard({
             flex={1}
             width="100%"
           >
-            <Stack  
+            <Stack
               direction={{ xs: 'column', sm: 'row' }}
               spacing={{ sm: 2}}
               mb={4}>
@@ -67,7 +67,7 @@ export default function GalaxyMapCard({
                 allowEmpty={true}
               />
             </Stack>
-              <Heatmap 
+              <Heatmap
                 galaxyId={galaxy.id}
                 mapHdu={state.mapHdu}
                 contourHdu={state.contourHdu}

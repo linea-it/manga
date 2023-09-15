@@ -4,15 +4,19 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('galaxy', '0001_initial'),
+        ("galaxy", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='image',
-            name='nsa_z',
-            field=models.FloatField(blank=True, help_text='Heliocentric redshift', null=True, verbose_name='Heliocentric Redshift'),
+            model_name="image",
+            name="nsa_z",
+            field=models.FloatField(
+                blank=True,
+                help_text="Heliocentric redshift",
+                null=True,
+                verbose_name="Heliocentric Redshift",
+            ),
         ),
     ]

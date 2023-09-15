@@ -44,11 +44,11 @@ function SpectrumLinesPlot(props) {
       function makePlotData(data) {
 
         const plotData = []
-       
+
         const obs_spec = {
             name: "Obs. Spec",
             x: data.wavelength,
-            y: data.obs_spec,            
+            y: data.obs_spec,
             mode: 'lines',
             showlegend:true,
         }
@@ -57,13 +57,13 @@ function SpectrumLinesPlot(props) {
         const synt_spec = {
             name: "Synt. Spec",
             x: data.wavelength,
-            y: data.synt_spec,            
+            y: data.synt_spec,
             mode: 'lines',
             showlegend:true,
         }
         plotData.push(synt_spec)
 
-        let showlegend = true;        
+        let showlegend = true;
         for (const key in data) {
             if (key !== 'wavelength' && key !== 'obs_spec' && key !== 'synt_spec') {
                 const serie = {
@@ -88,13 +88,13 @@ function SpectrumLinesPlot(props) {
 
     if (isLoading === true) {
       return (
-        <Box 
-            display="flex" 
-            height={props.height} 
+        <Box
+            display="flex"
+            height={props.height}
             alignItems="center"
             justifyContent="center"
             m="auto"
-            flexDirection="column" 
+            flexDirection="column"
           >
               <Box p={1} alignSelf="center">
                 <CircularProgress color="secondary" />
@@ -103,22 +103,22 @@ function SpectrumLinesPlot(props) {
                 <Typography variant="body2" color="textSecondary" component="p">
                   This request can take a while, but only the first time for each object. {' '}
                 </Typography>
-              </Box> 
+              </Box>
               <Box p={1} alignSelf="center">
-                <Typography variant="body2" color="textSecondary" component="p">            
+                <Typography variant="body2" color="textSecondary" component="p">
                   We keep the compressed files and in the first request we uncompress the file and it is available in the cache for a while. If there is any failure try again after a few minutes.
                 </Typography>
-              </Box>             
-            </Box>                  
+              </Box>
+            </Box>
       )
     }
 
     return (
-        <Box 
+        <Box
             ref={ref}
             m="auto"
             alignItems="center"
-            justifyContent="center"           
+            justifyContent="center"
             minHeight={550}>
             <Plot
                 data={data}
@@ -135,7 +135,7 @@ function SpectrumLinesPlot(props) {
                   },
                   yaxis: {
                     title: 'Spectral flux density',
-                  }                  
+                  }
                 }}
                 config={{
                   scrollZoom: false,
@@ -149,7 +149,7 @@ function SpectrumLinesPlot(props) {
                 }}
                 frame={{ duration: 500 }}
               />
-              <Typography variant="body2" color="textSecondary" component="p">            
+              <Typography variant="body2" color="textSecondary" component="p">
                 <strong>Obs. Spec: </strong>Observed spectrum. <strong>Synt. Spec: </strong>Synthetic spectrum. <strong>Emission-lines: </strong>Emission lines + stellar and pseudo continuum.
               </Typography>
         </Box>

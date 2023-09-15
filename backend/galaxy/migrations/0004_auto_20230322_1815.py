@@ -4,25 +4,42 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('galaxy', '0003_image_had_parts_extracted'),
+        ("galaxy", "0003_image_had_parts_extracted"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='image',
-            name='compression',
-            field=models.CharField(blank=True, default='tar.bz2', max_length=10, null=True, verbose_name='Compression'),
+            model_name="image",
+            name="compression",
+            field=models.CharField(
+                blank=True,
+                default="tar.bz2",
+                max_length=10,
+                null=True,
+                verbose_name="Compression",
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='folder_name',
-            field=models.FilePathField(blank=True, default=None, help_text='Folder Name in megacube_parts', null=True, verbose_name='Folder'),
+            model_name="image",
+            name="folder_name",
+            field=models.FilePathField(
+                blank=True,
+                default=None,
+                help_text="Folder Name in megacube_parts",
+                null=True,
+                verbose_name="Folder",
+            ),
         ),
         migrations.AddField(
-            model_name='image',
-            name='path',
-            field=models.FilePathField(blank=True, default=None, help_text='Complete Path to original file.', null=True, verbose_name='Path'),
+            model_name="image",
+            name="path",
+            field=models.FilePathField(
+                blank=True,
+                default=None,
+                help_text="Complete Path to original file.",
+                null=True,
+                verbose_name="Path",
+            ),
         ),
     ]

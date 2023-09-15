@@ -48,7 +48,7 @@ export default function GalaxyList() {
 
   const selectRow = React.useCallback((row) => {
     // Only one galaxy can be consider as active/select object.
-    // But datagrid still can  handle multiple selections. 
+    // But datagrid still can  handle multiple selections.
     setQueryOptions(prev => {
       return {
         ...prev,

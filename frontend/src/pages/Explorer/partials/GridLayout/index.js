@@ -147,4 +147,3 @@ ExplorerGridLayout.defaultProps = {
 ExplorerGridLayout.propTypes = {
   galaxy: PropTypes.object
 };
-

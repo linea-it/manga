@@ -12,7 +12,7 @@ function Galaxies() {
   const [isLoading, setisLoading] = React.useState(false)
 
   return (
-    <Box 
+    <Box
       direction="row"
       justifyContent="flex-start"
       alignItems="stretch"
@@ -29,20 +29,20 @@ function Galaxies() {
         {/* Progress Placeholder */}
         {!isLoading && (<Box height={4} />)}
       </Box>
-      <Grid 
-        container 
-        spacing={1} 
+      <Grid
+        container
+        spacing={1}
         direction="row"
         justifyContent="flex-start"
         alignItems="stretch"
-        wrap="nowrap" 
+        wrap="nowrap"
         sx={{
-          overflow:"auto",          
+          overflow:"auto",
           height: '100%',
         }}>
-        <Grid 
-          xs={8} 
-          display={"flex"} 
+        <Grid
+          xs={8}
+          display={"flex"}
           flexDirection={"column"}
           sx={{
             alignItems: 'stretch',
@@ -56,10 +56,10 @@ function Galaxies() {
             >
           <GalaxyList />
          </Grid>
-         <Grid 
-          xs={4} 
-          // display={"flex"} 
-          // flexDirection={"column"} 
+         <Grid
+          xs={4}
+          // display={"flex"}
+          // flexDirection={"column"}
           sx={{
             alignItems: 'stretch',
             minWidth: '400px',

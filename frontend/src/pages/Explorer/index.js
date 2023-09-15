@@ -40,7 +40,7 @@ function Explorer() {
       navigate(-1);
     } else {
         // the current entry in the history stack will be replaced with the new one with { replace: true }
-        navigate('/galaxies', { replace: true }); 
+        navigate('/galaxies', { replace: true });
     }
   }
 
@@ -70,7 +70,7 @@ function Explorer() {
       <Box ml={3} mr={3}>
         {!isGrid && galaxy && (<ExplorerImageLayout galaxy={galaxy} />)}
         {isGrid && galaxy && (<ExplorerGridLayout galaxy={galaxy} />)}
-       
+
         {/* Modal Windows */}
         {galaxy?.id && (
           <MegacubeHeader galaxyId={galaxy.id} open={headerIsOpen} onClose={handleHeader} />

@@ -1,4 +1,5 @@
 from rest_framework import serializers
+
 from .models import Activity
 
 
@@ -9,9 +10,9 @@ class ActivityStatisticSerializer(serializers.ModelSerializer):
         model = Activity
 
         fields = (
-            'owner',
-            'event',
-            'date',
+            "owner",
+            "event",
+            "date",
         )
 
     def get_owner(self, obj):

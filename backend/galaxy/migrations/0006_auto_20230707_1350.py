@@ -4,15 +4,21 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('galaxy', '0005_auto_20230322_1837'),
+        ("galaxy", "0005_auto_20230322_1837"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='image',
-            name='folder_name',
-            field=models.CharField(blank=True, default=None, help_text='Folder Name in megacube_parts', max_length=150, null=True, verbose_name='Folder'),
+            model_name="image",
+            name="folder_name",
+            field=models.CharField(
+                blank=True,
+                default=None,
+                help_text="Folder Name in megacube_parts",
+                max_length=150,
+                null=True,
+                verbose_name="Folder",
+            ),
         ),
     ]

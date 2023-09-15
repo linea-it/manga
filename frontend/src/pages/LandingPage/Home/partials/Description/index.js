@@ -8,7 +8,7 @@ function Description() {
 
     return (
         <Card>
-        <CardContent>        
+        <CardContent>
         <Typography variant="body1" component="span">
             <p>
                 <span>
@@ -39,7 +39,7 @@ function Description() {
             </p>
         </Typography>
         </CardContent>
-          </Card>        
+          </Card>
     );
 }
 

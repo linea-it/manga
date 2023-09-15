@@ -39,4 +39,3 @@ ColorRange.propTypes = {
   max: PropTypes.number,
   disabled: PropTypes.bool,
 };
-

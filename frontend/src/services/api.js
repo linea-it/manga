@@ -143,7 +143,7 @@ const parseFilters = (filterModel) => {
         }
         if (operator === '<='){
           params[`${field}__lte`]=value
-        } 
+        }
         if (operator === 'contains'){
           params[`${field}__icontains`]=value
         }
@@ -152,18 +152,18 @@ const parseFilters = (filterModel) => {
         }
         if (operator === 'endsWith'){
           params[`${field}__iendswith`]=value
-        }        
+        }
         if (operator === 'isAnyOf'){
           params[`${field}__in`]=value.join(',')
         }
         if (operator === 'is'){
           if (value.toLowerCase() === "true") {
             params[`${field}`]=true
-          } 
+          }
           else if (value.toLowerCase() === "false") {
             params[`${field}`]=false
           }
-        }        
+        }
       } else {
         if (operator === 'isEmpty'){
           params[`${field}__isnull`]=true
@@ -179,7 +179,7 @@ const parseFilters = (filterModel) => {
 
 export const listAllGalaxies = ({ queryKey }) => {
   const [_, params] = queryKey
-  
+
   const { paginationModel, filterModel, sortModel } = params
   const {pageSize} = paginationModel
 
