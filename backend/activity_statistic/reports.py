@@ -179,7 +179,7 @@ class ActivityReports:
             return
 
         # subject
-        subject = "NCSA Status %s - %s - %s" % (
+        subject = "NCSA Status {} - {} - {}".format(
             report_date.year,
             report_date.month,
             report_date.day,

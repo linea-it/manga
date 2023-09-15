@@ -105,7 +105,7 @@ class EmissionLines:
 
         return df
 
-    def emission_lines(self, x: int, y: int) -> List[Dict[str, Union[np.float64, str]]]:
+    def emission_lines(self, x: int, y: int) -> list[dict[str, np.float64 | str]]:
         data = []
         for i in range(0, len(self.parameters), 3):  # esse 3 eh por que tem que ir de 3 em 3
             rest_wl = self.rest_wl[
@@ -115,7 +115,7 @@ class EmissionLines:
             data.append({"value": rest_wl, "label": self.parameters[i][0]})
         return data
 
-    def absortion_lines(self) -> List[Dict[str, Union[str, int]]]:
+    def absortion_lines(self) -> list[dict[str, str | int]]:
         # para marcar a posicao das linhas em absorcao.
         data = []
         abs_lines = np.array(
@@ -193,7 +193,7 @@ class EmissionLines:
             title=dict(
                 text="Spectrum",
             ),
-            xaxis_title="Wavelength ($\AA$)",
+            xaxis_title=r"Wavelength ($\AA$)",
             yaxis_title="Spectral flux density",
             # legend=dict(
             #     title_font_family='Courier New',

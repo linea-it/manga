@@ -61,4 +61,4 @@ class Visit(models.Model):
     )
 
     def __str__(self):
-        return str("%s - %s" % (self.owner, self.date.strftime("%Y-%m-%d %H:%M")))
+        return str("{} - {}".format(self.owner, self.date.strftime("%Y-%m-%d %H:%M")))

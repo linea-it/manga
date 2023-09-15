@@ -3,6 +3,7 @@ from django.contrib import admin
 from .models import Activity, Visit
 
 
+@admin.register(Activity)
 class ActivityAdmin(admin.ModelAdmin):
     list_display = (
         "owner",
@@ -17,9 +18,7 @@ class ActivityAdmin(admin.ModelAdmin):
     search_fields = ["owner__username", "event", "date"]
 
 
-admin.site.register(Activity, ActivityAdmin)
-
-
+@admin.register(Visit)
 class VisitAdmin(admin.ModelAdmin):
     list_display = (
         "owner",
@@ -30,6 +29,3 @@ class VisitAdmin(admin.ModelAdmin):
         "date",
     )
     search_fields = ["owner__username", "date"]
-
-
-admin.site.register(Visit, VisitAdmin)

@@ -1,7 +1,6 @@
 # from http://docs.celeryproject.org/en/latest/django
 #      /first-steps-with-django.html#using-celery-with-django
 
-from __future__ import absolute_import, unicode_literals
 
 import os
 

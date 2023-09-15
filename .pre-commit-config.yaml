@@ -18,11 +18,33 @@ repos:
     rev: v1.0.0
     hooks:
       - id: check-json5
+-   repo: https://github.com/asottile/pyupgrade
+    rev: v3.10.1
+    hooks:
+      - id: pyupgrade
+        files: ^backend/
+        args: [--py311-plus]
+-   repo: https://github.com/adamchainz/django-upgrade
+    rev: '1.14.0'
+    hooks:
+      - id: django-upgrade
+        files: ^backend/
+        args: ['--target-version', '4.2']
+# TODO: Necessita corrigir os erros que o Lint apresentou
+# -   repo: https://github.com/Riverside-Healthcare/djLint
+#     rev: v1.32.1
+#     hooks:
+#       - id: djlint-reformat-django
+#         files: ^backend/
+#       - id: djlint-django
+#         files: ^backend/
 -   repo: https://github.com/psf/black
     rev: 23.7.0
     hooks:
       - id: black
+        files: ^backend/
 -   repo: https://github.com/PyCQA/isort
     rev: 5.12.0
     hooks:
       - id: isort
+        files: ^backend/

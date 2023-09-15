@@ -40,7 +40,7 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
         if pk == "i":
             return response.Response(UserSerializer(request.user, context={"request": request}).data)
 
-        return super(UserViewSet, self).retrieve(request, pk)
+        return super().retrieve(request, pk)
 
 
 @api_view(["POST"])
@@ -66,7 +66,7 @@ def contact_us(request):
                 to_email = settings.EMAIL_HELPDESK
                 from_email = settings.EMAIL_HELPDESK_CONTACT
 
-                message_header = "Name: %s\nUsername: %s\nEmail: %s\nMessage:\n" % (
+                message_header = "Name: {}\nUsername: {}\nEmail: {}\nMessage:\n".format(
                     name,
                     request.user.username,
                     user_email,

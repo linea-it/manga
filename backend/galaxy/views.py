@@ -232,7 +232,7 @@ class ImageViewSet(viewsets.ReadOnlyModelViewSet):
         # Join and make the url for the sdss image:
         file_url = posixpath.join(settings.MEGACUBE_PARTS_URL, obj.folder_name, filename)
 
-        base_url = "{0}://{1}".format(self.request.scheme, self.request.get_host())
+        base_url = f"{self.request.scheme}://{self.request.get_host()}"
 
         return file_url
 

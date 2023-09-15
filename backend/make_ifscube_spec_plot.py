@@ -42,7 +42,7 @@ def plot_ifscube_fits(wavelength, obs_flux, pseudo_continuum, stellar_flux):
         "r:",
         label="Emission lines +  continuum (stellar & pseudo)",
     )  # Adicionei apenas para a legend
-    plt.xlabel("$\lambda (\AA)$")
+    plt.xlabel(r"$\lambda (\AA)$")
     plt.ylabel("Flux")
     plt.legend(frameon=False, loc=0)
 

@@ -60,7 +60,7 @@ class Command(BaseCommand):
         current = 1
         exec_times = []
         for obj in objs:
-            title = "[%s/%s] " % (current, len(objs))
+            title = f"[{current}/{len(objs)}] "
             self.stdout.write(title.ljust(80, "-"))
 
             if obj.path != None:
@@ -72,7 +72,7 @@ class Command(BaseCommand):
             if len(exec_times) > 0:
                 estimated = (len(objs) - current) * statistics.mean(exec_times)
                 estimated_delta = timedelta(seconds=estimated)
-                self.stdout.write("Processed %s of %s objects" % (current, len(objs)))
+                self.stdout.write(f"Processed {current} of {len(objs)} objects")
                 self.stdout.write(
                     "Estimated Execution time: %s" % humanize.naturaldelta(estimated_delta, minimum_unit="seconds")
                 )
