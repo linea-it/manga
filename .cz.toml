@@ -7,5 +7,4 @@ update_changelog_on_bump = true
 version_files = [
     "backend/__version__.py",
     "backend/pyproject.toml",
-    "backend/setup.py",
     "frontend/package.json"]
