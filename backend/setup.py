@@ -3,7 +3,7 @@ from setuptools import find_packages, setup
 
 setup(
     name="manga",
-    version="1.0.1",
+    version="1.0.0",
     packages=find_packages(),
     scripts=["manage.py"],
     license="MIT",
