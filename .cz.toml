@@ -4,3 +4,7 @@ tag_format = "$version"
 version_scheme = "semver"
 version = "1.0.0"
 update_changelog_on_bump = true
+version_files = [
+    "backend/__version__.py",
+    "backend/setup.py",
+    "frontend/package.json"]
