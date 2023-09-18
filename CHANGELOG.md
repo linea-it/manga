@@ -1,3 +1,9 @@
+## 1.2.0 (2023-09-18)
+
+### Feat
+
+- **Landingpage**: Version number information was added to the landing page
+
 ## 1.1.0 (2023-09-18)
 
 ### Feat
