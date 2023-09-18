@@ -1,3 +1,8 @@
+[metadata]
+version = "1.0.1"
+[project]
+name = "manga"
+
 # ==== pytest ====
 [tool.pytest.ini_options]
 minversion = "6.0"
