@@ -1,4 +1,9 @@
-## 1.0.1 (2023-09-18)
+## 1.1.0 (2023-09-18)
+
+### Feat
+
+- **Test**: Test Commitizen
+- **Changelog**: Added Changelog
 
 ### Fix
 
