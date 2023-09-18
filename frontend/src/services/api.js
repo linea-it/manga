@@ -1,6 +1,9 @@
 import axios from 'axios';
 
+export const APP_VERSION = process.env.REACT_APP_VERSION;
+
 axios.defaults.baseURL = process.env.REACT_APP_API;
+
 
 export const getGalaxyById = ({ queryKey }) => {
   const [_, params] = queryKey
@@ -111,6 +114,7 @@ export const getAllImagesHeatmap = (id) => {
   return axios.get(`/images/${id}/all_images_heatmap/`).then((res) => res.data);
 };
 
+// TODO: Move this method to another file
 const parseFilters = (filterModel) => {
 
   const params = {}
@@ -183,7 +187,6 @@ export const listAllGalaxies = ({ queryKey }) => {
   const { paginationModel, filterModel, sortModel } = params
   const {pageSize} = paginationModel
 
-  console.log("FilterModel: ", filterModel)
   // Fix Current page
   let page = paginationModel.page + 1
 

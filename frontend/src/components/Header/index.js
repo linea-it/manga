@@ -14,6 +14,7 @@ import {
 
 import useStyles from './styles';
 import logo from '../../assets/img/logo.png';
+import { APP_VERSION } from '../../services/api';
 
 function Header() {
   const classes = useStyles();
@@ -70,15 +71,25 @@ function Header() {
           <IconButton color="inherit" onClick={handleHome}>
             <img alt="LIneA Dark Logo" src={logo} />
           </IconButton>
-          <Typography className={classes.grow} variant="h6" color="inherit">
+          <Typography variant="h6" color="inherit">
             MaNGA
           </Typography>
-
-          {/* {user && user.username ? <UserLogged /> : <UserUnLogged />} */}
-
+          {APP_VERSION !== undefined && (
+            <Typography
+              variant="body"
+              // pt={1}
+              pl={2}
+              sx={{
+                // color: "yellow",
+                fontSize: "0.75em",
+                flexGrow: 1,
+              }}
+              >
+              v{APP_VERSION}
+            </Typography>
+          )}
           <IconButton
             color="inherit"
-            // className={classes.menuButton}
             onClick={handleHome}
           >
             <HomeIcon />
