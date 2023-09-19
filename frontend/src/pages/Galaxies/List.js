@@ -74,6 +74,31 @@ export default function GalaxyList() {
     }
   }, [data, queryOptions, selectRow]);
 
+  const getNextRow = (currentRow) => {
+    const currentIdx = data.results.indexOf(currentRow)
+    const nextRow = data.results[currentIdx + 1] ? data.results[currentIdx + 1] : currentRow
+    return nextRow
+  }
+
+  const getPrevRow = (currentRow) => {
+    const currentIdx = data.results.indexOf(currentRow)
+    // console.log("currentIdx: ", currentIdx)
+    const prevRow = data.results[currentIdx - 1] ? data.results[currentIdx - 1] : currentRow
+    // console.log("prevRow: ", prevRow)
+    return prevRow
+  }
+
+  const onCellKeyDown = (params, event) => {
+    if (event.key === "ArrowDown") {
+      const nextRow = getNextRow(params.row)
+      selectRow(nextRow)
+    }
+    if (event.key === "ArrowUp") {
+      const nextRow = getPrevRow(params.row)
+      selectRow(nextRow)
+    }
+  }
+
   return (
     <DataGrid
       pagination
@@ -81,7 +106,7 @@ export default function GalaxyList() {
       columns={galaxyListColumns}
       rowCount={rowCountState}
       loading={isLoading}
-      pageSizeOptions={[2, 50, 100]}
+      pageSizeOptions={[100]}
       paginationModel={queryOptions.paginationModel}
       paginationMode="server"
       onPaginationModelChange={(paginationModel) => {
@@ -121,10 +146,12 @@ export default function GalaxyList() {
       }}
       rowSelectionModel={queryOptions.selectionModel}
       keepNonExistentRowsSelected
+      disableMultipleRowSelection={true}
+      onCellKeyDown={onCellKeyDown}
       initialState={{
         pagination: {
           paginationModel: {
-            pageSize: 2,
+            pageSize: 100,
           },
         },
         sorting: {
