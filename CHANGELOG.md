@@ -1,3 +1,13 @@
+## 1.3.0 (2023-09-18)
+
+### Feat
+
+- **GalaxyList**: Pagination now shows the number of pages
+
+### Fix
+
+- **Commitizen**: Removed commitzen-branch hook from pre-commit. #Closed 93
+
 ## 1.2.0 (2023-09-18)
 
 ### Feat

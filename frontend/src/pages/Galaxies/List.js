@@ -6,7 +6,7 @@ import {
   GridToolbarColumnsButton,
   GridToolbarFilterButton,
   GridToolbarExport,
-  // GridToolbarDensitySelector
+
 } from '@mui/x-data-grid';
 import { GalaxyContext } from '../../contexts/GalaxyContext';
 import { useQuery } from 'react-query';
@@ -14,13 +14,16 @@ import { listAllGalaxies } from '../../services/api';
 import { Button } from '@mui/material';
 import DownloadIcon from '@mui/icons-material/Download';
 import { galaxyListColumns, columnVisibilityModel } from './Columns'
-export default function GalaxyList() {
+import CustomPagination from '../../components/DataGrid/Pagination';
+import CustomToolbar from '../../components/DataGrid/Toolbar';
 
+
+export default function GalaxyList() {
   // galaxy represent Current Selected Galaxy, used in list, preview and explorer.
   const { queryOptions, setQueryOptions, setGalaxy } = useContext(GalaxyContext)
-  const { paginationModel, sortModel, filterModel} = queryOptions
+  const { paginationModel, sortModel, filterModel } = queryOptions
   const { data, isLoading } = useQuery({
-    queryKey: ['galaxies', { paginationModel, sortModel, filterModel}],
+    queryKey: ['galaxies', { paginationModel, sortModel, filterModel }],
     queryFn: listAllGalaxies,
     keepPreviousData: true,
     refetchInterval: false,
@@ -46,6 +49,11 @@ export default function GalaxyList() {
     );
   }, [data?.count, setRowCountState]);
 
+  // TODO: Implementar a seleção usando o padrão da datagrid:
+  // https://mui.com/x/react-data-grid/state/#direct-selector-access
+
+  // TODO: Seleção usando seta para baixo no teclado pode ser implementado com este evento:
+  // https://mui.com/x/api/data-grid/data-grid/#DataGrid-prop-onCellKeyDown
   const selectRow = React.useCallback((row) => {
     // Only one galaxy can be consider as active/select object.
     // But datagrid still can  handle multiple selections.
@@ -66,88 +74,99 @@ export default function GalaxyList() {
     }
   }, [data, queryOptions, selectRow]);
 
-  const handleDownload = React.useCallback(() => {
-    const link = document.createElement("a");
-    link.download = `megacube_mean_properties_table_Riffel_2023.fits.tar.gz`;
-    link.href = "/table/megacube_mean_properties_table_Riffel_2023.fits.tar.gz";
-    link.click();
-  }, []);
+  const getNextRow = (currentRow) => {
+    const currentIdx = data.results.indexOf(currentRow)
+    const nextRow = data.results[currentIdx + 1] ? data.results[currentIdx + 1] : currentRow
+    return nextRow
+  }
 
-  function CustomToolbar() {
-    return (
-      <GridToolbarContainer>
-        <GridToolbarQuickFilter debounceMs={600}/>
-        <GridToolbarColumnsButton />
-        <GridToolbarFilterButton />
-        {/* <GridToolbarDensitySelector /> */}
-        <GridToolbarExport />
-        <Button
-          onClick={handleDownload}
-          startIcon={<DownloadIcon />}>Download mean properties file</Button>
-      </GridToolbarContainer>
-    );
+  const getPrevRow = (currentRow) => {
+    const currentIdx = data.results.indexOf(currentRow)
+    // console.log("currentIdx: ", currentIdx)
+    const prevRow = data.results[currentIdx - 1] ? data.results[currentIdx - 1] : currentRow
+    // console.log("prevRow: ", prevRow)
+    return prevRow
+  }
+
+  const onCellKeyDown = (params, event) => {
+    if (event.key === "ArrowDown") {
+      const nextRow = getNextRow(params.row)
+      selectRow(nextRow)
+    }
+    if (event.key === "ArrowUp") {
+      const nextRow = getPrevRow(params.row)
+      selectRow(nextRow)
+    }
   }
 
   return (
-      <DataGrid
-        // sx={{ m: 2 }}
-        rows={data?.results !== undefined ? data.results : []}
-        columns={galaxyListColumns}
-        rowCount={rowCountState}
-        loading={isLoading}
-        pageSizeOptions={[20, 50, 100]}
-        paginationModel={queryOptions.paginationModel}
-        paginationMode="server"
-        onPaginationModelChange={(paginationModel) => {
-          setQueryOptions(prev => {
-            return {
-              ...prev,
-              paginationModel: { ...paginationModel }
-            }
-          })
-        }}
-        filterMode="server"
-        onFilterModelChange={(filterModel) => {
-          setQueryOptions(prev => {
-            return {
-              ...prev,
-              paginationModel: {
-                ...prev.paginationModel,
-                page: 0,
-              },
-              filterModel: { ...filterModel }
-            }
-          })
-        }}
-        sortingMode="server"
-        onSortModelChange={(sortModel) => {
-          setQueryOptions(prev => {
-            return {
-              ...prev,
-              sortModel: [...sortModel]
-            }
-          })
-        }}
-        onRowSelectionModelChange={(selectionModel) => {
-          // Get Selected Row:
-          const selectedRowsData = selectionModel.map((id) => data.results.find((row) => row.id === id));
-          selectRow(selectedRowsData[0])
-        }}
-        rowSelectionModel={queryOptions.selectionModel}
-        keepNonExistentRowsSelected
-        initialState={{
-          sorting: {
-            sortModel: queryOptions.sortModel,
-          },
-          columns: {
-            columnVisibilityModel: {...columnVisibilityModel}
+    <DataGrid
+      pagination
+      rows={data?.results !== undefined ? data.results : []}
+      columns={galaxyListColumns}
+      rowCount={rowCountState}
+      loading={isLoading}
+      pageSizeOptions={[100]}
+      paginationModel={queryOptions.paginationModel}
+      paginationMode="server"
+      onPaginationModelChange={(paginationModel) => {
+        setQueryOptions(prev => {
+          return {
+            ...prev,
+            paginationModel: { ...paginationModel }
           }
-        }}
-        slots={{
-          toolbar: CustomToolbar,
-        }}
-      />
-    );
+        })
+      }}
+      filterMode="server"
+      onFilterModelChange={(filterModel) => {
+        setQueryOptions(prev => {
+          return {
+            ...prev,
+            paginationModel: {
+              ...prev.paginationModel,
+              page: 0,
+            },
+            filterModel: { ...filterModel }
+          }
+        })
+      }}
+      sortingMode="server"
+      onSortModelChange={(sortModel) => {
+        setQueryOptions(prev => {
+          return {
+            ...prev,
+            sortModel: [...sortModel]
+          }
+        })
+      }}
+      onRowSelectionModelChange={(selectionModel) => {
+        // Get Selected Row:
+        const selectedRowsData = selectionModel.map((id) => data.results.find((row) => row.id === id));
+        selectRow(selectedRowsData[0])
+      }}
+      rowSelectionModel={queryOptions.selectionModel}
+      keepNonExistentRowsSelected
+      disableMultipleRowSelection={true}
+      onCellKeyDown={onCellKeyDown}
+      initialState={{
+        pagination: {
+          paginationModel: {
+            pageSize: 100,
+          },
+        },
+        sorting: {
+          sortModel: queryOptions.sortModel,
+        },
+        columns: {
+          columnVisibilityModel: { ...columnVisibilityModel }
+        }
+      }}
+      slots={{
+        toolbar: CustomToolbar,
+        pagination: CustomPagination,
+      }}
+    />
+  );
 
 }
 GalaxyList.defaultProps = {
