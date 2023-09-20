@@ -1,3 +1,14 @@
+## 1.4.0 (2023-09-20)
+
+### Feat
+
+- **GalaxyList**: added line selection using keyboard arrows
+
+### Fix
+
+- **Explorer**: fixed explorer layout
+- **GalaxyPreview**: fixed image size in object preview
+
 ## 1.3.0 (2023-09-18)
 
 ### Feat
