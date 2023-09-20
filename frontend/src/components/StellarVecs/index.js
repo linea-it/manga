@@ -93,7 +93,7 @@ function BinedPopulationPlot(props) {
       m="auto"
       alignItems="center"
       justifyContent="center"
-      minHeight={550}>
+      minHeight={400}>
       <Plot
         data={data}
         layout={{

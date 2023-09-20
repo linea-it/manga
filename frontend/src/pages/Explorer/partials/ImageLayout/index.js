@@ -50,7 +50,7 @@ export default function ExplorerImageLayout({
         >
         </GalaxyStellarCard>
       </Grid>
-      <Grid item xs={12} md={6}>
+      <Grid item xs={12} md={6} pb={2}>
         <GalaxyBinedCard
           galaxyId={galaxy?.id}
           position={position}

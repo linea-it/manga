@@ -39,8 +39,8 @@ function Explorer() {
     if (window.history.state && window.history.state.idx > 0) {
       navigate(-1);
     } else {
-        // the current entry in the history stack will be replaced with the new one with { replace: true }
-        navigate('/galaxies', { replace: true });
+      // the current entry in the history stack will be replaced with the new one with { replace: true }
+      navigate('/galaxies', { replace: true });
     }
   }
 
