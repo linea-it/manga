@@ -18,7 +18,7 @@ export default function GalaxySpectrumCard({
   return (
     <Card elevation={3} sx={{ height: "100%" }}>
       <CardHeader title="Spectrum and Histograms" />
-      <CardContent style={{ minHeight: minHeight }}>
+      <CardContent style={{ minHeight: minHeight, display: "flex" }}>
         {
           galaxyId !== null
           && position[0] !== null
