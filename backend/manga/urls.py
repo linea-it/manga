@@ -20,7 +20,7 @@ from rest_framework import routers
 from rest_framework.authtoken.views import obtain_auth_token
 
 from activity_statistic.views import ActivityStatisticViewSet
-from common.views import LogoutView, UserViewSet, contact_us, send_statistic_email
+from common.views import LogoutView, UserViewSet, contact_us, get_mean_table_info, send_statistic_email
 from galaxy.views import ImageViewSet
 
 # Routers provide an easy way of automatically determining the URL conf.
@@ -37,6 +37,7 @@ urlpatterns = [
     path("api/", include(router.urls)),
     path("api/obtain-auth-token/", csrf_exempt(obtain_auth_token)),
     path("api/auth/", include("rest_framework.urls")),
+    re_path(r"api/mean_table_info/", get_mean_table_info),
     re_path(r"api/contact/", contact_us),
     re_path(r"^api/logout/", LogoutView),
     re_path(r"^api/send_statistic_email/", send_statistic_email),

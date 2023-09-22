@@ -1,3 +1,4 @@
+import posixpath
 from smtplib import SMTPException
 
 from django.conf import settings
@@ -118,3 +119,14 @@ def send_statistic_email(request):
 
         except Exception as e:
             return Response(dict({"status": "failure", "Exception": e}))
+
+
+@api_view(["GET"])
+def get_mean_table_info(request):
+    # IMPORTANTE! - Valores hardcoded por que o arquivo não existe no backend.
+    # O Arquivo existe dentro da imagem builded do frontend.
+    # e é atualizado manualmente.
+
+    filename = "megacube_mean_properties_table_Riffel_2023.fits.tar.gz"
+    file_url = posixpath.join(settings.DATA_BASE_URL, f"{filename}")
+    return Response(dict({"filename": filename, "url": file_url, "filesize": 60655680}))

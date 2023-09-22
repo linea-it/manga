@@ -4,6 +4,9 @@ export const APP_VERSION = process.env.REACT_APP_VERSION;
 
 axios.defaults.baseURL = process.env.REACT_APP_API;
 
+export const getMeanTableDownloadInfo = () => {
+  return axios.get(`/mean_table_info/`).then(res => res.data)
+}
 
 export const getGalaxyById = ({ queryKey }) => {
   const [_, params] = queryKey
@@ -35,6 +38,9 @@ export const getMegacubeDownloadInfo = ({ queryKey }) => {
   return axios.get(`/images/${id}/download_info`).then(res => res.data)
 }
 
+
+
+
 export const getHdus = ({ queryKey }) => {
   const [_, params] = queryKey
   const { id } = params
@@ -62,7 +68,7 @@ export const getHeatmapByHdu = ({ queryKey }) => {
     return
   }
 
-  return axios.get(`/images/${id}/heatmap_by_hdu`, {params:{hdu:hdu}}).then(res => res.data)
+  return axios.get(`/images/${id}/heatmap_by_hdu`, { params: { hdu: hdu } }).then(res => res.data)
 }
 
 
@@ -123,57 +129,57 @@ const parseFilters = (filterModel) => {
     return params
   }
   // Handle Search
-  if (filterModel.quickFilterValues !== undefined && filterModel.quickFilterValues?.length > 0){
+  if (filterModel.quickFilterValues !== undefined && filterModel.quickFilterValues?.length > 0) {
     params["search"] = filterModel.quickFilterValues.join(" ")
   }
-  if (filterModel.items !== undefined && filterModel.items.length > 0){
+  if (filterModel.items !== undefined && filterModel.items.length > 0) {
     filterModel.items.forEach((filter) => {
-      const {field, operator, value} = filter
+      const { field, operator, value } = filter
       if (value !== undefined) {
-        if (["=", "equals"].indexOf(operator) > -1){
-          params[field]=value
+        if (["=", "equals"].indexOf(operator) > -1) {
+          params[field] = value
         }
-        if (operator === '!='){
-          params[`${field}!`]=value
+        if (operator === '!=') {
+          params[`${field}!`] = value
         }
-        if (operator === '>'){
-          params[`${field}__gt`]=value
+        if (operator === '>') {
+          params[`${field}__gt`] = value
         }
-        if (operator === '>='){
-          params[`${field}__gte`]=value
+        if (operator === '>=') {
+          params[`${field}__gte`] = value
         }
-        if (operator === '<'){
-          params[`${field}__lt`]=value
+        if (operator === '<') {
+          params[`${field}__lt`] = value
         }
-        if (operator === '<='){
-          params[`${field}__lte`]=value
+        if (operator === '<=') {
+          params[`${field}__lte`] = value
         }
-        if (operator === 'contains'){
-          params[`${field}__icontains`]=value
+        if (operator === 'contains') {
+          params[`${field}__icontains`] = value
         }
-        if (operator === 'startsWith'){
-          params[`${field}__istartswith`]=value
+        if (operator === 'startsWith') {
+          params[`${field}__istartswith`] = value
         }
-        if (operator === 'endsWith'){
-          params[`${field}__iendswith`]=value
+        if (operator === 'endsWith') {
+          params[`${field}__iendswith`] = value
         }
-        if (operator === 'isAnyOf'){
-          params[`${field}__in`]=value.join(',')
+        if (operator === 'isAnyOf') {
+          params[`${field}__in`] = value.join(',')
         }
-        if (operator === 'is'){
+        if (operator === 'is') {
           if (value.toLowerCase() === "true") {
-            params[`${field}`]=true
+            params[`${field}`] = true
           }
           else if (value.toLowerCase() === "false") {
-            params[`${field}`]=false
+            params[`${field}`] = false
           }
         }
       } else {
-        if (operator === 'isEmpty'){
-          params[`${field}__isnull`]=true
+        if (operator === 'isEmpty') {
+          params[`${field}__isnull`] = true
         }
-        if (operator === 'isNotEmpty'){
-          params[`${field}__isnull`]=false
+        if (operator === 'isNotEmpty') {
+          params[`${field}__isnull`] = false
         }
       }
     })
@@ -185,7 +191,7 @@ export const listAllGalaxies = ({ queryKey }) => {
   const [_, params] = queryKey
 
   const { paginationModel, filterModel, sortModel } = params
-  const {pageSize} = paginationModel
+  const { pageSize } = paginationModel
 
   // Fix Current page
   let page = paginationModel.page + 1
