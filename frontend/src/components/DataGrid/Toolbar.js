@@ -4,8 +4,6 @@ import {
   GridToolbarQuickFilter,
   GridToolbarColumnsButton,
   GridToolbarFilterButton,
-  GridToolbarExport,
-
 } from '@mui/x-data-grid';
 import { Button } from '@mui/material';
 import DownloadIcon from '@mui/icons-material/Download';
@@ -24,8 +22,6 @@ function CustomToolbar() {
       <GridToolbarQuickFilter debounceMs={600} />
       <GridToolbarColumnsButton />
       <GridToolbarFilterButton />
-      {/* <GridToolbarDensitySelector /> */}
-      <GridToolbarExport />
       <Button
         onClick={handleDownload}
         startIcon={<DownloadIcon />}>Download mean properties file</Button>
