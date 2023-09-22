@@ -12,6 +12,8 @@ import {
   ListItemText,
   Breadcrumbs,
   Link,
+  Card,
+  CardContent
 } from '@mui/material';
 import MovieIcon from '@mui/icons-material/Movie';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
@@ -38,7 +40,7 @@ const treeTutorial = useMemo(() => [
     ],
   },
 ], []);
-  // const treeTutorial = 
+  // const treeTutorial =
 
   const [expanded, setExpanded] = React.useState('');
   const handleChange = (panel) => (event, newExpanded) => {
@@ -120,6 +122,33 @@ const treeTutorial = useMemo(() => [
             )}
           </Grid>
         </Grid>
+        <Card>
+          <CardContent>
+            <Typography variant="h6">Download Instructions</Typography>
+            <Typography variant="body1">
+              <p>If you want to download a single datacube, follow these steps:</p>
+              <pre className={classes.codeBlock}>
+                <code>
+                  wget https://manga.linea.org.br/data/manga-10001-12701-MEGACUBE.fits.tar.bz2
+                </code>
+              </pre>
+              <p>If you have a list of datacubes to download, save the URLs in a file named e.g. <strong>download.txt</strong>:</p>
+              <pre className={classes.codeBlock}>
+                <code>
+                  https://manga.linea.org.br/data/manga-10001-12701-MEGACUBE.fits.tar.bz2
+                  {'\n'}
+                  https://manga.linea.org.br/data/manga-10001-6104-MEGACUBE.fits.tar.bz2
+                  </code>
+              </pre>
+              <p>Then, use the following command to download the datacubes:</p>
+              <pre className={classes.codeBlock}>
+                <code>
+                  wget -i download.txt
+                </code>
+              </pre>
+            </Typography>
+          </CardContent>
+        </Card>
       </Container>
     </div>
   );

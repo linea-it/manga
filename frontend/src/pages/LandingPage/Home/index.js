@@ -3,19 +3,20 @@ import Banner from '../../../components/LandingPage/Banner';
 import Interfaces from './partials/Interfaces';
 import Supporters from './partials/Supporters';
 import Description from './partials/Description';
-import styles from './styles';
+// import styles from './styles';
+import { Box } from '@mui/material';
 
 function Main() {
-  const classes = styles();
+  // const classes = styles();
 
   return (
     <>
       <Banner />
-      <div className={classes.root}>
-        <Interfaces />
-        <Description />
-        <Supporters />
-      </div>
+        <Box mb={10} sx={{padding:'0 5%'}}>
+          <Interfaces />
+          <Description />
+          <Supporters />
+        </Box>
     </>
   );
 }

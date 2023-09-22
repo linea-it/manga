@@ -1,12 +1,12 @@
 import logging
+
 from django.conf import settings
 from django.core.mail import EmailMessage
 
 
-class Notify():
-
+class Notify:
     def __init__(self):
-        self.logger = logging.getLogger('django')
+        self.logger = logging.getLogger("django")
 
     def send_email(self, subject, body, to, copy_to_adms=True, html=True):
         """
@@ -22,8 +22,7 @@ class Notify():
         try:
             from_email = settings.EMAIL_NOTIFICATION
         except:
-            raise Exception(
-                "The EMAIL_NOTIFICATION variable is not configured in settings.")
+            raise Exception("The EMAIL_NOTIFICATION variable is not configured in settings.")
 
         self.logger.debug("FROM: %s" % from_email)
 
@@ -34,7 +33,7 @@ class Notify():
         self.logger.debug("TO: %s" % to)
 
         # Subject
-        subject = ("MaNGA Portal - %s" % (subject))
+        subject = "MaNGA Portal - %s" % (subject)
 
         self.logger.debug("SUBJECT: %s" % subject)
 
@@ -55,11 +54,9 @@ class Notify():
             self.logger.error(e)
 
     def send_email_failure_helpdesk(self, subject, original_message):
-
         try:
             to = settings.EMAIL_HELPDESK
         except:
-            raise Exception(
-                "The EMAIL_HELPDESK variable is not configured in settings.")
+            raise Exception("The EMAIL_HELPDESK variable is not configured in settings.")
 
         self.send_email(subject, original_message, to, False, False)

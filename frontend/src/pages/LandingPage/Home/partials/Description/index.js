@@ -8,7 +8,7 @@ function Description() {
 
     return (
         <Card>
-        <CardContent>        
+        <CardContent>
         <Typography variant="body1" component="span">
             <p>
                 <span>
@@ -34,12 +34,12 @@ function Description() {
             </p>
             <p>
                 <span>
-                    To enter the portal click on the figure.
+                    To enter the portal click on the figure above.
                 </span>
             </p>
         </Typography>
         </CardContent>
-          </Card>        
+          </Card>
     );
 }
 

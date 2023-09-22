@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate  } from 'react-router-dom';
 import Grid from '@mui/material/Grid';
 import Card from '@mui/material/Card';
 import Container from '@mui/material/Container';
@@ -7,10 +7,11 @@ import CardActionArea from '@mui/material/CardActionArea';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import styles from './styles';
+import CardContent from '@mui/material/CardContent';
 
 function Interfaces() {
   const classes = styles();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const [interfaces] = useState([
     {
@@ -20,7 +21,7 @@ function Interfaces() {
     },
   ]);
 
-  const handleCardClick = (pathname) => history.push(pathname);
+  const handleCardClick = (pathname) => navigate(pathname);
 
   return (
     <Container className={classes.minHeight}>
@@ -53,6 +54,9 @@ function Interfaces() {
                     {item.app_display_name}
                   </Typography>
                 </CardMedia>
+                <CardContent>
+                  Click the figure above to enter the portal.
+                </CardContent>
               </CardActionArea>
             </Card>
           </Grid>

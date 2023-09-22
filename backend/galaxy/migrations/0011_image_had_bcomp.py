@@ -4,15 +4,18 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('galaxy', '0010_auto_20230710_2057'),
+        ("galaxy", "0010_auto_20230710_2057"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='image',
-            name='had_bcomp',
-            field=models.BooleanField(default=False, help_text='Indicates whether the object has an extra bz2 file containing the bcomp attribute. when true, it affects the download function, which makes 2 files available.', verbose_name='bcomp'),
+            model_name="image",
+            name="had_bcomp",
+            field=models.BooleanField(
+                default=False,
+                help_text="Indicates whether the object has an extra bz2 file containing the bcomp attribute. when true, it affects the download function, which makes 2 files available.",
+                verbose_name="bcomp",
+            ),
         ),
     ]

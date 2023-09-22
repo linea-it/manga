@@ -1,26 +1,28 @@
-import React from 'react';
-import { Router } from 'react-router-dom';
-import { ThemeProvider } from '@mui/material/styles';
-import ReactGA from 'react-ga';
-import Routes from './routes';
-import history from './services/history';
-import light from './themes/light';
+import React, { useState } from 'react';
+import { GalaxyContext } from './contexts/GalaxyContext';
+import { RouterProvider } from 'react-router-dom';
 
-
-ReactGA.initialize(process.env.REACT_APP_GA_TRACKING_ID);
-
-history.listen((location) => {
-  ReactGA.set({ page: location.pathname }); // Update the user's current page
-  ReactGA.pageview(location.pathname); // Record a pageview for the given page
-});
+import { router } from './routes';
 
 function App() {
+
+  const [galaxy, setGalaxy] = useState({})
+  const [queryOptions, setQueryOptions] = useState({
+    paginationModel: { page: 0, pageSize: 100 },
+    selectionModel: [],
+    sortModel: [{ field: 'id', sort: 'asc' }],
+    filterModel: { items: [] }
+  })
+
   return (
-    <ThemeProvider theme={light}>
-      <Router history={history}>
-        <Routes />
-      </Router>
-    </ThemeProvider>
+    <GalaxyContext.Provider value={{
+      galaxy,
+      setGalaxy,
+      queryOptions,
+      setQueryOptions
+    }}>
+      <RouterProvider router={router} />
+    </GalaxyContext.Provider>
   );
 }
 

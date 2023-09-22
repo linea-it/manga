@@ -3,12 +3,10 @@ import Plot from 'react-plotly.js';
 import { CircularProgress, Typography, Box } from '@mui/material';
 import { useQuery } from 'react-query'
 import { vecsByPosition } from '../../services/api';
-import styles from './styles';
 import PropTypes from 'prop-types';
 
 function BinedPopulationPlot(props) {
   const ref = useRef(null);
-  const classes = styles();
 
   const { id, x, y } = props
   // const [error, setError] = React.useState(null)
@@ -95,10 +93,9 @@ function BinedPopulationPlot(props) {
       m="auto"
       alignItems="center"
       justifyContent="center"
-      minHeight={550}>
+      minHeight={400}>
       <Plot
         data={data}
-        className={classes.plotWrapper}
         layout={{
           hovermode: 'closest',
           autosize: true,

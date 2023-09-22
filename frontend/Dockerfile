@@ -2,11 +2,11 @@ FROM node:16.10 as builder
 
 WORKDIR /app
 COPY package.json /app/package.json
-# COPY yarn.lock /app/yarn.lock
+COPY yarn.lock /app/yarn.lock
 
 RUN yarn -v
 
-RUN yarn --ignore-optional
+RUN yarn --ignore-optional --network-timeout 500000
 
 COPY . /app
 

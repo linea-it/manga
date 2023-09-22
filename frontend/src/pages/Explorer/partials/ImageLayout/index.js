@@ -23,18 +23,18 @@ export default function ExplorerImageLayout({
     <Grid
       container
       direction="row"
-      justifyContent="space-between"
+      justifyContent="flex-start"
       alignItems="stretch"
       spacing={2}
     >
-      <Grid item xs={6}>
+      <Grid item xs={12} md={6}>
         <GalaxyMapCard
           galaxy={galaxy}
           minHeight='40vw'
           onClick={onChangePosition}
         ></GalaxyMapCard>
       </Grid>
-      <Grid item xs={6}>
+      <Grid item xs={12} md={6}>
         <GalaxySpectrumCard
           galaxyId={galaxy?.id}
           position={position}
@@ -42,7 +42,7 @@ export default function ExplorerImageLayout({
         >
         </GalaxySpectrumCard>
       </Grid>
-      <Grid item xs={6}>
+      <Grid item xs={12} md={6}>
         <GalaxyStellarCard
           galaxyId={galaxy?.id}
           position={position}
@@ -50,13 +50,13 @@ export default function ExplorerImageLayout({
         >
         </GalaxyStellarCard>
       </Grid>
-      <Grid item xs={6}>
+      <Grid item xs={12} md={6} pb={2}>
         <GalaxyBinedCard
           galaxyId={galaxy?.id}
           position={position}
           minHeight='20vw'
         >
-        </GalaxyBinedCard> 
+        </GalaxyBinedCard>
       </Grid>
     </Grid>
   );
@@ -67,4 +67,3 @@ ExplorerImageLayout.defaultProps = {
 ExplorerImageLayout.propTypes = {
   galaxy: PropTypes.object
 };
-

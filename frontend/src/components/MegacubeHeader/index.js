@@ -20,7 +20,7 @@ function MegacubeHeader({galaxyId, open, onClose  }) {
     queryFn: getMegacubeHeadersById,
     enabled: open,
     keepPreviousData: true,
-    staleTime: 1 * 60 * 60 * 1000,    
+    staleTime: 1 * 60 * 60 * 1000,
   })
 
   function generate_skeleton(element) {
@@ -56,7 +56,7 @@ function MegacubeHeader({galaxyId, open, onClose  }) {
           <Button onClick={onClose} color="primary">
             Close
           </Button>
-      </DialogActions>      
+      </DialogActions>
     </Dialog>
   )
 }

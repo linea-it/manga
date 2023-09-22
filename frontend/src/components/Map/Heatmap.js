@@ -10,7 +10,6 @@ import GenericError from '../Alerts/GenericError';
 import { getAllHeatmaps } from '../../services/api';
 
 const useStyles = makeStyles((theme) => ({
-  margin: theme.spacing(1),
   plotWrapper: {
     width: '100%',
     height: '100%',
@@ -237,6 +236,10 @@ function Heatmap(props) {
         display="block"
         flexGrow={1}
         position="relative"
+        sx={{
+          minWidth: 250,
+          minHeight: 250
+        }}
       >
         {isLoading && (
         <div className={classes.plotWrapper}><CircularProgress color="secondary" /></div>)}

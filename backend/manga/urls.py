@@ -14,31 +14,31 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
-from django.conf.urls import include, url
+from django.urls import include, path, re_path
 from django.views.decorators.csrf import csrf_exempt
-from rest_framework.authtoken.views import obtain_auth_token
 from rest_framework import routers
-from common.views import UserViewSet, LogoutView, contact_us, send_statistic_email
-from galaxy.views import ImageViewSet
+from rest_framework.authtoken.views import obtain_auth_token
+
 from activity_statistic.views import ActivityStatisticViewSet
+from common.views import LogoutView, UserViewSet, contact_us, get_mean_table_info, send_statistic_email
+from galaxy.views import ImageViewSet
 
 # Routers provide an easy way of automatically determining the URL conf.
 router = routers.DefaultRouter()
-router.register(r'users', UserViewSet)
+router.register(r"users", UserViewSet)
 
-router.register(r'images', ImageViewSet)
+router.register(r"images", ImageViewSet)
 
 # Statistics API
-router.register(r'statistics', ActivityStatisticViewSet)
+router.register(r"statistics", ActivityStatisticViewSet)
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    url(r'^api/', include(router.urls)),
-    url(r'^api/obtain-auth-token/$', csrf_exempt(obtain_auth_token)),
-    path('api/auth/', include('rest_framework.urls')),
-    url(r'api/contact/', contact_us),
-    url(r'^api/logout/', LogoutView),
-
-    url(r'^api/send_statistic_email/', send_statistic_email),
+    path("admin/", admin.site.urls),
+    path("api/", include(router.urls)),
+    path("api/obtain-auth-token/", csrf_exempt(obtain_auth_token)),
+    path("api/auth/", include("rest_framework.urls")),
+    re_path(r"api/mean_table_info/", get_mean_table_info),
+    re_path(r"api/contact/", contact_us),
+    re_path(r"^api/logout/", LogoutView),
+    re_path(r"^api/send_statistic_email/", send_statistic_email),
 ]

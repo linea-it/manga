@@ -4,15 +4,21 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('galaxy', '0006_auto_20230707_1350'),
+        ("galaxy", "0006_auto_20230707_1350"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='image',
-            name='path',
-            field=models.CharField(blank=True, default=None, help_text='Complete Path to original file.', max_length=1024, null=True, verbose_name='Path'),
+            model_name="image",
+            name="path",
+            field=models.CharField(
+                blank=True,
+                default=None,
+                help_text="Complete Path to original file.",
+                max_length=1024,
+                null=True,
+                verbose_name="Path",
+            ),
         ),
     ]

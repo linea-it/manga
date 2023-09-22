@@ -1,5 +1,5 @@
 import React from 'react';
-import { useParams, useHistory } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from 'react-query'
 import Box from '@mui/material/Box';
 import Backdrop from '@mui/material/Backdrop';
@@ -14,7 +14,7 @@ import { getGalaxyById } from '../../services/api';
 
 function Explorer() {
   const { id } = useParams();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const [headerIsOpen, setHeaderIsOpen] = React.useState(false)
   const [downloadIsOpen, setDownloadIsOpen] = React.useState(false)
@@ -35,7 +35,14 @@ function Explorer() {
     onError: () => { setErrorIsOpen(true) }
   })
 
-  const handleBackNavigation = () => history.goBack();
+  const handleBackNavigation = () => {
+    if (window.history.state && window.history.state.idx > 0) {
+      navigate(-1);
+    } else {
+      // the current entry in the history stack will be replaced with the new one with { replace: true }
+      navigate('/galaxies', { replace: true });
+    }
+  }
 
   const handleDownload = () => setDownloadIsOpen(!downloadIsOpen);
 
@@ -63,7 +70,7 @@ function Explorer() {
       <Box ml={3} mr={3}>
         {!isGrid && galaxy && (<ExplorerImageLayout galaxy={galaxy} />)}
         {isGrid && galaxy && (<ExplorerGridLayout galaxy={galaxy} />)}
-       
+
         {/* Modal Windows */}
         {galaxy?.id && (
           <MegacubeHeader galaxyId={galaxy.id} open={headerIsOpen} onClose={handleHeader} />

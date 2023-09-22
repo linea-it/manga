@@ -8,7 +8,7 @@ import SpectrumLinesPlot from '../../../../components/Spectrum';
 
 const useStyles = makeStyles(() => ({}));
 
-export default function GalaxySpectrumCard({ 
+export default function GalaxySpectrumCard({
   galaxyId,
   position,
   minHeight
@@ -16,20 +16,20 @@ export default function GalaxySpectrumCard({
   const classes = useStyles();
 
   return (
-    <Card elevation={3}>
+    <Card elevation={3} sx={{ height: "100%" }}>
       <CardHeader title="Spectrum and Histograms" />
-      <CardContent style={{ minHeight: minHeight }}>
+      <CardContent style={{ minHeight: minHeight, display: "flex" }}>
         {
-        galaxyId !== null 
-        && position[0] !== null 
-        && position[1] !== null 
-        && (
-          <SpectrumLinesPlot 
-            id={galaxyId} 
-            x={position[0]} 
-            y={position[1]} 
+          galaxyId !== null
+          && position[0] !== null
+          && position[1] !== null
+          && (
+            <SpectrumLinesPlot
+              id={galaxyId}
+              x={position[0]}
+              y={position[1]}
             />
-        )}
+          )}
       </CardContent>
     </Card>
   );

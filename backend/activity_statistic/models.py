@@ -1,9 +1,8 @@
+from django.conf import settings
+from django.contrib.auth.signals import user_logged_in, user_logged_out
 from django.db import models
 
-from django.db import models
-from django.conf import settings
 from current_user import get_current_user
-from django.contrib.auth.signals import user_logged_in, user_logged_out
 
 
 class Activity(models.Model):
@@ -12,15 +11,21 @@ class Activity(models.Model):
 
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        verbose_name='Owner',
+        verbose_name="Owner",
         on_delete=models.SET_NULL,
-        null=True, blank=True, )
+        null=True,
+        blank=True,
+    )
 
-    event = models.CharField(
-        max_length=100, null=False, blank=False, verbose_name='Event')
+    event = models.CharField(max_length=100, null=False, blank=False, verbose_name="Event")
 
     date = models.DateTimeField(
-        auto_now_add=True, null=True, blank=True, verbose_name='Date', help_text='Creation Date')
+        auto_now_add=True,
+        null=True,
+        blank=True,
+        verbose_name="Date",
+        help_text="Creation Date",
+    )
 
     def __str__(self):
         return str(self.event)
@@ -41,12 +46,19 @@ user_logged_out.connect(activity_log_out)
 class Visit(models.Model):
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        verbose_name='Owner',
+        verbose_name="Owner",
         on_delete=models.SET_NULL,
-        null=True, blank=True, )
+        null=True,
+        blank=True,
+    )
 
     date = models.DateTimeField(
-        auto_now_add=True, null=True, blank=True, verbose_name='Date', help_text='Creation Date')
+        auto_now_add=True,
+        null=True,
+        blank=True,
+        verbose_name="Date",
+        help_text="Creation Date",
+    )
 
     def __str__(self):
-        return str("%s - %s" % (self.owner, self.date.strftime('%Y-%m-%d %H:%M')))
+        return str("{} - {}".format(self.owner, self.date.strftime("%Y-%m-%d %H:%M")))
