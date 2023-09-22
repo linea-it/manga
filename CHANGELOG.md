@@ -1,3 +1,15 @@
+## 1.5.0 (2023-09-22)
+
+### Feat
+
+- **MeanTableDownload**: added information about mean table file before download
+- **SpectrumLinesPlot**: changed loading text
+- **GalaxyList**: removed export button in galaxy list
+
+### Fix
+
+- **contact**: adjust footer on contact page
+
 ## 1.4.0 (2023-09-20)
 
 ### Feat
