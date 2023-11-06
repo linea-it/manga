@@ -9,7 +9,7 @@ import {
   DialogActions
 } from '@mui/material'
 import filesize from 'filesize';
-import Skeleton from '@mui/lab/Skeleton';
+import { Skeleton } from '@mui/material';
 import { useQuery } from 'react-query'
 import { getMeanTableDownloadInfo } from '../../services/api';
 import GenericError from '../Alerts/GenericError';
