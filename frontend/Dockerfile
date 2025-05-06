@@ -2,7 +2,7 @@ FROM node:16.10 as builder
 
 WORKDIR /app
 COPY package.json /app/package.json
-COPY yarn.lock /app/yarn.lock
+#COPY yarn.lock /app/yarn.lock
 
 RUN yarn -v
 
@@ -11,7 +11,6 @@ RUN yarn --ignore-optional --network-timeout 500000
 COPY . /app
 
 RUN yarn run build
-
 
 # Ngnix
 FROM nginx:latest
@@ -32,5 +31,11 @@ RUN mkdir /var/www/table \
 
 COPY ./data/megacube_mean_properties_table_Riffel_2023.fits.tar.gz /var/www/table/megacube_mean_properties_table_Riffel_2023.fits.tar.gz
 COPY ./nginx/production.conf /etc/nginx/conf.d/default.conf
+
+# New nginx UID and GID
+ARG NGINX_UID=30000
+ARG NGINX_GID=30000
+RUN groupmod --gid ${NGINX_GID} nginx
+RUN usermod --uid ${NGINX_UID} nginx
 
 USER nginx
