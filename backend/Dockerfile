@@ -1,4 +1,4 @@
-FROM python:3.8-slim as builder
+FROM python:3.8-slim AS builder
 
 # WORKDIR /usr/src/app
 
@@ -35,7 +35,7 @@ RUN pip install --upgrade pip wheel setuptools \
     && rm -rf /tmp/pip-tmp
 
 ARG USERNAME=manga
-ARG USER_UID=1000
+ARG USER_UID=30001
 ARG USER_GID=$USER_UID
 
 
