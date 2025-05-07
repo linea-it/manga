@@ -52,7 +52,7 @@ ENV PYTHONPATH="/usr/src/app:$PYTHONPATH"
 # Matplotlib Config
 ENV MPLCONFIGDIR="/tmp"
 
-ENV SHELL /bin/bash
+ENV SHELL=/bin/bash
 
 # Copy app files into container
 WORKDIR /usr/src/app
