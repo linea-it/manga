@@ -35,7 +35,7 @@ RUN pip install --upgrade pip wheel setuptools \
     && rm -rf /tmp/pip-tmp
 
 ARG USERNAME=manga
-ARG USER_UID=30001
+ARG USER_UID=50017
 ARG USER_GID=$USER_UID
 
 
