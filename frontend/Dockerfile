@@ -1,4 +1,4 @@
-FROM node:18.20 as builder
+FROM node:18.20 AS builder
 
 WORKDIR /app
 COPY package.json /app/package.json
@@ -21,7 +21,7 @@ RUN chgrp nginx /var/cache/nginx/
 RUN chmod -R g+w /var/cache/nginx/
 
 # Write the PID file to a location where regular users have write access.
-RUN sed --regexp-extended --in-place=.bak 's%^pid\s+/var/run/nginx.pid;%pid /var/tmp/nginx.pid;%' /etc/nginx/nginx.conf
+RUN sed --regexp-extended --in-place=.bak 's%^pid\s+(/var)?/run/nginx.pid;%pid /var/tmp/nginx.pid;%' /etc/nginx/nginx.conf
 
 COPY --from=builder /app/build /var/www/frontend
 RUN chgrp nginx /var/www/frontend
